@@ -1,0 +1,51 @@
+[
+  {
+    "id": "wang_tie",
+    "name": "王铁",
+    "title": "老镖师",
+    "description": "走南闯北数十年的老镖师，刀法凌厉，为人正直豪爽。虽已年迈，仍一身正气。",
+    "affinityLevels": [
+      { "threshold": 0,  "label": "陌生人" },
+      { "threshold": 20, "label": "点头之交" },
+      { "threshold": 40, "label": "相识" },
+      { "threshold": 60, "label": "朋友" },
+      { "threshold": 80, "label": "知己" }
+    ]
+  },
+  {
+    "id": "li_yunshu",
+    "name": "李云舒",
+    "title": "江湖少女",
+    "description": "出身武林世家的少女，性格爽朗，武艺不俗，心怀侠义，游历四方。",
+    "affinityLevels": [
+      { "threshold": 0,  "label": "陌生人" },
+      { "threshold": 20, "label": "点头之交" },
+      { "threshold": 40, "label": "朋友" },
+      { "threshold": 60, "label": "挚友" },
+      { "threshold": 80, "label": "知己" }
+    ]
+  },
+  {
+    "id": "zhao_batian",
+    "name": "赵霸天",
+    "title": "江湖恶霸",
+    "description": "横行一方的江湖恶霸，力大无穷，性格残忍，素有\"铁拳赵\"之称。",
+    "affinityLevels": [
+      { "threshold": 0,  "label": "陌生人" },
+      { "threshold": 10, "label": "相识" },
+      { "threshold": 30, "label": "宿敌" },
+      { "threshold": 60, "label": "死敌" }
+    ]
+  },
+  {
+    "id": "mysterious_elder",
+    "name": "神秘老者",
+    "title": "世外高人",
+    "description": "来历不明的神秘老人，深藏不露，每次相遇皆令人深思，似乎洞悉一切。",
+    "affinityLevels": [
+      { "threshold": 0,  "label": "陌生人" },
+      { "threshold": 30, "label": "有缘人" },
+      { "threshold": 70, "label": "传承弟子" }
+    ]
+  }
+]

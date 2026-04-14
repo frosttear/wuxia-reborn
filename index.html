@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>轮回江湖</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Serif+SC:wght@400;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="css/styles.css">
+</head>
+<body>
+
+<!-- Start Screen -->
+<div id="startScreen" style="display:flex; flex-direction:column; flex:1; align-items:center; justify-content:center; gap:24px;">
+    <div class="start-title">轮回江湖</div>
+    <div class="start-sub">武侠 · 轮回 · 文字冒险</div>
+    <div class="start-form">
+        <input id="nameInput" class="start-input" type="text" placeholder="输入角色名" maxlength="8">
+        <button id="startBtn" class="btn-confirm" style="width:200px; padding:10px">踏入江湖</button>
+        <button id="continueBtn" class="btn-secondary" style="width:200px; padding:10px; display:none">继续前世</button>
+    </div>
+    <div style="font-size:0.75rem; color:var(--muted); max-width:320px; text-align:center; line-height:1.8;">
+        一个武侠轮回故事。<br>
+        每世行走江湖，结识人物，磨砺武艺。<br>
+        死后轮回，携前世记忆，再踏征途。<br>
+        终有一日，天魔必败于你手。
+    </div>
+</div>
+
+<!-- Game Screen (hidden until start) -->
+<div id="gameScreen" style="display:none; flex-direction:column; flex:1; overflow:hidden;">
+    <header class="game-header">
+        <div class="game-title">轮回江湖</div>
+        <div class="header-controls">
+            <button id="saveInfoBtn" class="btn-small" style="opacity:0.6; cursor:default" disabled>自动存档</button>
+            <button id="resetBtn" class="btn-small btn-danger" onclick="if(confirm('确定重置？存档将清除。')){Engine.deleteSave();location.reload();}">重置</button>
+        </div>
+    </header>
+
+    <div class="game-layout">
+        <!-- Left: Character -->
+        <div class="panel">
+            <div class="panel-title">角色</div>
+            <div id="charName" class="char-name">—</div>
+            <div id="charAge" class="char-age">—</div>
+            <div id="charJob" class="char-job">—</div>
+            <div id="charRebirth" class="char-rebirth">—</div>
+
+            <div class="hp-bar-wrap">
+                <div class="hp-label">
+                    <span>气血</span>
+                    <span id="hpText">—</span>
+                </div>
+                <div class="hp-bar-bg">
+                    <div id="hpBar" class="hp-fill hp-high" style="width:100%"></div>
+                </div>
+            </div>
+
+            <div class="panel-title" style="margin-top:10px">属性</div>
+            <div id="attributes"></div>
+            <div id="combatStats" class="combat-stats"></div>
+
+            <div class="panel-title" style="margin-top:12px">传承天赋</div>
+            <div id="talents" class="talents-wrap"></div>
+        </div>
+
+        <!-- Center: Event log -->
+        <div class="center-panel">
+            <div id="eventLog" class="event-log"></div>
+            <div id="choicesPanel" class="choices-panel"></div>
+            <div class="controls-bar">
+                <button id="nextMonthBtn" onclick="Engine.advanceMonth()">下一月 ▶</button>
+                <button id="autoAdvanceBtn" onclick="Engine.toggleAuto()">▶ 自动</button>
+            </div>
+        </div>
+
+        <!-- Right: Relationships + Jobs -->
+        <div class="panel panel-right">
+            <div class="panel-title">江湖人物</div>
+            <div id="relationships"></div>
+
+            <div class="panel-title" style="margin-top:16px">武道路线</div>
+            <div id="jobPanel"></div>
+        </div>
+    </div>
+</div>
+
+<script src="js/character.js"></script>
+<script src="js/npc.js"></script>
+<script src="js/combat.js"></script>
+<script src="js/rebirth.js"></script>
+<script src="js/engine.js"></script>
+<script src="js/ui.js"></script>
+<script>
+(async function() {
+    await Engine.init();
+    UI.init();
+
+    const saved = Engine.loadGame();
+    if (saved) {
+        document.getElementById('continueBtn').style.display = 'block';
+    }
+
+    document.getElementById('startBtn').onclick = function() {
+        const name = document.getElementById('nameInput').value.trim() || '无名';
+        Engine.deleteSave();
+        document.getElementById('startScreen').style.display = 'none';
+        document.getElementById('gameScreen').style.display = 'flex';
+        Engine.startNewGame(name, {}, []);
+    };
+
+    document.getElementById('continueBtn').onclick = function() {
+        const char = Engine.loadGame();
+        if (!char) return;
+        Engine.state.char = char;
+        const job = Engine.getJob(char.job);
+        if (!char.hp) char.hp = Character.getHPMax(char, job);
+        document.getElementById('startScreen').style.display = 'none';
+        document.getElementById('gameScreen').style.display = 'flex';
+        UI.renderAll(Engine.state);
+        UI.addLog('欢迎回来，继续你的江湖之旅。', 'system');
+    };
+
+    document.getElementById('nameInput').addEventListener('keydown', function(e) {
+        if (e.key === 'Enter') document.getElementById('startBtn').click();
+    });
+})();
+</script>
+</body>
+</html>

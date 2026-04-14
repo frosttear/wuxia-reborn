@@ -1,0 +1,76 @@
+[
+  {
+    "id": "nobody",
+    "name": "无名小卒",
+    "description": "尚未踏上修行之路的普通人，在江湖中随波逐流。",
+    "branch": "common",
+    "requirements": {},
+    "baseAttack": 3,
+    "baseDefense": 2,
+    "hpBonus": 0,
+    "skills": [],
+    "unlockText": ""
+  },
+  {
+    "id": "wanderer",
+    "name": "游侠",
+    "description": "浪迹江湖的游侠，以武会友，行侠仗义，初窥武道门径。",
+    "branch": "wudao",
+    "requirements": { "strength": 12 },
+    "baseAttack": 10,
+    "baseDefense": 6,
+    "hpBonus": 20,
+    "skills": [{ "name": "江湖经验", "desc": "力量+2，攻击力额外+2" }],
+    "skillBonuses": { "attack": 2 },
+    "unlockText": "你踏上了武道之路，成为了一名游侠。"
+  },
+  {
+    "id": "swordsman",
+    "name": "剑客",
+    "description": "专精剑术的江湖剑客，出剑如风，攻守兼备。",
+    "branch": "wudao",
+    "requirements": { "strength": 20, "agility": 15 },
+    "baseAttack": 22,
+    "baseDefense": 13,
+    "hpBonus": 50,
+    "skills": [
+      { "name": "剑气凌厉", "desc": "攻击力+5" },
+      { "name": "轻身步法", "desc": "防御力+3" }
+    ],
+    "skillBonuses": { "attack": 5, "defense": 3 },
+    "unlockText": "你的剑术已臻化境，跻身剑客之列。"
+  },
+  {
+    "id": "hero",
+    "name": "大侠",
+    "description": "声名远播的江湖大侠，武艺超群，威震四方。",
+    "branch": "wudao",
+    "requirements": { "strength": 35, "reputation": 20 },
+    "baseAttack": 38,
+    "baseDefense": 22,
+    "hpBonus": 100,
+    "skills": [
+      { "name": "侠义之心", "desc": "声望越高，攻击越强" },
+      { "name": "威慑气场", "desc": "防御力+8" }
+    ],
+    "skillBonuses": { "attack": 0, "defense": 8 },
+    "unlockText": "你的侠义之名传遍江湖，成为了大侠。"
+  },
+  {
+    "id": "sword_saint",
+    "name": "剑宗",
+    "description": "达到剑道极境的宗师，人剑合一，剑意通天。",
+    "branch": "wudao",
+    "requirements": { "strength": 55, "innerForce": 25, "reputation": 40 },
+    "baseAttack": 65,
+    "baseDefense": 38,
+    "hpBonus": 180,
+    "skills": [
+      { "name": "剑意如虹", "desc": "攻击力+20" },
+      { "name": "以气御剑", "desc": "内力转化攻击，内力每10点额外+3攻击" },
+      { "name": "天罡剑盾", "desc": "防御力+15" }
+    ],
+    "skillBonuses": { "attack": 20, "defense": 15 },
+    "unlockText": "你达到了剑道的极致境界，晋升为剑宗！"
+  }
+]

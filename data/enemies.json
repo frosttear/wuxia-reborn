@@ -1,0 +1,69 @@
+[
+  {
+    "id": "bandit",
+    "name": "山贼",
+    "description": "横行山道的普通山贼，武艺平平",
+    "attack": 12, "defense": 8, "hp": 60,
+    "hpLossOnDefeat": 15, "hpLossOnWin": 5,
+    "winNarrative": "你三两下打倒了山贼，他们抱头鼠窜，落荒而逃。",
+    "loseNarrative": "山贼人多势众，你寡不敌众，负伤撤退，狼狈不堪。",
+    "winEffects": { "reputation": 1 },
+    "loseEffects": {}
+  },
+  {
+    "id": "skilled_bandit",
+    "name": "悍匪",
+    "description": "身手不凡的江湖悍匪，经历过大风大浪",
+    "attack": 22, "defense": 15, "hp": 100,
+    "hpLossOnDefeat": 25, "hpLossOnWin": 10,
+    "winNarrative": "恶战一场，你终于击败了悍匪，扬长而去，附近百姓纷纷喝彩。",
+    "loseNarrative": "悍匪武艺超群，你力战不敌，带伤逃脱，心中郁郁。",
+    "winEffects": { "reputation": 2, "strength": 1 },
+    "loseEffects": {}
+  },
+  {
+    "id": "wild_tiger",
+    "name": "野虎",
+    "description": "山中出没的猛虎，爪牙锋利，凶猛异常",
+    "attack": 18, "defense": 10, "hp": 80,
+    "hpLossOnDefeat": 30, "hpLossOnWin": 8,
+    "winNarrative": "你与猛虎搏斗良久，终于将其击退。虎啸山林，你也感受到了自身力量的成长。",
+    "loseNarrative": "猛虎凶猛异常，你被扑倒在地，拼死挣扎才得以逃脱，身上留下几道深痕。",
+    "winEffects": { "strength": 1, "constitution": 1 },
+    "loseEffects": {}
+  },
+  {
+    "id": "zhao_batian_enemy",
+    "name": "赵霸天",
+    "description": "横行一方的江湖恶霸，铁拳无情",
+    "attack": 30, "defense": 20, "hp": 130,
+    "hpLossOnDefeat": 20, "hpLossOnWin": 12,
+    "winNarrative": "你与赵霸天大战数十回合，终于将其打倒在地。他怒视着你，强撑着离去，留下一句「后会有期」。",
+    "loseNarrative": "赵霸天武艺精湛，你力战不敌。他大笑着扬长而去，你独自咬牙，心中暗誓日后必报此仇。",
+    "winEffects": { "reputation": 3, "strength": 1 },
+    "loseEffects": {}
+  },
+  {
+    "id": "escort_leader",
+    "name": "劫镖头目",
+    "description": "率领手下劫镖的江湖人，刀法凌厉",
+    "attack": 20, "defense": 14, "hp": 90,
+    "hpLossOnDefeat": 20, "hpLossOnWin": 8,
+    "winNarrative": "你击败了劫镖头目，他的手下作鸟兽散，镖货得以安然保全。",
+    "loseNarrative": "劫镖头目武艺高强，你力战力竭，镖货被劫，颜面尽失。",
+    "winEffects": { "reputation": 2 },
+    "loseEffects": {}
+  },
+  {
+    "id": "tianmo",
+    "name": "天魔",
+    "description": "传说中的魔道宗师，武功通天，邪气滔天，是这个时代最大的祸乱之源",
+    "attack": 85, "defense": 65, "hp": 600,
+    "hpLossOnDefeat": 9999, "hpLossOnWin": 40,
+    "winNarrative": "你与天魔鏖战三日三夜，以一己之力击败了这个时代最强的魔道修士。天地震动，魔气消散，江湖恢复了太平。你的名字将永载史册。",
+    "loseNarrative": "天魔实力远超你的想象，你精疲力竭，倒在了血泊之中……意识渐渐模糊，耳边响起天魔的狂笑。这一世，终究未能成功……",
+    "winEffects": {},
+    "loseEffects": {},
+    "isFinalBoss": true
+  }
+]

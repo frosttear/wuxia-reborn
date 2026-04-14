@@ -1,0 +1,268 @@
+/* styles.css - Wuxia Reborn */
+
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+:root {
+    --bg:        #1a1a2e;
+    --surface:   #16213e;
+    --surface2:  #0f3460;
+    --accent:    #c9a84c;
+    --accent2:   #e2b96f;
+    --text:      #e0d8c8;
+    --muted:     #888;
+    --red:       #e05c5c;
+    --green:     #5cbf7a;
+    --blue:      #5b9bd5;
+    --border:    rgba(201,168,76,0.25);
+}
+
+body {
+    font-family: 'Noto Serif SC', 'SimSun', serif;
+    background: var(--bg);
+    color: var(--text);
+    height: 100vh;
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+}
+
+/* Header */
+.game-header {
+    background: var(--surface);
+    border-bottom: 1px solid var(--border);
+    padding: 10px 20px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    flex-shrink: 0;
+}
+.game-title {
+    font-size: 1.4rem;
+    color: var(--accent);
+    letter-spacing: 4px;
+    text-shadow: 0 0 12px rgba(201,168,76,0.4);
+}
+.header-controls { display: flex; gap: 8px; }
+
+/* Layout */
+.game-layout {
+    display: grid;
+    grid-template-columns: 220px 1fr 200px;
+    gap: 0;
+    flex: 1;
+    overflow: hidden;
+}
+
+/* Panels */
+.panel {
+    background: var(--surface);
+    border-right: 1px solid var(--border);
+    overflow-y: auto;
+    padding: 12px;
+}
+.panel-right {
+    border-right: none;
+    border-left: 1px solid var(--border);
+}
+.panel-title {
+    font-size: 0.75rem;
+    color: var(--accent);
+    letter-spacing: 3px;
+    text-transform: uppercase;
+    border-bottom: 1px solid var(--border);
+    padding-bottom: 6px;
+    margin-bottom: 10px;
+}
+
+/* Character card */
+.char-name    { font-size: 1.2rem; color: var(--accent2); font-weight: bold; margin-bottom: 2px; }
+.char-age     { font-size: 0.78rem; color: var(--muted); margin-bottom: 2px; }
+.char-job     { font-size: 0.9rem; color: var(--blue); margin-bottom: 2px; }
+.char-rebirth { font-size: 0.75rem; color: var(--muted); margin-bottom: 10px; }
+
+/* HP bar */
+.hp-bar-wrap { margin-bottom: 12px; }
+.hp-label    { font-size: 0.72rem; color: var(--muted); margin-bottom: 3px; display: flex; justify-content: space-between; }
+.hp-bar-bg   { background: #333; border-radius: 4px; height: 8px; overflow: hidden; }
+.hp-fill     { height: 100%; border-radius: 4px; transition: width 0.3s; }
+.hp-high     { background: var(--green); }
+.hp-mid      { background: #d4a017; }
+.hp-low      { background: var(--red); }
+
+/* Attributes */
+.attr-row    { display: flex; justify-content: space-between; padding: 3px 0; border-bottom: 1px solid rgba(255,255,255,0.04); font-size: 0.82rem; }
+.attr-name   { color: var(--muted); }
+.attr-val    { color: var(--accent2); font-weight: bold; }
+
+/* Combat stats */
+.combat-stats { display: flex; gap: 12px; font-size: 0.78rem; color: var(--text); margin-top: 8px; padding-top: 6px; border-top: 1px solid var(--border); }
+
+/* Talents */
+.talents-wrap { margin-top: 10px; }
+.talent-tag  { display: inline-block; background: rgba(201,168,76,0.15); border: 1px solid var(--border); border-radius: 4px; padding: 2px 8px; font-size: 0.72rem; color: var(--accent); margin: 2px; cursor: help; }
+
+/* Center — event log */
+.center-panel {
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+    background: #111827;
+}
+.event-log {
+    flex: 1;
+    overflow-y: auto;
+    padding: 14px 16px;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+.event-log::-webkit-scrollbar { width: 4px; }
+.event-log::-webkit-scrollbar-thumb { background: var(--surface2); border-radius: 2px; }
+
+/* Log entries */
+.log-entry    { font-size: 0.85rem; line-height: 1.65; }
+.event-entry  { background: var(--surface); border: 1px solid var(--border); border-radius: 6px; padding: 10px 12px; }
+.log-age      { font-size: 0.7rem; color: var(--muted); margin-bottom: 4px; }
+.log-type     { display: inline-block; font-size: 0.68rem; padding: 1px 7px; border-radius: 3px; margin-bottom: 4px; }
+.type-磨练    { background: rgba(91,155,213,0.2); color: var(--blue); }
+.type-奇遇    { background: rgba(92,191,122,0.2); color: var(--green); }
+.type-遭遇战  { background: rgba(224,92,92,0.2); color: var(--red); }
+.type-交友    { background: rgba(201,168,76,0.2); color: var(--accent); }
+.type-机缘    { background: rgba(160,100,220,0.25); color: #c09ee0; }
+.type-boss    { background: rgba(224,92,92,0.4); color: #ff8080; }
+.log-title    { font-size: 0.92rem; color: var(--accent2); font-weight: bold; margin-bottom: 4px; }
+.log-text     { color: var(--text); }
+
+.log-system   { color: var(--accent); font-size: 0.82rem; text-align: center; padding: 4px 0; }
+.log-result   { color: var(--green); font-size: 0.82rem; padding: 2px 6px; }
+.log-win      { color: var(--green); font-size: 0.83rem; padding: 2px 6px; }
+.log-lose     { color: var(--red); font-size: 0.83rem; padding: 2px 6px; }
+.log-unlock   { color: var(--accent); font-size: 0.83rem; padding: 2px 6px; }
+.log-info     { color: var(--muted); font-size: 0.78rem; padding: 2px 6px; }
+.log-combat-info { color: #aaa; font-size: 0.75rem; font-style: italic; padding: 2px 6px; }
+.log-error    { color: var(--red); font-size: 0.78rem; padding: 2px 6px; }
+
+/* Choices panel */
+.choices-panel {
+    padding: 10px 16px;
+    background: var(--surface);
+    border-top: 1px solid var(--border);
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    min-height: 52px;
+    flex-shrink: 0;
+}
+.choice-btn {
+    background: rgba(201,168,76,0.1);
+    border: 1px solid var(--border);
+    color: var(--text);
+    padding: 7px 14px;
+    border-radius: 5px;
+    cursor: pointer;
+    font-family: inherit;
+    font-size: 0.83rem;
+    transition: background 0.2s, border-color 0.2s;
+}
+.choice-btn:hover {
+    background: rgba(201,168,76,0.25);
+    border-color: var(--accent);
+    color: var(--accent2);
+}
+
+/* Controls bar */
+.controls-bar {
+    padding: 8px 16px;
+    background: var(--surface);
+    border-top: 1px solid var(--border);
+    display: flex;
+    gap: 8px;
+    flex-shrink: 0;
+}
+
+/* NPC relationships */
+.npc-row      { margin-bottom: 10px; }
+.npc-header   { display: flex; align-items: baseline; gap: 5px; margin-bottom: 3px; flex-wrap: wrap; }
+.npc-name     { font-size: 0.88rem; color: var(--accent2); }
+.npc-title    { font-size: 0.7rem; color: var(--muted); }
+.npc-label    { font-size: 0.7rem; color: var(--green); margin-left: auto; }
+.affinity-bar-bg   { background: #333; border-radius: 3px; height: 4px; }
+.affinity-bar-fill { background: var(--accent); height: 100%; border-radius: 3px; transition: width 0.4s; }
+
+/* Job panel */
+.job-row      { padding: 7px 6px; border-bottom: 1px solid rgba(255,255,255,0.05); font-size: 0.8rem; }
+.job-name     { color: var(--text); margin-bottom: 2px; }
+.job-current  { background: rgba(201,168,76,0.1); border-radius: 4px; }
+.job-current .job-name { color: var(--accent); }
+.job-locked .job-name  { color: var(--muted); }
+.job-req      { font-size: 0.7rem; }
+.unlock-ready { color: var(--green); font-size: 0.72rem; }
+.unlock-locked{ color: var(--muted); }
+
+/* Buttons */
+button, .btn {
+    background: var(--surface2);
+    border: 1px solid var(--border);
+    color: var(--text);
+    padding: 7px 16px;
+    border-radius: 5px;
+    cursor: pointer;
+    font-family: inherit;
+    font-size: 0.83rem;
+    transition: all 0.2s;
+}
+button:hover:not(:disabled) { background: rgba(15,52,96,0.9); border-color: var(--accent); }
+button:disabled { opacity: 0.4; cursor: not-allowed; }
+.btn-active { background: rgba(201,168,76,0.2); border-color: var(--accent); color: var(--accent); }
+.btn-small  { padding: 3px 10px; font-size: 0.72rem; margin-top: 4px; }
+.btn-confirm { background: var(--accent); color: #1a1a2e; border-color: var(--accent2); font-weight: bold; padding: 9px 22px; }
+.btn-confirm:hover:not(:disabled) { background: var(--accent2); }
+.btn-secondary { background: var(--surface); color: var(--text); padding: 9px 22px; }
+.btn-danger { border-color: var(--red); color: var(--red); background: rgba(224,92,92,0.1); }
+.btn-danger:hover:not(:disabled) { background: rgba(224,92,92,0.25); }
+
+/* Modal */
+.modal-overlay {
+    position: fixed; inset: 0;
+    background: rgba(0,0,0,0.75);
+    display: flex; align-items: center; justify-content: center;
+    z-index: 100;
+}
+.modal-box {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 28px 32px;
+    max-width: 480px;
+    width: 90%;
+    text-align: center;
+}
+.modal-box h2   { color: var(--accent); font-size: 1.4rem; margin-bottom: 10px; letter-spacing: 4px; }
+.modal-cause    { color: var(--red); font-size: 0.9rem; margin-bottom: 14px; }
+.modal-summary  { font-family: inherit; font-size: 0.8rem; color: var(--muted); white-space: pre-wrap; text-align: left; background: rgba(0,0,0,0.2); padding: 10px; border-radius: 5px; margin-bottom: 14px; }
+.modal-section  { margin-bottom: 14px; text-align: left; }
+.modal-label    { font-size: 0.83rem; color: var(--muted); margin-bottom: 8px; }
+.talent-choices { display: flex; flex-wrap: wrap; gap: 8px; }
+.talent-choice-btn { background: rgba(0,0,0,0.2); border: 1px solid var(--border); color: var(--text); padding: 8px 12px; border-radius: 6px; cursor: pointer; font-family: inherit; font-size: 0.78rem; text-align: left; transition: all 0.2s; }
+.talent-choice-btn:hover  { border-color: var(--accent); }
+.talent-choice-btn.selected { background: rgba(201,168,76,0.2); border-color: var(--accent); color: var(--accent2); }
+
+/* Start screen */
+.start-screen {
+    display: flex; align-items: center; justify-content: center;
+    flex: 1;
+    flex-direction: column;
+    gap: 20px;
+}
+.start-title  { font-size: 2.4rem; color: var(--accent); letter-spacing: 8px; text-shadow: 0 0 20px rgba(201,168,76,0.5); }
+.start-sub    { color: var(--muted); font-size: 0.9rem; letter-spacing: 2px; }
+.start-form   { display: flex; flex-direction: column; gap: 10px; align-items: center; }
+.start-input  { background: var(--surface); border: 1px solid var(--border); color: var(--text); padding: 9px 16px; border-radius: 5px; font-family: inherit; font-size: 1rem; text-align: center; width: 200px; outline: none; }
+.start-input:focus { border-color: var(--accent); }
+
+.muted { color: var(--muted); }
+
+/* Scrollbar global */
+::-webkit-scrollbar       { width: 5px; }
+::-webkit-scrollbar-track { background: transparent; }
+::-webkit-scrollbar-thumb { background: var(--surface2); border-radius: 3px; }
