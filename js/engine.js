@@ -282,8 +282,11 @@ const Engine = {
         const job = this.getJob(jobId);
         if (!job) return;
         if (!char.unlockedJobs.includes(jobId)) {
-            UI.addLog(`你尚未满足晋升【${job.name}】的条件。`, 'error');
-            return;
+            if (!Character.meetsJobRequirements(char, job)) {
+                UI.addLog(`你尚未满足晋升【${job.name}】的条件。`, 'error');
+                return;
+            }
+            char.unlockedJobs.push(jobId);
         }
         const oldJob = char.job;
         char.job = jobId;

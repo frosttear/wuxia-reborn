@@ -14,7 +14,7 @@ const NPCSystem = {
         if (!char.relationships[npcId]) {
             char.relationships[npcId] = { affinity: 0, met: false };
         }
-        char.relationships[npcId].affinity = Math.max(0, Math.min(100,
+        char.relationships[npcId].affinity = Math.max(-100, Math.min(100,
             char.relationships[npcId].affinity + amount
         ));
     },

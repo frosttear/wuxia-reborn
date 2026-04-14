@@ -86,17 +86,24 @@ const UI = {
         for (const npc of metNPCs) {
             const affinity = NPCSystem.getAffinity(char, npc.id);
             const label = NPCSystem.getAffinityLabel(char, npc.id, npcs);
-            const pct = affinity;
+            // Centered bar: 0 is at 50%, range -100..+100
+            const halfPct = Math.abs(affinity) / 2; // max 50%
+            const isPos = affinity >= 0;
+            const fillStyle = isPos
+                ? `left:50%; width:${halfPct}%`
+                : `right:50%; width:${halfPct}%`;
+            const fillClass = isPos ? 'affinity-bar-fill pos' : 'affinity-bar-fill neg';
             const div = document.createElement('div');
             div.className = 'npc-row';
             div.innerHTML = `
                 <div class="npc-header">
                     <span class="npc-name">${npc.name}</span>
                     <span class="npc-title">${npc.title}</span>
-                    <span class="npc-label">${label}</span>
+                    <span class="npc-label ${isPos ? 'label-pos' : 'label-neg'}">${label}</span>
                 </div>
                 <div class="affinity-bar-bg">
-                    <div class="affinity-bar-fill" style="width:${pct}%"></div>
+                    <div class="affinity-center-line"></div>
+                    <div class="${fillClass}" style="${fillStyle}"></div>
                 </div>`;
             div.title = npc.description;
             el.appendChild(div);
@@ -117,16 +124,16 @@ const UI = {
             div.innerHTML = `
                 <div class="job-name">${job.name}${isCurrent ? ' ✓' : ''}</div>
                 <div class="job-req muted">${reqText}</div>`;
-            if (unlocked && !isCurrent) {
+            if (!isCurrent && (unlocked || meetsReq)) {
                 const btn = document.createElement('button');
                 btn.className = 'btn-small';
                 btn.textContent = '切换';
                 btn.onclick = () => Engine.promoteJob(job.id);
                 div.appendChild(btn);
-            } else if (!unlocked) {
+            } else if (!isCurrent && !unlocked && !meetsReq) {
                 const indicator = document.createElement('span');
-                indicator.className = meetsReq ? 'unlock-ready' : 'unlock-locked';
-                indicator.textContent = meetsReq ? '可解锁' : '🔒';
+                indicator.className = 'unlock-locked';
+                indicator.textContent = '🔒';
                 div.appendChild(indicator);
             }
             el.appendChild(div);

@@ -198,8 +198,13 @@ body {
 .npc-name     { font-size: 0.88rem; color: var(--accent2); }
 .npc-title    { font-size: 0.7rem; color: var(--muted); }
 .npc-label    { font-size: 0.7rem; color: var(--green); margin-left: auto; }
-.affinity-bar-bg   { background: #333; border-radius: 3px; height: 4px; }
-.affinity-bar-fill { background: var(--accent); height: 100%; border-radius: 3px; transition: width 0.4s; }
+.affinity-bar-bg   { background: #333; border-radius: 3px; height: 5px; position: relative; overflow: hidden; }
+.affinity-center-line { position: absolute; left: 50%; top: 0; width: 1px; height: 100%; background: #666; z-index: 1; }
+.affinity-bar-fill { position: absolute; height: 100%; transition: width 0.4s; z-index: 0; }
+.affinity-bar-fill.pos { background: var(--green); border-radius: 0 3px 3px 0; }
+.affinity-bar-fill.neg { background: var(--red);   border-radius: 3px 0 0 3px; }
+.label-pos { color: var(--green); }
+.label-neg { color: var(--red); }
 
 /* Job panel */
 .job-row      { padding: 7px 6px; border-bottom: 1px solid rgba(255,255,255,0.05); font-size: 0.8rem; }

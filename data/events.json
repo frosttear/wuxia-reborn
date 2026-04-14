@@ -551,12 +551,12 @@
       {
         "id": "confront",
         "text": "挺身而出，为商贩说话",
-        "effects": { "flags": { "met_zhao_batian": true }, "npcAffinity": { "zhao_batian": 20 }, "attributes": { "reputation": 2 }, "narrative": "赵霸天转头打量你，冷笑道：「小子，你是不想在这片地界混了？」双方就此结仇。" }
+        "effects": { "flags": { "met_zhao_batian": true }, "npcAffinity": { "zhao_batian": -20 }, "attributes": { "reputation": 2 }, "narrative": "赵霸天转头打量你，冷笑道：「小子，你是不想在这片地界混了？」双方就此结仇。" }
       },
       {
         "id": "watch",
         "text": "暗记此人，不轻举妄动",
-        "effects": { "flags": { "met_zhao_batian": true }, "npcAffinity": { "zhao_batian": 5 }, "narrative": "你默默记住了赵霸天的样貌，心想日后必有一番交锋。" }
+        "effects": { "flags": { "met_zhao_batian": true }, "npcAffinity": { "zhao_batian": -5 }, "narrative": "你默默记住了赵霸天的样貌，心想日后必有一番交锋。" }
       }
     ]
   },
