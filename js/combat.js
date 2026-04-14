@@ -34,10 +34,15 @@ const Combat = {
             winEffects = enemy.loseEffects || {};
         }
 
+        // 运气闪避：概率性减伤5-%
+        const dodgeChance = Character.getLuckDodgeChance(char);
+        const dodged = Math.random() < dodgeChance;
+        if (dodged) hpLost = Math.max(1, Math.floor(hpLost * 0.5));
+
         // Take HP damage
         const died = Character.takeDamage(char, hpLost);
 
-        return { won, hpLost, narrative, winEffects, died };
+        return { won, hpLost, narrative, winEffects, died, dodged };
     },
 
     // Get a descriptive combat summary line

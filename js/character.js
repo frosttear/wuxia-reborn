@@ -69,12 +69,39 @@ const Character = {
         return base + jobBase + skillBonus;
     },
 
+    // 悟性：每10点提升5%属性学习效率
+    getComprehensionRate(char) {
+        return Math.floor(char.attributes.comprehension / 10) * 0.05;
+    },
+
+    // 运气：每20点有5%概率触发双倍收益
+    getLuckTriggerChance(char) {
+        return Math.min(0.5, char.attributes.luck / 200);
+    },
+
+    // 运气：战斗闪避概率（每20点减伤5%，上限30%）
+    getLuckDodgeChance(char) {
+        return Math.min(0.30, char.attributes.luck / 200);
+    },
+
     applyAttributeChanges(char, changes) {
+        const compRate = this.getComprehensionRate(char);
+        const luckChance = this.getLuckTriggerChance(char);
+        const isLucky = Math.random() < luckChance;
+        let luckyTriggered = false;
+
         for (const attr in changes) {
-            if (attr in char.attributes) {
-                char.attributes[attr] = Math.max(0, char.attributes[attr] + changes[attr]);
+            if (!(attr in char.attributes)) continue;
+            let amount = changes[attr];
+            if (amount > 0) {
+                // 悟性加成
+                amount = Math.round(amount * (1 + compRate));
+                // 运气幸运触发：双倍
+                if (isLucky) { amount *= 2; luckyTriggered = true; }
             }
+            char.attributes[attr] = Math.max(0, char.attributes[attr] + amount);
         }
+
         // Talent: 慧根 boosts innerForce/comprehension gains by 15%
         if (char.legacyTalents.includes('spiritual_root')) {
             const bonus = ['innerForce', 'comprehension'];
@@ -93,6 +120,8 @@ const Character = {
                 }
             }
         }
+
+        return luckyTriggered;
     },
 
     healHP(char, amount, job) {

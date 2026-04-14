@@ -52,9 +52,16 @@ const UI = {
             row.innerHTML = `<span class="attr-name">${ATTR_NAMES[key]}</span><span class="attr-val">${val}</span>`;
             attrsEl.appendChild(row);
         }
-        // Combat stats
+        // Combat stats + derived stat effects
+        const compRate  = Character.getComprehensionRate(char);
+        const luckDodge = Character.getLuckDodgeChance(char);
+        const luckCrit  = Character.getLuckTriggerChance(char);
         const combatEl = document.getElementById('combatStats');
-        combatEl.innerHTML = `<span>⚔ 攻击 ${attack}</span><span>🛡 防御 ${defense}</span>`;
+        combatEl.innerHTML =
+            `<span>⚔ 攻击 ${attack}</span><span>🛡 防御 ${defense}</span>` +
+            `<span title="悟性每10点提升5%属性学习效率">📖 ${compRate > 0 ? '+' : ''}${Math.round(compRate * 100)}%</span>` +
+            `<span title="运气：战斗闪避概率">💨 ${Math.round(luckDodge * 100)}%</span>` +
+            `<span title="运气：属性双倍触发概率">✨ ${Math.round(luckCrit * 100)}%</span>`;
 
         // Learned skills
         const skillsEl = document.getElementById('learnedSkills');

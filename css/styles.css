@@ -95,7 +95,8 @@ body {
 .attr-val    { color: var(--accent2); font-weight: bold; }
 
 /* Combat stats */
-.combat-stats { display: flex; gap: 12px; font-size: 0.78rem; color: var(--text); margin-top: 8px; padding-top: 6px; border-top: 1px solid var(--border); }
+.combat-stats { display: flex; flex-wrap: wrap; gap: 6px 10px; font-size: 0.75rem; color: var(--text); margin-top: 8px; padding-top: 6px; border-top: 1px solid var(--border); }
+.combat-stats span[title] { color: var(--muted); cursor: help; }
 
 /* Talents */
 .talents-wrap { margin-top: 10px; }

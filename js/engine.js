@@ -98,13 +98,21 @@ const Engine = {
         const { char, events } = this.state;
         const eligible = [];
 
+        // 悟性提升奇遇/机缘权重；运气降低遭遇战、提升正面事件权重
+        const compBonus  = Math.floor(char.attributes.comprehension / 5);
+        const luckBonus  = Math.floor(char.attributes.luck / 8);
+
         for (const event of events) {
             if (event.type === 'boss') continue; // boss triggered separately
             if (!this.checkConditions(event.conditions || {})) continue;
 
-            // Slightly reduce weight for recently seen events
             let weight = event.weight;
-            if (this.state.seenEvents.has(event.id)) weight = Math.floor(weight * 0.3);
+            if (['奇遇', '机缘'].includes(event.type))  weight += compBonus;
+            if (['奇遇', '机缘', '交友'].includes(event.type)) weight += Math.floor(luckBonus / 2);
+            if (event.type === '遭遇战') weight = Math.max(1, weight - Math.floor(luckBonus / 2));
+
+            // Slightly reduce weight for recently seen events
+            if (this.state.seenEvents.has(event.id)) weight = Math.max(1, Math.floor(weight * 0.3));
 
             for (let i = 0; i < weight; i++) eligible.push(event);
         }
@@ -197,6 +205,19 @@ const Engine = {
 
         const effects = choice.effects || {};
 
+        // Log lucky trigger if attributes changed
+        if (effects.attributes) {
+            const lucky = Character.applyAttributeChanges(this.state.char, effects.attributes);
+            if (lucky) UI.addLog('✨ 幸运触发！属性收益翻倍！', 'unlock');
+            const effectsCopy = Object.assign({}, effects);
+            delete effectsCopy.attributes;
+            this.applyEffects(effectsCopy);
+            if (effects.narrative) UI.addLog(effects.narrative, 'result');
+            UI.renderAll(this.state);
+            this.saveGame();
+            return;
+        }
+
         // Combat event
         if (effects.combat) {
             const enemy = this.getEnemy(effects.combat);
@@ -271,6 +292,7 @@ const Engine = {
             return;
         }
 
+        if (result.dodged) UI.addLog('〖运气〗你轻巧闪开部分攻击，伤害减半！', 'unlock');
         UI.addLog(`本月结束后，你损失了 ${result.hpLost} 点血量。剩余血量：${char.hp}`, 'info');
         UI.renderAll(this.state);
         this.saveGame();
