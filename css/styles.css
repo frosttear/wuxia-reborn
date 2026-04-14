@@ -157,17 +157,29 @@ body {
     background: rgba(201,168,76,0.1);
     border: 1px solid var(--border);
     color: var(--text);
-    padding: 7px 14px;
+    padding: 8px 14px;
     border-radius: 5px;
     cursor: pointer;
     font-family: inherit;
     font-size: 0.83rem;
     transition: background 0.2s, border-color 0.2s;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 3px;
+    text-align: left;
 }
 .choice-btn:hover {
     background: rgba(201,168,76,0.25);
     border-color: var(--accent);
     color: var(--accent2);
+}
+.choice-text  { line-height: 1.4; }
+.choice-effects {
+    font-size: 0.72rem;
+    color: var(--accent);
+    opacity: 0.85;
+    letter-spacing: 0.3px;
 }
 
 /* Controls bar */

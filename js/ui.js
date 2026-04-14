@@ -138,6 +138,40 @@ const UI = {
         return Object.entries(reqs).map(([k, v]) => `${ATTR_NAMES[k] || k}≥${v}`).join(' ');
     },
 
+    formatEffectPreview(effects, enemies, npcs) {
+        if (!effects) return '';
+        const parts = [];
+
+        if (effects.combat) {
+            const enemy = (enemies || []).find(e => e.id === effects.combat);
+            parts.push(`⚔ 与【${enemy ? enemy.name : effects.combat}】战斗`);
+        }
+
+        if (effects.attributes) {
+            for (const [k, v] of Object.entries(effects.attributes)) {
+                if (v === 0) continue;
+                const sign = v > 0 ? '+' : '';
+                parts.push(`${ATTR_NAMES[k] || k} ${sign}${v}`);
+            }
+        }
+
+        if (effects.hp) {
+            const sign = effects.hp > 0 ? '+' : '';
+            parts.push(`气血 ${sign}${effects.hp}`);
+        }
+
+        if (effects.npcAffinity) {
+            for (const [npcId, v] of Object.entries(effects.npcAffinity)) {
+                const npc = (npcs || []).find(n => n.id === npcId);
+                const name = npc ? npc.name : npcId;
+                const sign = v > 0 ? '+' : '';
+                parts.push(`${name}好感 ${sign}${v}`);
+            }
+        }
+
+        return parts.join('  |  ');
+    },
+
     showEvent(event, choices, state) {
         const ageYears = Character.getAgeYears(state.char);
         const ageMonths = Character.getAgeMonthsRemainder(state.char);
@@ -153,14 +187,16 @@ const UI = {
         this.logEl.appendChild(entry);
         this.logEl.scrollTop = this.logEl.scrollHeight;
 
-        // Show choices
+        // Show choices with effect previews
         this.choicesEl.innerHTML = '';
         if (choices && choices.length > 0) {
             for (let i = 0; i < choices.length; i++) {
                 const choice = choices[i];
+                const preview = this.formatEffectPreview(choice.effects, state.enemies, state.npcs);
                 const btn = document.createElement('button');
                 btn.className = 'choice-btn';
-                btn.textContent = choice.text;
+                btn.innerHTML = `<span class="choice-text">${choice.text}</span>`
+                    + (preview ? `<span class="choice-effects">${preview}</span>` : '');
                 btn.onclick = () => {
                     this.choicesEl.innerHTML = '';
                     this.nextBtn.disabled = false;

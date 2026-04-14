@@ -58,6 +58,7 @@ const Engine = {
         // Monthly HP regen
         const job = this.getJob(char.job);
         Character.monthlyHPRegen(char, job);
+        UI.renderCharacter(char, this.state.jobs);
 
         // Check death by age
         if (char.ageMonths >= char.maxAgeMonths) {
@@ -265,6 +266,7 @@ const Engine = {
 
         // Check death
         if (result.died || (enemy.isFinalBoss && !result.won)) {
+            UI.renderCharacter(char, this.state.jobs);
             this.triggerDeath(enemy.isFinalBoss ? 'boss' : 'combat');
             return;
         }
