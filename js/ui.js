@@ -13,6 +13,25 @@ const UI = {
         this.autoBtn = document.getElementById('autoAdvanceBtn');
     },
 
+    // Mobile tab switching
+    switchTab(tab) {
+        const map = { char: 'panelChar', event: 'panelEvent', npc: 'panelNpc' };
+        Object.values(map).forEach(id => {
+            document.getElementById(id).classList.remove('mobile-active');
+        });
+        document.getElementById(map[tab]).classList.add('mobile-active');
+        document.querySelectorAll('.tab-btn').forEach(btn => {
+            btn.classList.toggle('tab-active', btn.dataset.tab === tab);
+        });
+        // Auto-scroll event log to bottom when switching to event tab
+        if (tab === 'event') this.logEl.scrollTop = this.logEl.scrollHeight;
+    },
+
+    // On mobile, auto-switch to event tab when a new event/log arrives
+    notifyEventTab() {
+        if (window.innerWidth <= 768) this.switchTab('event');
+    },
+
     renderAll(state) {
         const { char, jobs, npcs } = state;
         if (!char) return;
@@ -249,6 +268,7 @@ const UI = {
             <div class="log-text">${event.text.replace(/\n/g, '<br>')}</div>`;
         this.logEl.appendChild(entry);
         this.logEl.scrollTop = this.logEl.scrollHeight;
+        this.notifyEventTab();
 
         // Show choices with effect previews
         this.choicesEl.innerHTML = '';
@@ -277,6 +297,7 @@ const UI = {
         div.innerHTML = text.replace(/\n/g, '<br>');
         this.logEl.appendChild(div);
         this.logEl.scrollTop = this.logEl.scrollHeight;
+        this.notifyEventTab();
     },
 
     clearLog() {

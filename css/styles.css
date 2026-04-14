@@ -297,3 +297,105 @@ button:disabled { opacity: 0.4; cursor: not-allowed; }
 ::-webkit-scrollbar       { width: 5px; }
 ::-webkit-scrollbar-track { background: transparent; }
 ::-webkit-scrollbar-thumb { background: var(--surface2); border-radius: 3px; }
+
+/* ─── Mobile tab bar (desktop: hidden) ─── */
+.mobile-tabs { display: none; }
+
+/* ─── Mobile responsive ≤768px ─── */
+@media (max-width: 768px) {
+    body { overflow: hidden; height: 100dvh; }
+
+    /* Header compact */
+    .game-header  { padding: 8px 12px; }
+    .game-title   { font-size: 1.1rem; letter-spacing: 2px; }
+    .btn-small    { padding: 5px 10px; font-size: 0.75rem; }
+
+    /* Tab bar fixed at bottom */
+    .mobile-tabs {
+        display: flex;
+        position: fixed;
+        bottom: 0; left: 0; right: 0;
+        height: 52px;
+        background: var(--surface);
+        border-top: 1px solid var(--border);
+        z-index: 100;
+    }
+    .tab-btn {
+        flex: 1;
+        background: none;
+        border: none;
+        color: var(--muted);
+        font-family: inherit;
+        font-size: 0.8rem;
+        cursor: pointer;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        gap: 2px;
+        transition: color 0.2s;
+        -webkit-tap-highlight-color: transparent;
+    }
+    .tab-btn.tab-active { color: var(--accent); border-top: 2px solid var(--accent); }
+
+    /* Layout: single column, panels stacked */
+    .game-layout {
+        grid-template-columns: 1fr;
+        grid-template-rows: 1fr;
+        padding-bottom: 52px; /* room for tab bar */
+        overflow: hidden;
+    }
+
+    /* All panels hidden by default on mobile */
+    .panel-left,
+    .panel-right,
+    .center-panel {
+        display: none;
+        grid-column: 1;
+        grid-row: 1;
+        border: none;
+        overflow-y: auto;
+        height: 100%;
+    }
+
+    /* Only active panel visible */
+    .panel-left.mobile-active,
+    .panel-right.mobile-active,
+    .center-panel.mobile-active {
+        display: flex;
+        flex-direction: column;
+    }
+
+    /* Center panel: event log fills space, controls at bottom */
+    .center-panel { padding: 0; }
+    .event-log    { flex: 1; overflow-y: auto; padding: 10px; }
+    .choices-panel{ padding: 6px 10px; }
+    .controls-bar { padding: 8px 10px; gap: 8px; }
+    .controls-bar button { flex: 1; padding: 12px 0; font-size: 0.9rem; }
+
+    /* Bigger touch targets for choice buttons */
+    .choice-btn   { padding: 12px 14px; font-size: 0.88rem; }
+
+    /* Left panel: scrollable */
+    .panel-left   { padding: 12px; }
+
+    /* Job requirement tags: slightly larger */
+    .req-tag      { font-size: 0.72rem; padding: 2px 8px; }
+
+    /* Buttons in job panel */
+    .btn-small    { padding: 6px 14px; }
+
+    /* Right panel */
+    .panel-right  { padding: 12px; }
+
+    /* NPC affinity bar: bit taller */
+    .affinity-bar-bg { height: 7px; }
+
+    /* Rebirth / victory overlay */
+    .rebirth-box,
+    .victory-box  { width: 94vw; max-height: 88vh; overflow-y: auto; padding: 20px 16px; }
+
+    /* Start screen */
+    .start-title  { font-size: 1.8rem; letter-spacing: 4px; }
+    .start-input  { width: 240px; }
+}

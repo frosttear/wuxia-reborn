@@ -37,9 +37,16 @@
         </div>
     </header>
 
+    <!-- Mobile tab bar (hidden on desktop) -->
+    <nav class="mobile-tabs" id="mobileTabs">
+        <button class="tab-btn" data-tab="char" onclick="UI.switchTab('char')">⚔ 角色</button>
+        <button class="tab-btn tab-active" data-tab="event" onclick="UI.switchTab('event')">📜 事件</button>
+        <button class="tab-btn" data-tab="npc" onclick="UI.switchTab('npc')">👥 人物</button>
+    </nav>
+
     <div class="game-layout">
         <!-- Left: Character + Job Tree -->
-        <div class="panel panel-left">
+        <div class="panel panel-left" id="panelChar">
             <div class="panel-title">角色</div>
             <div id="charName" class="char-name">—</div>
             <div id="charAge" class="char-age">—</div>
@@ -68,7 +75,7 @@
         </div>
 
         <!-- Center: Event log -->
-        <div class="center-panel">
+        <div class="center-panel mobile-active" id="panelEvent">
             <div id="eventLog" class="event-log"></div>
             <div id="choicesPanel" class="choices-panel"></div>
             <div class="controls-bar">
@@ -78,7 +85,7 @@
         </div>
 
         <!-- Right: NPC Relationships + Talents -->
-        <div class="panel panel-right">
+        <div class="panel panel-right" id="panelNpc">
             <div class="panel-title">江湖人物</div>
             <div id="relationships"></div>
 
