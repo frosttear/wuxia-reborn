@@ -145,10 +145,12 @@ const UI = {
             const meetsReq = Character.meetsJobRequirements(char, job);
             const div = document.createElement('div');
             div.className = 'job-row' + (isCurrent ? ' job-current' : '') + (unlocked ? ' job-unlocked' : ' job-locked');
-            const reqText = this.formatRequirements(job.requirements);
+            const reqHtml = this.formatRequirementsWithChar(job.requirements, char);
             div.innerHTML = `
-                <div class="job-name">${job.name}${isCurrent ? ' ✓' : ''}</div>
-                <div class="job-req muted">${reqText}</div>`;
+                <div class="job-header">
+                    <span class="job-name">${job.name}${isCurrent ? ' ✓' : ''}</span>
+                </div>
+                <div class="job-reqs">${reqHtml}</div>`;
             if (!isCurrent && (unlocked || meetsReq)) {
                 const btn = document.createElement('button');
                 btn.className = 'btn-small';
@@ -168,6 +170,19 @@ const UI = {
     formatRequirements(reqs) {
         if (!reqs || Object.keys(reqs).length === 0) return '无要求';
         return Object.entries(reqs).map(([k, v]) => `${ATTR_NAMES[k] || k}≥${v}`).join(' ');
+    },
+
+    formatRequirementsWithChar(reqs, char) {
+        if (!reqs || Object.keys(reqs).length === 0) {
+            return '<span class="req-tag req-ok">无要求</span>';
+        }
+        return Object.entries(reqs).map(([k, needed]) => {
+            const have = char.attributes[k] || 0;
+            const met = have >= needed;
+            const cls = met ? 'req-tag req-ok' : 'req-tag req-no';
+            const icon = met ? '✓' : '✗';
+            return `<span class="${cls}">${ATTR_NAMES[k] || k} ${have}/${needed} ${icon}</span>`;
+        }).join('');
     },
 
     formatEffectPreview(effects, enemies, npcs) {

@@ -47,7 +47,7 @@ body {
 /* Layout */
 .game-layout {
     display: grid;
-    grid-template-columns: 220px 1fr 200px;
+    grid-template-columns: 260px 1fr 190px;
     gap: 0;
     flex: 1;
     overflow: hidden;
@@ -213,14 +213,21 @@ body {
 .skill-bonus { font-size: 0.7rem; color: var(--accent); white-space: nowrap; margin-left: 6px; }
 
 /* Job panel */
-.job-row      { padding: 7px 6px; border-bottom: 1px solid rgba(255,255,255,0.05); font-size: 0.8rem; }
-.job-name     { color: var(--text); margin-bottom: 2px; }
-.job-current  { background: rgba(201,168,76,0.1); border-radius: 4px; }
-.job-current .job-name { color: var(--accent); }
+.job-row        { padding: 6px 4px; border-bottom: 1px solid rgba(255,255,255,0.05); }
+.job-header     { display: flex; align-items: center; justify-content: space-between; margin-bottom: 4px; }
+.job-name       { font-size: 0.82rem; color: var(--text); }
+.job-reqs       { display: flex; flex-wrap: wrap; gap: 4px; }
+.job-current    { background: rgba(201,168,76,0.1); border-radius: 4px; padding: 6px 6px; }
+.job-current .job-name { color: var(--accent); font-weight: bold; }
 .job-locked .job-name  { color: var(--muted); }
-.job-req      { font-size: 0.7rem; }
-.unlock-ready { color: var(--green); font-size: 0.72rem; }
-.unlock-locked{ color: var(--muted); }
+
+/* Requirement tags */
+.req-tag  { display: inline-block; font-size: 0.68rem; padding: 1px 6px; border-radius: 3px; white-space: nowrap; }
+.req-ok   { background: rgba(92,191,122,0.15); color: var(--green); border: 1px solid rgba(92,191,122,0.3); }
+.req-no   { background: rgba(224,92,92,0.12); color: var(--red);   border: 1px solid rgba(224,92,92,0.25); }
+
+.unlock-ready  { color: var(--green); font-size: 0.72rem; }
+.unlock-locked { color: var(--muted); font-size: 0.72rem; }
 
 /* Buttons */
 button, .btn {
