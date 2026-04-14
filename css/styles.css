@@ -197,7 +197,8 @@ body {
 .npc-header   { display: flex; align-items: baseline; gap: 5px; margin-bottom: 3px; flex-wrap: wrap; }
 .npc-name     { font-size: 0.88rem; color: var(--accent2); }
 .npc-title    { font-size: 0.7rem; color: var(--muted); }
-.npc-label    { font-size: 0.7rem; color: var(--green); margin-left: auto; }
+.npc-label         { font-size: 0.7rem; margin-left: 4px; }
+.npc-affinity-val  { font-size: 0.7rem; font-variant-numeric: tabular-nums; margin-left: auto; font-weight: bold; }
 .affinity-bar-bg   { background: #333; border-radius: 3px; height: 5px; position: relative; overflow: hidden; }
 .affinity-center-line { position: absolute; left: 50%; top: 0; width: 1px; height: 100%; background: #666; z-index: 1; }
 .affinity-bar-fill { position: absolute; height: 100%; transition: width 0.4s; z-index: 0; }
@@ -205,6 +206,11 @@ body {
 .affinity-bar-fill.neg { background: var(--red);   border-radius: 3px 0 0 3px; }
 .label-pos { color: var(--green); }
 .label-neg { color: var(--red); }
+
+/* Learned skills */
+.skill-row   { display: flex; justify-content: space-between; align-items: center; padding: 3px 0; border-bottom: 1px solid rgba(255,255,255,0.04); font-size: 0.8rem; }
+.skill-name  { color: var(--text); }
+.skill-bonus { font-size: 0.7rem; color: var(--accent); white-space: nowrap; margin-left: 6px; }
 
 /* Job panel */
 .job-row      { padding: 7px 6px; border-bottom: 1px solid rgba(255,255,255,0.05); font-size: 0.8rem; }

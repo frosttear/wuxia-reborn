@@ -20,6 +20,7 @@ const Character = {
             hp: 0,                // set after creation
             job: 'nobody',
             unlockedJobs: ['nobody'],
+            learnedSkills: [],    // [{ id, name, desc, branch, bonuses, special? }]
             legacyTalents: legacyTalents || [],
             relationships: {},    // { npcId: { affinity, metAt } }
             flags: {},            // story flags
@@ -46,11 +47,15 @@ const Character = {
     getAttackPower(char, job) {
         const base = char.attributes.strength * 2;
         const jobBase = job ? job.baseAttack : 3;
-        const skillBonus = job ? (job.skillBonuses && job.skillBonuses.attack || 0) : 0;
-        // 侠义之心: reputation bonus for hero
-        const heroBonus = (job && job.id === 'hero') ? Math.floor(char.attributes.reputation * 0.5) : 0;
-        // 以气御剑: innerForce bonus for sword_saint
-        const saintBonus = (job && job.id === 'sword_saint') ? Math.floor(char.attributes.innerForce / 10) * 3 : 0;
+        // Sum fixed bonuses from all learned skills
+        const skills = char.learnedSkills || [];
+        const skillBonus = skills.reduce((s, sk) => s + (sk.bonuses && sk.bonuses.attack || 0), 0);
+        // 侠义之心: reputation scaling (learned skill special)
+        const heroBonus = skills.some(sk => sk.special === 'reputation_scaling')
+            ? Math.floor(char.attributes.reputation / 10) : 0;
+        // 以气御剑: innerForce scaling (learned skill special)
+        const saintBonus = skills.some(sk => sk.special === 'innerforce_scaling')
+            ? Math.floor(char.attributes.innerForce / 10) * 3 : 0;
         // Talent bonus
         const talentBonus = char.legacyTalents.includes('sword_heart') ? Math.floor(base * 0.1) : 0;
         return base + jobBase + skillBonus + heroBonus + saintBonus + talentBonus;
@@ -59,7 +64,8 @@ const Character = {
     getDefensePower(char, job) {
         const base = Math.floor(char.attributes.constitution * 1.5 + char.attributes.agility * 0.5);
         const jobBase = job ? job.baseDefense : 2;
-        const skillBonus = job ? (job.skillBonuses && job.skillBonuses.defense || 0) : 0;
+        const skills = char.learnedSkills || [];
+        const skillBonus = skills.reduce((s, sk) => s + (sk.bonuses && sk.bonuses.defense || 0), 0);
         return base + jobBase + skillBonus;
     },
 

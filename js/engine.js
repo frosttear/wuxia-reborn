@@ -279,22 +279,49 @@ const Engine = {
     promoteJob(jobId) {
         const { char } = this.state;
         if (!char) return;
-        const job = this.getJob(jobId);
-        if (!job) return;
+        const newJob = this.getJob(jobId);
+        if (!newJob) return;
         if (!char.unlockedJobs.includes(jobId)) {
-            if (!Character.meetsJobRequirements(char, job)) {
-                UI.addLog(`你尚未满足晋升【${job.name}】的条件。`, 'error');
+            if (!Character.meetsJobRequirements(char, newJob)) {
+                UI.addLog(`你尚未满足晋升【${newJob.name}】的条件。`, 'error');
                 return;
             }
             char.unlockedJobs.push(jobId);
         }
-        const oldJob = char.job;
+
+        const oldJob = this.getJob(char.job);
+        const oldBranch = oldJob ? oldJob.branch : null;
+        const newBranch = newJob.branch;
+
+        // If switching to a different branch, remove old branch skills
+        if (oldBranch && oldBranch !== newBranch && oldBranch !== 'common') {
+            const removedNames = char.learnedSkills
+                .filter(s => s.branch === oldBranch)
+                .map(s => s.name);
+            char.learnedSkills = char.learnedSkills.filter(s => s.branch !== oldBranch);
+            if (removedNames.length > 0) {
+                UI.addLog(`分支变更，失去技能：${removedNames.join('、')}`, 'info');
+            }
+        }
+
+        // Learn new job's skills (skip already learned)
+        const newlyLearned = [];
+        for (const skill of (newJob.skills || [])) {
+            if (!char.learnedSkills.find(s => s.id === skill.id)) {
+                char.learnedSkills.push(skill);
+                newlyLearned.push(skill.name);
+            }
+        }
+
         char.job = jobId;
-        // Recalculate HP max and ensure current HP is valid
-        const newJob = this.getJob(jobId);
+        // Recalculate HP max
         const newMax = Character.getHPMax(char, newJob);
         if (char.hp > newMax) char.hp = newMax;
-        UI.addLog(`🌟 ${job.unlockText}`, 'unlock');
+
+        UI.addLog(`🌟 ${newJob.unlockText}`, 'unlock');
+        if (newlyLearned.length > 0) {
+            UI.addLog(`📖 学会新技能：${newlyLearned.join('、')}`, 'unlock');
+        }
         UI.renderAll(this.state);
         this.saveGame();
     },

@@ -56,6 +56,30 @@ const UI = {
         const combatEl = document.getElementById('combatStats');
         combatEl.innerHTML = `<span>⚔ 攻击 ${attack}</span><span>🛡 防御 ${defense}</span>`;
 
+        // Learned skills
+        const skillsEl = document.getElementById('learnedSkills');
+        skillsEl.innerHTML = '';
+        const skills = char.learnedSkills || [];
+        if (skills.length > 0) {
+            for (const sk of skills) {
+                const attackBonus = (sk.bonuses && sk.bonuses.attack) || 0;
+                const defenseBonus = (sk.bonuses && sk.bonuses.defense) || 0;
+                let bonusText = [];
+                if (attackBonus > 0) bonusText.push(`攻+${attackBonus}`);
+                if (defenseBonus > 0) bonusText.push(`防+${defenseBonus}`);
+                if (sk.special === 'reputation_scaling') bonusText.push('声望转攻击');
+                if (sk.special === 'innerforce_scaling') bonusText.push('内力转攻击');
+                const div = document.createElement('div');
+                div.className = 'skill-row';
+                div.title = sk.desc;
+                div.innerHTML = `<span class="skill-name">${sk.name}</span>`
+                    + (bonusText.length ? `<span class="skill-bonus">${bonusText.join(' ')}</span>` : '');
+                skillsEl.appendChild(div);
+            }
+        } else {
+            skillsEl.innerHTML = '<span class="muted">尚未学习任何技能</span>';
+        }
+
         // Talents
         const talentsEl = document.getElementById('talents');
         talentsEl.innerHTML = '';
@@ -99,6 +123,7 @@ const UI = {
                 <div class="npc-header">
                     <span class="npc-name">${npc.name}</span>
                     <span class="npc-title">${npc.title}</span>
+                    <span class="npc-affinity-val ${isPos ? 'label-pos' : 'label-neg'}">${affinity > 0 ? '+' : ''}${affinity}</span>
                     <span class="npc-label ${isPos ? 'label-pos' : 'label-neg'}">${label}</span>
                 </div>
                 <div class="affinity-bar-bg">
