@@ -72,9 +72,9 @@ const Engine = {
             UI.addLog(`⚔ 你已满足晋升【${j.name}】的条件！可在右侧面板切换职业。`, 'unlock');
         }
 
-        // Check boss trigger (only once, when at hero+ and age > 40)
-        if (!char.flags.boss_triggered && Character.getAgeYears(char) >= 40 &&
-            (char.job === 'hero' || char.job === 'sword_saint')) {
+        // Check boss trigger (only once, when at sword_saint and age > 45)
+        if (!char.flags.boss_triggered && Character.getAgeYears(char) >= 45 &&
+            char.job === 'sword_saint') {
             char.flags.boss_triggered = true;
             const bossEvent = this.state.events.find(e => e.id === 'tianmo_appears');
             if (bossEvent) {
