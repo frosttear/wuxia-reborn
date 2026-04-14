@@ -192,13 +192,22 @@ const UI = {
         }).join('');
     },
 
-    formatEffectPreview(effects, enemies, npcs) {
+    formatEffectPreview(effects, enemies, npcs, char, jobs) {
         if (!effects) return '';
         const parts = [];
 
         if (effects.combat) {
             const enemy = (enemies || []).find(e => e.id === effects.combat);
-            parts.push(`⚔ 与【${enemy ? enemy.name : effects.combat}】战斗`);
+            const eName = enemy ? enemy.name : effects.combat;
+            if (enemy && char && jobs) {
+                const job = jobs.find(j => j.id === char.job);
+                const eff = Combat.getEffectiveStats(enemy, char);
+                const winPct = Combat.calcWinChance(char, enemy, job);
+                const pctColor = winPct >= 70 ? '🟢' : winPct >= 40 ? '🟡' : '🔴';
+                parts.push(`⚔ 与【${eName}】战斗（攻${eff.attack}/防${eff.defense}） ${pctColor}胜率${winPct}%`);
+            } else {
+                parts.push(`⚔ 与【${eName}】战斗`);
+            }
         }
 
         if (effects.attributes) {
@@ -246,7 +255,7 @@ const UI = {
         if (choices && choices.length > 0) {
             for (let i = 0; i < choices.length; i++) {
                 const choice = choices[i];
-                const preview = this.formatEffectPreview(choice.effects, state.enemies, state.npcs);
+                const preview = this.formatEffectPreview(choice.effects, state.enemies, state.npcs, state.char, state.jobs);
                 const btn = document.createElement('button');
                 btn.className = 'choice-btn';
                 btn.innerHTML = `<span class="choice-text">${choice.text}</span>`

@@ -411,7 +411,7 @@
       {
         "id": "accept_duel",
         "text": "接受挑战，切磋武艺",
-        "effects": { "combat": "bandit", "narrative": "" }
+        "effects": { "combat": "jianghu_challenger", "narrative": "" }
       },
       {
         "id": "decline",
