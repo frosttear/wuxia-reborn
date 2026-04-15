@@ -14,7 +14,7 @@ const Character = {
         return {
             name: name,
             ageMonths: 192,       // start at 16 years old
-            maxAgeMonths: 390,    // safety cap; final boss triggers at 360 (age 30)
+            maxAgeMonths: 318,    // safety cap; final boss triggers at 312 (age 26)
             birthMonth: 1,        // 1-12, chosen at character creation
             alive: true,
             attributes: attrs,

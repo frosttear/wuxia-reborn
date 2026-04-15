@@ -88,8 +88,8 @@ const Engine = {
         if (isBirthday) {
             const ageYears = Character.getAgeYears(char);
 
-            if (ageYears >= 30) {
-                // 30th birthday — final boss, no job requirement
+            if (ageYears >= 26) {
+                // 26th birthday — final boss
                 if (!char.flags.boss_triggered) {
                     char.flags.boss_triggered = true;
                     const bossEvent = this.state.events.find(e => e.id === 'tianmo_appears');
@@ -110,7 +110,7 @@ const Engine = {
                 char.injured = false;
                 UI.addLog('【痊愈】伤势已愈，你重新踏上武道之路。', 'result');
             }
-            if (char.injured && char.ageMonths % 3 === 0) {
+            if (char.injured) {
                 const pool = this.state.events.filter(e => e.type === '养伤');
                 if (pool.length > 0) {
                     const weighted = [];
@@ -120,12 +120,6 @@ const Engine = {
                 }
             }
             UI.renderAll(this.state);
-            this.saveGame();
-            return;
-        }
-
-        // Events fire every 3 months; off-months just advance time quietly
-        if (char.ageMonths % 3 !== 0) {
             this.saveGame();
             return;
         }
@@ -148,7 +142,8 @@ const Engine = {
         const luckBonus  = Math.floor(char.attributes.luck / 8);
 
         for (const event of events) {
-            if (event.type === 'boss') continue; // boss triggered separately
+            if (event.type === 'boss') continue;   // boss triggered separately
+            if (event.type === '养伤') continue;   // only available during injury
             if (!this.checkConditions(event.conditions || {})) continue;
 
             let weight = event.weight;
@@ -371,16 +366,14 @@ const Engine = {
         const bondEvent = npcBonds.find(b => b.level === currentLevel + 1);
         if (!bondEvent) return;
 
-        // Advance months (visit costs 3 months — travel + time spent)
+        // Advance 1 month for the visit
         const job = this.getJob(char.job);
-        for (let i = 0; i < 3; i++) {
-            char.ageMonths++;
-            Character.monthlyHPRegen(char, job);
-            if (char.ageMonths >= char.maxAgeMonths) {
-                UI.renderCharacter(char, this.state.jobs);
-                this.triggerNaturalDeath();
-                return;
-            }
+        char.ageMonths++;
+        Character.monthlyHPRegen(char, job);
+        if (char.ageMonths >= char.maxAgeMonths) {
+            UI.renderCharacter(char, this.state.jobs);
+            this.triggerNaturalDeath();
+            return;
         }
         UI.renderCharacter(char, this.state.jobs);
 
@@ -391,7 +384,8 @@ const Engine = {
             : '';
         const displayEvent = Object.assign({}, bondEvent, {
             text: prefix + bondEvent.text,
-            title: `羁绊·${npc ? npc.name : npcId}·第${bondEvent.level}章`
+            title: `羁绊·${npc ? npc.name : npcId}·第${bondEvent.level}章`,
+            type: '羁绊'
         });
 
         this.state.pendingChoice = {
@@ -656,7 +650,7 @@ const Engine = {
     triggerBirthdayEvent(age) {
         const { char } = this.state;
         const mName = this.BIRTH_MONTH_NAMES[(char.birthMonth - 1) || 0];
-        const remaining = 30 - age;
+        const remaining = 26 - age;
         let msg, attrs = null;
 
         if (age === 17) {
@@ -667,8 +661,8 @@ const Engine = {
         } else if (age === 20) {
             msg = `【生辰】${mName}，弱冠之年。二十岁，正是建功立业的好时候。`;
             attrs = { reputation: 1, strength: 1 };
-        } else if (age === 24) {
-            msg = `【生辰】${mName}，${age}岁。天魔之约，还有六年。时间，越来越少了。`;
+        } else if (age === 22) {
+            msg = `【生辰】${mName}，${age}岁。天魔之约，还有四年。江湖的路，走了多远了？`;
         } else if (age === 25) {
             if (char.flags.elder_revelation && !char.flags.jade_tablet_awakened) {
                 char.flags.jade_tablet_awakened = true;
@@ -683,12 +677,8 @@ const Engine = {
 玉牌重归平静，但你知道：有什么事情，已经开始了。`;
                 attrs = { comprehension: 1 };
             } else {
-                msg = `【生辰】${mName}，${age}岁。天魔之约还有五年。`;
+                msg = `【生辰】${mName}，${age}岁。最后一年——天魔之约，如期将至。`;
             }
-        } else if (age === 27) {
-            msg = `【生辰】${mName}，${age}岁。还有三年。江湖中走过的路，足够你面对天魔了吗？`;
-        } else if (age === 29) {
-            msg = `【生辰】${mName}，${age}岁。最后一年。天魔，明年生辰，如期而至。`;
         } else {
             msg = `【生辰】${mName}，${age}岁。天魔之约还有 ${remaining} 年。`;
         }
@@ -713,6 +703,7 @@ const Engine = {
         if (char.kills === undefined) char.kills = 0;
         if (char.injured === undefined) char.injured = false;
         if (char.injuredMonths === undefined) char.injuredMonths = 0;
+        if (char.maxAgeMonths > 318) char.maxAgeMonths = 318; // clamp to new shorter life
         // Re-derive jade_tablet_awakened for saves that went through 25th birthday before this flag existed
         if (!char.flags.jade_tablet_awakened && char.flags.elder_revelation &&
             Character.getAgeYears(char) > 25) {
