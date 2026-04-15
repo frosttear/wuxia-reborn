@@ -88,8 +88,8 @@ const Engine = {
         if (isBirthday) {
             const ageYears = Character.getAgeYears(char);
 
-            if (ageYears >= 26) {
-                // 26th birthday — final boss
+            if (ageYears >= 21) {
+                // 21st birthday — final boss (5-year game)
                 if (!char.flags.boss_triggered) {
                     char.flags.boss_triggered = true;
                     const bossEvent = this.state.events.find(e => e.id === 'tianmo_appears');
@@ -650,7 +650,7 @@ const Engine = {
     triggerBirthdayEvent(age) {
         const { char } = this.state;
         const mName = this.BIRTH_MONTH_NAMES[(char.birthMonth - 1) || 0];
-        const remaining = 26 - age;
+        const remaining = 21 - age;
         let msg, attrs = null;
 
         if (age === 17) {
@@ -658,15 +658,12 @@ const Engine = {
         } else if (age === 18) {
             msg = `【生辰】${mName}，年满18岁。在江湖中，这个年纪已能独当一面。`;
             attrs = { comprehension: 1 };
+        } else if (age === 19) {
+            msg = `【生辰】${mName}，${age}岁。天魔之约，还有两年。这一生，走了多远了？`;
         } else if (age === 20) {
-            msg = `【生辰】${mName}，弱冠之年。二十岁，正是建功立业的好时候。`;
-            attrs = { reputation: 1, strength: 1 };
-        } else if (age === 22) {
-            msg = `【生辰】${mName}，${age}岁。天魔之约，还有四年。江湖的路，走了多远了？`;
-        } else if (age === 25) {
             if (char.flags.elder_revelation && !char.flags.jade_tablet_awakened) {
                 char.flags.jade_tablet_awakened = true;
-                msg = `【生辰·异变】${mName}，二十五岁。
+                msg = `【生辰·异变】${mName}，二十岁。
 
 那枚老者留下的玉牌，忽然变得灼热。
 
@@ -677,7 +674,8 @@ const Engine = {
 玉牌重归平静，但你知道：有什么事情，已经开始了。`;
                 attrs = { comprehension: 1 };
             } else {
-                msg = `【生辰】${mName}，${age}岁。最后一年——天魔之约，如期将至。`;
+                msg = `【生辰】${mName}，弱冠之年。二十岁，最后一年——天魔之约，如期将至。`;
+                attrs = { reputation: 1, strength: 1 };
             }
         } else {
             msg = `【生辰】${mName}，${age}岁。天魔之约还有 ${remaining} 年。`;
@@ -703,10 +701,10 @@ const Engine = {
         if (char.kills === undefined) char.kills = 0;
         if (char.injured === undefined) char.injured = false;
         if (char.injuredMonths === undefined) char.injuredMonths = 0;
-        if (char.maxAgeMonths > 318) char.maxAgeMonths = 318; // clamp to new shorter life
-        // Re-derive jade_tablet_awakened for saves that went through 25th birthday before this flag existed
+        if (char.maxAgeMonths > 258) char.maxAgeMonths = 258; // clamp to 5-year game
+        // Re-derive jade_tablet_awakened for saves past 20th birthday
         if (!char.flags.jade_tablet_awakened && char.flags.elder_revelation &&
-            Character.getAgeYears(char) > 25) {
+            Character.getAgeYears(char) > 20) {
             char.flags.jade_tablet_awakened = true;
         }
         return char;
