@@ -423,6 +423,7 @@ const Engine = {
         } else if (enemy.isHiddenBoss && !this.allBondsComplete(char)) {
             UI.addLog('【羁绊未满】你感到胸中力量空缺……或许，集齐所有羁绊才能撼动此敌。', 'info');
         }
+        if (enemy.isFinalBoss || enemy.isHiddenBoss) cs.noFlee = true;
         this.state.combatState = cs;
         this.state.gamePhase = 'combat';
         UI.updateControls(this.state);
@@ -431,6 +432,7 @@ const Engine = {
 
     handleCombatAction(action) {
         if (this.state.gamePhase !== 'combat' || !this.state.combatState || this.state.combatBusy) return;
+        if (action === 'flee' && this.state.combatState.noFlee) return;
         this.state.combatBusy = true;
         const { char } = this.state;
         const job = this.getJob(char.job);

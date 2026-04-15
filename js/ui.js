@@ -395,6 +395,11 @@ const UI = {
         document.getElementById('combatLog').innerHTML = '';
         this.setCombatActionsEnabled(true); // re-enable buttons on every new combat
         this.setCombatAutoButton(false);    // reset auto button state
+        if (cs.noFlee) {
+            const fleeBtn = document.getElementById('combatFleeBtn');
+            fleeBtn.disabled = true;
+            fleeBtn.textContent = '🔒 无法逃跑';
+        }
         this.updateCombatOverlay(state);
         document.getElementById('combatOverlay').classList.add('visible');
         if (window.innerWidth <= 768) this.switchTab('event');
@@ -428,8 +433,13 @@ const UI = {
         logEl.scrollTop = logEl.scrollHeight;
 
         // Flee button text
-        document.getElementById('combatFleeBtn').textContent =
-            `💨 逃跑 ${Math.round(cs.fleeChance * 100)}%`;
+        const fleeBtn = document.getElementById('combatFleeBtn');
+        if (cs.noFlee) {
+            fleeBtn.disabled = true;
+            fleeBtn.textContent = '🔒 无法逃跑';
+        } else {
+            fleeBtn.textContent = `💨 逃跑 ${Math.round(cs.fleeChance * 100)}%`;
+        }
     },
 
     hideCombatOverlay() {
