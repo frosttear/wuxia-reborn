@@ -341,12 +341,6 @@
         "id": "fight",
         "text": "拔剑迎战",
         "effects": { "combat": "bandit", "narrative": "" }
-      },
-      {
-        "id": "flee",
-        "text": "转身逃跑",
-        "requirements": { "minAttributes": { "agility": 8 } },
-        "effects": { "attributes": { "agility": 1 }, "narrative": "你凭借灵活的身法成功脱身，但心中留下遗憾。" }
       }
     ]
   },
@@ -377,11 +371,6 @@
         "id": "fight_tiger",
         "text": "凝神应战，以武会虎",
         "effects": { "combat": "wild_tiger", "narrative": "" }
-      },
-      {
-        "id": "back_away",
-        "text": "缓缓后退，伺机脱身",
-        "effects": { "attributes": { "luck": 1 }, "narrative": "你屏息凝神，缓缓退出了猛虎的领地，虎视你片刻后转身离去。" }
       }
     ]
   },
@@ -647,6 +636,71 @@
         "id": "accept_recognition",
         "text": "受宠若惊，欣然接受",
         "effects": { "attributes": { "reputation": 2, "innerForce": 1 }, "flags": { "hero_recognized": true }, "narrative": "武林的认可让你声威大震，剑侠之名远播四方。" }
+      }
+    ]
+  },
+  {
+    "id": "rest_read",
+    "type": "养伤",
+    "weight": 8,
+    "title": "养伤读书",
+    "text": "伤势让你不得不在屋内休养。闲来无事，你取出一卷武学典籍，细细研读，思索方才那场败仗的得失。",
+    "conditions": {},
+    "choices": [
+      {
+        "id": "focus_read",
+        "text": "认真研读，推敲武学道理",
+        "effects": { "attributes": { "comprehension": 1 }, "narrative": "卧床之时，倒让你静下心来钻研武学，悟性有所精进。" }
+      },
+      {
+        "id": "casual_read",
+        "text": "随手翻阅，消磨时光",
+        "effects": { "attributes": { "luck": 1 }, "narrative": "随手翻到几段奇闻轶事，颇为有趣，心情也好了不少。" }
+      }
+    ]
+  },
+  {
+    "id": "rest_meditation",
+    "type": "养伤",
+    "weight": 8,
+    "title": "静心调息",
+    "text": "重伤之后，你按照心法，静心调息，感受体内真气游走，慢慢修复受损的经脉。",
+    "conditions": {},
+    "choices": [
+      {
+        "id": "deep_meditation",
+        "text": "凝神入定，以内功疗伤",
+        "effects": { "attributes": { "innerForce": 1 }, "narrative": "内力在体内游走，缓缓修复受损经脉，内功有所精进。" }
+      }
+    ]
+  },
+  {
+    "id": "rest_visitor",
+    "type": "养伤",
+    "weight": 5,
+    "title": "友人探望",
+    "text": "养伤期间，有位相识的江湖人登门探视，带来了一些珍贵药材，又说起了外面的见闻。",
+    "conditions": {},
+    "choices": [
+      {
+        "id": "chat_warmly",
+        "text": "把酒言欢，叙旧畅谈",
+        "effects": { "attributes": { "reputation": 1, "constitution": 1 }, "narrative": "朋友的探望令你精神大振，伤势好了几分，声望也随之传扬。" }
+      }
+    ]
+  },
+  {
+    "id": "rest_enlightenment",
+    "type": "养伤",
+    "weight": 3,
+    "title": "伤中顿悟",
+    "text": "养伤期间，你反复回想那场败仗的每一个细节，对手的招式、自己的破绽……忽然间，脑中灵光一闪。",
+    "conditions": {},
+    "choices": [
+      {
+        "id": "ponder_battle",
+        "text": "沉心推演，化败为悟",
+        "effects": { "attributes": { "comprehension": 2, "agility": 1 }, "narrative": "败而后悟，或许才是真正的成长。你对自身武艺的不足有了深刻认识，步法也随之精进。" }
       }
     ]
   },

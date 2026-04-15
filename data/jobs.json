@@ -17,16 +17,16 @@
     "description": "浪迹江湖的游侠，以武会友，行侠仗义，初窥武道门径。",
     "branch": "wudao",
     "requirements": { "strength": 12 },
-    "baseAttack": 10,
+    "baseAttack": 14,
     "baseDefense": 6,
-    "hpBonus": 20,
+    "hpBonus": 35,
     "skills": [
       {
         "id": "jianghu_exp",
         "name": "江湖经验",
-        "desc": "行走江湖积累的实战经验，攻击力+2",
+        "desc": "行走江湖积累的实战经验，攻击力+8",
         "branch": "wudao",
-        "bonuses": { "attack": 2, "defense": 0 }
+        "bonuses": { "attack": 8, "defense": 0 }
       }
     ],
     "unlockText": "你踏上了武道之路，成为了一名游侠。"
@@ -37,23 +37,23 @@
     "description": "专精剑术的江湖剑客，出剑如风，攻守兼备。",
     "branch": "wudao",
     "requirements": { "strength": 18, "agility": 12 },
-    "baseAttack": 22,
+    "baseAttack": 28,
     "baseDefense": 13,
-    "hpBonus": 50,
+    "hpBonus": 90,
     "skills": [
       {
         "id": "sword_qi",
         "name": "剑气凌厉",
-        "desc": "以真气催动剑气，攻击力+5",
+        "desc": "以真气催动剑气，攻击力+14",
         "branch": "wudao",
-        "bonuses": { "attack": 5, "defense": 0 }
+        "bonuses": { "attack": 14, "defense": 0 }
       },
       {
         "id": "light_step",
         "name": "轻身步法",
-        "desc": "灵动的步伐减少受击，防御力+3",
+        "desc": "灵动的步伐大幅减少受击，防御力+10",
         "branch": "wudao",
-        "bonuses": { "attack": 0, "defense": 3 }
+        "bonuses": { "attack": 0, "defense": 10 }
       }
     ],
     "unlockText": "你的剑术已臻化境，跻身剑客之列。"
@@ -65,14 +65,14 @@
     "branch": "wudao",
     "requirements": { "strength": 26, "agility": 15, "reputation": 18 },
     "requiredFlags": { "hero_recognized": true },
-    "baseAttack": 38,
+    "baseAttack": 46,
     "baseDefense": 22,
-    "hpBonus": 100,
+    "hpBonus": 160,
     "skills": [
       {
         "id": "noble_heart",
         "name": "侠义之心",
-        "desc": "声望越高攻击越强，声望每10点额外+1攻击（特殊）",
+        "desc": "声望越高攻击越强，声望每10点额外+2攻击（特殊）",
         "branch": "wudao",
         "bonuses": { "attack": 0, "defense": 0 },
         "special": "reputation_scaling"
@@ -80,9 +80,9 @@
       {
         "id": "intimidate_aura",
         "name": "威慑气场",
-        "desc": "令敌人心生惧意，防御力+8",
+        "desc": "气势如虹令对手心生忌惮，防御力+20",
         "branch": "wudao",
-        "bonuses": { "attack": 0, "defense": 8 }
+        "bonuses": { "attack": 0, "defense": 20 }
       }
     ],
     "unlockText": "你的侠义之名传遍江湖，成为了一代剑侠。"
@@ -94,21 +94,21 @@
     "branch": "wudao",
     "requirements": { "strength": 36, "innerForce": 18, "agility": 20, "reputation": 25 },
     "requiredFlags": { "sword_legacy": true },
-    "baseAttack": 65,
+    "baseAttack": 80,
     "baseDefense": 38,
-    "hpBonus": 180,
+    "hpBonus": 260,
     "skills": [
       {
         "id": "sword_intent",
         "name": "剑意如虹",
-        "desc": "剑意化为无形利刃，攻击力+20",
+        "desc": "剑意化为无形利刃，攻击力+40",
         "branch": "wudao",
-        "bonuses": { "attack": 20, "defense": 0 }
+        "bonuses": { "attack": 40, "defense": 0 }
       },
       {
         "id": "qi_sword",
         "name": "以气御剑",
-        "desc": "内力化攻击，内力每10点额外+3攻击（特殊）",
+        "desc": "内力化攻击，内力每10点额外+4攻击（特殊）",
         "branch": "wudao",
         "bonuses": { "attack": 0, "defense": 0 },
         "special": "innerforce_scaling"
@@ -116,9 +116,9 @@
       {
         "id": "heaven_shield",
         "name": "天罡剑盾",
-        "desc": "以剑气形成护盾，防御力+15",
+        "desc": "以剑气凝成铁壁，防御力+30",
         "branch": "wudao",
-        "bonuses": { "attack": 0, "defense": 15 }
+        "bonuses": { "attack": 0, "defense": 30 }
       }
     ],
     "unlockText": "你达到了剑道的极致境界，晋升为剑宗！"

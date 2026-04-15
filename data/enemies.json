@@ -21,7 +21,16 @@
     "winNarrative": "恶战一场，你终于击败了悍匪，扬长而去，附近百姓纷纷喝彩。",
     "loseNarrative": "悍匪武艺超群，你力战不敌，带伤逃脱，心中郁郁。",
     "winEffects": { "reputation": 2, "strength": 1, "constitution": 1 },
-    "loseEffects": {}
+    "loseEffects": {},
+    "skills": [
+      {
+        "id": "vicious_slash",
+        "name": "狠劲一刀",
+        "telegraph": "悍匪双眼赤红，双手猛握刀柄，蓄力大喝：「受死！」⚠ 下回合重击即至，建议【防御】！",
+        "damageMult": 2.2,
+        "hpThreshold": 0.55
+      }
+    ]
   },
   {
     "id": "wild_tiger",
@@ -33,7 +42,16 @@
     "winNarrative": "你与猛虎搏斗良久，终于将其击退。虎啸山林，你也感受到了自身力量的成长。",
     "loseNarrative": "猛虎凶猛异常，你被扑倒在地，拼死挣扎才得以逃脱，身上留下几道深痕。",
     "winEffects": { "strength": 1, "constitution": 1 },
-    "loseEffects": {}
+    "loseEffects": {},
+    "skills": [
+      {
+        "id": "tiger_pounce",
+        "name": "虎扑",
+        "telegraph": "猛虎低吼，后腿用力蹬地，摆出虎扑之势——⚠ 蓄势将扑，务必【防御】！",
+        "damageMult": 2.5,
+        "hpThreshold": 0.6
+      }
+    ]
   },
   {
     "id": "jianghu_challenger",
@@ -45,7 +63,16 @@
     "winNarrative": "数十回合后，你以精妙的身法将对方逼退。他抱拳道：「阁下果然名不虚传，在下甘拜下风。」",
     "loseNarrative": "对方武艺高超，将你打得节节败退，最终拱手而去。此番切磋令你深感自身不足。",
     "winEffects": { "reputation": 2, "comprehension": 1, "agility": 1 },
-    "loseEffects": { "comprehension": 1 }
+    "loseEffects": { "comprehension": 1 },
+    "skills": [
+      {
+        "id": "combo_strike",
+        "name": "连环击",
+        "telegraph": "对方深吸一口气，脚步连踏，连环击之势已成！⚠ 连招即至，建议【防御】！",
+        "damageMult": 1.9,
+        "hpThreshold": 0.5
+      }
+    ]
   },
   {
     "id": "zhao_batian_enemy",
@@ -57,7 +84,23 @@
     "winNarrative": "你与赵霸天大战数十回合，终于将其打倒在地。他怒视着你，强撑着离去，留下一句「后会有期」。",
     "loseNarrative": "赵霸天武艺精湛，你力战不敌。他大笑着扬长而去，你独自咬牙，心中暗誓日后必报此仇。",
     "winEffects": { "reputation": 3, "strength": 1 },
-    "loseEffects": {}
+    "loseEffects": {},
+    "skills": [
+      {
+        "id": "iron_fist",
+        "name": "铁拳",
+        "telegraph": "赵霸天大喝一声，铁拳震得空气嗡鸣，全力蓄势！⚠ 此招极猛，务必【防御】！",
+        "damageMult": 2.4,
+        "hpThreshold": 0.6
+      },
+      {
+        "id": "berserk_blow",
+        "name": "狂暴重击",
+        "telegraph": "赵霸天怒吼，眼中充血——他已至狂暴之态！⚠ 伤害极高，务必【防御】！",
+        "damageMult": 3.2,
+        "hpThreshold": 0.3
+      }
+    ]
   },
   {
     "id": "escort_leader",
@@ -82,7 +125,23 @@
     "loseNarrative": "剑魂的锋芒远超你的极限，你在无形的剑意中节节败退，最终倒下……意识离去前，你隐约看到那道剑光在空中徘徊，似乎在等待下一次相遇。",
     "winEffects": { "innerForce": 5, "comprehension": 3 },
     "loseEffects": {},
-    "isHiddenBoss": true
+    "isHiddenBoss": true,
+    "skills": [
+      {
+        "id": "void_sword",
+        "name": "虚空一剑",
+        "telegraph": "剑魂缓缓抬起长剑，剑身白光大盛，无形剑意弥漫四方……⚠ 【虚空一剑】蓄势，务必【防御】！",
+        "damageMult": 2.8,
+        "hpThreshold": 0.6
+      },
+      {
+        "id": "thousand_cuts",
+        "name": "万剑归宗",
+        "telegraph": "剑魂双手合拢，周围虚空中浮现无数剑影……⚠ 【万剑归宗】即发，危急！务必【防御】！",
+        "damageMult": 4.0,
+        "hpThreshold": 0.25
+      }
+    ]
   },
   {
     "id": "tianmo",
@@ -95,6 +154,22 @@
     "loseNarrative": "天魔实力远超你的想象，你精疲力竭，倒在了血泊之中……意识渐渐模糊，耳边响起天魔的狂笑。这一世，终究未能成功……",
     "winEffects": {},
     "loseEffects": {},
-    "isFinalBoss": true
+    "isFinalBoss": true,
+    "skills": [
+      {
+        "id": "demon_roar",
+        "name": "魔吼",
+        "telegraph": "天魔仰天长啸，魔气冲天，四周空间扭曲震颤！⚠ 下回合将受巨大冲击，务必【防御】！",
+        "damageMult": 2.5,
+        "hpThreshold": 0.65
+      },
+      {
+        "id": "soul_crush",
+        "name": "噬魂掌",
+        "telegraph": "天魔双掌合拢，漆黑魔气在掌心凝聚成形……⚠ 【噬魂掌】即将发出！危急，务必【防御】！",
+        "damageMult": 3.5,
+        "hpThreshold": 0.3
+      }
+    ]
   }
 ]

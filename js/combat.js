@@ -57,6 +57,8 @@ const Combat = {
             enemyEffDef: eff.defense,
             turn:       0,
             fleeChance: 0.25,
+            pendingSkill: null,   // enemy skill telegraphed, fires next turn
+            usedSkills:   [],     // skill ids already used (array for serializability)
             log:        [],
             postNarrative: ''
         };
@@ -103,18 +105,40 @@ const Combat = {
 
             // Enemy counter (skip if already won)
             if (!combatOver) {
+                // Apply pending skill if telegraphed last turn
+                const skill = cs.pendingSkill;
+                const skillMult = skill ? (skill.damageMult || 1.5) : 1.0;
+                const skillName = skill ? skill.name : null;
+                if (skill) cs.pendingSkill = null;
+
                 const defMult = action === 'defend' ? 0.35 : 1.0;
                 const effDef  = playerDef * (action === 'defend' ? 0.85 : 0.5);
                 const rawDmg  = Math.max(1,
-                    cs.enemyEffAtk - Math.floor(effDef) + Math.floor(Math.random() * 6) - 2);
+                    Math.floor(cs.enemyEffAtk * skillMult) - Math.floor(effDef)
+                    + Math.floor(Math.random() * 6) - 2);
                 const eDmg    = Math.max(1, Math.floor(rawDmg * defMult));
-                const ed      = this._pick(this.ENEMY_ATTACK_DESCS);
+                const ed      = skillName
+                    ? `使出【<b style="color:#e07b39">${skillName}</b>】`
+                    : this._pick(this.ENEMY_ATTACK_DESCS);
                 if (Math.random() < Character.getLuckDodgeChance(char)) {
                     lines.push(`${cs.enemy.name}${ed}——你【<b>灵巧闪避</b>】，未受伤害！`);
                 } else {
                     Character.takeDamage(char, eDmg);
                     lines.push(`${cs.enemy.name}${ed}，你承受 <b>${eDmg}</b> 伤害${action === 'defend' ? '（防御减伤）' : ''}。`);
                     if (char.hp <= 0) { result = 'lost'; combatOver = true; }
+                }
+
+                // Telegraph next skill if HP threshold crossed
+                if (!combatOver && cs.enemy.skills && cs.enemy.skills.length > 0) {
+                    const hpPct = cs.enemyHp / cs.enemyMaxHp;
+                    for (const s of cs.enemy.skills) {
+                        if (!cs.usedSkills.includes(s.id) && hpPct <= (s.hpThreshold || 0.5)) {
+                            cs.pendingSkill = s;
+                            cs.usedSkills.push(s.id);
+                            lines.push(`<br><span style="color:#f4a261;font-weight:bold">⚠ ${s.telegraph}</span>`);
+                            break;
+                        }
+                    }
                 }
             }
         }

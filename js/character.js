@@ -57,10 +57,10 @@ const Character = {
         const skillBonus = skills.reduce((s, sk) => s + (sk.bonuses && sk.bonuses.attack || 0), 0);
         // 侠义之心: reputation scaling (learned skill special)
         const heroBonus = skills.some(sk => sk.special === 'reputation_scaling')
-            ? Math.floor(char.attributes.reputation / 10) : 0;
+            ? Math.floor(char.attributes.reputation / 10) * 2 : 0;
         // 以气御剑: innerForce scaling (learned skill special)
         const saintBonus = skills.some(sk => sk.special === 'innerforce_scaling')
-            ? Math.floor(char.attributes.innerForce / 10) * 3 : 0;
+            ? Math.floor(char.attributes.innerForce / 10) * 4 : 0;
         // Talent bonus
         const talentBonus = char.legacyTalents.includes('sword_heart') ? Math.floor(base * 0.1) : 0;
         return base + jobBase + skillBonus + heroBonus + saintBonus + talentBonus;

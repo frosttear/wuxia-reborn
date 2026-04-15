@@ -51,7 +51,8 @@ const UI = {
 
         document.getElementById('charName').textContent = char.name;
         document.getElementById('charAge').textContent = `${ageYears}岁${ageMonths > 0 ? ageMonths + '月' : ''}`;
-        document.getElementById('charJob').textContent = job ? job.name : '无名小卒';
+        const injuredBadge = char.injured ? ' <span class="injured-badge">重伤休养</span>' : '';
+        document.getElementById('charJob').innerHTML = (job ? job.name : '无名小卒') + injuredBadge;
         document.getElementById('charRebirth').textContent = char.rebirthCount > 0 ? `第${char.rebirthCount}世轮回` : '初入江湖';
 
         // HP bar
@@ -336,6 +337,8 @@ const UI = {
         document.getElementById('combatPlayerName').textContent = char.name;
         document.getElementById('combatPlayerStats').textContent = `攻 ${atk}  防 ${def}`;
         document.getElementById('combatLog').innerHTML = '';
+        this.setCombatActionsEnabled(true); // re-enable buttons on every new combat
+        this.setCombatAutoButton(false);    // reset auto button state
         this.updateCombatOverlay(state);
         document.getElementById('combatOverlay').style.display = 'flex';
         if (window.innerWidth <= 768) this.switchTab('event');
@@ -378,7 +381,16 @@ const UI = {
     },
 
     setCombatActionsEnabled(enabled) {
-        document.querySelectorAll('.combat-btn').forEach(btn => { btn.disabled = !enabled; });
+        document.querySelectorAll('.combat-btn').forEach(btn => {
+            if (!btn.classList.contains('combat-auto')) btn.disabled = !enabled;
+        });
+    },
+
+    setCombatAutoButton(isOn) {
+        const btn = document.getElementById('combatAutoBtn');
+        if (!btn) return;
+        btn.textContent = isOn ? '⏸ 停止' : '⚡ 自动';
+        btn.classList.toggle('btn-active', isOn);
     },
     // ─────────────────────────────────────────────────────────────
 

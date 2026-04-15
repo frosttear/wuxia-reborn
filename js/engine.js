@@ -11,6 +11,9 @@ const Engine = {
         pendingChoice: null,  // event waiting for player input
         gamePhase: 'idle',    // idle | choosing | combat | game_over | rebirth | victory
         combatState: null,
+        combatBusy: false,       // true while processing a turn (prevents double-tap)
+        combatAutoActive: false, // auto-combat mode
+        combatAutoTimer: null,
         autoAdvance: false,
         autoTimer: null,
         seenEvents: new Set() // track seen events this life to avoid repetition
@@ -96,6 +99,29 @@ const Engine = {
                 this.triggerBirthdayEvent(ageYears);
                 return;
             }
+        }
+
+        // Injured state: forced rest, only 养伤 events allowed
+        if (char.injured) {
+            char.injuredMonths = Math.max(0, (char.injuredMonths || 1) - 1);
+            Character.monthlyHPRegen(char, job); // extra regen during rest
+            UI.renderCharacter(char, this.state.jobs);
+            if (char.injuredMonths <= 0) {
+                char.injured = false;
+                UI.addLog('【痊愈】伤势已愈，你重新踏上武道之路。', 'result');
+            }
+            if (char.injured && char.ageMonths % 3 === 0) {
+                const pool = this.state.events.filter(e => e.type === '养伤');
+                if (pool.length > 0) {
+                    const weighted = [];
+                    for (const ev of pool) for (let i = 0; i < (ev.weight || 1); i++) weighted.push(ev);
+                    this.triggerEvent(weighted[Math.floor(Math.random() * weighted.length)]);
+                    return;
+                }
+            }
+            UI.renderAll(this.state);
+            this.saveGame();
+            return;
         }
 
         // Events fire every 3 months; off-months just advance time quietly
@@ -388,27 +414,62 @@ const Engine = {
     },
 
     handleCombatAction(action) {
-        if (this.state.gamePhase !== 'combat' || !this.state.combatState) return;
+        if (this.state.gamePhase !== 'combat' || !this.state.combatState || this.state.combatBusy) return;
+        this.state.combatBusy = true;
         const { char } = this.state;
         const job = this.getJob(char.job);
         const cs = this.state.combatState;
 
-        // Disable buttons immediately to prevent double-tap
         UI.setCombatActionsEnabled(false);
 
         const { combatOver, result } = Combat.processTurn(action, cs, char, job);
         UI.updateCombatOverlay(this.state);
 
         if (combatOver) {
-            setTimeout(() => this.endCombat(result, cs), 900);
+            setTimeout(() => {
+                this.state.combatBusy = false;
+                this.endCombat(result, cs);
+            }, 900);
         } else {
+            this.state.combatBusy = false;
             UI.setCombatActionsEnabled(true);
+        }
+    },
+
+    toggleCombatAuto() {
+        if (this.state.combatAutoActive) {
+            this.stopCombatAuto();
+        } else {
+            this.startCombatAuto();
+        }
+    },
+
+    startCombatAuto() {
+        if (this.state.combatAutoActive) return;
+        this.state.combatAutoActive = true;
+        UI.setCombatAutoButton(true);
+        this.state.combatAutoTimer = setInterval(() => {
+            if (this.state.gamePhase === 'combat') {
+                this.handleCombatAction('attack');
+            } else {
+                this.stopCombatAuto();
+            }
+        }, 1200);
+    },
+
+    stopCombatAuto() {
+        this.state.combatAutoActive = false;
+        UI.setCombatAutoButton(false);
+        if (this.state.combatAutoTimer) {
+            clearInterval(this.state.combatAutoTimer);
+            this.state.combatAutoTimer = null;
         }
     },
 
     endCombat(result, cs) {
         const { char } = this.state;
         const enemy = cs.enemy;
+        this.stopCombatAuto();
         UI.hideCombatOverlay();
         this.state.combatState = null;
         this.state.gamePhase = 'idle';
@@ -432,9 +493,20 @@ const Engine = {
             if (enemy.isHiddenBoss) {
                 UI.addLog('你击败了天魔，却败于那更深处的剑意。此生功亏一筑。下一世，再来。', 'system');
                 this.triggerDeath('hidden_boss');
-            } else {
-                this.triggerDeath(enemy.isFinalBoss ? 'boss' : 'combat');
+                return;
             }
+            if (enemy.isFinalBoss) {
+                this.triggerDeath('boss');
+                return;
+            }
+            // Non-boss loss: injured state instead of death
+            char.hp = 1;
+            char.injured = true;
+            char.injuredMonths = 6;
+            UI.addLog('【重伤】你身负重创，勉强撤退。未来数月须静养调息，方可恢复。', 'lose');
+            UI.renderCharacter(char, this.state.jobs);
+            UI.renderAll(this.state);
+            this.saveGame();
             return;
         } else if (result === 'fled') {
             UI.addLog('你成功脱身，暂避其锋芒。', 'result');
@@ -611,6 +683,8 @@ const Engine = {
         if (!char.learnedSkills)   char.learnedSkills = [];
         if (!char.birthMonth)      char.birthMonth = 1;
         if (char.kills === undefined) char.kills = 0;
+        if (char.injured === undefined) char.injured = false;
+        if (char.injuredMonths === undefined) char.injuredMonths = 0;
         // Re-derive jade_tablet_awakened for saves that went through 25th birthday before this flag existed
         if (!char.flags.jade_tablet_awakened && char.flags.elder_revelation &&
             Character.getAgeYears(char) > 25) {
