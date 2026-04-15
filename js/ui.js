@@ -13,6 +13,7 @@ const UI = {
         this.autoBtn   = document.getElementById('autoAdvanceBtn');
         this.visitBtn  = document.getElementById('visitBtn');
         this.visitPanel = document.getElementById('visitPanel');
+        this.logBuffer = []; // persisted log entries
     },
 
     // Mobile tab switching
@@ -362,6 +363,26 @@ const UI = {
         this.logEl.appendChild(div);
         this.logEl.scrollTop = this.logEl.scrollHeight;
         this.notifyEventTab();
+        this.logBuffer.push({ text, type });
+        if (this.logBuffer.length > 30) this.logBuffer.shift();
+    },
+
+    getLogBuffer() { return this.logBuffer; },
+
+    restoreLog(entries) {
+        if (!entries || !entries.length) return;
+        const sep = document.createElement('div');
+        sep.className = 'log-entry log-system';
+        sep.textContent = '── 上次存档 ──';
+        this.logEl.appendChild(sep);
+        for (const { text, type } of entries) {
+            const div = document.createElement('div');
+            div.className = `log-entry log-${type}`;
+            div.innerHTML = text.replace(/\n/g, '<br>');
+            this.logEl.appendChild(div);
+        }
+        this.logEl.scrollTop = this.logEl.scrollHeight;
+        this.logBuffer = [...entries];
     },
 
     addCombatSummary({ turns, dmgDealt, dmgReceived, result, rewards }) {
@@ -386,6 +407,7 @@ const UI = {
     clearLog() {
         this.logEl.innerHTML = '';
         this.choicesEl.innerHTML = '';
+        this.logBuffer = [];
     },
 
     // ── Combat overlay ──────────────────────────────────────────

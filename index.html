@@ -185,6 +185,10 @@
         document.getElementById('startScreen').style.display = 'none';
         document.getElementById('gameScreen').style.display = 'flex';
         UI.renderAll(Engine.state);
+        try {
+            const savedLog = localStorage.getItem('wuxia_log');
+            if (savedLog) UI.restoreLog(JSON.parse(savedLog));
+        } catch(e) {}
         UI.addLog('欢迎回来，继续你的江湖之旅。', 'system');
     };
 

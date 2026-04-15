@@ -786,6 +786,7 @@ const Engine = {
         if (!char) return;
         try {
             localStorage.setItem('wuxia_save', JSON.stringify(char));
+            localStorage.setItem('wuxia_log', JSON.stringify(UI.getLogBuffer()));
         } catch(e) {}
     },
 
