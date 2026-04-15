@@ -83,13 +83,13 @@ const Engine = {
             UI.addLog(`⚔ 你已满足晋升【${j.name}】的条件！可在右侧面板切换职业。`, 'unlock');
         }
 
-        // Birthday system: fires every 12 months starting from ageMonths=204 (17th birthday)
-        const isBirthday = char.ageMonths > 192 && char.ageMonths % 12 === 0;
+        // Birthday system: fires every 12 months starting from ageMonths=192 (16th birthday)
+        const isBirthday = char.ageMonths > 180 && char.ageMonths % 12 === 0;
         if (isBirthday) {
             const ageYears = Character.getAgeYears(char);
 
-            if (ageYears >= 21) {
-                // 21st birthday — final boss (5-year game)
+            if (ageYears >= 20) {
+                // 20th birthday — final boss (5-year game, 15→20)
                 if (!char.flags.boss_triggered) {
                     char.flags.boss_triggered = true;
                     const bossEvent = this.state.events.find(e => e.id === 'tianmo_appears');
@@ -650,20 +650,21 @@ const Engine = {
     triggerBirthdayEvent(age) {
         const { char } = this.state;
         const mName = this.BIRTH_MONTH_NAMES[(char.birthMonth - 1) || 0];
-        const remaining = 21 - age;
+        const remaining = 20 - age;
         let msg, attrs = null;
 
-        if (age === 17) {
+        if (age === 16) {
             msg = `【生辰】${mName}，你已${age}岁。初入江湖一年，天地广阔，前途未知。`;
-        } else if (age === 18) {
-            msg = `【生辰】${mName}，年满18岁。在江湖中，这个年纪已能独当一面。`;
+        } else if (age === 17) {
+            msg = `【生辰】${mName}，${age}岁。少年老成，已能独当一面。`;
             attrs = { comprehension: 1 };
+        } else if (age === 18) {
+            msg = `【生辰】${mName}，年满18岁。弱冠之年，江湖人人目，可建功立业了。`;
+            attrs = { reputation: 1, strength: 1 };
         } else if (age === 19) {
-            msg = `【生辰】${mName}，${age}岁。天魔之约，还有两年。这一生，走了多远了？`;
-        } else if (age === 20) {
             if (char.flags.elder_revelation && !char.flags.jade_tablet_awakened) {
                 char.flags.jade_tablet_awakened = true;
-                msg = `【生辰·异变】${mName}，二十岁。
+                msg = `【生辰·异变】${mName}，十九岁。
 
 那枚老者留下的玉牌，忽然变得灼热。
 
@@ -674,8 +675,7 @@ const Engine = {
 玉牌重归平静，但你知道：有什么事情，已经开始了。`;
                 attrs = { comprehension: 1 };
             } else {
-                msg = `【生辰】${mName}，弱冠之年。二十岁，最后一年——天魔之约，如期将至。`;
-                attrs = { reputation: 1, strength: 1 };
+                msg = `【生辰】${mName}，${age}岁。最后一年——天魔之约，如期将至。`;
             }
         } else {
             msg = `【生辰】${mName}，${age}岁。天魔之约还有 ${remaining} 年。`;
@@ -701,10 +701,10 @@ const Engine = {
         if (char.kills === undefined) char.kills = 0;
         if (char.injured === undefined) char.injured = false;
         if (char.injuredMonths === undefined) char.injuredMonths = 0;
-        if (char.maxAgeMonths > 258) char.maxAgeMonths = 258; // clamp to 5-year game
-        // Re-derive jade_tablet_awakened for saves past 20th birthday
+        if (char.maxAgeMonths > 246) char.maxAgeMonths = 246; // clamp to 5-year game (15→20)
+        // Re-derive jade_tablet_awakened for saves past 19th birthday
         if (!char.flags.jade_tablet_awakened && char.flags.elder_revelation &&
-            Character.getAgeYears(char) > 20) {
+            Character.getAgeYears(char) > 19) {
             char.flags.jade_tablet_awakened = true;
         }
         return char;

@@ -255,7 +255,7 @@
     "weight": 4,
     "title": "古庙奇遇",
     "text": "你在深山中发现一座荒废已久的古庙，庙内供奉着一位不知名的武神。奇异的是，庙内的空气中弥漫着一股浓郁的真气。",
-    "conditions": { "minAgeYears": 20 },
+    "conditions": { "minAgeYears": 17 },
     "choices": [
       {
         "id": "pray_cultivate",
@@ -350,7 +350,7 @@
     "weight": 6,
     "title": "遭遇悍匪",
     "text": "你在通往城镇的官道上遭遇了一名臭名昭著的悍匪。他拦路叫嚣，目光凶狠，手中单刀锃亮。",
-    "conditions": { "minAgeYears": 20 },
+    "conditions": { "minAgeYears": 17 },
     "choices": [
       {
         "id": "fight",
@@ -395,7 +395,7 @@
     "weight": 7,
     "title": "被人挑战",
     "text": "一名陌生的江湖人走到你面前，抱拳道：「在下久闻阁下大名，特来切磋，还望赐教。」言罢摆开架势，显然来者不善。",
-    "conditions": { "minAgeYears": 20, "minAttributes": { "reputation": 5 } },
+    "conditions": { "minAgeYears": 17, "minAttributes": { "reputation": 5 } },
     "choices": [
       {
         "id": "accept_duel",
@@ -465,7 +465,7 @@
     "weight": 3,
     "title": "王铁临终托付",
     "text": "你得到消息，王铁病倒了，时日无多。你赶到他的床前，他握住你的手，眼神清澈：「我这一生走镖无数，唯一放不下的，是那些被赵霸天欺压的百姓……」",
-    "conditions": { "flags": { "wang_taught_advanced": true }, "npcAffinity": { "wang_tie": 70 }, "minAgeYears": 20 },
+    "conditions": { "flags": { "wang_taught_advanced": true }, "npcAffinity": { "wang_tie": 70 }, "minAgeYears": 19 },
     "choices": [
       {
         "id": "promise",
@@ -520,7 +520,7 @@
     "weight": 3,
     "title": "重逢云舒",
     "text": "数年未见，你与李云舒在江湖上偶然重逢。她已不是昔日的少女，眼神中多了几分沉稳。她笑道：「你变强了许多，当年那个愣头青，如今也成大人物了。」",
-    "conditions": { "flags": { "li_knows_burden": true }, "npcAffinity": { "li_yunshu": 55 }, "minAgeYears": 19 },
+    "conditions": { "flags": { "li_knows_burden": true }, "npcAffinity": { "li_yunshu": 55 }, "minAgeYears": 18 },
     "choices": [
       {
         "id": "reunite_warmly",
@@ -960,7 +960,7 @@
     "weight": 0,
     "monthCost": 3,
     "title": "天魔降世",
-    "text": "二十一岁生辰。\n\n你以为这天会和往常一样，直到一阵冷风拂过——他来了。\n\n天魔站在你面前，如同一道深渊。他没有派使者，没有递战书，只是静静地看着你，开口道：「每一世，我都在等你。不知这一次，你准备好了吗？」\n\n无论你的答案是什么，这一战，无可避免。这就是你生来的命运。",
+    "text": "二十岁生辰。\n\n你以为这天会和往常一样，直到一阵冷风拂过——他来了。\n\n天魔站在你面前，如同一道深渊。他没有派使者，没有递战书，只是静静地看着你，开口道：「每一世，我都在等你。不知这一次，你准备好了吗？」\n\n无论你的答案是什么，这一战，无可避免。这就是你生来的命运。",
     "conditions": {},
 
     "choices": [
