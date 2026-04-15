@@ -232,13 +232,10 @@ const Engine = {
         // Show the event
         UI.showEvent(event, availableChoices, this.state);
 
-        if (availableChoices.length === 1 && !availableChoices[0].requirements) {
-            // Single-choice or no meaningful decision — auto-resolve after brief display
+        if (availableChoices.length > 0) {
             this.state.pendingChoice = { event, choices: availableChoices };
             this.state.gamePhase = 'choosing';
-        } else if (availableChoices.length > 0) {
-            this.state.pendingChoice = { event, choices: availableChoices };
-            this.state.gamePhase = 'choosing';
+            UI.updateControls(this.state);
         } else {
             // No choices — auto apply if autoEffects exist
             if (event.autoEffects) {
@@ -419,6 +416,7 @@ const Engine = {
         }
         this.state.combatState = cs;
         this.state.gamePhase = 'combat';
+        UI.updateControls(this.state);
         UI.showCombatOverlay(this.state);
     },
 
