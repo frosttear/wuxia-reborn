@@ -623,7 +623,7 @@ const Engine = {
         this.stopAuto();
 
         const availableTalents = Rebirth.getAvailableTalents(char);
-        const summary = Rebirth.getSummaryText(char);
+        const summary = Rebirth.getSummaryText(char, this.state.jobs, this.state.bonds, this.state.npcs);
         UI.showRebirthScreen(summary, availableTalents, cause);
     },
 

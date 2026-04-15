@@ -90,15 +90,36 @@ const Rebirth = {
     },
 
     // Get a summary text for the rebirth screen
-    getSummaryText(char) {
+    getSummaryText(char, jobs, bonds, npcs) {
         const years = Character.getAgeYears(char);
-        const job = char.job;
+        const jobData = jobs && jobs.find(j => j.id === char.job);
+        const jobName = jobData ? jobData.name : char.job;
         const lines = [
             `你活了 ${years} 岁，走完了这一世的旅程。`,
-            `最终职业：${job}`,
+            `最终职业：${jobName}`,
             `力量 ${char.attributes.strength} | 敏捷 ${char.attributes.agility} | 体质 ${char.attributes.constitution}`,
             `内力 ${char.attributes.innerForce} | 悟性 ${char.attributes.comprehension} | 声望 ${char.attributes.reputation}`
         ];
+
+        // Bonds summary
+        const bondLines = [];
+        if (bonds && npcs) {
+            for (const npcId in char.bondLevels) {
+                const level = char.bondLevels[npcId];
+                if (level > 0) {
+                    const npc = npcs.find(n => n.id === npcId);
+                    const npcName = npc ? npc.name : npcId;
+                    const total = bonds[npcId] ? bonds[npcId].length : '?';
+                    bondLines.push(`  ${npcName}（第 ${level}/${total} 章）`);
+                }
+            }
+        }
+        if (bondLines.length > 0) {
+            lines.push('');
+            lines.push('羁绊：');
+            lines.push(...bondLines);
+        }
+
         return lines.join('\n');
     }
 };

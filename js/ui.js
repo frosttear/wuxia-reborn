@@ -555,7 +555,7 @@ const UI = {
         modal.querySelector('#victoryRebirthBtn').onclick = () => {
             document.body.removeChild(modal);
             const avail = Rebirth.getAvailableTalents(char);
-            const summary = Rebirth.getSummaryText(char);
+            const summary = Rebirth.getSummaryText(char, Engine.state.jobs, Engine.state.bonds, Engine.state.npcs);
             this.showRebirthScreen(summary, avail, 'victory');
         };
         modal.querySelector('#newGameBtn').onclick = () => {
