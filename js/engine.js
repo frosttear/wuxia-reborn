@@ -7,24 +7,28 @@ const Engine = {
         npcs: [],
         events: [],
         enemies: [],
+        bonds: {},            // loaded from bonds.json
         pendingChoice: null,  // event waiting for player input
-        gamePhase: 'idle',    // idle | choosing | game_over | rebirth | victory
+        gamePhase: 'idle',    // idle | choosing | combat | game_over | rebirth | victory
+        combatState: null,
         autoAdvance: false,
         autoTimer: null,
         seenEvents: new Set() // track seen events this life to avoid repetition
     },
 
     async init() {
-        const [jobs, npcs, events, enemies] = await Promise.all([
+        const [jobs, npcs, events, enemies, bonds] = await Promise.all([
             fetch('data/jobs.json').then(r => r.json()),
             fetch('data/npcs.json').then(r => r.json()),
             fetch('data/events.json').then(r => r.json()),
-            fetch('data/enemies.json').then(r => r.json())
+            fetch('data/enemies.json').then(r => r.json()),
+            fetch('data/bonds.json').then(r => r.json())
         ]);
         this.state.jobs = jobs;
         this.state.npcs = npcs;
         this.state.events = events;
         this.state.enemies = enemies;
+        this.state.bonds = bonds;
     },
 
     startNewGame(name, inheritedAttributes, legacyTalents) {
@@ -196,12 +200,22 @@ const Engine = {
 
     applyChoice(choiceIndex) {
         if (this.state.gamePhase !== 'choosing' || !this.state.pendingChoice) return;
-        const { event, choices } = this.state.pendingChoice;
+        const { event, choices, bondInfo } = this.state.pendingChoice;
         const choice = choices[choiceIndex];
         if (!choice) return;
 
         this.state.pendingChoice = null;
         this.state.gamePhase = 'idle';
+
+        // Mark bond event complete before applying effects
+        if (bondInfo) {
+            const { npcId, level } = bondInfo;
+            const char = this.state.char;
+            char.bondEventsDone[`${npcId}_${level}`] = true;
+            char.bondLevels[npcId] = Math.max(char.bondLevels[npcId] || 0, level);
+            const npc = this.state.npcs.find(n => n.id === npcId);
+            UI.addLog(`💞 与【${npc ? npc.name : npcId}】的羁绊加深！（第${level}章）`, 'unlock');
+        }
 
         const effects = choice.effects || {};
 
@@ -218,11 +232,11 @@ const Engine = {
             return;
         }
 
-        // Combat event
+        // Combat event → start turn-based combat
         if (effects.combat) {
             const enemy = this.getEnemy(effects.combat);
             if (enemy) {
-                this.resolveCombat(enemy, effects.narrative || '');
+                this.startCombat(enemy, effects.narrative || '');
                 return;
             }
         }
@@ -265,35 +279,113 @@ const Engine = {
         }
     },
 
-    resolveCombat(enemy, preNarrative) {
+    // Return list of NPCs the player can currently visit for a bond event
+    getAvailableVisits() {
+        const { char, bonds, npcs } = this.state;
+        if (!char || !bonds) return [];
+        const available = [];
+        for (const npcId in bonds) {
+            const npc = npcs.find(n => n.id === npcId);
+            if (!npc) continue;
+            const npcBonds = bonds[npcId];
+            const currentLevel = char.bondLevels[npcId] || 0;
+            const nextEvent = npcBonds.find(b => b.level === currentLevel + 1);
+            if (!nextEvent) continue;
+            if (char.bondEventsDone[`${npcId}_${nextEvent.level}`]) continue;
+            const affinity = NPCSystem.getAffinity(char, npcId);
+            if (affinity < nextEvent.minAffinity) continue;
+            available.push({ npcId, npc, bondEvent: nextEvent, affinity, currentLevel });
+        }
+        return available;
+    },
+
+    visitNPC(npcId) {
+        const { char } = this.state;
+        if (!char || this.state.gamePhase !== 'idle') return;
+        const npcBonds = this.state.bonds[npcId];
+        if (!npcBonds) return;
+        const currentLevel = char.bondLevels[npcId] || 0;
+        const bondEvent = npcBonds.find(b => b.level === currentLevel + 1);
+        if (!bondEvent) return;
+
+        // Advance month (visit costs the month)
+        char.ageMonths++;
+        const job = this.getJob(char.job);
+        Character.monthlyHPRegen(char, job);
+        UI.renderCharacter(char, this.state.jobs);
+
+        if (char.ageMonths >= char.maxAgeMonths) { this.triggerNaturalDeath(); return; }
+
+        const npc = this.state.npcs.find(n => n.id === npcId);
+        const inherited = char.inheritedBonds[npcId];
+        const prefix = inherited && inherited >= bondEvent.level
+            ? `【前世记忆】你隐约记得与${npc.name}曾有过这一段故事……\n\n`
+            : '';
+        const displayEvent = Object.assign({}, bondEvent, {
+            text: prefix + bondEvent.text,
+            title: `羁绊·${npc ? npc.name : npcId}·第${bondEvent.level}章`
+        });
+
+        this.state.pendingChoice = {
+            event: displayEvent,
+            choices: bondEvent.choices,
+            bondInfo: { npcId, level: bondEvent.level }
+        };
+        this.state.gamePhase = 'choosing';
+        UI.showEvent(displayEvent, bondEvent.choices, this.state);
+    },
+
+    startCombat(enemy, postNarrative) {
         const { char } = this.state;
         const job = this.getJob(char.job);
-        const result = Combat.resolve(char, enemy, job);
+        const cs = Combat.initState(char, enemy, job);
+        cs.postNarrative = postNarrative || '';
+        this.state.combatState = cs;
+        this.state.gamePhase = 'combat';
+        UI.showCombatOverlay(this.state);
+    },
 
-        const combatLine = Combat.getSummaryLine(char, enemy, job);
-        UI.addLog(`⚔ ${combatLine}`, 'combat-info');
-        UI.addLog(result.narrative, result.won ? 'win' : 'lose');
+    handleCombatAction(action) {
+        if (this.state.gamePhase !== 'combat' || !this.state.combatState) return;
+        const { char } = this.state;
+        const job = this.getJob(char.job);
+        const cs = this.state.combatState;
 
-        // Apply win effects
-        if (result.won && result.winEffects) {
-            this.applyEffects({ attributes: result.winEffects });
+        // Disable buttons immediately to prevent double-tap
+        UI.setCombatActionsEnabled(false);
+
+        const { combatOver, result } = Combat.processTurn(action, cs, char, job);
+        UI.updateCombatOverlay(this.state);
+
+        if (combatOver) {
+            setTimeout(() => this.endCombat(result, cs), 900);
+        } else {
+            UI.setCombatActionsEnabled(true);
         }
+    },
 
-        // Check for final boss win
-        if (result.won && enemy.isFinalBoss) {
-            this.triggerVictory();
-            return;
-        }
+    endCombat(result, cs) {
+        const { char } = this.state;
+        const enemy = cs.enemy;
+        UI.hideCombatOverlay();
+        this.state.combatState = null;
+        this.state.gamePhase = 'idle';
 
-        // Check death
-        if (result.died || (enemy.isFinalBoss && !result.won)) {
+        if (result === 'won') {
+            UI.addLog(enemy.winNarrative, 'win');
+            if (enemy.winEffects) this.applyEffects({ attributes: enemy.winEffects });
+            if (enemy.isFinalBoss) { this.triggerVictory(); return; }
+        } else if (result === 'lost') {
+            UI.addLog(enemy.loseNarrative, 'lose');
+            if (enemy.loseEffects) this.applyEffects({ attributes: enemy.loseEffects });
             UI.renderCharacter(char, this.state.jobs);
             this.triggerDeath(enemy.isFinalBoss ? 'boss' : 'combat');
             return;
+        } else if (result === 'fled') {
+            UI.addLog('你成功脱身，暂避其锋芒。', 'result');
         }
 
-        if (result.dodged) UI.addLog('〖运气〗你轻巧闪开部分攻击，伤害减半！', 'unlock');
-        UI.addLog(`本月结束后，你损失了 ${result.hpLost} 点血量。剩余血量：${char.hp}`, 'info');
+        if (cs.postNarrative) UI.addLog(cs.postNarrative, 'result');
         UI.renderAll(this.state);
         this.saveGame();
     },

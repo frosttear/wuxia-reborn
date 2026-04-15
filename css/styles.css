@@ -278,6 +278,99 @@ button:disabled { opacity: 0.4; cursor: not-allowed; }
 .talent-choice-btn:hover  { border-color: var(--accent); }
 .talent-choice-btn.selected { background: rgba(201,168,76,0.2); border-color: var(--accent); color: var(--accent2); }
 
+/* ─── Bond / Visit System ─── */
+.bond-level-row   { font-size: 0.7rem; color: var(--muted); margin-top: 4px; letter-spacing: 1px; }
+.bond-dot         { color: rgba(201,168,76,0.2); font-size: 0.7rem; margin: 0 1px; }
+.bond-dot-filled  { color: var(--accent); }
+
+.visit-panel {
+    background: rgba(0,0,0,0.3);
+    border-top: 1px solid var(--border);
+    padding: 8px 10px;
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+}
+.visit-npc-btn {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+    text-align: left;
+    padding: 8px 12px;
+    border-color: rgba(201,168,76,0.3);
+}
+.visit-npc-btn:hover:not(:disabled) { border-color: var(--accent); background: rgba(201,168,76,0.1); }
+.visit-npc-name { font-size: 0.88rem; color: var(--accent2); font-weight: bold; }
+.visit-npc-info { font-size: 0.73rem; color: var(--muted); }
+
+/* ─── Combat Overlay ─── */
+.combat-overlay {
+    position: fixed; inset: 0;
+    background: rgba(0,0,0,0.82);
+    display: flex; align-items: center; justify-content: center;
+    z-index: 200;
+}
+.combat-box {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 20px 24px;
+    width: min(520px, 95vw);
+    max-height: 90vh;
+    overflow-y: auto;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+.combat-title {
+    font-size: 1.1rem;
+    color: var(--accent);
+    letter-spacing: 4px;
+    text-align: center;
+    border-bottom: 1px solid var(--border);
+    padding-bottom: 8px;
+}
+.combat-enemy-section,
+.combat-player-section {
+    background: rgba(0,0,0,0.25);
+    border-radius: 6px;
+    padding: 10px 12px;
+}
+.combat-side-name   { font-size: 1rem; color: var(--accent2); font-weight: bold; margin-bottom: 4px; }
+.combat-stats-row   { font-size: 0.75rem; color: var(--muted); margin-bottom: 6px; }
+.combat-hp-wrap     { display: flex; flex-direction: column; gap: 3px; }
+.combat-hp-label    { display: flex; justify-content: space-between; font-size: 0.78rem; color: var(--muted); }
+
+.combat-log {
+    min-height: 80px;
+    max-height: 160px;
+    overflow-y: auto;
+    background: rgba(0,0,0,0.3);
+    border-radius: 6px;
+    padding: 8px 10px;
+    font-size: 0.82rem;
+    line-height: 1.7;
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+}
+.combat-log-entry   { border-bottom: 1px solid rgba(255,255,255,0.05); padding-bottom: 4px; }
+.combat-turn-badge  { color: var(--accent); font-size: 0.72rem; margin-right: 6px; font-weight: bold; }
+
+.combat-actions {
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr;
+    gap: 8px;
+    margin-top: 4px;
+}
+.combat-btn         { padding: 12px 8px; font-size: 0.85rem; border-radius: 6px; text-align: center; }
+.combat-attack      { border-color: rgba(201,168,76,0.5); color: var(--accent2); }
+.combat-attack:hover:not(:disabled)  { background: rgba(201,168,76,0.15); }
+.combat-defend      { border-color: rgba(91,155,213,0.5); color: var(--blue); }
+.combat-defend:hover:not(:disabled)  { background: rgba(91,155,213,0.1); }
+.combat-flee        { border-color: rgba(136,136,136,0.4); color: var(--muted); font-size: 0.78rem; }
+.combat-flee:hover:not(:disabled)    { background: rgba(136,136,136,0.1); }
+
 /* Start screen */
 .start-screen {
     display: flex; align-items: center; justify-content: center;

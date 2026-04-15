@@ -7,10 +7,12 @@ const ATTR_NAMES = {
 
 const UI = {
     init() {
-        this.logEl = document.getElementById('eventLog');
+        this.logEl   = document.getElementById('eventLog');
         this.choicesEl = document.getElementById('choicesPanel');
-        this.nextBtn = document.getElementById('nextMonthBtn');
-        this.autoBtn = document.getElementById('autoAdvanceBtn');
+        this.nextBtn   = document.getElementById('nextMonthBtn');
+        this.autoBtn   = document.getElementById('autoAdvanceBtn');
+        this.visitBtn  = document.getElementById('visitBtn');
+        this.visitPanel = document.getElementById('visitPanel');
     },
 
     // Mobile tab switching
@@ -145,6 +147,11 @@ const UI = {
             const fillClass = isPos ? 'affinity-bar-fill pos' : 'affinity-bar-fill neg';
             const div = document.createElement('div');
             div.className = 'npc-row';
+            const bondLevel = (char.bondLevels || {})[npc.id] || 0;
+            const totalBondLevels = 3;
+            const bondDots = Array.from({length: totalBondLevels}, (_, i) =>
+                `<span class="bond-dot ${i < bondLevel ? 'bond-dot-filled' : ''}">◆</span>`
+            ).join('');
             div.innerHTML = `
                 <div class="npc-header">
                     <span class="npc-name">${npc.name}</span>
@@ -155,7 +162,8 @@ const UI = {
                 <div class="affinity-bar-bg">
                     <div class="affinity-center-line"></div>
                     <div class="${fillClass}" style="${fillStyle}"></div>
-                </div>`;
+                </div>
+                <div class="bond-level-row">羁绊 ${bondDots}</div>`;
             div.title = npc.description;
             el.appendChild(div);
         }
@@ -305,10 +313,86 @@ const UI = {
         this.choicesEl.innerHTML = '';
     },
 
+    // ── Combat overlay ──────────────────────────────────────────
+    showCombatOverlay(state) {
+        const { char, combatState: cs } = state;
+        const job = state.jobs.find(j => j.id === char.job);
+        const atk = Character.getAttackPower(char, job);
+        const def = Character.getDefensePower(char, job);
+        document.getElementById('combatEnemyName').textContent  = cs.enemy.name;
+        document.getElementById('combatEnemyStats').textContent = `攻 ${cs.enemyEffAtk}  防 ${cs.enemyEffDef}`;
+        document.getElementById('combatPlayerName').textContent = char.name;
+        document.getElementById('combatPlayerStats').textContent = `攻 ${atk}  防 ${def}`;
+        document.getElementById('combatLog').innerHTML = '';
+        this.updateCombatOverlay(state);
+        document.getElementById('combatOverlay').style.display = 'flex';
+        if (window.innerWidth <= 768) this.switchTab('event');
+    },
+
+    updateCombatOverlay(state) {
+        const { char, combatState: cs } = state;
+        if (!cs) return;
+        const job  = state.jobs.find(j => j.id === char.job);
+        const hpMax = Character.getHPMax(char, job);
+
+        // Enemy HP bar
+        const ePct = Math.max(0, Math.round(cs.enemyHp / cs.enemyMaxHp * 100));
+        document.getElementById('combatEnemyHpText').textContent = `${Math.max(0, cs.enemyHp)} / ${cs.enemyMaxHp}`;
+        const eBar = document.getElementById('combatEnemyHpBar');
+        eBar.style.width = ePct + '%';
+        eBar.className = 'hp-fill ' + (ePct > 50 ? 'hp-high' : ePct > 25 ? 'hp-mid' : 'hp-low');
+
+        // Player HP bar
+        const pPct = Math.max(0, Math.round(char.hp / hpMax * 100));
+        document.getElementById('combatPlayerHpText').textContent = `${Math.max(0, char.hp)} / ${hpMax}`;
+        const pBar = document.getElementById('combatPlayerHpBar');
+        pBar.style.width = pPct + '%';
+        pBar.className = 'hp-fill ' + (pPct > 50 ? 'hp-high' : pPct > 25 ? 'hp-mid' : 'hp-low');
+
+        // Combat log (last 5 entries)
+        const logEl = document.getElementById('combatLog');
+        logEl.innerHTML = cs.log.slice(-5).map(e =>
+            `<div class="combat-log-entry"><span class="combat-turn-badge">第${e.turn}回合</span>${e.text}</div>`
+        ).join('');
+        logEl.scrollTop = logEl.scrollHeight;
+
+        // Flee button text
+        document.getElementById('combatFleeBtn').textContent =
+            `💨 逃跑 ${Math.round(cs.fleeChance * 100)}%`;
+    },
+
+    hideCombatOverlay() {
+        document.getElementById('combatOverlay').style.display = 'none';
+    },
+
+    setCombatActionsEnabled(enabled) {
+        document.querySelectorAll('.combat-btn').forEach(btn => { btn.disabled = !enabled; });
+    },
+    // ─────────────────────────────────────────────────────────────
+
     updateControls(state) {
         const busy = state.gamePhase !== 'idle';
         this.nextBtn.disabled = busy;
         this.autoBtn.disabled = (state.gamePhase === 'game_over' || state.gamePhase === 'rebirth' || state.gamePhase === 'victory');
+
+        // Show visit button only when idle and visits are available
+        const visits = state.gamePhase === 'idle' ? Engine.getAvailableVisits() : [];
+        this.visitBtn.style.display = visits.length > 0 ? '' : 'none';
+        if (visits.length === 0 && this.visitPanel) this.visitPanel.style.display = 'none';
+    },
+
+    toggleVisitPanel() {
+        const panel = this.visitPanel;
+        if (panel.style.display !== 'none') { panel.style.display = 'none'; return; }
+        const visits = Engine.getAvailableVisits();
+        if (visits.length === 0) return;
+        panel.innerHTML = visits.map(v =>
+            `<button class="visit-npc-btn" onclick="Engine.visitNPC('${v.npcId}'); UI.visitPanel.style.display='none'">
+                <span class="visit-npc-name">${v.npc.name}</span>
+                <span class="visit-npc-info">好感 ${v.affinity}  第${v.bondEvent.level}章「${v.bondEvent.title}」</span>
+            </button>`
+        ).join('');
+        panel.style.display = 'block';
     },
 
     setAutoButton(isOn) {

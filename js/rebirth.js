@@ -56,6 +56,9 @@ const Rebirth = {
         return inherited;
     },
 
+    // Bond level → starting affinity bonus for next life
+    BOND_AFFINITY_BONUS: { 1: 15, 2: 30, 3: 50 },
+
     // Execute rebirth: returns new character with inherited bonuses
     execute(char, chosenTalentIds, allNpcs) {
         const inheritedAttrs = this.calculateInheritedAttributes(char);
@@ -69,7 +72,20 @@ const Rebirth = {
             newChar.maxAgeMonths += 120; // +10 years
         }
 
+        // Inherit bond levels (穿越记忆)
+        newChar.inheritedBonds = Object.assign({}, char.bondLevels);
+
         NPCSystem.initRelationships(newChar, allNpcs);
+
+        // Apply starting affinity bonuses from inherited bonds
+        for (const npcId in newChar.inheritedBonds) {
+            const level = newChar.inheritedBonds[npcId];
+            const bonus = this.BOND_AFFINITY_BONUS[level] || 0;
+            if (bonus > 0) {
+                NPCSystem.applyAffinityChanges(newChar, { [npcId]: bonus });
+            }
+        }
+
         return newChar;
     },
 

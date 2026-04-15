@@ -23,6 +23,9 @@ const Character = {
             learnedSkills: [],    // [{ id, name, desc, branch, bonuses, special? }]
             legacyTalents: legacyTalents || [],
             relationships: {},    // { npcId: { affinity, metAt } }
+            bondLevels: {},       // { npcId: maxLevelCompleted }
+            bondEventsDone: {},   // { "npcId_level": true } — reset each life
+            inheritedBonds: {},   // { npcId: bondLevel } — carried across rebirths
             flags: {},            // story flags
             rebirthCount: 0,
             eventLog: []

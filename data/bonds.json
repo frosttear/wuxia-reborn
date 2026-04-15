@@ -1,0 +1,218 @@
+{
+  "wang_tie": [
+    {
+      "level": 1,
+      "title": "镖路往事",
+      "minAffinity": 25,
+      "text": "你找到正在磨刀的王铁，开口闲聊。他放下刀，叹了口气：「年轻时走镖，见过的事，三天三夜说不完……」\n\n他娓娓道来，从幸存的血战到落魄的绝境，眼神深邃而平静。你听得入神，隐约感受到一种历经沧桑后的超然。",
+      "choices": [
+        {
+          "id": "listen",
+          "text": "静静聆听，不打断",
+          "effects": {
+            "attributes": { "comprehension": 1 },
+            "npcAffinity": { "wang_tie": 15 },
+            "narrative": "王铁见你认真，越说越深入。临别时拍拍你的肩：「孩子，有这份耐心，将来不会差。」"
+          }
+        },
+        {
+          "id": "ask_skills",
+          "text": "趁机请教武学心得",
+          "effects": {
+            "attributes": { "strength": 1, "comprehension": 1 },
+            "npcAffinity": { "wang_tie": 10 },
+            "narrative": "王铁笑道：「年轻人就该问！」随手指点几个关键动作，你顿时感觉拳脚有力了许多。"
+          }
+        }
+      ]
+    },
+    {
+      "level": 2,
+      "title": "两肋插刀",
+      "minAffinity": 50,
+      "text": "王铁神色慌张地找到你：「老弟，有批货被劫了，镖局的脸面……你能帮我一回吗？」\n\n他说的是一批月前丢失的货物，劫匪还在附近活动，王铁一人难以应付。",
+      "choices": [
+        {
+          "id": "fight_with",
+          "text": "二话不说，随他出发",
+          "effects": {
+            "combat": "escort_leader",
+            "npcAffinity": { "wang_tie": 20 },
+            "narrative": "你与王铁并肩而战，一同夺回货物。他红着眼睛道：「此恩，老汉记下了。」"
+          }
+        },
+        {
+          "id": "plan",
+          "text": "建议智取，减少伤亡",
+          "effects": {
+            "attributes": { "reputation": 2, "comprehension": 1 },
+            "npcAffinity": { "wang_tie": 15 },
+            "narrative": "你设下巧计，趁夜收回货物，几乎未动刀兵。王铁叹道：「想不到你还有这份心思。」"
+          }
+        }
+      ]
+    },
+    {
+      "level": 3,
+      "title": "老镖师的最后一课",
+      "minAffinity": 75,
+      "text": "王铁将你叫到城外空地，神情郑重：「我这把老骨头，能动的日子不多了。」\n\n他缓缓取出一本泛黄的薄册：「这是我走镖三十年总结的心法，没有惊天动地的武学，有的只是活命的道理。我想传给你。」",
+      "choices": [
+        {
+          "id": "accept_teaching",
+          "text": "双手接过，郑重承诺",
+          "effects": {
+            "attributes": { "strength": 2, "innerForce": 1, "constitution": 1 },
+            "flags": { "wang_final_teaching": true },
+            "npcAffinity": { "wang_tie": 20 },
+            "narrative": "你跪地行礼，王铁扶起你，笑得很开心：「去吧，好好活着——比什么都强。」"
+          }
+        }
+      ]
+    }
+  ],
+  "li_yunshu": [
+    {
+      "level": 1,
+      "title": "一场切磋",
+      "minAffinity": 20,
+      "text": "李云舒拦住你，眼神清亮：「听说你最近武艺见长，想和我比划比划？」\n\n她手按剑柄，虽是邀战，却隐隐有几分期待。",
+      "choices": [
+        {
+          "id": "accept_spar",
+          "text": "欣然接受，全力以赴",
+          "effects": {
+            "attributes": { "agility": 1, "strength": 1 },
+            "npcAffinity": { "li_yunshu": 15 },
+            "narrative": "两人过了数十招，你虽落了下风，却悟到身法上诸多不足。李云舒点头：「有进步，不错。」"
+          }
+        },
+        {
+          "id": "decline_nicely",
+          "text": "笑着婉拒，改日再约",
+          "effects": {
+            "attributes": { "comprehension": 1 },
+            "npcAffinity": { "li_yunshu": 8 },
+            "narrative": "她微微失望地收手，但随即笑道：「行吧，改日再说。」"
+          }
+        }
+      ]
+    },
+    {
+      "level": 2,
+      "title": "家门困境",
+      "minAffinity": 45,
+      "text": "李云舒难得有些慌乱地来找你：「家里出了点事，有人找麻烦，我……不太好出面。」\n\n她说的是本地一个小势力，一直在打她家产业的主意，已经闹了好几回了。",
+      "choices": [
+        {
+          "id": "help_directly",
+          "text": "我去替你出头",
+          "effects": {
+            "attributes": { "reputation": 2 },
+            "npcAffinity": { "li_yunshu": 20 },
+            "narrative": "你登门交涉，气场十足，对方掂量了一番，悻悻而去。李云舒望着你的背影，若有所思。"
+          }
+        },
+        {
+          "id": "help_plan",
+          "text": "帮她想个两全其美的办法",
+          "effects": {
+            "attributes": { "comprehension": 1, "reputation": 1 },
+            "npcAffinity": { "li_yunshu": 15 },
+            "narrative": "你们商量了半晚，终于想出一个让对方知难而退的策略。她第一次对你微微一笑：「谢谢。」"
+          }
+        }
+      ]
+    },
+    {
+      "level": 3,
+      "title": "月下长谈",
+      "minAffinity": 70,
+      "text": "夜里，你们在城墙上坐着，望着远处的灯火。李云舒难得说了很多——她的过去，她的剑，她对未来的迷茫。\n\n「你觉得，一个人该为了什么而活？」她忽然问你。",
+      "choices": [
+        {
+          "id": "answer_conviction",
+          "text": "为心中所念而活，无论代价",
+          "effects": {
+            "attributes": { "comprehension": 2, "luck": 1 },
+            "npcAffinity": { "li_yunshu": 20 },
+            "flags": { "li_heart_talk": true },
+            "narrative": "她沉默了很久，最后轻声说：「说得好。」那一晚的月色，格外皎洁。"
+          }
+        },
+        {
+          "id": "answer_others",
+          "text": "为了不让牵挂自己的人失望",
+          "effects": {
+            "attributes": { "comprehension": 1, "reputation": 1 },
+            "npcAffinity": { "li_yunshu": 15 },
+            "narrative": "她微微低头，没再说话。良久，轻轻道了声「嗯」。"
+          }
+        }
+      ]
+    }
+  ],
+  "mysterious_elder": [
+    {
+      "level": 1,
+      "title": "茶馆问道",
+      "minAffinity": 20,
+      "text": "神秘老者坐在茶馆角落，见你过来，眼神一闪：「年轻人，你的眼神里有些东西，让老夫颇感兴趣。」\n\n他捧着茶杯，似笑非笑：「可有什么想问的？」",
+      "choices": [
+        {
+          "id": "ask_way",
+          "text": "请教武道的终极境界",
+          "effects": {
+            "attributes": { "comprehension": 2, "innerForce": 1 },
+            "npcAffinity": { "mysterious_elder": 15 },
+            "narrative": "他说了许多，听起来玄之又玄，却让你若有所悟。临走时他道：「境界不在招式，在于心。」"
+          }
+        },
+        {
+          "id": "ask_identity",
+          "text": "好奇地问他究竟是什么人",
+          "effects": {
+            "attributes": { "comprehension": 1 },
+            "npcAffinity": { "mysterious_elder": 10 },
+            "narrative": "他哈哈一笑，摇了摇头：「不过是个过路人罢了。」眼神里却有一丝深意。"
+          }
+        }
+      ]
+    },
+    {
+      "level": 2,
+      "title": "内功指引",
+      "minAffinity": 50,
+      "text": "老者今日神情郑重：「你的根骨不错，但内功修炼走偏了一些。老夫愿意指点你重新打好根基。」\n\n这番话令你大为震惊——他竟然一眼看出了你多年来的隐患。",
+      "choices": [
+        {
+          "id": "accept_guidance",
+          "text": "虚心受教，从头再来",
+          "effects": {
+            "attributes": { "innerForce": 3, "comprehension": 1 },
+            "npcAffinity": { "mysterious_elder": 20 },
+            "narrative": "三日讲授，让你整个内力体系焕然一新。你感觉眼前的路，前所未有地开阔。"
+          }
+        }
+      ]
+    },
+    {
+      "level": 3,
+      "title": "真名与来历",
+      "minAffinity": 75,
+      "text": "老者负手而立，望着远山，久久不语。最终转身，眼神深邃如渊：\n\n「既然你我缘分至此，有些事该告诉你了。老夫当年，也曾与天魔一战……未竟之事，或许要由你来了结了。」",
+      "choices": [
+        {
+          "id": "accept_legacy",
+          "text": "肃然起敬，承担这份托付",
+          "effects": {
+            "attributes": { "innerForce": 3, "comprehension": 2 },
+            "flags": { "elder_revelation": true },
+            "npcAffinity": { "mysterious_elder": 25 },
+            "narrative": "他叹了口气，将一枚玉牌交给你：「持此入魔宫，或有用处。此后，保重。」"
+          }
+        }
+      ]
+    }
+  ]
+}
