@@ -98,12 +98,16 @@ const Engine = {
             }
         }
 
-        // Select and trigger events
+        // Events fire every 3 months; off-months just advance time quietly
+        if (char.ageMonths % 3 !== 0) {
+            this.saveGame();
+            return;
+        }
+
         const eligible = this.selectEvents();
         if (eligible.length > 0) {
             this.triggerEvent(eligible[0]);
         } else {
-            // No event this month, just update UI
             UI.renderAll(this.state);
             this.saveGame();
         }

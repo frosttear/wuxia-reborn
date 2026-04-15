@@ -145,7 +145,7 @@
       {
         "id": "meditate",
         "text": "在瀑布中冥想，感悟自然之力",
-        "effects": { "attributes": { "innerForce": 3 }, "narrative": "数日的冥想后，你的内力得到了显著的提升，仿佛与天地相通。" }
+        "effects": { "attributes": { "innerForce": 2 }, "narrative": "数日的冥想后，你的内力得到了显著的提升，仿佛与天地相通。" }
       }
     ]
   },
@@ -245,7 +245,7 @@
       {
         "id": "accept_teaching",
         "text": "欣然接受，虚心求教",
-        "effects": { "attributes": { "innerForce": 3, "comprehension": 2 }, "narrative": "老者传授的心法玄妙无比，你感到内力大幅增长。" }
+        "effects": { "attributes": { "innerForce": 2, "comprehension": 1 }, "narrative": "老者传授的心法玄妙无比，你感到内力大幅增长。" }
       }
     ]
   },
@@ -466,7 +466,7 @@
       {
         "id": "accept",
         "text": "郑重接受，不辜负老人家的心意",
-        "effects": { "attributes": { "strength": 3, "innerForce": 2 }, "flags": { "wang_taught_advanced": true }, "npcAffinity": { "wang_tie": 15 }, "narrative": "王铁倾囊相授，你的武艺突飞猛进，对他的敬意也愈发深厚。" }
+        "effects": { "attributes": { "strength": 2, "innerForce": 2 }, "flags": { "wang_taught_advanced": true }, "npcAffinity": { "wang_tie": 15 }, "narrative": "王铁倾囊相授，你的武艺突飞猛进，对他的敬意也愈发深厚。" }
       }
     ]
   },
@@ -476,7 +476,7 @@
     "weight": 3,
     "title": "王铁临终托付",
     "text": "你得到消息，王铁病倒了，时日无多。你赶到他的床前，他握住你的手，眼神清澈：「我这一生走镖无数，唯一放不下的，是那些被赵霸天欺压的百姓……」",
-    "conditions": { "flags": { "wang_taught_advanced": true }, "npcAffinity": { "wang_tie": 70 }, "minAgeYears": 30 },
+    "conditions": { "flags": { "wang_taught_advanced": true }, "npcAffinity": { "wang_tie": 70 }, "minAgeYears": 24 },
     "choices": [
       {
         "id": "promise",
@@ -596,12 +596,12 @@
     "weight": 2,
     "title": "老者传道",
     "text": "神秘老者再次出现在你面前，这次他不再神秘，而是直接说：「天魔将出，江湖危矣。我今日传你一门心法，你日后自知其用。」",
-    "conditions": { "flags": { "met_mysterious_elder": true }, "npcAffinity": { "mysterious_elder": 60 }, "minAgeYears": 35 },
+    "conditions": { "flags": { "met_mysterious_elder": true }, "npcAffinity": { "mysterious_elder": 60 }, "minAgeYears": 21 },
     "choices": [
       {
         "id": "accept_teaching",
         "text": "恭敬接受，铭记于心",
-        "effects": { "attributes": { "innerForce": 5, "comprehension": 3 }, "flags": { "elder_taught": true }, "npcAffinity": { "mysterious_elder": 20 }, "narrative": "老者传授的心法玄妙异常，你感到体内真气翻腾，境界大幅提升。" }
+        "effects": { "attributes": { "innerForce": 2, "comprehension": 2 }, "flags": { "elder_taught": true }, "npcAffinity": { "mysterious_elder": 20 }, "narrative": "老者传授的心法玄妙异常，你感到体内真气翻腾，境界大幅提升。" }
       }
     ]
   },
@@ -611,7 +611,7 @@
     "weight": 4,
     "title": "游侠之路",
     "text": "一名老游侠在临终前将他的佩剑赠予你，说：「这剑跟了我一生，该找个新主人了。你有游侠的命，去走你自己的路吧。」",
-    "conditions": { "jobs": ["nobody"], "minAttributes": { "strength": 10 } },
+    "conditions": { "jobs": ["nobody"], "minAttributes": { "strength": 5 } },
     "choices": [
       {
         "id": "accept_sword",
@@ -626,7 +626,7 @@
     "weight": 3,
     "title": "剑客传承",
     "text": "你在古剑冢中偶然发现了一位已故剑客的遗物，其中有一封信：「得此信者，若有缘，愿将我毕生剑意相授。」",
-    "conditions": { "jobs": ["wanderer"], "minAttributes": { "strength": 12, "agility": 9 } },
+    "conditions": { "jobs": ["wanderer"], "minAttributes": { "strength": 8, "agility": 6 } },
     "choices": [
       {
         "id": "inherit_sword_intent",
@@ -641,12 +641,12 @@
     "weight": 2,
     "title": "武林认可",
     "text": "武林中多位德高望重的前辈联袂来访，其中一位抱拳道：「阁下行侠仗义多年，武艺超群，我等特来邀请入盟，共商江湖大事。」",
-    "conditions": { "jobs": ["swordsman"], "minAttributes": { "strength": 22, "reputation": 14 } },
+    "conditions": { "jobs": ["swordsman"], "minAttributes": { "strength": 18, "reputation": 10 } },
     "choices": [
       {
         "id": "accept_recognition",
         "text": "受宠若惊，欣然接受",
-        "effects": { "attributes": { "reputation": 5, "innerForce": 2 }, "flags": { "hero_recognized": true }, "narrative": "武林的认可让你声威大震，大侠之名远播四方。" }
+        "effects": { "attributes": { "reputation": 2, "innerForce": 1 }, "flags": { "hero_recognized": true }, "narrative": "武林的认可让你声威大震，大侠之名远播四方。" }
       }
     ]
   },
