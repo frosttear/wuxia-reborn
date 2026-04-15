@@ -507,8 +507,8 @@ const Engine = {
     triggerVictory(isTrueEnding) {
         const { char } = this.state;
 
-        // Normal ending: check if hidden boss chain unlocks
-        if (!isTrueEnding && char.flags.elder_revelation && !char.flags.hidden_boss_triggered) {
+        // Normal ending: check if hidden boss chain unlocks (requires 25th birthday jade_tablet event)
+        if (!isTrueEnding && char.flags.jade_tablet_awakened && !char.flags.hidden_boss_triggered) {
             char.flags.hidden_boss_triggered = true;
             this.state.gamePhase = 'idle';
             UI.addLog('天魔倒下。江湖归于平静。', 'win');
@@ -541,6 +541,22 @@ const Engine = {
             attrs = { reputation: 1, strength: 1 };
         } else if (age === 24) {
             msg = `【生辰】${mName}，${age}岁。天魔之约，还有六年。时间，越来越少了。`;
+        } else if (age === 25) {
+            if (char.flags.elder_revelation && !char.flags.jade_tablet_awakened) {
+                char.flags.jade_tablet_awakened = true;
+                msg = `【生辰·异变】${mName}，二十五岁。
+
+那枚老者留下的玉牌，忽然变得灼热。
+
+你握住它，感受到其中封印着某种东西——一道锋锐的意志，在漫长的沉眠后，终于感知到了你的存在。
+
+「……还不够。」那意志似乎在说，「但你已经能让我有所感应了。等你走完这一世。」
+
+玉牌重归平静，但你知道：有什么事情，已经开始了。`;
+                attrs = { comprehension: 1 };
+            } else {
+                msg = `【生辰】${mName}，${age}岁。天魔之约还有五年。`;
+            }
         } else if (age === 27) {
             msg = `【生辰】${mName}，${age}岁。还有三年。江湖中走过的路，足够你面对天魔了吗？`;
         } else if (age === 29) {
@@ -566,6 +582,11 @@ const Engine = {
         if (!char.inheritedBonds)  char.inheritedBonds = {};
         if (!char.learnedSkills)   char.learnedSkills = [];
         if (!char.birthMonth)      char.birthMonth = 1;
+        // Re-derive jade_tablet_awakened for saves that went through 25th birthday before this flag existed
+        if (!char.flags.jade_tablet_awakened && char.flags.elder_revelation &&
+            Character.getAgeYears(char) > 25) {
+            char.flags.jade_tablet_awakened = true;
+        }
         return char;
     },
 
