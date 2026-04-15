@@ -24,12 +24,14 @@ const Combat = {
         '快步上前，连续出手'
     ],
 
-    // Scaled enemy stats based on player strength tier
+    // Scaled enemy stats based on years of play (tier = ageYears - 15)
     getEffectiveStats(enemy, char) {
-        const tier = Math.floor((char.attributes.strength || 0) / 10);
+        const tier = Math.max(0, Character.getAgeYears(char) - 15);
+        const hp = Math.round((enemy.hp || 80) * (1 + tier * (enemy.hpScale || 0.15)));
         return {
             attack:  enemy.attack  + tier * (enemy.attackScale  || 0),
-            defense: enemy.defense + tier * (enemy.defenseScale || 0)
+            defense: enemy.defense + tier * (enemy.defenseScale || 0),
+            hp
         };
     },
 
@@ -51,8 +53,8 @@ const Combat = {
         const eff = this.getEffectiveStats(enemy, char);
         return {
             enemy,
-            enemyHp:    enemy.hp || 80,
-            enemyMaxHp: enemy.hp || 80,
+            enemyHp:    eff.hp,
+            enemyMaxHp: eff.hp,
             enemyEffAtk: eff.attack,
             enemyEffDef: eff.defense,
             turn:       0,
