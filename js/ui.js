@@ -50,7 +50,7 @@ const UI = {
         const ageMonths = Character.getAgeMonthsRemainder(char);
 
         document.getElementById('charName').textContent = char.name;
-        document.getElementById('charAge').textContent = `${ageYears}岁${ageMonths > 0 ? ageMonths + '月' : ''}`;
+        document.getElementById('charAge').textContent = `${ageYears}岁${ageMonths}月`;
         const injuredBadge = char.injured ? ' <span class="injured-badge">重伤休养</span>' : '';
         document.getElementById('charJob').innerHTML = (job ? job.name : '无名小卒') + injuredBadge;
         document.getElementById('charRebirth').textContent = char.rebirthCount > 0 ? `第${char.rebirthCount}世轮回` : '初入江湖';
@@ -278,7 +278,7 @@ const UI = {
     showEvent(event, choices, state) {
         const ageYears = Character.getAgeYears(state.char);
         const ageMonths = Character.getAgeMonthsRemainder(state.char);
-        const ageStr = `${ageYears}岁${ageMonths > 0 ? ageMonths + '月' : ''}`;
+        const ageStr = `${ageYears}岁${ageMonths}月`;
 
         // Add event to log
         const entry = document.createElement('div');
