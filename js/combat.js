@@ -90,7 +90,9 @@ const Combat = {
                     cs.enemyEffAtk - Math.floor(playerDef / 2) + Math.floor(Math.random() * 5));
                 Character.takeDamage(char, dmg);
                 cs.totalDmgReceived += dmg;
-                const ed = this._pick(this.ENEMY_ATTACK_DESCS);
+                const fleePool = (cs.enemy.attackDescs && cs.enemy.attackDescs.length)
+                    ? cs.enemy.attackDescs : this.ENEMY_ATTACK_DESCS;
+                const ed = this._pick(fleePool);
                 lines.push(`逃跑失败！${cs.enemy.name}${ed}，你仓皇受击，损失 <b>${dmg}</b> 气血。`);
                 cs.fleeChance = Math.min(0.85, cs.fleeChance + 0.15);
                 if (char.hp <= 0) { result = 'lost'; combatOver = true; }
@@ -127,9 +129,11 @@ const Combat = {
                     Math.floor(cs.enemyEffAtk * skillMult) - Math.floor(effDef)
                     + Math.floor(Math.random() * 6) - 2);
                 const eDmg    = Math.max(1, Math.floor(rawDmg * defMult));
+                const attackPool = (cs.enemy.attackDescs && cs.enemy.attackDescs.length)
+                    ? cs.enemy.attackDescs : this.ENEMY_ATTACK_DESCS;
                 const ed      = skillName
                     ? `使出【<b style="color:#e07b39">${skillName}</b>】`
-                    : this._pick(this.ENEMY_ATTACK_DESCS);
+                    : this._pick(attackPool);
                 if (Math.random() < Character.getLuckDodgeChance(char)) {
                     lines.push(`${cs.enemy.name}${ed}——你【<b>灵巧闪避</b>】，未受伤害！`);
                 } else {
