@@ -54,5 +54,32 @@
       { "threshold": 30,  "label": "有缘人" },
       { "threshold": 70,  "label": "传承弟子" }
     ]
+  },
+  {
+    "id": "han_shuang",
+    "name": "韩霜",
+    "title": "独行剑客",
+    "description": "面容冷峻、左颊有一道深疤的孤剑客。话不多，出剑却快如寒霜。据说曾在一夜之间击败过整整一支镖队，原因无人知晓。",
+    "affinityLevels": [
+      { "threshold": -100, "label": "敌对" },
+      { "threshold": -20,  "label": "警戒" },
+      { "threshold": 0,   "label": "陌生人" },
+      { "threshold": 25,  "label": "同道中人" },
+      { "threshold": 55,  "label": "并肩之人" },
+      { "threshold": 80,  "label": "刎颈之交" }
+    ]
+  },
+  {
+    "id": "su_qing",
+    "name": "苏青",
+    "title": "游方医者",
+    "description": "背着药箱游走四方的年轻女医者，医术精湛却行事低调。眉宇间总带着一丝说不清道不明的忧愁，据说是在寻找一个失踪多年的人。",
+    "affinityLevels": [
+      { "threshold": -100, "label": "无缘" },
+      { "threshold": 0,   "label": "陌生人" },
+      { "threshold": 20,  "label": "患者" },
+      { "threshold": 45,  "label": "相识" },
+      { "threshold": 70,  "label": "知心好友" }
+    ]
   }
 ]

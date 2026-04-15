@@ -4,7 +4,7 @@
       "level": 1,
       "title": "镖路往事",
       "minAffinity": 25,
-      "text": "你找到正在磨刀的王铁，开口闲聊。他放下刀，叹了口气：「年轻时走镖，见过的事，三天三夜说不完……」\n\n他娓娓道来，从幸存的血战到落魄的绝境，眼神深邃而平静。你听得入神，隐约感受到一种历经沧桑后的超然。",
+      "text": "你找到正在磨刀的王铁，开口闲聊。他放下刀，叹了口气：「年轻时走镖，见过的事，三天三夜说不完……」\n\n他娓娓道来——从幸存的血战到落魄的绝境，从生死兄弟到背信弃义，眼神深邃而平静。你听得入神，隐约感受到一种历经沧桑后的超然。夕阳将他的影子拉得很长，那一刻你忽然明白：眼前这个老人，走过的路比你想象的要远得多。",
       "choices": [
         {
           "id": "listen",
@@ -12,7 +12,7 @@
           "effects": {
             "attributes": { "comprehension": 1 },
             "npcAffinity": { "wang_tie": 15 },
-            "narrative": "王铁见你认真，越说越深入。临别时拍拍你的肩：「孩子，有这份耐心，将来不会差。」"
+            "narrative": "王铁见你认真，越说越深入，将许多从未对人提起的往事和盘托出。临别时拍拍你的肩：「孩子，有这份耐心，将来不会差。」那一刻，你感觉自己似乎懂了许多。"
           }
         },
         {
@@ -21,7 +21,17 @@
           "effects": {
             "attributes": { "strength": 1, "comprehension": 1 },
             "npcAffinity": { "wang_tie": 10 },
-            "narrative": "王铁笑道：「年轻人就该问！」随手指点几个关键动作，你顿时感觉拳脚有力了许多。"
+            "narrative": "王铁笑道：「年轻人就该问！」随手指点几个关键动作，说起走镖时以力破局的经验。你顿时感觉拳脚有力了许多，眼界也开阔了几分。"
+          }
+        },
+        {
+          "id": "sense_injury",
+          "text": "悄悄以内力感知他的身体状况，发现暗伤后关切地问及",
+          "requirements": { "minAttributes": { "innerForce": 8 } },
+          "effects": {
+            "attributes": { "innerForce": 1 },
+            "npcAffinity": { "wang_tie": 20 },
+            "narrative": "你感知到老人体内旧伤未愈，轻声问道。王铁愣了一下，随即苦笑：「原来你已能感知旧伤……孩子，你比我想象的走得更远。」那日他破例将许多平时不肯外传的秘诀一并教了你。"
           }
         }
       ]
@@ -30,7 +40,7 @@
       "level": 2,
       "title": "两肋插刀",
       "minAffinity": 50,
-      "text": "王铁神色慌张地找到你：「老弟，有批货被劫了，镖局的脸面……你能帮我一回吗？」\n\n他说的是一批月前丢失的货物，劫匪还在附近活动，王铁一人难以应付。",
+      "text": "王铁神色慌张地找到你：「老弟，有批货被劫了，镖局的脸面……你能帮我一回吗？」\n\n他说的是一批月前丢失的货物，劫匪还在附近活动，为首的是个横行一方的江湖老手。王铁一人难以应付，但更令他难受的是——那批货里，藏着一封他欠人的承诺。\n\n「不只是货，是我半辈子的信誉。」他低声道。",
       "choices": [
         {
           "id": "fight_with",
@@ -38,7 +48,7 @@
           "effects": {
             "combat": "escort_leader",
             "npcAffinity": { "wang_tie": 20 },
-            "narrative": "你与王铁并肩而战，一同夺回货物。他红着眼睛道：「此恩，老汉记下了。」"
+            "narrative": "你与王铁并肩而战，血战之后终于夺回货物。回来的路上，他红着眼睛道：「此恩，老汉记下了。只要你开口，我这把老骨头豁出去都成。」"
           }
         },
         {
@@ -47,7 +57,16 @@
           "effects": {
             "attributes": { "reputation": 2, "comprehension": 1 },
             "npcAffinity": { "wang_tie": 15 },
-            "narrative": "你设下巧计，趁夜收回货物，几乎未动刀兵。王铁叹道：「想不到你还有这份心思。」"
+            "narrative": "你设下巧计，趁夜摸清对方营地分布，悄无声息地收回货物，几乎未动刀兵。王铁叹道：「想不到你还有这份心思。老汉这辈子，认识的人里，你算聪明的。」"
+          }
+        },
+        {
+          "id": "negotiate",
+          "text": "先礼后兵，亲自去找劫匪头目谈条件",
+          "effects": {
+            "attributes": { "reputation": 2, "comprehension": 1 },
+            "npcAffinity": { "wang_tie": 12 },
+            "narrative": "你只身赴约，言辞犀利，将对方的退路和代价一一点明。劫匪头目沉默良久，最终放货。王铁望着你，既惊且喜：「后生，你这张嘴比刀还厉害。」"
           }
         }
       ]
@@ -56,16 +75,26 @@
       "level": 3,
       "title": "老镖师的最后一课",
       "minAffinity": 75,
-      "text": "王铁将你叫到城外空地，神情郑重：「我这把老骨头，能动的日子不多了。」\n\n他缓缓取出一本泛黄的薄册：「这是我走镖三十年总结的心法，没有惊天动地的武学，有的只是活命的道理。我想传给你。」",
+      "text": "王铁将你叫到城外空地，神情郑重：「我这把老骨头，能动的日子不多了。」\n\n他缓缓取出一本泛黄的薄册：「这是我走镖三十年总结的心法，没有惊天动地的武学，有的只是活命的道理——受伤了怎么撑，绝境里怎么找出路，被人背刺了怎么继续走。」\n\n他顿了顿，语气罕见地有些哽咽：「我想传给你。」",
       "choices": [
         {
           "id": "accept_teaching",
-          "text": "双手接过，郑重承诺",
+          "text": "双手接过，郑重承诺会好好走下去",
           "effects": {
             "attributes": { "strength": 2, "innerForce": 1, "constitution": 1 },
             "flags": { "wang_final_teaching": true },
             "npcAffinity": { "wang_tie": 20 },
-            "narrative": "你跪地行礼，王铁扶起你，笑得很开心：「去吧，好好活着——比什么都强。」"
+            "narrative": "你跪地行礼，王铁扶起你，手掌粗糙而有力。他笑得很开心，皱纹都舒展开来：「去吧，好好活着——比什么都强。」那本册子，你收进怀里，比任何宝贝都重。"
+          }
+        },
+        {
+          "id": "share_own_story",
+          "text": "接过手册，也将自己这一世走过的路，坦诚说给他听",
+          "effects": {
+            "attributes": { "comprehension": 1, "luck": 1 },
+            "flags": { "wang_heart_talk": true },
+            "npcAffinity": { "wang_tie": 20 },
+            "narrative": "你们一老一少坐在空地上，从日暮谈到星出。王铁少见地动了真情，末了低声说：「老汉这辈子，总觉得有些遗憾。今日听你说这些，倒觉得……值了。」那一夜，风很轻。"
           }
         }
       ]
@@ -76,7 +105,7 @@
       "level": 1,
       "title": "一场切磋",
       "minAffinity": 20,
-      "text": "李云舒拦住你，眼神清亮：「听说你最近武艺见长，想和我比划比划？」\n\n她手按剑柄，虽是邀战，却隐隐有几分期待。",
+      "text": "李云舒拦住你，眼神清亮：「听说你最近武艺见长，想和我比划比划？」\n\n她手按剑柄，虽是邀战，却隐隐有几分期待。你知道她出身武林世家，功底扎实，这一战败多胜少——但正因如此，才能看清自己的真实水准。\n\n她侧头看你：「怎么，不敢？」",
       "choices": [
         {
           "id": "accept_spar",
@@ -84,16 +113,26 @@
           "effects": {
             "attributes": { "agility": 1, "strength": 1 },
             "npcAffinity": { "li_yunshu": 15 },
-            "narrative": "两人过了数十招，你虽落了下风，却悟到身法上诸多不足。李云舒点头：「有进步，不错。」"
+            "narrative": "两人过了数十招，你虽落了下风，却悟到身法上诸多不足。李云舒收招，点头道：「有进步，真的不错。」语气里带着一丝藏不住的赞许。"
           }
         },
         {
           "id": "decline_nicely",
-          "text": "笑着婉拒，改日再约",
+          "text": "笑着婉拒，说时机未到，改日定不推辞",
           "effects": {
             "attributes": { "comprehension": 1 },
             "npcAffinity": { "li_yunshu": 8 },
-            "narrative": "她微微失望地收手，但随即笑道：「行吧，改日再说。」"
+            "narrative": "她微微失望地收手，但随即笑道：「行吧，我记着这句话。」听起来是在开玩笑，眼神里却有一丝认真。"
+          }
+        },
+        {
+          "id": "show_footwork",
+          "text": "不答话，以一套灵动的连续身法无声应答",
+          "requirements": { "minAttributes": { "agility": 10 } },
+          "effects": {
+            "attributes": { "agility": 2 },
+            "npcAffinity": { "li_yunshu": 18 },
+            "narrative": "你身形在她面前流动如水，一招接一招，连贯得几乎没有破绽。李云舒眼神倏地一亮，拍手道：「好！比上次判若两人！」她破天荒地向你请教了两式身法的细节。"
           }
         }
       ]
@@ -102,24 +141,34 @@
       "level": 2,
       "title": "家门困境",
       "minAffinity": 45,
-      "text": "李云舒难得有些慌乱地来找你：「家里出了点事，有人找麻烦，我……不太好出面。」\n\n她说的是本地一个小势力，一直在打她家产业的主意，已经闹了好几回了。",
+      "text": "李云舒难得有些慌乱地来找你：「家里出了点事，有人找麻烦，我……不太好出面。」\n\n她说的是本地一个小势力，觊觎她家的商路已久，近来愈发明目张胆——砸摊子、逼伙计、拦路收费，闹了好几回了。她不是没有能力解决，只是牵扯太多，一出手就是大动静，连累更多人。\n\n「我知道这事不该拖累你，但……」她欲言又止。",
       "choices": [
         {
           "id": "help_directly",
-          "text": "我去替你出头",
+          "text": "我去替你出头，不必多说",
           "effects": {
             "attributes": { "reputation": 2 },
             "npcAffinity": { "li_yunshu": 20 },
-            "narrative": "你登门交涉，气场十足，对方掂量了一番，悻悻而去。李云舒望着你的背影，若有所思。"
+            "narrative": "你登门交涉，气场沉稳而凌厉，将对方的算盘一一点破。对方掂量了一番，悻悻而去。李云舒望着你的背影，沉默了很久，声音有些轻：「谢谢。」"
           }
         },
         {
           "id": "help_plan",
-          "text": "帮她想个两全其美的办法",
+          "text": "帮她想个两全其美的办法，不硬碰硬",
           "effects": {
             "attributes": { "comprehension": 1, "reputation": 1 },
             "npcAffinity": { "li_yunshu": 15 },
-            "narrative": "你们商量了半晚，终于想出一个让对方知难而退的策略。她第一次对你微微一笑：「谢谢。」"
+            "narrative": "你们商量了半晚，终于想出一个让对方知难而退、又不伤体面的策略。事情解决后，她第一次对你露出不带戒备的笑：「没想到你挺能想。」"
+          }
+        },
+        {
+          "id": "rally_jianghu",
+          "text": "联络在场的江湖朋友，借声势压制对方",
+          "requirements": { "minAttributes": { "reputation": 8 } },
+          "effects": {
+            "attributes": { "reputation": 2, "comprehension": 1 },
+            "npcAffinity": { "li_yunshu": 15 },
+            "narrative": "你登高一呼，召来几位认识你的江湖人，将那伙人团团围住。对方见势不妙，再不敢轻举妄动。李云舒看你的眼神，明显不一样了——里面有什么东西，在悄悄改变。"
           }
         }
       ]
@@ -128,7 +177,7 @@
       "level": 3,
       "title": "月下长谈",
       "minAffinity": 70,
-      "text": "夜里，你们在城墙上坐着，望着远处的灯火。李云舒难得说了很多——她的过去，她的剑，她对未来的迷茫。\n\n「你觉得，一个人该为了什么而活？」她忽然问你。",
+      "text": "夜里，你们在城墙上坐着，望着远处的灯火。李云舒难得说了很多——她的过去，她的剑，她第一次杀人后三天没睡着觉，她对未来的迷茫与恐惧。\n\n「你知道吗，有时候我怕极了。」她的声音很低，「不是怕死，是怕——不知道自己在为什么活着。」\n\n月光落在她侧脸上，你忽然觉得她从未这么真实过。\n\n「你觉得，一个人该为了什么而活？」",
       "choices": [
         {
           "id": "answer_conviction",
@@ -137,7 +186,7 @@
             "attributes": { "comprehension": 2, "luck": 1 },
             "npcAffinity": { "li_yunshu": 20 },
             "flags": { "li_heart_talk": true },
-            "narrative": "她沉默了很久，最后轻声说：「说得好。」那一晚的月色，格外皎洁。"
+            "narrative": "她沉默了很久，长到你以为她不会回答了。最后，她轻声说：「说得好。」那一晚的月色，格外皎洁。"
           }
         },
         {
@@ -146,7 +195,18 @@
           "effects": {
             "attributes": { "comprehension": 1, "reputation": 1 },
             "npcAffinity": { "li_yunshu": 15 },
-            "narrative": "她微微低头，没再说话。良久，轻轻道了声「嗯」。"
+            "narrative": "她微微低头，没再说话。良久，轻轻道了声「嗯」，像是对你，又像是对自己说的。"
+          }
+        },
+        {
+          "id": "answer_path",
+          "text": "也许问题本身就是答案——能问出这个问题，说明你还在前行",
+          "requirements": { "minAttributes": { "comprehension": 14 } },
+          "effects": {
+            "attributes": { "comprehension": 2, "innerForce": 1 },
+            "npcAffinity": { "li_yunshu": 20 },
+            "flags": { "li_deep_talk": true },
+            "narrative": "她愣了好一会儿，然后忽然笑了起来——不是苦笑，是真正的笑，比月光还亮。「你这个人，」她说，「有时候真的很烦人。」但你知道，那是最高的夸奖。"
           }
         }
       ]
@@ -157,7 +217,7 @@
       "level": 1,
       "title": "茶馆问道",
       "minAffinity": 20,
-      "text": "神秘老者坐在茶馆角落，见你过来，眼神一闪：「年轻人，你的眼神里有些东西，让老夫颇感兴趣。」\n\n他捧着茶杯，似笑非笑：「可有什么想问的？」",
+      "text": "神秘老者坐在茶馆角落，见你过来，眼神一闪：「年轻人，你的眼神里有些东西，让老夫颇感兴趣。」\n\n他捧着茶杯，似笑非笑：「可有什么想问的？」\n\n茶馆里嘈嘈嚷嚷，但他所在的角落，却仿佛自成一片宁静。你坐下来，感觉到一种说不清的压迫感——不是恶意，是深不见底的气度。",
       "choices": [
         {
           "id": "ask_way",
@@ -165,7 +225,7 @@
           "effects": {
             "attributes": { "comprehension": 2, "innerForce": 1 },
             "npcAffinity": { "mysterious_elder": 15 },
-            "narrative": "他说了许多，听起来玄之又玄，却让你若有所悟。临走时他道：「境界不在招式，在于心。」"
+            "narrative": "他说了许多，听起来玄之又玄，却让你若有所悟——如同雾中忽然出现了一条路的轮廓。临走时他道：「境界不在招式，在于心。记住这句话，有一天你会明白的。」"
           }
         },
         {
@@ -174,7 +234,17 @@
           "effects": {
             "attributes": { "comprehension": 1 },
             "npcAffinity": { "mysterious_elder": 10 },
-            "narrative": "他哈哈一笑，摇了摇头：「不过是个过路人罢了。」眼神里却有一丝深意。"
+            "narrative": "他哈哈一笑，摇了摇头：「不过是个过路人罢了。」眼神里却有一丝深意——像是在考验你是否值得一个真实的答案。"
+          }
+        },
+        {
+          "id": "deduce_identity",
+          "text": "细细观察他，从掌茧、眼神与姿态中推断其来历",
+          "requirements": { "minAttributes": { "comprehension": 10 } },
+          "effects": {
+            "attributes": { "comprehension": 2 },
+            "npcAffinity": { "mysterious_elder": 15 },
+            "narrative": "你注意到他掌上茧的位置、眼神扫视的习惯，以及他茶杯放置的方式——「您曾经是一位剑宗级别的高手。」老者哈哈大笑：「聪明。那又如何？」但那之后，他与你说话，明显多了几分正视。"
           }
         }
       ]
@@ -183,7 +253,7 @@
       "level": 2,
       "title": "内功指引",
       "minAffinity": 50,
-      "text": "老者今日神情郑重：「你的根骨不错，但内功修炼走偏了一些。老夫愿意指点你重新打好根基。」\n\n这番话令你大为震惊——他竟然一眼看出了你多年来的隐患。",
+      "text": "老者今日神情郑重：「你的根骨不错，但内功修炼走偏了一些。老夫愿意指点你重新打好根基。」\n\n这番话令你大为震惊——他竟然一眼看出了你多年来的隐患，那是你自己都没有察觉的东西。\n\n「重修内功，短期内力道会下降，但根基牢固之后，上限将远超旧路。」他平静地说，「你愿不愿意，是你的事。」",
       "choices": [
         {
           "id": "accept_guidance",
@@ -191,7 +261,16 @@
           "effects": {
             "attributes": { "innerForce": 3, "comprehension": 1 },
             "npcAffinity": { "mysterious_elder": 20 },
-            "narrative": "三日讲授，让你整个内力体系焕然一新。你感觉眼前的路，前所未有地开阔。"
+            "narrative": "三日讲授，让你整个内力体系焕然一新。第三日夜间，你感觉眼前的路，前所未有地开阔——仿佛之前走的，不过是山脚，而现在，才看见了真正的山。"
+          }
+        },
+        {
+          "id": "ask_risks",
+          "text": "谨慎地询问重修内功的风险，确认安全后再答应",
+          "effects": {
+            "attributes": { "innerForce": 1, "comprehension": 2 },
+            "npcAffinity": { "mysterious_elder": 12 },
+            "narrative": "老者赞许地点头：「知道谨慎，比莽撞强。」他细细讲解了重修的三道关口，尤其是第二关的险处。有了他的引导，那道坎你走得格外稳。「此后，这条路上，不必再怕了。」"
           }
         }
       ]
@@ -200,16 +279,256 @@
       "level": 3,
       "title": "真名与来历",
       "minAffinity": 75,
-      "text": "老者负手而立，望着远山，久久不语。最终转身，眼神深邃如渊：\n\n「既然你我缘分至此，有些事该告诉你了。老夫当年，也曾与天魔一战……未竟之事，或许要由你来了结了。」",
+      "text": "老者负手而立，望着远山，久久不语。天边的云变幻着形状，你们就这样沉默地站着，仿佛时间已经不重要了。\n\n最终他转过身，眼神深邃如渊：\n\n「既然你我缘分至此，有些事该告诉你了。」\n\n「老夫当年，也曾与天魔一战……是我败了，败得体无完肤。此后隐遁于此，原以为余生与世无争。但有些事，不由人不想——那未竟之事，或许要由你来了结了。」",
       "choices": [
         {
           "id": "accept_legacy",
-          "text": "肃然起敬，承担这份托付",
+          "text": "肃然起敬，郑重承担这份托付",
           "effects": {
             "attributes": { "innerForce": 3, "comprehension": 2 },
             "flags": { "elder_revelation": true },
             "npcAffinity": { "mysterious_elder": 25 },
-            "narrative": "他叹了口气，将一枚玉牌交给你：「持此入魔宫，或有用处。此后，保重。」"
+            "narrative": "他叹了口气，将一枚玉牌交给你：「持此入魔宫，或有用处。此后，保重。」他转过身去，你知道，这一别或许是最后一别。走了很远，你回头——他还站在原处，身形如山。"
+          }
+        },
+        {
+          "id": "ask_battle_detail",
+          "text": "追问当年那场战斗的细节，探清天魔的真正实力",
+          "effects": {
+            "attributes": { "comprehension": 1, "innerForce": 1 },
+            "flags": { "tianmo_intel": true },
+            "npcAffinity": { "mysterious_elder": 15 },
+            "narrative": "老者沉默良久，终于将天魔几处要害和战法悉数相告，直到月升中天方才说完。那些话，如同刻进你的骨髓。「知道了，又如何？」他最后问。你回答：「知道了，才能赢。」他沉默，然后，极轻地点了点头。"
+          }
+        }
+      ]
+    }
+  ],
+  "han_shuang": [
+    {
+      "level": 1,
+      "title": "刀下问剑",
+      "minAffinity": 25,
+      "text": "在一处武人聚集的演武场，你注意到角落里站着一个冷面男子——左颊一道深疤，剑悬腰侧，目光如刀，将场上每个人的出招都默默收入眼底。\n\n比武结束后，他朝你走来，语气淡漠得像一阵冷风：「你的剑路，有点意思。」\n\n沉默片刻，他补了一句：「想试试吗？」\n\n旁边的人识趣地散开了。你知道，这不只是一场比试——他在判断你这个人值不值得他继续看下去。",
+      "choices": [
+        {
+          "id": "accept_duel",
+          "text": "迎上他的目光，点头应战",
+          "effects": {
+            "attributes": { "agility": 1, "strength": 1 },
+            "npcAffinity": { "han_shuang": 15 },
+            "narrative": "你们交手不过十招，他便收剑：「还行。」这两个字，从他嘴里说出来，分量不轻。你虽落了下风，却察觉出他的剑里藏着一种奇异的哀意——不是愤怒，更像是一种长久以来无处安放的东西。"
+          }
+        },
+        {
+          "id": "decline_calmly",
+          "text": "沉静地摇头，说：时机不对",
+          "effects": {
+            "attributes": { "comprehension": 1 },
+            "npcAffinity": { "han_shuang": 8 },
+            "narrative": "他凝视你片刻，没有嘲讽，只是转身离开。走出几步，他说了一句：「知道什么时候不该出剑，也算一种本事。」你不确定那算不算夸奖。"
+          }
+        },
+        {
+          "id": "sense_sorrow",
+          "text": "以内力感知他剑意中隐藏的哀愁，轻声问：「你的剑，在等什么？」",
+          "requirements": { "minAttributes": { "innerForce": 10 } },
+          "effects": {
+            "attributes": { "innerForce": 1, "comprehension": 1 },
+            "npcAffinity": { "han_shuang": 18 },
+            "narrative": "他猛地顿住。半晌，他没有回答，只是重新看了你一眼——这一次，那道目光里，除了审视，还多了一丝说不清道不明的东西。「以后别问这种问题，」他说，「会惹麻烦的。」"
+          }
+        }
+      ]
+    },
+    {
+      "level": 2,
+      "title": "铁幕之夜",
+      "minAffinity": 55,
+      "text": "夜市的灯火将熄未熄，一条僻静的巷子里，你听见兵刃相交的声响。\n\n转角而入，你看见韩霜独自面对三个黑衣人。他并不慌乱，但三人成犄角之势，显然是有备而来。\n\n「滚开，」他对你说，语气平静，「这是我的事。」\n\n但你注意到，他左臂已经挂彩——那件事，不关你的事？也许。但你已经站在这里了。",
+      "choices": [
+        {
+          "id": "charge_in",
+          "text": "不由分说，冲入战圈护住他的侧翼",
+          "effects": {
+            "combat": "escort_leader",
+            "npcAffinity": { "han_shuang": 20 },
+            "narrative": "那一战，你们背靠背地打完了最后一个人。等尘埃落定，他沉默了很久，终于低声道：「欠你一个。」对他而言，这几个字，重比千金。"
+          }
+        },
+        {
+          "id": "flank",
+          "text": "绕到外围，断其后路，让他无后顾之忧",
+          "effects": {
+            "attributes": { "agility": 1, "reputation": 1 },
+            "npcAffinity": { "han_shuang": 15 },
+            "narrative": "你的行动无声无息，三人退无可退，顾此失彼。战事很快结束。他看了你一眼：「你，有点东西。」那是他难得说出的赞语。"
+          }
+        },
+        {
+          "id": "intimidate",
+          "text": "以声名与气场镇压全场，喝令来人离开",
+          "requirements": { "minAttributes": { "reputation": 8 } },
+          "effects": {
+            "attributes": { "reputation": 2 },
+            "flags": { "han_threat_resolved": true },
+            "npcAffinity": { "han_shuang": 12 },
+            "narrative": "你踏前一步，沉声道出自己的名号，将眼前的局势点透了三分。三人相顾，脚步渐渐踌躇。最终，悻悻散去。韩霜望着你，神色复杂：「你这法子，比剑还有用。」"
+          }
+        }
+      ]
+    },
+    {
+      "level": 3,
+      "title": "疤痕之下",
+      "minAffinity": 80,
+      "text": "深夜，韩霜坐在河边，手里握着一枚旧铁牌，久久不动。你走近，他没有转身，只说：「坐吧。」\n\n那是他第一次主动叫你坐下。\n\n很久之后，他开了口——那道疤，是他结拜兄长留下的。他们曾共事一门，情同手足。然而那人为了势力，一夜间将整个门派出卖，数十条性命，灰飞烟灭。他是唯一的幸存者。\n\n「我活下来，就是为了杀他，」他的声音很平，「我用了七年，终于等到了机会。」\n\n他停顿了很久。「但那一剑，我没有刺下去。我不知道为什么。」\n\n河水流过，风声轻微。",
+      "choices": [
+        {
+          "id": "support_vengeance",
+          "text": "那人罪有应得，你只是在完成应尽的事",
+          "effects": {
+            "attributes": { "strength": 1, "reputation": 1 },
+            "flags": { "han_vengeance_path": true },
+            "npcAffinity": { "han_shuang": 15 },
+            "narrative": "他听完，闭上眼睛，沉默了一会儿：「也许吧。」那枚铁牌握得更紧了一些。你不知道那是赞同，还是说给自己听。"
+          }
+        },
+        {
+          "id": "counsel_peace",
+          "text": "也许，那一剑没刺下去，是因为你自己也不确定——仇恨是否真能了结一切",
+          "effects": {
+            "attributes": { "comprehension": 2, "luck": 1 },
+            "flags": { "han_peace_path": true },
+            "npcAffinity": { "han_shuang": 20 },
+            "narrative": "他长久地沉默，最终将那枚铁牌投入河中。「也许，」他说，「我只是累了。」那是他这辈子最接近坦白的一句话。那一夜，你们就这样坐到天亮，什么也没有再说。"
+          }
+        },
+        {
+          "id": "reveal_guilt",
+          "text": "你看穿了他真正的执念：不是仇恨，是无法原谅自己独自活下来的愧疚",
+          "requirements": { "minAttributes": { "comprehension": 18 } },
+          "effects": {
+            "attributes": { "comprehension": 2, "innerForce": 2 },
+            "flags": { "han_revelation": true },
+            "npcAffinity": { "han_shuang": 25 },
+            "narrative": "他猛地转过头看你，眼神像被什么刺中了。良久，他低下头，双肩微微颤动。「闭嘴，」他说，声音却哑了，「你怎么……」他没有说完。那一夜，他哭了——你装作没看见。但从此之后，他的剑里，那道哀意，淡了一些。"
+          }
+        }
+      ]
+    }
+  ],
+  "su_qing": [
+    {
+      "level": 1,
+      "title": "山道偶遇",
+      "minAffinity": 20,
+      "text": "一场遭遇战之后，你坐在山道边的石头上，捂着伤口，周围寂静得只剩风声。\n\n雾气中，一个背着大药箱的身影出现了，蓝色的衣裙沾着露水。她俯身检查你的伤势，动作干净利落，半点不拖泥带水。\n\n「别动。」她说，语气像是在对着一个不听话的患者，「伤口深了，你自己包扎不来。」\n\n她没有问你为什么受伤，也没有说什么暖心的话，只是专注地处理伤口。你看着她微微蹙着眉的侧脸，忽然觉得——这个人，心里装着的，不止是眼前这点事。",
+      "choices": [
+        {
+          "id": "chat_warmly",
+          "text": "感激道谢，想多聊几句",
+          "effects": {
+            "attributes": { "reputation": 1 },
+            "npcAffinity": { "su_qing": 15 },
+            "narrative": "她边包扎边简短地应答，话不多，但你发觉她并非冷漠——只是不惯于闲聊。临走前她说：「下次出门，带足金疮药。」那一句，像是关心，又像是埋怨。"
+          }
+        },
+        {
+          "id": "ask_teacher",
+          "text": "好奇她的医术师承，追问几句",
+          "effects": {
+            "attributes": { "comprehension": 1 },
+            "flags": { "asked_su_teacher": true },
+            "npcAffinity": { "su_qing": 12 },
+            "narrative": "她手上不停，回答却停顿了一下：「跟一个人学的。」简短而结束。你觉得那一停顿，装着不少东西，但她没有继续说，你也没有再问。"
+          }
+        },
+        {
+          "id": "notice_sadness",
+          "text": "静静观察她的神情，感知到那份若有若无的忧愁，轻声问：「你在找什么人？」",
+          "requirements": { "minAttributes": { "comprehension": 8 } },
+          "effects": {
+            "attributes": { "comprehension": 1, "luck": 1 },
+            "flags": { "noticed_su_sadness": true },
+            "npcAffinity": { "su_qing": 18 },
+            "narrative": "她的手微微一顿。「你怎么……」她抬起头，仔细看了你一眼，然后重新低下头去，「没什么。只是习惯性地往前走而已。」但那之后，她在离开前，多停了一会儿。"
+          }
+        }
+      ]
+    },
+    {
+      "level": 2,
+      "title": "青心草",
+      "minAffinity": 45,
+      "text": "苏青找到你，神情比平日多了一丝急迫。\n\n「有个孩子，毒入脏腑，我有解法，但需要一味药——青心草，只生在南边那片峡谷的崖壁上。」\n\n那片峡谷，你知道，如今盘踞着一伙走投无路的溃兵，穷凶极恶，等闲人不敢靠近。\n\n「我自己去。」她说，语气平静，像是在说一件理所当然的事。\n\n但你看见她拳头握着，关节微微发白。",
+      "choices": [
+        {
+          "id": "escort_her",
+          "text": "拦住她：「你负责认药，我负责开路。」",
+          "effects": {
+            "combat": "escort_leader",
+            "npcAffinity": { "su_qing": 20 },
+            "narrative": "一路上你护在她前面，她在你身后快步采药，动作比你以为的快得多。回来的路上，孩子得救了。她没有多说什么，只是对你点了点头——但那个点头，分量不同。"
+          }
+        },
+        {
+          "id": "guide_path",
+          "text": "凭记忆描述一条更隐蔽的小路，绕过溃兵的营地",
+          "effects": {
+            "attributes": { "comprehension": 1, "agility": 1 },
+            "npcAffinity": { "su_qing": 15 },
+            "narrative": "她按你说的路走，果然安然取回了药草。事后她来向你道谢：「那条路……你是怎么知道的？」你随口一说，她却认真地记下了。"
+          }
+        },
+        {
+          "id": "sense_herbs",
+          "text": "以内力感知周围气场，为她锁定青心草聚集的方位",
+          "requirements": { "minAttributes": { "innerForce": 12 } },
+          "effects": {
+            "attributes": { "innerForce": 2, "comprehension": 1 },
+            "flags": { "su_herb_found": true },
+            "npcAffinity": { "su_qing": 18 },
+            "narrative": "你闭目凝神，感受空气中那一缕草木的生气，缓缓指向一个方向：「那里，离崖顶三丈。」她愣了愣，然后取出一张小册子，认真记下了这种方法，「你这……是在内功上颇有造诣。」那是她第一次用「造诣」这个词评价你。"
+          }
+        }
+      ]
+    },
+    {
+      "level": 3,
+      "title": "别离之药",
+      "minAffinity": 70,
+      "text": "你找到苏青时，她正在收拾药箱，动作仔细而缓慢，像是在和什么东西道别。\n\n「我要走了，」她说，「找到线索了——我师父，在北边，还活着。」\n\n她把一个小瓷瓶递给你：「这是解我独门配制的一种毒的药。你大约用不到，但……以防万一。」\n\n她停了很长时间，像是还有什么话想说，却找不到开口的方式。窗外，天色已晚。",
+      "choices": [
+        {
+          "id": "give_parting_gift",
+          "text": "取出自己珍藏的一件东西送给她，祝她一路顺遂",
+          "effects": {
+            "attributes": { "reputation": 1, "luck": 2 },
+            "flags": { "su_parting_gift": true },
+            "npcAffinity": { "su_qing": 20 },
+            "narrative": "她盯着你手里的东西，沉默了很久，才伸手接过来：「谢谢你。」声音很轻，却比任何时候都更真实。出了门，她没有回头，但你看见她把那件东西握在手心里，攥得很紧。"
+          }
+        },
+        {
+          "id": "walk_with_her",
+          "text": "「我送你一段路。」",
+          "effects": {
+            "attributes": { "agility": 1 },
+            "flags": { "su_companion": true },
+            "npcAffinity": { "su_qing": 15 },
+            "narrative": "你们走了将近一个时辰，大部分时间沉默着，却没有一丝尴尬。分叉口处她转身：「保重。」你知道，对她来说，这两个字，不是客套。"
+          }
+        },
+        {
+          "id": "speak_truth",
+          "text": "「你找到的人，也许已经不是记忆里的那个了。不管如何，你都要准备好。」",
+          "requirements": { "minAttributes": { "comprehension": 14 } },
+          "effects": {
+            "attributes": { "comprehension": 2, "innerForce": 1 },
+            "flags": { "su_enlightenment": true },
+            "npcAffinity": { "su_qing": 22 },
+            "narrative": "她停住了脚步，背对着你，很久没有动。「我知道，」她最后说，声音有些哑，「但我还是得去。」她转过身，眼圈微红，却在笑：「谢谢你告诉我这个——哪怕很残忍。」那一刻，你觉得她真正长大了，或者说，放下了什么。"
           }
         }
       ]

@@ -963,6 +963,65 @@
     ]
   },
   {
+    "id": "meet_han_shuang",
+    "type": "交友",
+    "weight": 4,
+    "title": "刀疤剑客",
+    "text": "演武场边，人群里有个冷面男子格外显眼——左颊一道深疤，剑悬腰侧，目光锐利地打量着每一个出招的人。周围的人有意无意地与他保持着距离。\n\n他注意到了你，沉默片刻后，朝你方向抬了抬下颌：「你，来这里干什么？」",
+    "conditions": { "flags": { "met_han_shuang": false }, "minAgeYears": 16 },
+    "choices": [
+      {
+        "id": "introduce_self",
+        "text": "坦然报出名号，直言是为习武而来",
+        "effects": {
+          "flags": { "met_han_shuang": true },
+          "npcAffinity": { "han_shuang": 20 },
+          "attributes": { "strength": 1 },
+          "narrative": "他盯着你看了片刻，轻哼一声：「还算老实。」转身离开前丢下一句：「我叫韩霜。以后别挡我的路。」那算是他给过你的最好评价。"
+        }
+      },
+      {
+        "id": "observe_quietly",
+        "text": "不答话，以沉默回应，打量他的剑法",
+        "effects": {
+          "flags": { "met_han_shuang": true },
+          "npcAffinity": { "han_shuang": 12 },
+          "attributes": { "comprehension": 1 },
+          "narrative": "你们就这样对视了片刻。他忽然皱起眉，随即松开，低声道：「有点意思。」随手抛给你一块碎银，「算我欠你一顿饭。」你们就这样莫名其妙地认识了。"
+        }
+      }
+    ]
+  },
+  {
+    "id": "meet_su_qing",
+    "type": "交友",
+    "weight": 4,
+    "title": "游方医者",
+    "text": "你在镇口见到一个背着大药箱的年轻女子，正蹲在路边为一个跌破了膝盖的孩子包扎伤口，手法娴熟，旁边一圈围观的人议论纷纷。\n\n孩子的母亲掏出钱来，她摆了摆手：「不用，顺手的事。」\n\n她站起来，与你目光相交，平静地点了点头，像是打了个招呼，又像什么都没有。",
+    "conditions": { "flags": { "met_su_qing": false }, "minAgeYears": 16 },
+    "choices": [
+      {
+        "id": "talk_to_her",
+        "text": "上前搭话，问她是否常在此地",
+        "effects": {
+          "flags": { "met_su_qing": true },
+          "npcAffinity": { "su_qing": 18 },
+          "attributes": { "constitution": 1 },
+          "narrative": "「不常，走到哪里算哪里。」她简短地回答，补了一句：「你身上有旧伤，左肋，没有好利索。」你愣了一下——她已经背起药箱准备离开，「去找人看看，别拖。」那是她第一次主动对你说话。"
+        }
+      },
+      {
+        "id": "help_carry",
+        "text": "见她药箱沉重，主动帮忙提一段路",
+        "effects": {
+          "flags": { "met_su_qing": true },
+          "npcAffinity": { "su_qing": 22 },
+          "narrative": "她看了看你，没有拒绝。一路上话不多，但走到分叉口时，她驻足：「谢谢。」停顿了一下，「我叫苏青。以后若是受了伤，可以来找我。」不是客套，是认真的。"
+        }
+      }
+    ]
+  },
+  {
     "id": "hidden_boss_appears",
     "type": "boss",
     "weight": 0,
