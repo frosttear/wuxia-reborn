@@ -397,11 +397,26 @@ const Engine = {
         UI.showEvent(displayEvent, bondEvent.choices, this.state);
     },
 
+    allBondsComplete(char) {
+        const bonds = this.state.bonds;
+        for (const npcId in bonds) {
+            const maxLevel = bonds[npcId].length;
+            if ((char.bondLevels[npcId] || 0) < maxLevel) return false;
+        }
+        return true;
+    },
+
     startCombat(enemy, postNarrative) {
         const { char } = this.state;
         const job = this.getJob(char.job);
         const cs = Combat.initState(char, enemy, job);
         cs.postNarrative = postNarrative || '';
+        if (enemy.isHiddenBoss && this.allBondsComplete(char)) {
+            cs.allBondsBonus = true;
+            UI.addLog('【羁绊之力】王铁、李云舒、神秘老者……这一世结下的所有情谊，此刻化为无形之力，护持于你！', 'unlock');
+        } else if (enemy.isHiddenBoss && !this.allBondsComplete(char)) {
+            UI.addLog('【羁绊未满】你感到胸中力量空缺……或许，集齐所有羁绊才能撼动此敌。', 'info');
+        }
         this.state.combatState = cs;
         this.state.gamePhase = 'combat';
         UI.showCombatOverlay(this.state);

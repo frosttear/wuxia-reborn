@@ -71,10 +71,14 @@ const Combat = {
     // Process one player action; mutates cs and char
     // Returns { combatOver, result: 'won'|'lost'|'fled'|null }
     processTurn(action, cs, char, job) {
-        const playerAtk = Character.getAttackPower(char, job);
+        let playerAtk = Character.getAttackPower(char, job);
+        if (cs.allBondsBonus) playerAtk += 60;
         const playerDef = Character.getDefensePower(char, job);
         cs.turn++;
         const lines = [];
+        if (cs.allBondsBonus && cs.turn === 1) {
+            lines.push('<b style="color:#c9a84c">【羁绊之力】江湖情谊化为无形刃芒——攻击力+60！</b>');
+        }
         let combatOver = false, result = null;
 
         if (action === 'flee') {
