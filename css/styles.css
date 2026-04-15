@@ -361,8 +361,11 @@ button:disabled { opacity: 0.4; cursor: not-allowed; }
     border-color: rgba(201,168,76,0.3);
 }
 .visit-npc-btn:hover:not(:disabled) { border-color: var(--accent); background: rgba(201,168,76,0.1); }
+.visit-npc-btn.visit-bond-ready { border-color: rgba(92,191,122,0.5); background: rgba(92,191,122,0.07); }
+.visit-npc-btn.visit-bond-ready:hover:not(:disabled) { border-color: var(--green); background: rgba(92,191,122,0.15); }
 .visit-npc-name { font-size: 0.88rem; color: var(--accent2); font-weight: bold; }
 .visit-npc-info { font-size: 0.73rem; color: var(--muted); }
+.visit-bond-ready .visit-npc-info { color: var(--green); }
 
 /* ─── Combat Overlay ─── */
 .combat-overlay {

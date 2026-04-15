@@ -504,12 +504,18 @@ const UI = {
         if (panel.style.display !== 'none') { panel.style.display = 'none'; return; }
         const visits = Engine.getAvailableVisits();
         if (visits.length === 0) return;
-        panel.innerHTML = visits.map(v =>
-            `<button class="visit-npc-btn" onclick="Engine.visitNPC('${v.npcId}'); UI.visitPanel.style.display='none'">
+        panel.innerHTML = visits.map(v => {
+            const infoText = v.bondReady
+                ? `💞 第${v.bondEvent.level}章「${v.bondEvent.title}」可触发`
+                : v.bondEvent
+                    ? `好感 ${v.affinity}／${v.bondEvent.minAffinity}（差 ${v.bondEvent.minAffinity - v.affinity}）`
+                    : `羁绊圆满  好感 ${v.affinity}`;
+            const cls = v.bondReady ? 'visit-npc-btn visit-bond-ready' : 'visit-npc-btn';
+            return `<button class="${cls}" onclick="Engine.visitNPC('${v.npcId}'); UI.visitPanel.style.display='none'">
                 <span class="visit-npc-name">${v.npc.name}</span>
-                <span class="visit-npc-info">好感 ${v.affinity}  第${v.bondEvent.level}章「${v.bondEvent.title}」</span>
-            </button>`
-        ).join('');
+                <span class="visit-npc-info">${infoText}</span>
+            </button>`;
+        }).join('');
         panel.style.display = 'block';
     },
 

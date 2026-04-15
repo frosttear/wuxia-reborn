@@ -343,22 +343,23 @@ const Engine = {
         }
     },
 
-    // Return list of NPCs the player can currently visit for a bond event
+    // Return list of NPCs the player can currently visit
     getAvailableVisits() {
         const { char, bonds, npcs } = this.state;
         if (!char || !bonds) return [];
         const available = [];
         for (const npcId in bonds) {
+            if (!NPCSystem.isMet(char, npcId)) continue;
             const npc = npcs.find(n => n.id === npcId);
             if (!npc) continue;
             const npcBonds = bonds[npcId];
             const currentLevel = char.bondLevels[npcId] || 0;
             const nextEvent = npcBonds.find(b => b.level === currentLevel + 1);
-            if (!nextEvent) continue;
-            if (char.bondEventsDone[`${npcId}_${nextEvent.level}`]) continue;
             const affinity = NPCSystem.getAffinity(char, npcId);
-            if (affinity < nextEvent.minAffinity) continue;
-            available.push({ npcId, npc, bondEvent: nextEvent, affinity, currentLevel });
+            const bondReady = !!(nextEvent &&
+                !char.bondEventsDone[`${npcId}_${nextEvent.level}`] &&
+                affinity >= nextEvent.minAffinity);
+            available.push({ npcId, npc, bondEvent: nextEvent || null, affinity, currentLevel, bondReady });
         }
         return available;
     },
@@ -368,9 +369,6 @@ const Engine = {
         if (!char || this.state.gamePhase !== 'idle') return;
         const npcBonds = this.state.bonds[npcId];
         if (!npcBonds) return;
-        const currentLevel = char.bondLevels[npcId] || 0;
-        const bondEvent = npcBonds.find(b => b.level === currentLevel + 1);
-        if (!bondEvent) return;
 
         // Advance 1 month for the visit
         const job = this.getJob(char.job);
@@ -384,23 +382,42 @@ const Engine = {
         UI.renderCharacter(char, this.state.jobs);
 
         const npc = this.state.npcs.find(n => n.id === npcId);
-        const inherited = char.inheritedBonds[npcId];
-        const prefix = inherited && inherited >= bondEvent.level
-            ? `【前世记忆】你隐约记得与${npc.name}曾有过这一段故事……\n\n`
-            : '';
-        const displayEvent = Object.assign({}, bondEvent, {
-            text: prefix + bondEvent.text,
-            title: `羁绊·${npc ? npc.name : npcId}·第${bondEvent.level}章`,
-            type: '羁绊'
-        });
+        const currentLevel = char.bondLevels[npcId] || 0;
+        const bondEvent = npcBonds.find(b => b.level === currentLevel + 1);
+        const affinity = NPCSystem.getAffinity(char, npcId);
+        const bondReady = !!(bondEvent &&
+            !char.bondEventsDone[`${npcId}_${bondEvent.level}`] &&
+            affinity >= bondEvent.minAffinity);
 
-        this.state.pendingChoice = {
-            event: displayEvent,
-            choices: bondEvent.choices,
-            bondInfo: { npcId, level: bondEvent.level }
-        };
-        this.state.gamePhase = 'choosing';
-        UI.showEvent(displayEvent, bondEvent.choices, this.state);
+        if (bondReady) {
+            // Trigger full bond chapter event
+            const inherited = char.inheritedBonds[npcId];
+            const prefix = inherited && inherited >= bondEvent.level
+                ? `【前世记忆】你隐约记得与${npc.name}曾有过这一段故事……\n\n`
+                : '';
+            const displayEvent = Object.assign({}, bondEvent, {
+                text: prefix + bondEvent.text,
+                title: `羁绊·${npc ? npc.name : npcId}·第${bondEvent.level}章`,
+                type: '羁绊'
+            });
+            this.state.pendingChoice = {
+                event: displayEvent,
+                choices: bondEvent.choices,
+                bondInfo: { npcId, level: bondEvent.level }
+            };
+            this.state.gamePhase = 'choosing';
+            UI.showEvent(displayEvent, bondEvent.choices, this.state);
+        } else {
+            // Casual visit: small affinity boost
+            NPCSystem.changeAffinity(char, npcId, 3);
+            const newAffinity = NPCSystem.getAffinity(char, npcId);
+            const needed = bondEvent ? bondEvent.minAffinity : null;
+            const gap = needed !== null ? needed - newAffinity : null;
+            const gapNote = gap > 0 ? `（还需好感 +${gap} 可解锁第${bondEvent.level}章）` : '';
+            UI.addLog(`拜访了【${npc.name}】，闲聊了一会儿。好感 +3（当前 ${newAffinity}）${gapNote}`, 'result');
+            UI.renderAll(this.state);
+            this.saveGame();
+        }
     },
 
     allBondsComplete(char) {
