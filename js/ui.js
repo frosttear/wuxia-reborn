@@ -48,10 +48,9 @@ const UI = {
         const hpMax = Character.getHPMax(char, job);
         const ageYears = Character.getAgeYears(char);
         const ageMonths = Character.getAgeMonthsRemainder(char);
-        const maxYears = Math.floor(char.maxAgeMonths / 12);
 
         document.getElementById('charName').textContent = char.name;
-        document.getElementById('charAge').textContent = `${ageYears}岁${ageMonths > 0 ? ageMonths + '月' : ''} / 寿元${maxYears}年`;
+        document.getElementById('charAge').textContent = `${ageYears}岁${ageMonths > 0 ? ageMonths + '月' : ''}`;
         document.getElementById('charJob').textContent = job ? job.name : '无名小卒';
         document.getElementById('charRebirth').textContent = char.rebirthCount > 0 ? `第${char.rebirthCount}世轮回` : '初入江湖';
 
