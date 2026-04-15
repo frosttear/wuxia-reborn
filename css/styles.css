@@ -383,6 +383,10 @@ button:disabled { opacity: 0.4; cursor: not-allowed; }
 .start-form   { display: flex; flex-direction: column; gap: 10px; align-items: center; }
 .start-input  { background: var(--surface); border: 1px solid var(--border); color: var(--text); padding: 9px 16px; border-radius: 5px; font-family: inherit; font-size: 1rem; text-align: center; width: 200px; outline: none; }
 .start-input:focus { border-color: var(--accent); }
+.start-birth-row  { display: flex; align-items: center; gap: 10px; }
+.start-birth-label { font-size: 0.82rem; color: var(--muted); white-space: nowrap; }
+.start-select { background: var(--surface); border: 1px solid var(--border); color: var(--text); padding: 8px 10px; border-radius: 5px; font-family: inherit; font-size: 0.88rem; outline: none; cursor: pointer; }
+.start-select:focus { border-color: var(--accent); }
 
 .muted { color: var(--muted); }
 

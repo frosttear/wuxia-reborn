@@ -31,8 +31,11 @@ const Engine = {
         this.state.bonds = bonds;
     },
 
-    startNewGame(name, inheritedAttributes, legacyTalents) {
+    BIRTH_MONTH_NAMES: ['正月','二月','三月','四月','五月','六月','七月','八月','九月','十月','冬月','腊月'],
+
+    startNewGame(name, birthMonth, inheritedAttributes, legacyTalents) {
         const char = Character.create(name, inheritedAttributes || {}, legacyTalents || []);
+        char.birthMonth = birthMonth || 1;
         NPCSystem.initRelationships(char, this.state.npcs);
         const job = this.getJob(char.job);
         char.hp = Character.getHPMax(char, job);
@@ -41,8 +44,9 @@ const Engine = {
         this.state.seenEvents = new Set();
         this.saveGame();
         UI.renderAll(this.state);
+        const mName = this.BIRTH_MONTH_NAMES[char.birthMonth - 1];
         UI.addLog(`【${char.name}】的传奇，从此开始。`, 'system');
-        UI.addLog(`年龄：${Character.getAgeYears(char)}岁。一介无名，踏入江湖。`, 'system');
+        UI.addLog(`生于${mName}，年集16岁，踏入江湖。三十岁生辰日，天魔如约而至。`, 'system');
     },
 
     getJob(jobId) {
@@ -76,24 +80,26 @@ const Engine = {
             UI.addLog(`⚔ 你已满足晋升【${j.name}】的条件！可在右侧面板切换职业。`, 'unlock');
         }
 
-        // Hidden boss trigger: elder_revelation flag + sword_saint + age >= 36 (once only)
-        if (!char.flags.hidden_boss_triggered && char.flags.elder_revelation &&
-            char.job === 'sword_saint' && Character.getAgeYears(char) >= 36) {
-            char.flags.hidden_boss_triggered = true;
-            const hiddenBossEvent = this.state.events.find(e => e.id === 'hidden_boss_appears');
-            if (hiddenBossEvent) {
-                this.triggerEvent(hiddenBossEvent);
-                return;
-            }
-        }
+        // Birthday system: fires every 12 months starting from ageMonths=204 (17th birthday)
+        const isBirthday = char.ageMonths > 192 && char.ageMonths % 12 === 0;
+        if (isBirthday) {
+            const ageYears = Character.getAgeYears(char);
 
-        // Final boss trigger (only once, when at sword_saint and age >= 40)
-        if (!char.flags.boss_triggered && Character.getAgeYears(char) >= 40 &&
-            char.job === 'sword_saint') {
-            char.flags.boss_triggered = true;
-            const bossEvent = this.state.events.find(e => e.id === 'tianmo_appears');
-            if (bossEvent) {
-                this.triggerEvent(bossEvent);
+            if (ageYears >= 30) {
+                // 30th birthday — final boss, no job requirement
+                if (!char.flags.boss_triggered) {
+                    char.flags.boss_triggered = true;
+                    const bossEvent = this.state.events.find(e => e.id === 'tianmo_appears');
+                    if (bossEvent) { this.triggerEvent(bossEvent); return; }
+                }
+            } else if (ageYears === 25 && !char.flags.hidden_boss_triggered &&
+                       char.flags.elder_revelation && char.job === 'sword_saint') {
+                // 25th birthday — hidden boss (only if elder bond completed + sword_saint)
+                char.flags.hidden_boss_triggered = true;
+                const hiddenEvent = this.state.events.find(e => e.id === 'hidden_boss_appears');
+                if (hiddenEvent) { this.triggerEvent(hiddenEvent); return; }
+            } else {
+                this.triggerBirthdayEvent(ageYears);
                 return;
             }
         }
@@ -505,6 +511,39 @@ const Engine = {
         UI.showVictoryScreen(char);
     },
 
+    triggerBirthdayEvent(age) {
+        const { char } = this.state;
+        const mName = this.BIRTH_MONTH_NAMES[(char.birthMonth - 1) || 0];
+        const remaining = 30 - age;
+        let msg, attrs = null;
+
+        if (age === 17) {
+            msg = `【生辰】${mName}，你已${age}岁。初入江湖一年，天地广阔，前途未知。`;
+        } else if (age === 18) {
+            msg = `【生辰】${mName}，年满18岁。在江湖中，这个年纪已能独当一面。`;
+            attrs = { comprehension: 1 };
+        } else if (age === 20) {
+            msg = `【生辰】${mName}，弱冠之年。二十岁，正是建功立业的好时候。`;
+            attrs = { reputation: 1, strength: 1 };
+        } else if (age === 24) {
+            msg = `【生辰】${mName}，${age}岁。天魔之约，还有六年。时间，越来越少了。`;
+        } else if (age === 27) {
+            msg = `【生辰】${mName}，${age}岁。还有三年。江湖中走过的路，足够你面对天魔了吗？`;
+        } else if (age === 29) {
+            msg = `【生辰】${mName}，${age}岁。最后一年。天魔，明年生辰，如期而至。`;
+        } else {
+            msg = `【生辰】${mName}，${age}岁。天魔之约还有 ${remaining} 年。`;
+        }
+
+        UI.addLog(msg, 'system');
+        if (attrs) {
+            Character.applyAttributeChanges(char, attrs);
+            UI.renderCharacter(char, this.state.jobs);
+        }
+        UI.renderAll(this.state);
+        this.saveGame();
+    },
+
     // Ensure old saves have required fields
     migrateChar(char) {
         if (!char) return char;
@@ -512,12 +551,14 @@ const Engine = {
         if (!char.bondEventsDone)  char.bondEventsDone = {};
         if (!char.inheritedBonds)  char.inheritedBonds = {};
         if (!char.learnedSkills)   char.learnedSkills = [];
+        if (!char.birthMonth)      char.birthMonth = 1;
         return char;
     },
 
     executeRebirth(chosenTalentIds) {
         const { char, npcs } = this.state;
         const newChar = Rebirth.execute(char, chosenTalentIds, npcs);
+        newChar.birthMonth = char.birthMonth; // same fate, same birthday
         const job = this.getJob(newChar.job);
         newChar.hp = Character.getHPMax(newChar, job);
         this.migrateChar(newChar);
@@ -526,7 +567,8 @@ const Engine = {
         this.state.seenEvents = new Set();
         UI.clearLog();
         UI.renderAll(this.state);
-        UI.addLog(`✨ 轮回第 ${newChar.rebirthCount} 世。【${newChar.name}】再度降生，带着前世的记忆重走江湖。`, 'system');
+        const mName = this.BIRTH_MONTH_NAMES[newChar.birthMonth - 1];
+        UI.addLog(`✨ 轮回第 ${newChar.rebirthCount} 世。【${newChar.name}】再度降生。和上一世一样，生于${mName}。天魔之约，依然在候。`, 'system');
         this.saveGame();
     },
 

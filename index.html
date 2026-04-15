@@ -6,7 +6,7 @@
     <title>轮回江湖</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link href="https://fonts.googleapis.com/css2?family=Noto+Serif+SC:wght@400;700&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="css/styles.css?v=0.3.0">
+    <link rel="stylesheet" href="css/styles.css?v=0.4.0">
 </head>
 <body>
 
@@ -16,14 +16,30 @@
     <div class="start-sub">武侠 · 轮回 · 文字冒险</div>
     <div class="start-form">
         <input id="nameInput" class="start-input" type="text" placeholder="输入角色名" maxlength="8">
+        <div class="start-birth-row">
+            <span class="start-birth-label">出生月份</span>
+            <select id="birthMonthInput" class="start-select">
+                <option value="1">一月（正月）</option>
+                <option value="2">二月（杏月）</option>
+                <option value="3">三月（桃月）</option>
+                <option value="4">四月（槐月）</option>
+                <option value="5">五月（蒲月）</option>
+                <option value="6">六月（荷月）</option>
+                <option value="7">七月（瓜月）</option>
+                <option value="8">八月（桂月）</option>
+                <option value="9">九月（菊月）</option>
+                <option value="10">十月（良月）</option>
+                <option value="11">十一月（冬月）</option>
+                <option value="12">十二月（腊月）</option>
+            </select>
+        </div>
         <button id="startBtn" class="btn-confirm" style="width:200px; padding:10px">踏入江湖</button>
         <button id="continueBtn" class="btn-secondary" style="width:200px; padding:10px; display:none">继续前世</button>
     </div>
     <div style="font-size:0.75rem; color:var(--muted); max-width:320px; text-align:center; line-height:1.8;">
         一个武侠轮回故事。<br>
-        每世行走江湖，结识人物，磨砺武艺。<br>
-        死后轮回，携前世记忆，再踏征途。<br>
-        终有一日，天魔必败于你手。
+        每世行走江湖，结识人物，磨砺武艺。<br>        死后轮回，携前世记忆，再踏征途。<br>
+        <strong style="color:var(--accent)">三十岁生辰，天魔如约而至。</strong>
     </div>
 </div>
 
@@ -134,12 +150,12 @@
     </div>
 </div>
 
-<script src="js/character.js?v=0.3.0"></script>
-<script src="js/npc.js?v=0.3.0"></script>
-<script src="js/combat.js?v=0.3.0"></script>
-<script src="js/rebirth.js?v=0.3.0"></script>
-<script src="js/engine.js?v=0.3.0"></script>
-<script src="js/ui.js?v=0.3.0"></script>
+<script src="js/character.js?v=0.4.0"></script>
+<script src="js/npc.js?v=0.4.0"></script>
+<script src="js/combat.js?v=0.4.0"></script>
+<script src="js/rebirth.js?v=0.4.0"></script>
+<script src="js/engine.js?v=0.4.0"></script>
+<script src="js/ui.js?v=0.4.0"></script>
 <script>
 (async function() {
     await Engine.init();
@@ -152,10 +168,11 @@
 
     document.getElementById('startBtn').onclick = function() {
         const name = document.getElementById('nameInput').value.trim() || '无名';
+        const birthMonth = parseInt(document.getElementById('birthMonthInput').value) || 1;
         Engine.deleteSave();
         document.getElementById('startScreen').style.display = 'none';
         document.getElementById('gameScreen').style.display = 'flex';
-        Engine.startNewGame(name, {}, []);
+        Engine.startNewGame(name, birthMonth, {}, []);
     };
 
     document.getElementById('continueBtn').onclick = function() {
