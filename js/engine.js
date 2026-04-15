@@ -417,8 +417,26 @@ const Engine = {
             const newAffinity = NPCSystem.getAffinity(char, npcId);
             const needed = bondEvent ? bondEvent.minAffinity : null;
             const gap = needed !== null ? needed - newAffinity : null;
-            const gapNote = gap > 0 ? `（还需好感 +${gap} 可解锁第${bondEvent.level}章）` : '';
-            UI.addLog(`拜访了【${npc.name}】，闲聊了一会儿。好感 +3（当前 ${newAffinity}）${gapNote}`, 'result');
+            const gapNote = gap > 0
+                ? `好感 +3（当前 ${newAffinity}，距第${bondEvent.level}章还差 ${gap}）`
+                : `好感 +3（当前 ${newAffinity}）`;
+
+            // Pick from per-NPC affinity-tiered casual visit pool
+            const pools = this.state.bonds._casualVisits;
+            let visitText = null;
+            if (pools && pools[npcId]) {
+                const matching = pools[npcId].filter(t =>
+                    (t.minAffinity === undefined || newAffinity >= t.minAffinity) &&
+                    (t.maxAffinity === undefined || newAffinity < t.maxAffinity)
+                );
+                const tier = matching[Math.floor(Math.random() * matching.length)];
+                if (tier && tier.texts && tier.texts.length > 0) {
+                    visitText = tier.texts[Math.floor(Math.random() * tier.texts.length)];
+                }
+            }
+
+            UI.addLog(visitText || `拜访了【${npc.name}】，闲聊了一会儿。`, 'result');
+            UI.addLog(gapNote, 'info');
             UI.renderAll(this.state);
             this.saveGame();
         }
