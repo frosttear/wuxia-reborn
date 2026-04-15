@@ -59,6 +59,8 @@ const Combat = {
             fleeChance: 0.25,
             pendingSkill: null,   // enemy skill telegraphed, fires next turn
             usedSkills:   [],     // skill ids already used (array for serializability)
+            totalDmgDealt: 0,     // cumulative damage player dealt to enemy
+            totalDmgReceived: 0,  // cumulative damage player received
             log:        [],
             postNarrative: ''
         };
@@ -81,6 +83,7 @@ const Combat = {
                 const dmg = Math.max(1,
                     cs.enemyEffAtk - Math.floor(playerDef / 2) + Math.floor(Math.random() * 5));
                 Character.takeDamage(char, dmg);
+                cs.totalDmgReceived += dmg;
                 const ed = this._pick(this.ENEMY_ATTACK_DESCS);
                 lines.push(`逃跑失败！${cs.enemy.name}${ed}，你仓皇受击，损失 <b>${dmg}</b> 气血。`);
                 cs.fleeChance = Math.min(0.85, cs.fleeChance + 0.15);
@@ -96,6 +99,7 @@ const Combat = {
                     + Math.floor(Math.random() * 8) - 3);
                 if (isCrit) dmg = Math.floor(dmg * 1.5);
                 cs.enemyHp = Math.max(0, cs.enemyHp - dmg);
+                cs.totalDmgDealt += dmg;
                 const pd = this._pick(this.PLAYER_ATTACK_DESCS);
                 lines.push(`${pd}${isCrit ? '【<b>会心一击</b>】' : ''}，对方损失 <b>${dmg}</b> 气血（剩余 ${cs.enemyHp}）。`);
                 if (cs.enemyHp <= 0) { result = 'won'; combatOver = true; }
@@ -124,6 +128,7 @@ const Combat = {
                     lines.push(`${cs.enemy.name}${ed}——你【<b>灵巧闪避</b>】，未受伤害！`);
                 } else {
                     Character.takeDamage(char, eDmg);
+                    cs.totalDmgReceived += eDmg;
                     lines.push(`${cs.enemy.name}${ed}，你承受 <b>${eDmg}</b> 伤害${action === 'defend' ? '（防御减伤）' : ''}。`);
                     if (char.hp <= 0) { result = 'lost'; combatOver = true; }
                 }

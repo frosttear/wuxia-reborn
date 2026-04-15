@@ -466,6 +466,18 @@ const Engine = {
         }
     },
 
+    formatAttrGains(attrs) {
+        if (!attrs) return '';
+        const NAMES = {
+            strength: '力量', agility: '敏捷', constitution: '体质',
+            innerForce: '内力', comprehension: '悟性', luck: '运气', reputation: '声望'
+        };
+        return Object.entries(attrs)
+            .filter(([, v]) => v !== 0)
+            .map(([k, v]) => `${NAMES[k] || k}${v > 0 ? '+' : ''}${v}`)
+            .join('  ');
+    },
+
     endCombat(result, cs) {
         const { char } = this.state;
         const enemy = cs.enemy;
@@ -476,19 +488,26 @@ const Engine = {
 
         if (result === 'won') {
             UI.addLog(enemy.winNarrative, 'win');
-            if (enemy.winEffects) this.applyEffects({ attributes: enemy.winEffects });
+            const rewards = enemy.winEffects || {};
+            if (Object.keys(rewards).length > 0) this.applyEffects({ attributes: rewards });
             if (enemy.isHiddenBoss) {
                 char.flags.hidden_boss_beaten = true;
-                this.triggerVictory(true); // true ending
+                this.triggerVictory(true);
                 return;
             }
             if (enemy.isFinalBoss) { this.triggerVictory(false); return; }
-            // Increment kill counter and check thresholds
+            UI.addCombatSummary({
+                turns: cs.turn, dmgDealt: cs.totalDmgDealt,
+                dmgReceived: cs.totalDmgReceived, result: 'won',
+                rewards: this.formatAttrGains(rewards)
+            });
             char.kills = (char.kills || 0) + 1;
             this.checkKillThreshold(char);
+
         } else if (result === 'lost') {
             UI.addLog(enemy.loseNarrative, 'lose');
-            if (enemy.loseEffects) this.applyEffects({ attributes: enemy.loseEffects });
+            const loseRewards = enemy.loseEffects || {};
+            if (Object.keys(loseRewards).length > 0) this.applyEffects({ attributes: loseRewards });
             UI.renderCharacter(char, this.state.jobs);
             if (enemy.isHiddenBoss) {
                 UI.addLog('你击败了天魔，却败于那更深处的剑意。此生功亏一筑。下一世，再来。', 'system');
@@ -499,7 +518,11 @@ const Engine = {
                 this.triggerDeath('boss');
                 return;
             }
-            // Non-boss loss: injured state instead of death
+            UI.addCombatSummary({
+                turns: cs.turn, dmgDealt: cs.totalDmgDealt,
+                dmgReceived: cs.totalDmgReceived, result: 'lost',
+                rewards: this.formatAttrGains(loseRewards)
+            });
             char.hp = 1;
             char.injured = true;
             char.injuredMonths = 6;
@@ -508,7 +531,12 @@ const Engine = {
             UI.renderAll(this.state);
             this.saveGame();
             return;
+
         } else if (result === 'fled') {
+            UI.addCombatSummary({
+                turns: cs.turn, dmgDealt: cs.totalDmgDealt,
+                dmgReceived: cs.totalDmgReceived, result: 'fled', rewards: ''
+            });
             UI.addLog('你成功脱身，暂避其锋芒。', 'result');
         }
 

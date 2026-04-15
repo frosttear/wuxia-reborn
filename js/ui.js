@@ -321,6 +321,25 @@ const UI = {
         this.notifyEventTab();
     },
 
+    addCombatSummary({ turns, dmgDealt, dmgReceived, result, rewards }) {
+        const resultLabel = result === 'won'  ? '<span style="color:#6fcf97">⚔ 战斗胜利</span>'
+                          : result === 'lost' ? '<span style="color:#e05050">💀 战斗落败</span>'
+                          :                    '<span style="color:#aaa">💨 成功逃脱</span>';
+        const rewardLine = rewards
+            ? `<div class="csumm-row"><span class="csumm-label">🏆 获得奖励</span><span class="csumm-val" style="color:#c9a84c">${rewards}</span></div>`
+            : '';
+        const div = document.createElement('div');
+        div.className = 'combat-summary';
+        div.innerHTML = `
+            <div class="csumm-title">${resultLabel} &nbsp;·&nbsp; 共 ${turns} 回合</div>
+            <div class="csumm-row"><span class="csumm-label">⚔ 造成伤害</span><span class="csumm-val">${dmgDealt}</span></div>
+            <div class="csumm-row"><span class="csumm-label">🩸 承受伤害</span><span class="csumm-val">${dmgReceived}</span></div>
+            ${rewardLine}`;
+        this.logEl.appendChild(div);
+        this.logEl.scrollTop = this.logEl.scrollHeight;
+        this.notifyEventTab();
+    },
+
     clearLog() {
         this.logEl.innerHTML = '';
         this.choicesEl.innerHTML = '';
