@@ -155,6 +155,10 @@ const Character = {
         for (const attr in reqs) {
             if ((char.attributes[attr] || 0) < reqs[attr]) return false;
         }
+        const reqFlags = job.requiredFlags || {};
+        for (const flag in reqFlags) {
+            if ((char.flags[flag] || false) !== reqFlags[flag]) return false;
+        }
         return true;
     },
 

@@ -226,6 +226,7 @@ body {
 .req-tag  { display: inline-block; font-size: 0.68rem; padding: 1px 6px; border-radius: 3px; white-space: nowrap; }
 .req-ok   { background: rgba(92,191,122,0.15); color: var(--green); border: 1px solid rgba(92,191,122,0.3); }
 .req-no   { background: rgba(224,92,92,0.12); color: var(--red);   border: 1px solid rgba(224,92,92,0.25); }
+.req-flag { background: rgba(201,168,76,0.10); color: var(--accent); border: 1px solid rgba(201,168,76,0.25); font-style: italic; }
 
 .unlock-ready  { color: var(--green); font-size: 0.72rem; }
 .unlock-locked { color: var(--muted); font-size: 0.72rem; }

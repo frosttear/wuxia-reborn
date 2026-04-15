@@ -180,11 +180,12 @@ const UI = {
             const div = document.createElement('div');
             div.className = 'job-row' + (isCurrent ? ' job-current' : '') + (unlocked ? ' job-unlocked' : ' job-locked');
             const reqHtml = this.formatRequirementsWithChar(job.requirements, char);
+            const flagHtml = this.formatFlagRequirementsWithChar(job.requiredFlags, char);
             div.innerHTML = `
                 <div class="job-header">
                     <span class="job-name">${job.name}${isCurrent ? ' ✓' : ''}</span>
                 </div>
-                <div class="job-reqs">${reqHtml}</div>`;
+                <div class="job-reqs">${reqHtml}${flagHtml}</div>`;
             if (!isCurrent && (unlocked || meetsReq)) {
                 const btn = document.createElement('button');
                 btn.className = 'btn-small';
@@ -207,15 +208,27 @@ const UI = {
     },
 
     formatRequirementsWithChar(reqs, char) {
-        if (!reqs || Object.keys(reqs).length === 0) {
-            return '<span class="req-tag req-ok">无要求</span>';
-        }
+        if (!reqs || Object.keys(reqs).length === 0) return '';
         return Object.entries(reqs).map(([k, needed]) => {
             const have = char.attributes[k] || 0;
             const met = have >= needed;
             const cls = met ? 'req-tag req-ok' : 'req-tag req-no';
-            const icon = met ? '✓' : '✗';
-            return `<span class="${cls}">${ATTR_NAMES[k] || k} ${have}/${needed} ${icon}</span>`;
+            return `<span class="${cls}">${ATTR_NAMES[k] || k} ${have}/${needed} ${met ? '✓' : '✗'}</span>`;
+        }).join('');
+    },
+
+    FLAG_NAMES: {
+        hero_recognized: '武林认可',
+        sword_legacy: '剑意传承'
+    },
+
+    formatFlagRequirementsWithChar(reqFlags, char) {
+        if (!reqFlags || Object.keys(reqFlags).length === 0) return '';
+        return Object.entries(reqFlags).map(([flag, needed]) => {
+            const have = (char.flags[flag] || false) === needed;
+            const cls = have ? 'req-tag req-ok' : 'req-tag req-no req-flag';
+            const label = this.FLAG_NAMES[flag] || flag;
+            return `<span class="${cls}">${label} ${have ? '✓' : '（事件）'}</span>`;
         }).join('');
     },
 
@@ -407,7 +420,7 @@ const UI = {
 
         const modal = document.createElement('div');
         modal.className = 'modal-overlay';
-        const causeText = cause === 'age' ? '寿终正寝' : cause === 'boss' ? '败于天魔' : '力战身陨';
+        const causeText = cause === 'age' ? '寿终正寝' : cause === 'boss' ? '败于天魔' : cause === 'hidden_boss' ? '功亏一篑，败于剑魂' : '力战身陨';
         modal.innerHTML = `
             <div class="modal-box">
                 <h2>✦ 轮回 ✦</h2>
@@ -452,14 +465,21 @@ const UI = {
         };
     },
 
-    showVictoryScreen(char) {
+    showVictoryScreen(char, isTrueEnding) {
         const modal = document.createElement('div');
         modal.className = 'modal-overlay';
+        const title = isTrueEnding ? '✦ 真·天下太平 ✦' : '✦ 天下太平 ✦';
+        const body = isTrueEnding
+            ? `<p>天魔已倒，剑魂亦散。</p>
+               <p>你是这个时代真正的强者。</p>
+               <p>那枚玉牌最终化为流光，没入你的眉心。老者在另一个地方，或许微微一笑。</p>
+               <p>【${char.name}】的传奇，将永远流传于世。</p>`
+            : `<p>你击败了天魔，还江湖以清明。</p>
+               <p>【${char.name}】的传奇将永远流传于世。</p>`;
         modal.innerHTML = `
             <div class="modal-box">
-                <h2>✦ 天下太平 ✦</h2>
-                <p>你击败了天魔，还江湖以清明。</p>
-                <p>【${char.name}】的传奇将永远流传于世。</p>
+                <h2>${title}</h2>
+                ${body}
                 <p class="muted">轮回 ${char.rebirthCount} 次 | 享年 ${Character.getAgeYears(char)} 岁</p>
                 <button id="victoryRebirthBtn" class="btn-confirm" style="margin-right:12px">继续轮回</button>
                 <button id="newGameBtn" class="btn-secondary">重新开始</button>

@@ -92,12 +92,6 @@ const Engine = {
                     const bossEvent = this.state.events.find(e => e.id === 'tianmo_appears');
                     if (bossEvent) { this.triggerEvent(bossEvent); return; }
                 }
-            } else if (ageYears === 25 && !char.flags.hidden_boss_triggered &&
-                       char.flags.elder_revelation && char.job === 'sword_saint') {
-                // 25th birthday — hidden boss (only if elder bond completed + sword_saint)
-                char.flags.hidden_boss_triggered = true;
-                const hiddenEvent = this.state.events.find(e => e.id === 'hidden_boss_appears');
-                if (hiddenEvent) { this.triggerEvent(hiddenEvent); return; }
             } else {
                 this.triggerBirthdayEvent(ageYears);
                 return;
@@ -418,16 +412,22 @@ const Engine = {
         if (result === 'won') {
             UI.addLog(enemy.winNarrative, 'win');
             if (enemy.winEffects) this.applyEffects({ attributes: enemy.winEffects });
-            if (enemy.isFinalBoss) { this.triggerVictory(); return; }
             if (enemy.isHiddenBoss) {
                 char.flags.hidden_boss_beaten = true;
-                UI.addLog('《剩魏》你击败了它。老者的剑意封印已解，你将带着这一段记忆走完此生。', 'unlock');
+                this.triggerVictory(true); // true ending
+                return;
             }
+            if (enemy.isFinalBoss) { this.triggerVictory(false); return; }
         } else if (result === 'lost') {
             UI.addLog(enemy.loseNarrative, 'lose');
             if (enemy.loseEffects) this.applyEffects({ attributes: enemy.loseEffects });
             UI.renderCharacter(char, this.state.jobs);
-            this.triggerDeath(enemy.isFinalBoss ? 'boss' : 'combat');
+            if (enemy.isHiddenBoss) {
+                UI.addLog('你击败了天魔，却败于那更深处的剑意。此生功亏一筑。下一世，再来。', 'system');
+                this.triggerDeath('hidden_boss');
+            } else {
+                this.triggerDeath(enemy.isFinalBoss ? 'boss' : 'combat');
+            }
             return;
         } else if (result === 'fled') {
             UI.addLog('你成功脱身，暂避其锋芒。', 'result');
@@ -504,11 +504,25 @@ const Engine = {
         UI.showRebirthScreen(summary, availableTalents, cause);
     },
 
-    triggerVictory() {
+    triggerVictory(isTrueEnding) {
         const { char } = this.state;
+
+        // Normal ending: check if hidden boss chain unlocks
+        if (!isTrueEnding && char.flags.elder_revelation && !char.flags.hidden_boss_triggered) {
+            char.flags.hidden_boss_triggered = true;
+            this.state.gamePhase = 'idle';
+            UI.addLog('天魔倒下。江湖归于平静。', 'win');
+            UI.addLog('你以为，一切终于结束了……', 'system');
+            setTimeout(() => {
+                const hiddenEvent = this.state.events.find(e => e.id === 'hidden_boss_appears');
+                if (hiddenEvent) this.triggerEvent(hiddenEvent);
+            }, 2000);
+            return;
+        }
+
         this.state.gamePhase = 'victory';
         this.stopAuto();
-        UI.showVictoryScreen(char);
+        UI.showVictoryScreen(char, isTrueEnding || false);
     },
 
     triggerBirthdayEvent(age) {
