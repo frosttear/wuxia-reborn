@@ -487,13 +487,11 @@ const UI = {
 
         const modal = document.createElement('div');
         modal.className = 'modal-overlay';
-        const causeText = cause === 'age' ? '寿终正寝' : cause === 'boss' ? '败于天魔' : cause === 'hidden_boss' ? '功亏一篑，败于剑魂' : '力战身陨';
+        const causeText = cause === 'boss' ? '败于天魔' : cause === 'hidden_boss' ? '功亏一篑，败于剑魂' : '力战身陨';
         const rebirthNarrative = cause === 'boss'
             ? '天魔最后一击将你轰飞，血气殆尽，意识正在消散……就在这一刻，胸口的家传双鱼玉佩骤然亮起，白光如潮水般涌出，将四周的黑暗尽数淹没。时光在那道光里倒流——你感到自己被卷入一道无形的漩涡，前世的山河与记忆化为点点星光，没入眉心。'
             : cause === 'hidden_boss'
             ? '剑魂的虚空剑意贯穿了你最后的防线，你轰然倒下……恍惚中，胸口的双鱼玉佩剧烈震动，白光骤起，将那道凌厉的剑意硬生生格在了门外。时光开始回溯，碎裂的剑影在光中缓缓复原——你知道，这不是结束。'
-            : cause === 'age'
-            ? '晨光里，你安详地合上了双眼。临终之前，那枚从未离身的双鱼玉佩散发出温热的白光，将这一世的悲欢离合悉数镌刻于魂魄深处。你听见远处有人呼唤你的名字，声音穿越了漫长的岁月……'
             : '你在江湖的厮杀中倒下，鲜血浸透衣衫。正当一切归于黑暗之际，胸口的双鱼玉佩忽然震动，柔和的白光将你从那个瞬间带离——山河依旧，而你，将重新踏上这条路。';
         modal.innerHTML = `
             <div class="modal-box">
