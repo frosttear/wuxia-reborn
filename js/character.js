@@ -13,7 +13,7 @@ const Character = {
         }
         return {
             name: name,
-            ageMonths: 180,       // start at 15 years old
+            ageMonths: 181,       // start at month 1 of age 15 (15岁1月)
             maxAgeMonths: 246,    // safety cap; final boss triggers at 240 (age 20)
             birthMonth: 1,        // 1-12, chosen at character creation
             alive: true,
@@ -35,11 +35,13 @@ const Character = {
     },
 
     getAgeYears(char) {
-        return Math.floor(char.ageMonths / 12);
+        const r = char.ageMonths % 12;
+        return r === 0 ? (char.ageMonths / 12) - 1 : Math.floor(char.ageMonths / 12);
     },
 
     getAgeMonthsRemainder(char) {
-        return char.ageMonths % 12;
+        const r = char.ageMonths % 12;
+        return r === 0 ? 12 : r;
     },
 
     getHPMax(char, job) {

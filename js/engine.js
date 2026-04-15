@@ -83,20 +83,21 @@ const Engine = {
             UI.addLog(`⚔ 你已满足晋升【${j.name}】的条件！可在右侧面板切换职业。`, 'unlock');
         }
 
-        // Birthday system: fires every 12 months starting from ageMonths=192 (16th birthday)
+        // Birthday system: fires when ageMonths % 12 === 0 (months display as 1-12; month 12 = birthday month)
         const isBirthday = char.ageMonths > 180 && char.ageMonths % 12 === 0;
         if (isBirthday) {
-            const ageYears = Character.getAgeYears(char);
+            const ageYears = Character.getAgeYears(char);  // returns old year (e.g. 15 when turning 16)
+            const turningAge = ageYears + 1;               // the age being turned into
 
-            if (ageYears >= 20) {
-                // 20th birthday — final boss (5-year game, 15→20)
+            if (turningAge >= 20) {
+                // turning 20 — final boss (5-year game, 15→20)
                 if (!char.flags.boss_triggered) {
                     char.flags.boss_triggered = true;
                     const bossEvent = this.state.events.find(e => e.id === 'tianmo_appears');
                     if (bossEvent) { this.triggerEvent(bossEvent); return; }
                 }
             } else {
-                this.triggerBirthdayEvent(ageYears);
+                this.triggerBirthdayEvent(turningAge);
                 return;
             }
         }
@@ -702,9 +703,9 @@ const Engine = {
         if (char.injured === undefined) char.injured = false;
         if (char.injuredMonths === undefined) char.injuredMonths = 0;
         if (char.maxAgeMonths > 246) char.maxAgeMonths = 246; // clamp to 5-year game (15→20)
-        // Re-derive jade_tablet_awakened for saves past 19th birthday
+        // Re-derive jade_tablet_awakened for saves past the 19th birthday (ageMonths > 228)
         if (!char.flags.jade_tablet_awakened && char.flags.elder_revelation &&
-            Character.getAgeYears(char) > 19) {
+            Character.getAgeYears(char) > 18) {
             char.flags.jade_tablet_awakened = true;
         }
         return char;
