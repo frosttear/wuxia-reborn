@@ -81,16 +81,16 @@ const Character = {
 
     // 运气+内力：会心率（属性双倍触发）
     getLuckTriggerChance(char) {
-        const luckPart      = char.attributes.luck / 100;
-        const innerForcePart = char.attributes.innerForce / 200;
-        return Math.min(0.60, luckPart + innerForcePart);
+        const luckPart       = char.attributes.luck / 200;
+        const innerForcePart = char.attributes.innerForce / 250;
+        return Math.min(0.50, luckPart + innerForcePart);
     },
 
     // 运气+敏捷：战斗闪避概率
     getLuckDodgeChance(char) {
-        const luckPart    = char.attributes.luck / 100;
-        const agilityPart = char.attributes.agility / 200;
-        return Math.min(0.50, luckPart + agilityPart);
+        const luckPart    = char.attributes.luck / 200;
+        const agilityPart = char.attributes.agility / 250;
+        return Math.min(0.40, luckPart + agilityPart);
     },
 
     applyAttributeChanges(char, changes) {
