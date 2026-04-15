@@ -646,7 +646,7 @@
       {
         "id": "accept_recognition",
         "text": "受宠若惊，欣然接受",
-        "effects": { "attributes": { "reputation": 2, "innerForce": 1 }, "flags": { "hero_recognized": true }, "narrative": "武林的认可让你声威大震，大侠之名远播四方。" }
+        "effects": { "attributes": { "reputation": 2, "innerForce": 1 }, "flags": { "hero_recognized": true }, "narrative": "武林的认可让你声威大震，剑侠之名远播四方。" }
       }
     ]
   },

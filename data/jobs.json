@@ -60,8 +60,8 @@
   },
   {
     "id": "hero",
-    "name": "大侠",
-    "description": "声名远播的江湖大侠，武艺超群，威震四方。",
+    "name": "剑侠",
+    "description": "声名远播的江湖剑侠，武艺超群，剑行天下。",
     "branch": "wudao",
     "requirements": { "strength": 22, "agility": 12, "reputation": 12 },
     "requiredFlags": { "hero_recognized": true },
@@ -85,7 +85,7 @@
         "bonuses": { "attack": 0, "defense": 8 }
       }
     ],
-    "unlockText": "你的侠义之名传遍江湖，成为了大侠。"
+    "unlockText": "你的侠义之名传遍江湖，成为了一代剑侠。"
   },
   {
     "id": "sword_saint",
