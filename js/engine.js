@@ -49,7 +49,7 @@ const Engine = {
         UI.renderAll(this.state);
         const mName = this.BIRTH_MONTH_NAMES[char.birthMonth - 1];
         UI.addLog(`【${char.name}】的传奇，从此开始。`, 'system');
-        UI.addLog(`生于${mName}，年集16岁，踏入江湖。三十岁生辰日，天魔如约而至。`, 'system');
+        UI.addLog(`生于${mName}，年集15岁，踏入江湖。二十岁生辰日，天魔如约而至。`, 'system');
     },
 
     getJob(jobId) {
