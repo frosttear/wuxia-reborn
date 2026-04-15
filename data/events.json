@@ -611,7 +611,7 @@
     "weight": 4,
     "title": "游侠之路",
     "text": "一名老游侠在临终前将他的佩剑赠予你，说：「这剑跟了我一生，该找个新主人了。你有游侠的命，去走你自己的路吧。」",
-    "conditions": { "jobs": ["nobody"], "minAttributes": { "strength": 7 } },
+    "conditions": { "jobs": ["nobody"], "minAttributes": { "strength": 10 } },
     "choices": [
       {
         "id": "accept_sword",
@@ -626,7 +626,7 @@
     "weight": 3,
     "title": "剑客传承",
     "text": "你在古剑冢中偶然发现了一位已故剑客的遗物，其中有一封信：「得此信者，若有缘，愿将我毕生剑意相授。」",
-    "conditions": { "jobs": ["wanderer"], "minAttributes": { "strength": 11, "agility": 8 } },
+    "conditions": { "jobs": ["wanderer"], "minAttributes": { "strength": 15, "agility": 10 } },
     "choices": [
       {
         "id": "inherit_sword_intent",
@@ -641,7 +641,7 @@
     "weight": 2,
     "title": "武林认可",
     "text": "武林中多位德高望重的前辈联袂来访，其中一位抱拳道：「阁下行侠仗义多年，武艺超群，我等特来邀请入盟，共商江湖大事。」",
-    "conditions": { "jobs": ["swordsman"], "minAttributes": { "strength": 18, "reputation": 10 } },
+    "conditions": { "jobs": ["swordsman"], "minAttributes": { "strength": 22, "reputation": 15 } },
     "choices": [
       {
         "id": "accept_recognition",
