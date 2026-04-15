@@ -196,6 +196,15 @@ body {
     margin-right: 4px;
     font-family: inherit;
 }
+.choice-unlock-tag {
+    font-size: 0.72rem;
+    color: var(--green);
+    background: rgba(92,191,122,0.12);
+    border: 1px solid rgba(92,191,122,0.3);
+    border-radius: 3px;
+    padding: 1px 6px;
+    font-family: inherit;
+}
 .choice-text  { line-height: 1.4; }
 .choice-effects {
     font-size: 0.72rem;
@@ -262,7 +271,7 @@ button, .btn {
     cursor: pointer;
     font-family: inherit;
     font-size: 0.83rem;
-    transition: all 0.2s;
+    transition: background 0.2s, border-color 0.2s, color 0.15s, opacity 0.15s;
 }
 button:hover:not(:disabled) { background: rgba(15,52,96,0.9); border-color: var(--accent); }
 button:disabled { opacity: 0.4; cursor: not-allowed; }
@@ -334,6 +343,8 @@ button:disabled { opacity: 0.4; cursor: not-allowed; }
     opacity: 0;
     pointer-events: none;
     transition: opacity 0.12s ease;
+    isolation: isolate;
+    will-change: opacity;
 }
 .combat-overlay.visible {
     opacity: 1;

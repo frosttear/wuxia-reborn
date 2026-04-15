@@ -232,7 +232,7 @@ const UI = {
         }).join('');
     },
 
-    formatRequirementLabel(requirements) {
+    formatRequirementLabel(requirements, unlocked = false) {
         if (!requirements) return '';
         const parts = [];
         if (requirements.minAttributes) {
@@ -252,7 +252,8 @@ const UI = {
                 parts.push(`好感≥${val}`);
             }
         }
-        return parts.length > 0 ? `[${parts.join('·')}]` : '[条件]';
+        const inner = parts.length > 0 ? parts.join('·') : '条件';
+        return unlocked ? `[${inner} ✓]` : `[${inner}]`;
     },
 
     formatEffectPreview(effects, enemies, npcs, char, jobs) {
@@ -324,13 +325,17 @@ const UI = {
                 if (choice.locked) {
                     btn.className = 'choice-btn choice-locked';
                     btn.disabled = true;
-                    const lockTag = this.formatRequirementLabel(choice.requirements);
+                    const lockTag = this.formatRequirementLabel(choice.requirements, false);
                     btn.innerHTML = `<span class="choice-lock-tag">${lockTag}</span><span class="choice-text">${choice.text}</span>`;
                 } else {
                     const idx = unlockIdx++;
                     const preview = this.formatEffectPreview(choice.effects, state.enemies, state.npcs, state.char, state.jobs);
+                    const unlockTag = choice.requirements
+                        ? `<span class="choice-unlock-tag">${this.formatRequirementLabel(choice.requirements, true)}</span>`
+                        : '';
                     btn.className = 'choice-btn';
-                    btn.innerHTML = `<span class="choice-text">${choice.text}</span>`
+                    btn.innerHTML = unlockTag
+                        + `<span class="choice-text">${choice.text}</span>`
                         + (preview ? `<span class="choice-effects">${preview}</span>` : '');
                     btn.onclick = () => {
                         this.choicesEl.innerHTML = '';
