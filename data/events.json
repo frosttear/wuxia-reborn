@@ -1076,6 +1076,54 @@
     ]
   },
   {
+    "id": "birthday_reflection",
+    "type": "机缘",
+    "weight": 30,
+    "title": "生辰感悟",
+    "text": "今日生辰，你独坐屋顶，望着夜空发呆。离那个约定还有多少时日？你盘腿而坐，将心中的念头一一厘清，不知不觉进入了一种前所未有的清明之境。",
+    "conditions": { "flags": { "_is_birthday": true } },
+    "choices": [
+      { "id": "meditate", "text": "趁此良机，运功打坐一夜", "effects": { "attributes": { "innerForce": 1, "comprehension": 1 }, "narrative": "一夜吐纳，真气暗涨，思路也愈发清晰。" } },
+      { "id": "plan", "text": "将这一年的经历细细梳理", "effects": { "attributes": { "comprehension": 2 }, "narrative": "回顾这一年的起伏，你对自己的道路有了更清醒的认识。" } }
+    ]
+  },
+  {
+    "id": "birthday_wang_tie",
+    "type": "交友",
+    "weight": 40,
+    "title": "老镖师庆生",
+    "text": "生辰当日，王铁提着一壶老酒找上门来，粗声粗气说：「今儿你生辰，别整天练功了，陪老夫喝两杯。」两人相对而坐，他讲起年轻时的江湖往事，言语间透出几分对你的期许。",
+    "conditions": { "flags": { "_is_birthday": true, "met_wang_tie": true } },
+    "choices": [
+      { "id": "share_wine", "text": "推杯换盏，听他讲古", "effects": { "attributes": { "constitution": 1 }, "npcAffinity": { "wang_tie": 8 }, "narrative": "一壶酒喝到月上中天，两人说得尽兴。王铁临走前拍了拍你的肩，什么也没说，却胜过千言万语。" } },
+      { "id": "ask_guidance", "text": "请他指点未来的路", "effects": { "attributes": { "strength": 1, "comprehension": 1 }, "npcAffinity": { "wang_tie": 10 }, "narrative": "王铁沉默良久，缓缓道出几句话。寥寥数语，让你对武道与前路都有了新的认识。" } }
+    ]
+  },
+  {
+    "id": "birthday_li_yunshu",
+    "type": "交友",
+    "weight": 40,
+    "title": "云舒相贺",
+    "text": "生辰清晨，李云舒不知从哪里打听到了日子，早早送来一包亲手做的点心，笑道：「生辰快乐，你要长命百岁的。」她眼睛弯弯的，看起来比你还高兴。",
+    "conditions": { "flags": { "_is_birthday": true, "met_li_yunshu": true } },
+    "choices": [
+      { "id": "accept_gift", "text": "收下心意，道谢言欢", "effects": { "attributes": { "luck": 1 }, "npcAffinity": { "li_yunshu": 8 }, "narrative": "一块点心，两人笑语，这个生辰意外地温暖。她走后，你发现袋底还压着一张字条：「好好活着。」" } },
+      { "id": "train_together", "text": "邀她切磋，以武会友", "effects": { "attributes": { "agility": 1, "reputation": 1 }, "npcAffinity": { "li_yunshu": 10 }, "narrative": "两人从日出练到日落，汗流浃背，却都笑个不停。这是你迄今最充实的一个生辰。" } }
+    ]
+  },
+  {
+    "id": "birthday_mysterious_elder",
+    "type": "机缘",
+    "weight": 40,
+    "title": "老者生辰赠言",
+    "text": "生辰傍晚，那神秘老者不知何时坐在了你院中的石凳上，望着天色喃喃道：「又大一岁了。时间对每个人都公平，但不是每个人都懂得如何用它。」",
+    "conditions": { "flags": { "_is_birthday": true, "met_mysterious_elder": true } },
+    "choices": [
+      { "id": "ask_meaning", "text": "请教他时间的意义", "effects": { "attributes": { "comprehension": 2 }, "npcAffinity": { "mysterious_elder": 8 }, "narrative": "老者的话如一把钥匙，打开了你心中某扇紧闭的门。当你回过神，他已悄然离去，只留下石凳上一枚不知名的药丸。" } },
+      { "id": "sit_in_silence", "text": "与他并肩静坐，无言相伴", "effects": { "attributes": { "innerForce": 2 }, "npcAffinity": { "mysterious_elder": 10 }, "narrative": "两人一坐便是一个时辰，无言胜有言。你的真气在那片寂静中悄然增长，仿佛天地都在为你庆生。" } }
+    ]
+  },
+  {
     "id": "tianmo_appears",
     "type": "boss",
     "weight": 0,

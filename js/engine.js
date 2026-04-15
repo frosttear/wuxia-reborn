@@ -67,6 +67,7 @@ const Engine = {
         const { char } = this.state;
         if (!char || this.state.gamePhase !== 'idle') return;
 
+        char.flags._is_birthday = false; // clear from last birthday
         char.ageMonths++;
 
         // Monthly HP regen
@@ -101,7 +102,7 @@ const Engine = {
                 }
             } else {
                 this.triggerBirthdayEvent(ageYears);
-                return;
+                char.flags._is_birthday = true;
             }
         }
 
