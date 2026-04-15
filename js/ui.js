@@ -359,7 +359,7 @@ const UI = {
         this.setCombatActionsEnabled(true); // re-enable buttons on every new combat
         this.setCombatAutoButton(false);    // reset auto button state
         this.updateCombatOverlay(state);
-        document.getElementById('combatOverlay').style.display = 'flex';
+        document.getElementById('combatOverlay').classList.add('visible');
         if (window.innerWidth <= 768) this.switchTab('event');
     },
 
@@ -396,7 +396,7 @@ const UI = {
     },
 
     hideCombatOverlay() {
-        document.getElementById('combatOverlay').style.display = 'none';
+        document.getElementById('combatOverlay').classList.remove('visible');
     },
 
     setCombatActionsEnabled(enabled) {
