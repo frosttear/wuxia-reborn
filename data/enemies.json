@@ -3,8 +3,8 @@
     "id": "bandit",
     "name": "山贼",
     "description": "横行山道的普通山贼，武艺平平",
-    "attack": 15, "defense": 12, "hp": 80,
-    "attackScale": 5, "defenseScale": 3, "hpScale": 0.2,
+    "attack": 12, "defense": 9, "hp": 68,
+    "attackScale": 3, "defenseScale": 2, "hpScale": 0.15,
     "hpLossOnDefeat": 15, "hpLossOnWin": 5,
     "attackDescs": [
       "挥刀横劈，来势粗猛",
@@ -21,8 +21,8 @@
     "id": "skilled_bandit",
     "name": "悍匪",
     "description": "身手不凡的江湖悍匪，经历过大风大浪",
-    "attack": 26, "defense": 20, "hp": 120,
-    "attackScale": 7, "defenseScale": 5, "hpScale": 0.25,
+    "attack": 21, "defense": 16, "hp": 100,
+    "attackScale": 5, "defenseScale": 3, "hpScale": 0.18,
     "hpLossOnDefeat": 25, "hpLossOnWin": 10,
     "attackDescs": [
       "狠劲一刀，直奔要害",
@@ -48,8 +48,8 @@
     "id": "wild_tiger",
     "name": "野虎",
     "description": "山中出没的猛虎，爪牙锋利，凶猛异常",
-    "attack": 22, "defense": 15, "hp": 100,
-    "attackScale": 6, "defenseScale": 4, "hpScale": 0.2,
+    "attack": 18, "defense": 12, "hp": 85,
+    "attackScale": 4, "defenseScale": 3, "hpScale": 0.15,
     "hpLossOnDefeat": 30, "hpLossOnWin": 8,
     "attackDescs": [
       "猛地扑来，利爪横扫",
@@ -75,8 +75,8 @@
     "id": "jianghu_challenger",
     "name": "江湖挑战者",
     "description": "慕名而来的江湖武人，身手矫健，来者不善",
-    "attack": 32, "defense": 25, "hp": 140,
-    "attackScale": 8, "defenseScale": 6, "hpScale": 0.25,
+    "attack": 26, "defense": 20, "hp": 118,
+    "attackScale": 6, "defenseScale": 4, "hpScale": 0.18,
     "hpLossOnDefeat": 22, "hpLossOnWin": 10,
     "attackDescs": [
       "身形飘忽，掌风袭来",
@@ -102,8 +102,8 @@
     "id": "zhao_batian_enemy",
     "name": "赵霸天",
     "description": "横行一方的江湖恶霸，铁拳无情",
-    "attack": 42, "defense": 32, "hp": 200,
-    "attackScale": 5, "defenseScale": 3, "hpScale": 0.15,
+    "attack": 34, "defense": 25, "hp": 168,
+    "attackScale": 4, "defenseScale": 2, "hpScale": 0.12,
     "hpLossOnDefeat": 20, "hpLossOnWin": 12,
     "attackDescs": [
       "铁拳轰出，虎虎生威",
@@ -136,8 +136,8 @@
     "id": "escort_leader",
     "name": "劫镖头目",
     "description": "率领手下劫镖的江湖人，刀法凌厉",
-    "attack": 24, "defense": 18, "hp": 110,
-    "attackScale": 6, "defenseScale": 4, "hpScale": 0.2,
+    "attack": 19, "defense": 14, "hp": 92,
+    "attackScale": 5, "defenseScale": 3, "hpScale": 0.15,
     "hpLossOnDefeat": 20, "hpLossOnWin": 8,
     "attackDescs": [
       "抽刀横劈，刀势凌厉",
@@ -154,7 +154,7 @@
     "id": "sword_soul",
     "name": "剑魂",
     "description": "神秘老者昔年留下的未竟之敌。以剑意凝聚而成，无形无质，却锋锐如渊。",
-    "attack": 130, "defense": 160, "hp": 700,
+    "attack": 105, "defense": 128, "hp": 580,
     "attackScale": 0, "defenseScale": 0, "hpScale": 0,
     "hpLossOnDefeat": 9999, "hpLossOnWin": 30,
     "attackDescs": [
@@ -189,7 +189,7 @@
     "id": "tianmo",
     "name": "天魔",
     "description": "传说中的魔道宗师，武功通天，邪气滔天，是这个时代最大的祸乱之源",
-    "attack": 100, "defense": 90, "hp": 500,
+    "attack": 82, "defense": 72, "hp": 420,
     "attackScale": 0, "defenseScale": 0, "hpScale": 0,
     "hpLossOnDefeat": 9999, "hpLossOnWin": 60,
     "attackDescs": [
