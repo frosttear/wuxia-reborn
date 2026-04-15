@@ -626,7 +626,7 @@
     "weight": 3,
     "title": "剑客传承",
     "text": "你在古剑冢中偶然发现了一位已故剑客的遗物，其中有一封信：「得此信者，若有缘，愿将我毕生剑意相授。」",
-    "conditions": { "jobs": ["wanderer"], "minAttributes": { "strength": 18, "agility": 13 } },
+    "conditions": { "jobs": ["wanderer"], "minAttributes": { "strength": 12, "agility": 9 } },
     "choices": [
       {
         "id": "inherit_sword_intent",
@@ -641,7 +641,7 @@
     "weight": 2,
     "title": "武林认可",
     "text": "武林中多位德高望重的前辈联袂来访，其中一位抱拳道：「阁下行侠仗义多年，武艺超群，我等特来邀请入盟，共商江湖大事。」",
-    "conditions": { "jobs": ["swordsman"], "minAttributes": { "strength": 32, "reputation": 18 } },
+    "conditions": { "jobs": ["swordsman"], "minAttributes": { "strength": 22, "reputation": 14 } },
     "choices": [
       {
         "id": "accept_recognition",
@@ -654,6 +654,7 @@
     "id": "hidden_boss_appears",
     "type": "boss",
     "weight": 0,
+    "monthCost": 3,
     "title": "剑魂觉醒",
     "text": "那枚老者交予你的玉牌，今日忽然灼热起来。\n\n你拿出玉牌，只见其上剑纹流转，光芒渐盛，最终化作一道凛冽的剑气，在你面前凝聚成人形。\n\n「……终于有人能把老头的东西带到此处。」那道剑影开口，声音如金铁相鸣，「老头说，若有人持此牌前来，必是有资格与我一战之人。」\n\n「我是他昔年之剑意。他斩不断我，便将我封印于此，等待一个能真正击败我的人。」\n\n剑影望着你，锋芒毕露：「来吧。胜了我，你才算是真正的剑客。」",
     "conditions": { "flags": { "elder_revelation": true }, "jobs": ["sword_saint"] },
@@ -669,6 +670,7 @@
     "id": "tianmo_appears",
     "type": "boss",
     "weight": 0,
+    "monthCost": 3,
     "title": "天魔降世",
     "text": "江湖中流传着越来越多的消息——天魔已破关而出，所过之处，门派凋零，生灵涂炭。众人皆知，已无人能制。\n\n这一天，天魔的使者出现在你面前，递来一封战书：「我家主人听闻你之名，邀你一战。此战无论胜败，皆是天命。」\n\n你望着战书，心中清楚：天魔武功已臻化境，凭你此刻之力，胜算渺茫。但无论如何，这一战无法回避。",
     "conditions": { "jobs": ["sword_saint"] },

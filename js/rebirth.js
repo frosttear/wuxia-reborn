@@ -16,8 +16,8 @@ const TALENTS = [
     {
         id: 'longevity_secret',
         name: '长生诀',
-        desc: '最大血量+50，寿命延长10年',
-        condition: (char) => Character.getAgeYears(char) >= 65
+        desc: '最大血量+50，寿命延长5年',
+        condition: (char) => Character.getAgeYears(char) >= 38
     },
     {
         id: 'destiny_mark',
@@ -69,7 +69,7 @@ const Rebirth = {
 
         // Extend lifespan if longevity talent
         if (newTalents.includes('longevity_secret')) {
-            newChar.maxAgeMonths += 120; // +10 years
+            newChar.maxAgeMonths += 60; // +5 years
         }
 
         // Inherit bond levels (穿越记忆)

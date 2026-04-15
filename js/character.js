@@ -14,7 +14,7 @@ const Character = {
         return {
             name: name,
             ageMonths: 192,       // start at 16 years old
-            maxAgeMonths: 960,    // die at 80
+            maxAgeMonths: 540,    // die at 45
             alive: true,
             attributes: attrs,
             hp: 0,                // set after creation

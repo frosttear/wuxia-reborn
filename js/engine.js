@@ -76,9 +76,9 @@ const Engine = {
             UI.addLog(`⚔ 你已满足晋升【${j.name}】的条件！可在右侧面板切换职业。`, 'unlock');
         }
 
-        // Hidden boss trigger: elder_revelation flag + sword_saint + age >= 42 (once only)
+        // Hidden boss trigger: elder_revelation flag + sword_saint + age >= 36 (once only)
         if (!char.flags.hidden_boss_triggered && char.flags.elder_revelation &&
-            char.job === 'sword_saint' && Character.getAgeYears(char) >= 42) {
+            char.job === 'sword_saint' && Character.getAgeYears(char) >= 36) {
             char.flags.hidden_boss_triggered = true;
             const hiddenBossEvent = this.state.events.find(e => e.id === 'hidden_boss_appears');
             if (hiddenBossEvent) {
@@ -87,8 +87,8 @@ const Engine = {
             }
         }
 
-        // Final boss trigger (only once, when at sword_saint and age >= 45)
-        if (!char.flags.boss_triggered && Character.getAgeYears(char) >= 45 &&
+        // Final boss trigger (only once, when at sword_saint and age >= 40)
+        if (!char.flags.boss_triggered && Character.getAgeYears(char) >= 40 &&
             char.job === 'sword_saint') {
             char.flags.boss_triggered = true;
             const bossEvent = this.state.events.find(e => e.id === 'tianmo_appears');
@@ -181,6 +181,22 @@ const Engine = {
 
     triggerEvent(event) {
         const { char } = this.state;
+
+        // Consume extra months for time-intensive events (monthCost > 1)
+        const extraMonths = (event.monthCost || 1) - 1;
+        if (extraMonths > 0) {
+            const job = this.getJob(char.job);
+            for (let i = 0; i < extraMonths; i++) {
+                char.ageMonths++;
+                Character.monthlyHPRegen(char, job);
+                if (char.ageMonths >= char.maxAgeMonths) {
+                    this.triggerNaturalDeath();
+                    return;
+                }
+            }
+            UI.renderCharacter(char, this.state.jobs);
+            UI.addLog(`（此事耗时约${event.monthCost}个月）`, 'info');
+        }
 
         // Filter available choices (some have requirements)
         const availableChoices = (event.choices || []).filter(choice => {
@@ -325,13 +341,18 @@ const Engine = {
         const bondEvent = npcBonds.find(b => b.level === currentLevel + 1);
         if (!bondEvent) return;
 
-        // Advance month (visit costs the month)
-        char.ageMonths++;
+        // Advance months (visit costs 3 months — travel + time spent)
         const job = this.getJob(char.job);
-        Character.monthlyHPRegen(char, job);
+        for (let i = 0; i < 3; i++) {
+            char.ageMonths++;
+            Character.monthlyHPRegen(char, job);
+            if (char.ageMonths >= char.maxAgeMonths) {
+                UI.renderCharacter(char, this.state.jobs);
+                this.triggerNaturalDeath();
+                return;
+            }
+        }
         UI.renderCharacter(char, this.state.jobs);
-
-        if (char.ageMonths >= char.maxAgeMonths) { this.triggerNaturalDeath(); return; }
 
         const npc = this.state.npcs.find(n => n.id === npcId);
         const inherited = char.inheritedBonds[npcId];
