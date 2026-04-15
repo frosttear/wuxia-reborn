@@ -72,6 +72,19 @@
     "loseEffects": {}
   },
   {
+    "id": "sword_soul",
+    "name": "剑魂",
+    "description": "神秘老者昔年留下的未竟之敌。以剑意凝聚而成，无形无质，却锋锐如渊。",
+    "attack": 90, "defense": 150, "hp": 300,
+    "attackScale": 0, "defenseScale": 0,
+    "hpLossOnDefeat": 9999, "hpLossOnWin": 30,
+    "winNarrative": "剑光骤熄，那道凝结千年的剑意终于消散。你站在原地，胸口剧烈起伏——这场战斗，磨砺了你的剑心，也让你对武道有了全新的领悟。\n\n玉牌在你手中化为流光，没入眉心，留下一阵温热。老者曾说，此战之后，你方算真正踏入了那扇门。",
+    "loseNarrative": "剑魂的锋芒远超你的极限，你在无形的剑意中节节败退，最终倒下……意识离去前，你隐约看到那道剑光在空中徘徊，似乎在等待下一次相遇。",
+    "winEffects": { "innerForce": 5, "comprehension": 3 },
+    "loseEffects": {},
+    "isHiddenBoss": true
+  },
+  {
     "id": "tianmo",
     "name": "天魔",
     "description": "传说中的魔道宗师，武功通天，邪气滔天，是这个时代最大的祸乱之源",

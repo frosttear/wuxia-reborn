@@ -651,6 +651,21 @@
     ]
   },
   {
+    "id": "hidden_boss_appears",
+    "type": "boss",
+    "weight": 0,
+    "title": "剑魂觉醒",
+    "text": "那枚老者交予你的玉牌，今日忽然灼热起来。\n\n你拿出玉牌，只见其上剑纹流转，光芒渐盛，最终化作一道凛冽的剑气，在你面前凝聚成人形。\n\n「……终于有人能把老头的东西带到此处。」那道剑影开口，声音如金铁相鸣，「老头说，若有人持此牌前来，必是有资格与我一战之人。」\n\n「我是他昔年之剑意。他斩不断我，便将我封印于此，等待一个能真正击败我的人。」\n\n剑影望着你，锋芒毕露：「来吧。胜了我，你才算是真正的剑客。」",
+    "conditions": { "flags": { "elder_revelation": true }, "jobs": ["sword_saint"] },
+    "choices": [
+      {
+        "id": "accept_duel",
+        "text": "握紧佩剑，迎上去",
+        "effects": { "combat": "sword_soul", "narrative": "" }
+      }
+    ]
+  },
+  {
     "id": "tianmo_appears",
     "type": "boss",
     "weight": 0,

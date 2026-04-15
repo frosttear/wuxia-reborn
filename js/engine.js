@@ -76,7 +76,18 @@ const Engine = {
             UI.addLog(`⚔ 你已满足晋升【${j.name}】的条件！可在右侧面板切换职业。`, 'unlock');
         }
 
-        // Check boss trigger (only once, when at sword_saint and age > 45)
+        // Hidden boss trigger: elder_revelation flag + sword_saint + age >= 42 (once only)
+        if (!char.flags.hidden_boss_triggered && char.flags.elder_revelation &&
+            char.job === 'sword_saint' && Character.getAgeYears(char) >= 42) {
+            char.flags.hidden_boss_triggered = true;
+            const hiddenBossEvent = this.state.events.find(e => e.id === 'hidden_boss_appears');
+            if (hiddenBossEvent) {
+                this.triggerEvent(hiddenBossEvent);
+                return;
+            }
+        }
+
+        // Final boss trigger (only once, when at sword_saint and age >= 45)
         if (!char.flags.boss_triggered && Character.getAgeYears(char) >= 45 &&
             char.job === 'sword_saint') {
             char.flags.boss_triggered = true;
@@ -381,6 +392,10 @@ const Engine = {
             UI.addLog(enemy.winNarrative, 'win');
             if (enemy.winEffects) this.applyEffects({ attributes: enemy.winEffects });
             if (enemy.isFinalBoss) { this.triggerVictory(); return; }
+            if (enemy.isHiddenBoss) {
+                char.flags.hidden_boss_beaten = true;
+                UI.addLog('《剩魏》你击败了它。老者的剑意封印已解，你将带着这一段记忆走完此生。', 'unlock');
+            }
         } else if (result === 'lost') {
             UI.addLog(enemy.loseNarrative, 'lose');
             if (enemy.loseEffects) this.applyEffects({ attributes: enemy.loseEffects });
