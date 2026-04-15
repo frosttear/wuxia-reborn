@@ -8,7 +8,7 @@
     "hpLossOnDefeat": 15, "hpLossOnWin": 5,
     "winNarrative": "你三两下打倒了山贼，他们抱头鼠窜，落荒而逃。",
     "loseNarrative": "山贼人多势众，你寡不敌众，负伤撤退，狼狈不堪。",
-    "winEffects": { "reputation": 1 },
+    "winEffects": { "reputation": 1, "agility": 1 },
     "loseEffects": {}
   },
   {
@@ -20,7 +20,7 @@
     "hpLossOnDefeat": 25, "hpLossOnWin": 10,
     "winNarrative": "恶战一场，你终于击败了悍匪，扬长而去，附近百姓纷纷喝彩。",
     "loseNarrative": "悍匪武艺超群，你力战不敌，带伤逃脱，心中郁郁。",
-    "winEffects": { "reputation": 2, "strength": 1 },
+    "winEffects": { "reputation": 2, "strength": 1, "constitution": 1 },
     "loseEffects": {}
   },
   {
@@ -44,7 +44,7 @@
     "hpLossOnDefeat": 22, "hpLossOnWin": 10,
     "winNarrative": "数十回合后，你以精妙的身法将对方逼退。他抱拳道：「阁下果然名不虚传，在下甘拜下风。」",
     "loseNarrative": "对方武艺高超，将你打得节节败退，最终拱手而去。此番切磋令你深感自身不足。",
-    "winEffects": { "reputation": 2, "comprehension": 1 },
+    "winEffects": { "reputation": 2, "comprehension": 1, "agility": 1 },
     "loseEffects": { "comprehension": 1 }
   },
   {
@@ -68,7 +68,7 @@
     "hpLossOnDefeat": 20, "hpLossOnWin": 8,
     "winNarrative": "你击败了劫镖头目，他的手下作鸟兽散，镖货得以安然保全。",
     "loseNarrative": "劫镖头目武艺高强，你力战力竭，镖货被劫，颜面尽失。",
-    "winEffects": { "reputation": 2 },
+    "winEffects": { "reputation": 2, "agility": 1 },
     "loseEffects": {}
   },
   {

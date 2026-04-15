@@ -28,6 +28,7 @@ const Character = {
             bondEventsDone: {},   // { "npcId_level": true } — reset each life
             inheritedBonds: {},   // { npcId: bondLevel } — carried across rebirths
             flags: {},            // story flags
+            kills: 0,             // cumulative combat wins (hidden stat)
             rebirthCount: 0,
             eventLog: []
         };

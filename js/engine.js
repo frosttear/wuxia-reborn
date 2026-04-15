@@ -422,6 +422,9 @@ const Engine = {
                 return;
             }
             if (enemy.isFinalBoss) { this.triggerVictory(false); return; }
+            // Increment kill counter and check thresholds
+            char.kills = (char.kills || 0) + 1;
+            this.checkKillThreshold(char);
         } else if (result === 'lost') {
             UI.addLog(enemy.loseNarrative, 'lose');
             if (enemy.loseEffects) this.applyEffects({ attributes: enemy.loseEffects });
@@ -529,6 +532,27 @@ const Engine = {
         UI.showVictoryScreen(char, isTrueEnding || false);
     },
 
+    KILL_THRESHOLDS: [
+        { kills: 5,  flag: 'kill5',  attrs: { agility: 1 },
+          msg: '【初历战阵】你已斩落五名对手。身体在一次次对决中悄然蜕变，步伐越来越快。' },
+        { kills: 10, flag: 'kill10', attrs: { strength: 1 },
+          msg: '【百战苦修】十场胜绩，每一刀都磨砺了你的筋骨。力量在积累中慢慢渗出。' },
+        { kills: 20, flag: 'kill20', attrs: { reputation: 2, comprehension: 1 },
+          msg: '【杀伐决断】二十场战斗——江湖人开始以不同的眼神看你。你在战斗中悟出了某种东西。' },
+        { kills: 30, flag: 'kill30', attrs: { strength: 1, innerForce: 1 },
+          msg: '【战名远播】三十场胜绩。你的名字在江湖中开始流传，真气也在无数次生死搏杀中渐渐凝实。' }
+    ],
+
+    checkKillThreshold(char) {
+        for (const t of this.KILL_THRESHOLDS) {
+            if (char.kills === t.kills && !char.flags[t.flag]) {
+                char.flags[t.flag] = true;
+                UI.addLog(t.msg, 'unlock');
+                if (t.attrs) this.applyEffects({ attributes: t.attrs });
+            }
+        }
+    },
+
     triggerBirthdayEvent(age) {
         const { char } = this.state;
         const mName = this.BIRTH_MONTH_NAMES[(char.birthMonth - 1) || 0];
@@ -586,6 +610,7 @@ const Engine = {
         if (!char.inheritedBonds)  char.inheritedBonds = {};
         if (!char.learnedSkills)   char.learnedSkills = [];
         if (!char.birthMonth)      char.birthMonth = 1;
+        if (char.kills === undefined) char.kills = 0;
         // Re-derive jade_tablet_awakened for saves that went through 25th birthday before this flag existed
         if (!char.flags.jade_tablet_awakened && char.flags.elder_revelation &&
             Character.getAgeYears(char) > 25) {
