@@ -1,5 +1,20 @@
 // character.js - Character state and attribute management
 
+const BIRTH_MONTH_BONUSES = [
+    { attr: 'luck',          amount: 2, label: '开年纳福',  tagline: '运气+2' },
+    { attr: 'comprehension', amount: 2, label: '春雨润智',  tagline: '悟性+2' },
+    { attr: 'agility',       amount: 2, label: '桃月轻灵',  tagline: '敏捷+2' },
+    { attr: 'constitution',  amount: 2, label: '槐夏强壮',  tagline: '体质+2' },
+    { attr: 'strength',      amount: 2, label: '烈日锻骨',  tagline: '力量+2' },
+    { attr: 'innerForce',    amount: 2, label: '荷月蓄元',  tagline: '内力+2' },
+    { attr: 'luck',          amount: 2, label: '七夕天缘',  tagline: '运气+2' },
+    { attr: 'comprehension', amount: 2, label: '桂月明志',  tagline: '悟性+2' },
+    { attr: 'agility',       amount: 2, label: '菊月清爽',  tagline: '敏捷+2' },
+    { attr: 'constitution',  amount: 2, label: '良月厚积',  tagline: '体质+2' },
+    { attr: 'innerForce',    amount: 2, label: '寒凝真气',  tagline: '内力+2' },
+    { attr: 'strength',      amount: 2, label: '苦寒百炼',  tagline: '力量+2' },
+];
+
 const Character = {
     // Create a new character
     create(name, inheritedAttributes, legacyTalents) {
@@ -32,6 +47,12 @@ const Character = {
             rebirthCount: 0,
             eventLog: []
         };
+    },
+
+    applyBirthMonthBonus(char) {
+        const bonus = BIRTH_MONTH_BONUSES[(char.birthMonth - 1) % 12];
+        if (!bonus) return;
+        char.attributes[bonus.attr] = (char.attributes[bonus.attr] || 0) + bonus.amount;
     },
 
     getAgeYears(char) {

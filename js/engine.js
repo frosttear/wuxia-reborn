@@ -39,6 +39,7 @@ const Engine = {
     startNewGame(name, birthMonth, inheritedAttributes, legacyTalents) {
         const char = Character.create(name, inheritedAttributes || {}, legacyTalents || []);
         char.birthMonth = birthMonth || 1;
+        Character.applyBirthMonthBonus(char);
         NPCSystem.initRelationships(char, this.state.npcs);
         const job = this.getJob(char.job);
         char.hp = Character.getHPMax(char, job);
@@ -48,8 +49,10 @@ const Engine = {
         this.saveGame();
         UI.renderAll(this.state);
         const mName = this.BIRTH_MONTH_NAMES[char.birthMonth - 1];
+        const bBonus = BIRTH_MONTH_BONUSES[char.birthMonth - 1];
         UI.addLog(`【${char.name}】的传奇，从此开始。`, 'system');
         UI.addLog(`生于${mName}，年集15岁，踏入江湖。二十岁生辰日，天魔如约而至。`, 'system');
+        if (bBonus) UI.addLog(`✦ 【${bBonus.label}】生于${mName}，${bBonus.tagline}。`, 'unlock');
     },
 
     getJob(jobId) {
@@ -755,6 +758,7 @@ const Engine = {
         const { char, npcs } = this.state;
         const newChar = Rebirth.execute(char, chosenTalentIds, npcs);
         newChar.birthMonth = char.birthMonth; // same fate, same birthday
+        Character.applyBirthMonthBonus(newChar);
         const job = this.getJob(newChar.job);
         newChar.hp = Character.getHPMax(newChar, job);
         this.migrateChar(newChar);
