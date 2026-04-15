@@ -62,6 +62,11 @@ const UI = {
         document.getElementById('hpText').textContent = `${char.hp} / ${hpMax}`;
 
         // Attributes
+        const ATTR_COLOR = {
+            strength: 'at-strength', agility: 'at-agility',
+            constitution: 'at-constitution', innerForce: 'at-inner-force',
+            comprehension: 'at-comprehension', luck: 'at-luck', reputation: 'at-reputation'
+        };
         const attrsEl = document.getElementById('attributes');
         attrsEl.innerHTML = '';
         const attack = Character.getAttackPower(char, job);
@@ -69,7 +74,7 @@ const UI = {
         for (const key in ATTR_NAMES) {
             const val = char.attributes[key] || 0;
             const row = document.createElement('div');
-            row.className = 'attr-row';
+            row.className = `attr-row ${ATTR_COLOR[key] || ''}`;
             row.innerHTML = `<span class="attr-name">${ATTR_NAMES[key]}</span><span class="attr-val">${val}</span>`;
             attrsEl.appendChild(row);
         }
@@ -78,11 +83,12 @@ const UI = {
         const luckDodge = Character.getLuckDodgeChance(char);
         const luckCrit  = Character.getLuckTriggerChance(char);
         const combatEl = document.getElementById('combatStats');
+        const atag = (cls, text) => `<span class="attr-tag ${cls}">${text}</span>`;
         combatEl.innerHTML =
             `<span>⚔ 攻击 ${attack}</span><span>🛡 防御 ${defense}</span>` +
-            `<span>📖 属性学习效率 ${compRate > 0 ? '+' : ''}${Math.round(compRate * 100)}%<small class="stat-src">悟性</small></span>` +
-            `<span>💨 闪避率 ${Math.round(luckDodge * 100)}%<small class="stat-src">运气·敏捷</small></span>` +
-            `<span>✨ 会心率 ${Math.round(luckCrit * 100)}%<small class="stat-src">运气·内力</small></span>`;
+            `<span>📖 属性学习效率 ${compRate > 0 ? '+' : ''}${Math.round(compRate * 100)}% ${atag('at-comprehension', '悟性')}</span>` +
+            `<span>💨 闪避率 ${Math.round(luckDodge * 100)}% ${atag('at-luck', '运气')}${atag('at-agility', '敏捷')}</span>` +
+            `<span>✨ 会心率 ${Math.round(luckCrit * 100)}% ${atag('at-luck', '运气')}${atag('at-inner-force', '内力')}</span>`;
 
         // Learned skills
         const skillsEl = document.getElementById('learnedSkills');

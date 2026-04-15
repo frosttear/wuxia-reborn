@@ -90,9 +90,28 @@ body {
 .hp-low      { background: var(--red); }
 
 /* Attributes */
-.attr-row    { display: flex; justify-content: space-between; padding: 3px 0; border-bottom: 1px solid rgba(255,255,255,0.04); font-size: 0.82rem; }
+.attr-row    { display: flex; justify-content: space-between; align-items: center; padding: 3px 6px; border-bottom: 1px solid rgba(255,255,255,0.04); font-size: 0.82rem; border-radius: 3px; }
 .attr-name   { color: var(--muted); }
 .attr-val    { color: var(--accent2); font-weight: bold; }
+
+/* Per-attribute tint rows */
+.at-strength      { border-left: 3px solid rgba(224,92,92,0.55);   background: rgba(224,92,92,0.06); }
+.at-agility       { border-left: 3px solid rgba(92,191,122,0.55);  background: rgba(92,191,122,0.06); }
+.at-constitution  { border-left: 3px solid rgba(224,144,80,0.55);  background: rgba(224,144,80,0.06); }
+.at-inner-force   { border-left: 3px solid rgba(160,112,216,0.55); background: rgba(160,112,216,0.06); }
+.at-comprehension { border-left: 3px solid rgba(80,144,216,0.55);  background: rgba(80,144,216,0.06); }
+.at-luck          { border-left: 3px solid rgba(201,168,76,0.55);  background: rgba(201,168,76,0.06); }
+.at-reputation    { border-left: 3px solid rgba(80,184,200,0.55);  background: rgba(80,184,200,0.06); }
+
+/* Colored attribute pill tags */
+.attr-tag { display: inline-block; font-size: 0.6rem; padding: 1px 5px; border-radius: 3px; font-weight: bold; margin-left: 3px; vertical-align: middle; }
+.at-strength      .attr-tag, .attr-tag.at-strength      { background: rgba(224,92,92,0.15);   color: #e05c5c; border: 1px solid rgba(224,92,92,0.35); }
+.at-agility       .attr-tag, .attr-tag.at-agility       { background: rgba(92,191,122,0.15);  color: #5cbf7a; border: 1px solid rgba(92,191,122,0.35); }
+.at-constitution  .attr-tag, .attr-tag.at-constitution  { background: rgba(224,144,80,0.15);  color: #e09050; border: 1px solid rgba(224,144,80,0.35); }
+.at-inner-force   .attr-tag, .attr-tag.at-inner-force   { background: rgba(160,112,216,0.15); color: #a070d8; border: 1px solid rgba(160,112,216,0.35); }
+.at-comprehension .attr-tag, .attr-tag.at-comprehension { background: rgba(80,144,216,0.15);  color: #5090d8; border: 1px solid rgba(80,144,216,0.35); }
+.at-luck          .attr-tag, .attr-tag.at-luck          { background: rgba(201,168,76,0.15);  color: #c9a84c; border: 1px solid rgba(201,168,76,0.35); }
+.at-reputation    .attr-tag, .attr-tag.at-reputation    { background: rgba(80,184,200,0.15);  color: #50b8c8; border: 1px solid rgba(80,184,200,0.35); }
 
 /* Combat stats */
 .combat-stats { display: flex; flex-wrap: wrap; gap: 6px 10px; font-size: 0.75rem; color: var(--text); margin-top: 8px; padding-top: 6px; border-top: 1px solid var(--border); }
@@ -458,14 +477,6 @@ button:disabled { opacity: 0.4; cursor: not-allowed; }
 .start-select:focus { border-color: var(--accent); }
 
 .muted { color: var(--muted); }
-.stat-src {
-    display: block;
-    font-size: 0.65rem;
-    color: var(--muted);
-    letter-spacing: 0.5px;
-    margin-top: 1px;
-    opacity: 0.75;
-}
 
 /* Scrollbar global */
 ::-webkit-scrollbar       { width: 5px; }
