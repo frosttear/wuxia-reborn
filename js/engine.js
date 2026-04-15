@@ -233,9 +233,15 @@ const Engine = {
         }
 
         // Combat event → start turn-based combat
+        // Apply non-combat side-effects first (npcAffinity, flags, hp)
         if (effects.combat) {
             const enemy = this.getEnemy(effects.combat);
             if (enemy) {
+                const sideEffects = Object.assign({}, effects);
+                delete sideEffects.combat;
+                delete sideEffects.narrative;
+                delete sideEffects.attributes; // already handled above
+                this.applyEffects(sideEffects);
                 this.startCombat(enemy, effects.narrative || '');
                 return;
             }
@@ -463,11 +469,22 @@ const Engine = {
         UI.showVictoryScreen(char);
     },
 
+    // Ensure old saves have required fields
+    migrateChar(char) {
+        if (!char) return char;
+        if (!char.bondLevels)      char.bondLevels = {};
+        if (!char.bondEventsDone)  char.bondEventsDone = {};
+        if (!char.inheritedBonds)  char.inheritedBonds = {};
+        if (!char.learnedSkills)   char.learnedSkills = [];
+        return char;
+    },
+
     executeRebirth(chosenTalentIds) {
         const { char, npcs } = this.state;
         const newChar = Rebirth.execute(char, chosenTalentIds, npcs);
         const job = this.getJob(newChar.job);
         newChar.hp = Character.getHPMax(newChar, job);
+        this.migrateChar(newChar);
         this.state.char = newChar;
         this.state.gamePhase = 'idle';
         this.state.seenEvents = new Set();
@@ -518,7 +535,7 @@ const Engine = {
     loadGame() {
         try {
             const saved = localStorage.getItem('wuxia_save');
-            if (saved) return JSON.parse(saved);
+            if (saved) return this.migrateChar(JSON.parse(saved));
         } catch(e) {}
         return null;
     },
