@@ -50,7 +50,7 @@ const Character = {
     },
 
     getAttackPower(char, job) {
-        const base = char.attributes.strength * 2;
+        const base = 0; // strength coefficient temporarily 0; combat power comes from job+skills
         const jobBase = job ? job.baseAttack : 3;
         // Sum fixed bonuses from all learned skills
         const skills = char.learnedSkills || [];
@@ -67,7 +67,7 @@ const Character = {
     },
 
     getDefensePower(char, job) {
-        const base = Math.floor(char.attributes.constitution * 1.5 + char.attributes.agility * 0.5);
+        const base = Math.floor(char.attributes.constitution * 1.5); // agility coefficient temporarily 0
         const jobBase = job ? job.baseDefense : 2;
         const skills = char.learnedSkills || [];
         const skillBonus = skills.reduce((s, sk) => s + (sk.bonuses && sk.bonuses.defense || 0), 0);
@@ -172,6 +172,9 @@ const Character = {
     },
 
     monthlyHPRegen(char, job) {
-        this.healHP(char, 10, job);
+        const innerBonus = Math.floor((char.attributes.innerForce || 0) / 5);
+        const total = 10 + innerBonus;
+        this.healHP(char, total, job);
+        return { total, innerBonus };
     }
 };

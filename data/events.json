@@ -76,6 +76,12 @@
         "id": "contemplation",
         "text": "思考武道之理，参悟天地",
         "effects": { "attributes": { "comprehension": 1, "innerForce": 1 }, "narrative": "冥想中你对武道的理解更深一层，内力也有所精进。" }
+      },
+      {
+        "id": "deep_enlightenment",
+        "text": "以悟性引导，试图触及武道更深处的规律",
+        "requirements": { "minAttributes": { "comprehension": 15 } },
+        "effects": { "attributes": { "comprehension": 2, "innerForce": 2 }, "narrative": "寂灭中你的心神忽然跨越了一道无形的门槛——武道的本质在那一刻清晰如镜，悟性与内力都随之飞速增长。" }
       }
     ]
   },
@@ -161,6 +167,12 @@
         "id": "speed",
         "text": "追求剑法的速度与灵动",
         "effects": { "attributes": { "agility": 1, "strength": 1 }, "narrative": "你的剑法速度和力量都有所提升，出剑愈发犀利。" }
+      },
+      {
+        "id": "qi_sword",
+        "text": "以内力注入剑身，感受真气随剑意流转",
+        "requirements": { "minAttributes": { "innerForce": 10 } },
+        "effects": { "attributes": { "innerForce": 2, "comprehension": 1 }, "narrative": "真气流经剑身时竟与剑法产生了奇妙的共鸣，你对内功与剑道的融合有了全新的理解。" }
       }
     ]
   },
@@ -266,6 +278,12 @@
         "id": "explore_temple",
         "text": "仔细搜寻庙内，看是否有秘密",
         "effects": { "attributes": { "luck": 2, "comprehension": 1 }, "narrative": "你在庙中找到了几幅残缺的武学壁画，收获颇丰。" }
+      },
+      {
+        "id": "resonate_qi",
+        "text": "以真气与庙内气场共鸣，尝试引动武神残留的意志",
+        "requirements": { "minAttributes": { "innerForce": 15 } },
+        "effects": { "attributes": { "innerForce": 3, "strength": 1 }, "flags": { "temple_awakened": true }, "narrative": "你的真气与庙中的古老气场产生了剧烈的共鸣，一道无形的意志涌入眉心——那是远古高手留下的残影。你大受裨益，内力精进了一大截。" }
       }
     ]
   },
@@ -306,6 +324,12 @@
         "id": "focus_defense",
         "text": "重点学习防守身法",
         "effects": { "attributes": { "agility": 2, "comprehension": 1 }, "narrative": "对方的防守身法让你大受启发，身法和悟性都有所进步。" }
+      },
+      {
+        "id": "deduce_flaws",
+        "text": "以悟性推演两人招式中的破绽，默记在心",
+        "requirements": { "minAttributes": { "comprehension": 12 } },
+        "effects": { "attributes": { "comprehension": 2, "reputation": 1 }, "narrative": "你的悟性已臻化境，对决中两人的破绽在你眼中宛如白纸黑字。旁边观战的人发现你的目光格外锐利，忍不住向你请教——竟顺带为你赢得了一些声誉。" }
       }
     ]
   },

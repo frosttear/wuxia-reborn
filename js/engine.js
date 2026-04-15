@@ -68,8 +68,9 @@ const Engine = {
 
         // Monthly HP regen
         const job = this.getJob(char.job);
-        Character.monthlyHPRegen(char, job);
+        const { innerBonus } = Character.monthlyHPRegen(char, job);
         UI.renderCharacter(char, this.state.jobs);
+        if (innerBonus > 0) UI.addLog(`【内功】内力护体，本月额外回复 ${innerBonus} 气血。`, 'info');
 
         // Check death by age
         if (char.ageMonths >= char.maxAgeMonths) {
@@ -137,9 +138,12 @@ const Engine = {
         const { char, events } = this.state;
         const eligible = [];
 
-        // 悟性提升奇遇/机缘权重；运气降低遭遇战、提升正面事件权重
+        // 属性影响事件池权重
         const compBonus  = Math.floor(char.attributes.comprehension / 5);
         const luckBonus  = Math.floor(char.attributes.luck / 8);
+        const strBonus   = Math.floor(char.attributes.strength / 6);
+        const innerBonus = Math.floor(char.attributes.innerForce / 6);
+        const repBonus   = Math.floor(char.attributes.reputation / 5);
 
         for (const event of events) {
             if (event.type === 'boss') continue;   // boss triggered separately
@@ -150,6 +154,10 @@ const Engine = {
             if (['奇遇', '机缘'].includes(event.type))  weight += compBonus;
             if (['奇遇', '机缘', '交友'].includes(event.type)) weight += Math.floor(luckBonus / 2);
             if (event.type === '遭遇战') weight = Math.max(1, weight - Math.floor(luckBonus / 2));
+            // 力量高 → 更多磨练/遭遇战；内力高 → 更多奇遇/机缘；声望高 → 更多交友
+            if (['磨练', '遭遇战'].includes(event.type)) weight += strBonus;
+            if (['奇遇', '机缘'].includes(event.type))  weight += innerBonus;
+            if (event.type === '交友') weight += repBonus;
 
             // Slightly reduce weight for recently seen events
             if (this.state.seenEvents.has(event.id)) weight = Math.max(1, Math.floor(weight * 0.3));
@@ -223,14 +231,15 @@ const Engine = {
             UI.addLog(`（此事耗时约${event.monthCost}个月）`, 'info');
         }
 
-        // Filter available choices (some have requirements)
-        const availableChoices = (event.choices || []).filter(choice => {
-            if (!choice.requirements) return true;
-            return this.checkConditions(choice.requirements);
+        // Compute locked state for every choice (locked = requirements not met)
+        const allChoices = (event.choices || []).map(choice => {
+            if (!choice.requirements) return { ...choice, locked: false };
+            return { ...choice, locked: !this.checkConditions(choice.requirements) };
         });
+        const availableChoices = allChoices.filter(c => !c.locked);
 
-        // Show the event
-        UI.showEvent(event, availableChoices, this.state);
+        // Show the event with ALL choices (locked ones rendered grayed-out)
+        UI.showEvent(event, allChoices, this.state);
 
         if (availableChoices.length > 0) {
             this.state.pendingChoice = { event, choices: availableChoices };

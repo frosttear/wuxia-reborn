@@ -232,6 +232,29 @@ const UI = {
         }).join('');
     },
 
+    formatRequirementLabel(requirements) {
+        if (!requirements) return '';
+        const parts = [];
+        if (requirements.minAttributes) {
+            for (const [attr, val] of Object.entries(requirements.minAttributes)) {
+                parts.push(`${ATTR_NAMES[attr] || attr}${val}`);
+            }
+        }
+        if (requirements.minAgeYears) parts.push(`年满${requirements.minAgeYears}岁`);
+        if (requirements.flags) {
+            for (const [flag, val] of Object.entries(requirements.flags)) {
+                const label = this.FLAG_NAMES[flag] || flag;
+                if (val) parts.push(label);
+            }
+        }
+        if (requirements.npcAffinity) {
+            for (const [npcId, val] of Object.entries(requirements.npcAffinity)) {
+                parts.push(`好感≥${val}`);
+            }
+        }
+        return parts.length > 0 ? `[${parts.join('·')}]` : '[条件]';
+    },
+
     formatEffectPreview(effects, enemies, npcs, char, jobs) {
         if (!effects) return '';
         const parts = [];
@@ -291,21 +314,30 @@ const UI = {
         this.logEl.scrollTop = this.logEl.scrollHeight;
         this.notifyEventTab();
 
-        // Show choices with effect previews
+        // Show choices; locked ones grayed-out, unlocked ones get sequential applyChoice index
         this.choicesEl.innerHTML = '';
         if (choices && choices.length > 0) {
+            let unlockIdx = 0;
             for (let i = 0; i < choices.length; i++) {
                 const choice = choices[i];
-                const preview = this.formatEffectPreview(choice.effects, state.enemies, state.npcs, state.char, state.jobs);
                 const btn = document.createElement('button');
-                btn.className = 'choice-btn';
-                btn.innerHTML = `<span class="choice-text">${choice.text}</span>`
-                    + (preview ? `<span class="choice-effects">${preview}</span>` : '');
-                btn.onclick = () => {
-                    this.choicesEl.innerHTML = '';
-                    this.nextBtn.disabled = false;
-                    Engine.applyChoice(i);
-                };
+                if (choice.locked) {
+                    btn.className = 'choice-btn choice-locked';
+                    btn.disabled = true;
+                    const lockTag = this.formatRequirementLabel(choice.requirements);
+                    btn.innerHTML = `<span class="choice-lock-tag">${lockTag}</span><span class="choice-text">${choice.text}</span>`;
+                } else {
+                    const idx = unlockIdx++;
+                    const preview = this.formatEffectPreview(choice.effects, state.enemies, state.npcs, state.char, state.jobs);
+                    btn.className = 'choice-btn';
+                    btn.innerHTML = `<span class="choice-text">${choice.text}</span>`
+                        + (preview ? `<span class="choice-effects">${preview}</span>` : '');
+                    btn.onclick = () => {
+                        this.choicesEl.innerHTML = '';
+                        this.nextBtn.disabled = false;
+                        Engine.applyChoice(idx);
+                    };
+                }
                 this.choicesEl.appendChild(btn);
             }
             this.nextBtn.disabled = true;
