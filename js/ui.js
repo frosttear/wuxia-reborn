@@ -80,9 +80,9 @@ const UI = {
         const combatEl = document.getElementById('combatStats');
         combatEl.innerHTML =
             `<span>⚔ 攻击 ${attack}</span><span>🛡 防御 ${defense}</span>` +
-            `<span title="悟性每10点提升5%属性学习效率">📖 ${compRate > 0 ? '+' : ''}${Math.round(compRate * 100)}%</span>` +
-            `<span title="运气：战斗闪避概率">💨 ${Math.round(luckDodge * 100)}%</span>` +
-            `<span title="运气：属性双倍触发概率">✨ ${Math.round(luckCrit * 100)}%</span>`;
+            `<span title="悟性每10点提升5%属性学习效率">📖 悟性加成 ${compRate > 0 ? '+' : ''}${Math.round(compRate * 100)}%</span>` +
+            `<span title="运气：战斗闪避概率">💨 闪避率 ${Math.round(luckDodge * 100)}%</span>` +
+            `<span title="运气：属性双倍触发概率">✨ 会心率 ${Math.round(luckCrit * 100)}%</span>`;
 
         // Learned skills
         const skillsEl = document.getElementById('learnedSkills');
