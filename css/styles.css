@@ -300,7 +300,18 @@ button:disabled { opacity: 0.4; cursor: not-allowed; }
     text-align: center;
 }
 .modal-box h2   { color: var(--accent); font-size: 1.4rem; margin-bottom: 10px; letter-spacing: 4px; }
-.modal-cause    { color: var(--red); font-size: 0.9rem; margin-bottom: 14px; }
+.modal-cause    { color: var(--red); font-size: 0.9rem; margin-bottom: 10px; }
+.rebirth-narrative {
+    font-size: 0.82rem;
+    color: var(--text);
+    line-height: 1.85;
+    padding: 10px 12px;
+    margin-bottom: 14px;
+    background: rgba(201,168,76,0.06);
+    border-left: 2px solid rgba(201,168,76,0.35);
+    border-radius: 0 4px 4px 0;
+    font-style: italic;
+}
 .modal-summary  { font-family: inherit; font-size: 0.8rem; color: var(--muted); white-space: pre-wrap; text-align: left; background: rgba(0,0,0,0.2); padding: 10px; border-radius: 5px; margin-bottom: 14px; }
 .modal-section  { margin-bottom: 14px; text-align: left; }
 .modal-label    { font-size: 0.83rem; color: var(--muted); margin-bottom: 8px; }

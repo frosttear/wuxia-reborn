@@ -963,6 +963,44 @@
     ]
   },
   {
+    "id": "jade_pendant_memory",
+    "type": "机缘",
+    "weight": 8,
+    "title": "双鱼玉佩",
+    "text": "某个清晨，你从梦中猛然惊醒，心跳如鼓。\n\n梦里有刀光、有山河、有一些你从未经历过的面孔，却偏偏如此熟悉，像是久远的记忆，又像是另一个人的一生。\n\n你低头，摸到胸口那枚从小就戴着的家传双鱼玉佩。佩身温热，远超寻常体温，指尖划过纹路时，竟有一丝隐约的颤动传来。\n\n这枚玉佩，究竟是什么？",
+    "conditions": { "minRebirth": 1, "flags": { "jade_pendant_memory_done": false }, "maxAgeYears": 17 },
+    "choices": [
+      {
+        "id": "recall_visions",
+        "text": "静心回忆梦中的一切，试图捕捉那些残影",
+        "effects": {
+          "flags": { "jade_pendant_memory_done": true },
+          "attributes": { "comprehension": 2, "innerForce": 1 },
+          "narrative": "你盘膝而坐，闭眼凝神。那些残碎的画面渐渐清晰——刀风、山路、某个人的背影。你不知道那是谁，但那份沉甸甸的感觉告诉你：那些经历是真实的，只是属于另一个你。悟性莫名提升了一分。"
+        }
+      },
+      {
+        "id": "feel_the_warmth",
+        "text": "什么都不想，只是握紧玉佩，感受那份温热",
+        "effects": {
+          "flags": { "jade_pendant_memory_done": true },
+          "attributes": { "constitution": 1, "luck": 2 },
+          "narrative": "那道温热从掌心蔓延，遍布全身，像是有什么东西在守护着你。你说不清那是什么，但此后很长一段时间，你都感觉自己特别顺遂——该躲的危险莫名躲开了，该碰上的机遇接二连三地来。"
+        }
+      },
+      {
+        "id": "channel_qi",
+        "text": "尝试以内力感应玉佩，看看能否引出其中的秘密",
+        "requirements": { "minAttributes": { "innerForce": 8 } },
+        "effects": {
+          "flags": { "jade_pendant_memory_done": true, "jade_pendant_awakened": true },
+          "attributes": { "innerForce": 3, "comprehension": 1 },
+          "narrative": "内力缓缓注入，玉佩骤然大放白光，一道模糊的声音在脑海中响起：「……记住……不可……天魔……」随即一切归于寂静，但你感到经脉畅通，内力有了一次质的飞跃。玉佩上的双鱼纹路，似乎比昨天更清晰了一分。"
+        }
+      }
+    ]
+  },
+  {
     "id": "meet_han_shuang",
     "type": "交友",
     "weight": 4,
