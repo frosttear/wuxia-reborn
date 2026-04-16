@@ -29,6 +29,7 @@ describe('Combat.initState', () => {
         expect(cs.playerMomentum).toBe(0);
         expect(cs.skillCooldown).toBe(0);
         expect(cs.enemyStunned).toBe(false);
+        expect(cs.enemyComp).toBe(0);   // STUB_ENEMY has no comprehension
     });
 
     test('enemy HP scales with character age tier', () => {
@@ -230,19 +231,32 @@ describe('Combat.processTurn - enemy intent preview', () => {
         expect(['accurate', 'vague', 'wrong']).toContain(cs.enemyIntentType);
     });
 
-    test('high comprehension (55) yields accurate intent most of the time', () => {
+    test('high playerComp vs weak enemy (comp 0) yields accurate most of the time', () => {
         let accurateCount = 0;
         for (let i = 0; i < 40; i++) {
-            const char = makeChar({ attributes: { strength: 8, agility: 5, constitution: 5, innerForce: 3, comprehension: 55, luck: 5, reputation: 0 } });
+            const char = makeChar({ attributes: { strength: 8, agility: 5, constitution: 5, innerForce: 3, comprehension: 10, luck: 5, reputation: 0 } });
             char.hp = 100;
-            const cs = Combat.initState(char, STUB_ENEMY, STUB_JOB);
+            const cs = Combat.initState(char, STUB_ENEMY, STUB_JOB); // STUB_ENEMY.comp=0, ratio=10/5=2 → 90%
             Combat.processTurn('focus', cs, char, STUB_JOB);
             if (cs.enemyIntentType === 'accurate') accurateCount++;
         }
-        expect(accurateCount).toBeGreaterThan(20); // >50% at comp 55 (actual ~83%)
+        expect(accurateCount).toBeGreaterThan(28); // ~90% accurate at ratio=2
     });
 
-    test('zero comprehension never yields accurate (probabilistic)', () => {
+    test('low playerComp vs strong enemy yields mostly non-accurate', () => {
+        const STRONG_ENEMY = { ...STUB_ENEMY, comprehension: 30 };
+        let accurateCount = 0;
+        for (let i = 0; i < 40; i++) {
+            const char = makeChar({ attributes: { strength: 8, agility: 5, constitution: 5, innerForce: 3, comprehension: 5, luck: 5, reputation: 0 } });
+            char.hp = 100;
+            const cs = Combat.initState(char, STRONG_ENEMY, STUB_JOB); // ratio=5/35=0.143 → ~1.7%
+            Combat.processTurn('focus', cs, char, STUB_JOB);
+            if (cs.enemyIntentType === 'accurate') accurateCount++;
+        }
+        expect(accurateCount).toBeLessThan(5); // near-0% accurate at ratio=0.14
+    });
+
+    test('zero comprehension always yields non-accurate', () => {
         let accurateCount = 0;
         for (let i = 0; i < 40; i++) {
             const char = makeChar({ attributes: { strength: 8, agility: 5, constitution: 5, innerForce: 3, comprehension: 0, luck: 5, reputation: 0 } });
@@ -251,7 +265,7 @@ describe('Combat.processTurn - enemy intent preview', () => {
             Combat.processTurn('focus', cs, char, STUB_JOB);
             if (cs.enemyIntentType === 'accurate') accurateCount++;
         }
-        expect(accurateCount).toBe(0); // comp 0 = 0% accurate
+        expect(accurateCount).toBe(0); // ratio=0 → 0% accurate
     });
 });
 

@@ -21,6 +21,12 @@ const Combat = {
         '对方意图难以看穿',
         '对方下一招摄格不定',
     ],
+    WRONG_READ_MSGS: [
+        '糟了！对方出的招和预判的完全相反！',
+        '不妙！上回合错判了对方的意图！',
+        '失算！对方虚晦一招，妆弄了你的判断！',
+        '看漏眼了！对方换了路数！',
+    ],
 
     // ── Scaled enemy stats ──────────────────────────────────────────────────
     getEffectiveStats(enemy, char) {
@@ -61,8 +67,10 @@ const Combat = {
             usedSkills:   [],
             playerMomentum: 0,      // 0–5, builds with attacks / focus
             skillCooldown:  0,      // turns until job active skill can fire again
+            enemyComp:    enemy.comprehension || 0, // enemy comprehension (affects intent readability)
             enemyNextAction: null,  // 'heavy'|'swift', previewed for next turn
             enemyIntentHint: '',    // text shown in combat UI
+            enemyIntentType: null,  // 'accurate'|'vague'|'wrong'
             enemyStunned: false,    // skip enemy attack once (stun skill effect)
             totalDmgDealt: 0,
             totalDmgReceived: 0,
@@ -219,6 +227,10 @@ const Combat = {
                     cs.enemyStunned = false;
                     lines.push(`${cs.enemy.name}被震慑，无法出手！`);
                 } else {
+                    // Wrong-read feedback: show before damage resolution
+                    if (cs.enemyIntentType === 'wrong') {
+                        lines.push(`<span style="color:#e05050">⚠ ${this._pick(this.WRONG_READ_MSGS)}</span>`);
+                    }
                     // Normal enemy attack
                     const pend = cs.pendingSkill;
                     const skillMult = pend ? (pend.damageMult || 1.5) : 1.0;
@@ -272,30 +284,31 @@ const Combat = {
             }
         }
 
-        // ── Preview enemy's NEXT action (accuracy gated by comprehension) ────
-        // Power-law curve: needs comp ~55-60 (3-4 rebirths) for reliable reads.
-        // Low comp: mostly wrong reads (deceptive). Mid comp: vague. High comp: accurate.
+        // ── Preview enemy's NEXT action (accuracy = f(playerComp / enemyComp)) ────
+        // ratio = playerComp / (enemyComp + 5), accurateChance = min(0.90, ratio^1.5 * 0.90)
+        // Weak enemies (comp 3-5): readable at playerComp ~8-10.
+        // Final boss (comp 50): needs playerComp ~55 (3-4 rebirths) for reliable reads.
+        // Low comp vs tough enemy: biased toward deceptive wrong reads.
         if (!combatOver) {
             const next = this._enemyChooseAction(cs);
-            cs.enemyNextAction = next;
-            const comp = (char.attributes && char.attributes.comprehension) || 0;
-            // x^1.5 power law: 0% at comp≤3, ~15% at 20, ~50% at 40, ~90% at 60
-            const t = Math.max(0, comp - 3) / 55;
-            const accurateChance = Math.min(0.90, Math.pow(t, 1.5) * 0.90);
-            // Vague fraction rises with comp: low comp → mostly wrong, high comp → mostly vague
-            const vagueFrac = Math.min(0.80, 0.30 + comp / 60 * 0.50);
-            const remaining = 1 - accurateChance;
+            cs.enemyNextAction  = next;
+            const playerComp    = (char.attributes && char.attributes.comprehension) || 0;
+            const enemyComp     = cs.enemyComp;
+            const ratio         = playerComp / (enemyComp + 5);
+            const accurateChance = Math.min(0.90, Math.pow(ratio, 1.5) * 0.90);
+            const vagueFrac     = Math.min(0.80, 0.30 + playerComp / 60 * 0.50);
+            const remaining     = 1 - accurateChance;
             const r = Math.random();
             if (r < accurateChance) {
-                cs.enemyIntentHint  = this.ENEMY_INTENT[next] || '';
-                cs.enemyIntentType  = 'accurate';
+                cs.enemyIntentHint = this.ENEMY_INTENT[next] || '';
+                cs.enemyIntentType = 'accurate';
             } else if (r < accurateChance + remaining * vagueFrac) {
-                cs.enemyIntentHint  = this._pick(this.VAGUE_INTENT_MSGS);
-                cs.enemyIntentType  = 'vague';
+                cs.enemyIntentHint = this._pick(this.VAGUE_INTENT_MSGS);
+                cs.enemyIntentType = 'vague';
             } else {
                 const wrong = next === 'heavy' ? 'swift' : 'heavy';
-                cs.enemyIntentHint  = this.ENEMY_INTENT[wrong] || '';
-                cs.enemyIntentType  = 'wrong'; // looks identical to 'accurate' in UI
+                cs.enemyIntentHint = this.ENEMY_INTENT[wrong] || '';
+                cs.enemyIntentType = 'wrong'; // looks identical to 'accurate' in UI
             }
         }
 
