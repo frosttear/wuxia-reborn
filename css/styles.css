@@ -148,13 +148,14 @@ body {
 .log-age      { font-size: 0.78rem; font-weight: bold; color: var(--accent); letter-spacing: 0.04em; margin-bottom: 4px; display: flex; align-items: center; gap: 8px; flex-wrap: wrap; }
 .log-age-countdown { display: inline-block; font-size: 0.76rem; font-weight: bold; color: #c8a84b; background: rgba(200,168,75,0.12); border: 1px solid rgba(200,168,75,0.35); border-radius: 4px; padding: 2px 8px; letter-spacing: 0.02em; }
 .log-age-countdown.urgent { color: #e05050; background: rgba(224,80,80,0.12); border-color: rgba(224,80,80,0.4); }
-.log-type     { display: inline-block; font-size: 0.68rem; padding: 1px 7px; border-radius: 3px; margin-bottom: 4px; }
+.log-type     { display: inline-block; font-size: 0.68rem; padding: 1px 7px; border-radius: 3px; flex-shrink: 0; }
 .type-磨练    { background: rgba(91,155,213,0.2); color: var(--blue); }
 .type-奇遇    { background: rgba(92,191,122,0.2); color: var(--green); }
 .type-遭遇战  { background: rgba(224,92,92,0.2); color: var(--red); }
 .type-交友    { background: rgba(201,168,76,0.2); color: var(--accent); }
 .type-机缘    { background: rgba(160,100,220,0.25); color: #c09ee0; }
 .type-boss    { background: rgba(224,92,92,0.4); color: #ff8080; }
+.log-title-row { display: flex; align-items: center; gap: 6px; font-size: 0.92rem; color: var(--accent2); font-weight: bold; margin-bottom: 4px; }
 .log-title    { font-size: 0.92rem; color: var(--accent2); font-weight: bold; margin-bottom: 4px; }
 .log-text     { color: var(--text); }
 

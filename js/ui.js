@@ -365,8 +365,7 @@ const UI = {
         const entry = document.createElement('div');
         entry.className = 'log-entry event-entry';
         entry.innerHTML = `<div class="log-age">${ageStr}${countdownHtml}</div>
-            <div class="log-type type-${event.type}">${event.type}</div>
-            <div class="log-title">${event.title}</div>
+            <div class="log-title-row"><span class="log-type type-${event.type}">${event.type}</span>${event.title}</div>
             <div class="log-text">${event.text.replace(/\n/g, '<br>')}</div>`;
         this.logEl.appendChild(entry);
         this.logEl.scrollTop = this.logEl.scrollHeight;
