@@ -6,7 +6,6 @@
     "comprehension": 4,
     "attack": 12, "defense": 9, "hp": 68,
     "attackScale": 3, "defenseScale": 2, "hpScale": 0.15,
-    "hpLossOnDefeat": 15, "hpLossOnWin": 5,
     "attackDescs": [
       "挥刀横劈，来势粗猛",
       "抡棍横扫，招式散乱",
@@ -25,7 +24,6 @@
     "comprehension": 10,
     "attack": 21, "defense": 16, "hp": 100,
     "attackScale": 5, "defenseScale": 3, "hpScale": 0.18,
-    "hpLossOnDefeat": 25, "hpLossOnWin": 10,
     "attackDescs": [
       "狠劲一刀，直奔要害",
       "反手抽刀，刀势凌厉",
@@ -53,7 +51,6 @@
     "comprehension": 4,
     "attack": 18, "defense": 12, "hp": 85,
     "attackScale": 4, "defenseScale": 3, "hpScale": 0.15,
-    "hpLossOnDefeat": 30, "hpLossOnWin": 8,
     "attackDescs": [
       "猛地扑来，利爪横扫",
       "张开虎口，俯身咬来",
@@ -81,7 +78,6 @@
     "comprehension": 12,
     "attack": 26, "defense": 20, "hp": 118,
     "attackScale": 6, "defenseScale": 4, "hpScale": 0.18,
-    "hpLossOnDefeat": 22, "hpLossOnWin": 10,
     "attackDescs": [
       "身形飘忽，掌风袭来",
       "快步近身，连环出掌",
@@ -109,7 +105,6 @@
     "comprehension": 18,
     "attack": 34, "defense": 25, "hp": 168,
     "attackScale": 4, "defenseScale": 2, "hpScale": 0.12,
-    "hpLossOnDefeat": 20, "hpLossOnWin": 12,
     "attackDescs": [
       "铁拳轰出，虎虎生威",
       "大步踏来，臂力雄浑",
@@ -144,7 +139,6 @@
     "comprehension": 10,
     "attack": 19, "defense": 14, "hp": 92,
     "attackScale": 5, "defenseScale": 3, "hpScale": 0.15,
-    "hpLossOnDefeat": 20, "hpLossOnWin": 8,
     "attackDescs": [
       "抽刀横劈，刀势凌厉",
       "快步逼近，连刺数剑",
@@ -163,7 +157,6 @@
     "comprehension": 50,
     "attack": 105, "defense": 128, "hp": 580,
     "attackScale": 0, "defenseScale": 0, "hpScale": 0,
-    "hpLossOnDefeat": 9999, "hpLossOnWin": 30,
     "attackDescs": [
       "剑光一闪，无迹可循",
       "虚空剑意，化形袭来",
@@ -199,7 +192,6 @@
     "comprehension": 22,
     "attack": 38, "defense": 28, "hp": 195,
     "attackScale": 6, "defenseScale": 4, "hpScale": 0.18,
-    "hpLossOnDefeat": 25, "hpLossOnWin": 12,
     "attackDescs": [
       "黑气凝手，无声袭来",
       "身形错步，残影连击",
@@ -234,7 +226,6 @@
     "comprehension": 25,
     "attack": 48, "defense": 36, "hp": 255,
     "attackScale": 7, "defenseScale": 5, "hpScale": 0.2,
-    "hpLossOnDefeat": 28, "hpLossOnWin": 15,
     "attackDescs": [
       "阴刀横扫，带起黑色气浪",
       "炼魂之力注入刀身，沉重劈落",
@@ -269,7 +260,6 @@
     "attack": 58, "defense": 44, "hp": 300,
     "attackScale": 6, "defenseScale": 4, "hpScale": 0.18,
     "comprehension": 38,
-    "hpLossOnDefeat": 20, "hpLossOnWin": 10,
     "attackDescs": [
       "凌雪剑光如白虹贯日，冷芒乍现",
       "她步伐忽变，似雪花漫舞，剑却直指咽喉",
@@ -304,7 +294,6 @@
     "comprehension": 50,
     "attack": 82, "defense": 72, "hp": 420,
     "attackScale": 0, "defenseScale": 0, "hpScale": 0,
-    "hpLossOnDefeat": 9999, "hpLossOnWin": 60,
     "attackDescs": [
       "魔掌推出，掌风如山",
       "魔气凝拳，重击而来",
