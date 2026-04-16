@@ -223,6 +223,36 @@ describe('Combat.processTurn - enemy intent preview', () => {
         Combat.processTurn('focus', cs, char, STUB_JOB);
         expect(typeof cs.enemyIntentHint).toBe('string');
     });
+
+    test('sets enemyIntentType to accurate/vague/wrong', () => {
+        const { char, cs } = freshCombat();
+        Combat.processTurn('focus', cs, char, STUB_JOB);
+        expect(['accurate', 'vague', 'wrong']).toContain(cs.enemyIntentType);
+    });
+
+    test('high comprehension (20) yields accurate intent almost always', () => {
+        let accurateCount = 0;
+        for (let i = 0; i < 40; i++) {
+            const char = makeChar({ attributes: { strength: 8, agility: 5, constitution: 5, innerForce: 3, comprehension: 20, luck: 5, reputation: 0 } });
+            char.hp = 100;
+            const cs = Combat.initState(char, STUB_ENEMY, STUB_JOB);
+            Combat.processTurn('focus', cs, char, STUB_JOB);
+            if (cs.enemyIntentType === 'accurate') accurateCount++;
+        }
+        expect(accurateCount).toBeGreaterThan(25); // >60% at comp 20 (actual ~95%)
+    });
+
+    test('zero comprehension never yields accurate (probabilistic)', () => {
+        let accurateCount = 0;
+        for (let i = 0; i < 40; i++) {
+            const char = makeChar({ attributes: { strength: 8, agility: 5, constitution: 5, innerForce: 3, comprehension: 0, luck: 5, reputation: 0 } });
+            char.hp = 100;
+            const cs = Combat.initState(char, STUB_ENEMY, STUB_JOB);
+            Combat.processTurn('focus', cs, char, STUB_JOB);
+            if (cs.enemyIntentType === 'accurate') accurateCount++;
+        }
+        expect(accurateCount).toBe(0); // comp 0 = 0% accurate
+    });
 });
 
 describe('Combat.getEffectiveStats', () => {

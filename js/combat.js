@@ -15,6 +15,12 @@ const Combat = {
         heavy: '对方气沉丹田——<b>刚攻将至</b>',
         swift: '对方步法游走——<b>巧攻难测</b>',
     },
+    VAGUE_INTENT_MSGS: [
+        '对方行迹难以捉摸',
+        '对方拜式之调难以判断',
+        '对方意图难以看穿',
+        '对方下一招摄格不定',
+    ],
 
     // ── Scaled enemy stats ──────────────────────────────────────────────────
     getEffectiveStats(enemy, char) {
@@ -266,11 +272,25 @@ const Combat = {
             }
         }
 
-        // ── Preview enemy's NEXT action ──────────────────────────────────────
+        // ── Preview enemy's NEXT action (accuracy gated by comprehension) ────
         if (!combatOver) {
             const next = this._enemyChooseAction(cs);
             cs.enemyNextAction = next;
-            cs.enemyIntentHint = this.ENEMY_INTENT[next] || '';
+            const comp = (char.attributes && char.attributes.comprehension) || 0;
+            const accurateChance = Math.min(0.95, comp / 20);
+            const remaining     = 1 - accurateChance;
+            const r = Math.random();
+            if (r < accurateChance) {
+                cs.enemyIntentHint  = this.ENEMY_INTENT[next] || '';
+                cs.enemyIntentType  = 'accurate';
+            } else if (r < accurateChance + remaining * 0.6) {
+                cs.enemyIntentHint  = this._pick(this.VAGUE_INTENT_MSGS);
+                cs.enemyIntentType  = 'vague';
+            } else {
+                const wrong = next === 'heavy' ? 'swift' : 'heavy';
+                cs.enemyIntentHint  = this.ENEMY_INTENT[wrong] || '';
+                cs.enemyIntentType  = 'wrong'; // looks identical to 'accurate' in UI
+            }
         }
 
         cs.log.push({ turn: cs.turn, text: lines.join(' ') });

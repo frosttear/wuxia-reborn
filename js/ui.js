@@ -495,9 +495,19 @@ const UI = {
             skillEl.style.display = 'none';
         }
 
-        // Enemy intent hint
+        // Enemy intent hint (accuracy gated by comprehension)
         const intentEl = document.getElementById('combatIntentHint');
-        intentEl.innerHTML = cs.enemyIntentHint ? `🔮 ${cs.enemyIntentHint}` : '';
+        if (cs.enemyIntentHint) {
+            const comp = char.attributes.comprehension || 0;
+            const accuratePct = Math.round(Math.min(95, comp / 20 * 100));
+            if (cs.enemyIntentType === 'vague') {
+                intentEl.innerHTML = `<span class="intent-vague">❓ ${cs.enemyIntentHint}</span><span class="intent-comp-label">（悟性${comp}，洞察${accuratePct}%）</span>`;
+            } else {
+                intentEl.innerHTML = `<span class="intent-read">🔮 ${cs.enemyIntentHint}</span><span class="intent-comp-label">（悟性${comp}，洞察${accuratePct}%）</span>`;
+            }
+        } else {
+            intentEl.innerHTML = '';
+        }
 
         // Combat log (last 5 entries)
         const logEl = document.getElementById('combatLog');
