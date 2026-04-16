@@ -499,7 +499,8 @@ const UI = {
         const intentEl = document.getElementById('combatIntentHint');
         if (cs.enemyIntentHint) {
             const comp = char.attributes.comprehension || 0;
-            const accuratePct = Math.round(Math.min(95, comp / 20 * 100));
+            const t = Math.max(0, comp - 3) / 55;
+            const accuratePct = Math.round(Math.min(90, Math.pow(t, 1.5) * 90));
             if (cs.enemyIntentType === 'vague') {
                 intentEl.innerHTML = `<span class="intent-vague">❓ ${cs.enemyIntentHint}</span><span class="intent-comp-label">（悟性${comp}，洞察${accuratePct}%）</span>`;
             } else {

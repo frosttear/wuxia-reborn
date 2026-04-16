@@ -273,17 +273,23 @@ const Combat = {
         }
 
         // ── Preview enemy's NEXT action (accuracy gated by comprehension) ────
+        // Power-law curve: needs comp ~55-60 (3-4 rebirths) for reliable reads.
+        // Low comp: mostly wrong reads (deceptive). Mid comp: vague. High comp: accurate.
         if (!combatOver) {
             const next = this._enemyChooseAction(cs);
             cs.enemyNextAction = next;
             const comp = (char.attributes && char.attributes.comprehension) || 0;
-            const accurateChance = Math.min(0.95, comp / 20);
-            const remaining     = 1 - accurateChance;
+            // x^1.5 power law: 0% at comp≤3, ~15% at 20, ~50% at 40, ~90% at 60
+            const t = Math.max(0, comp - 3) / 55;
+            const accurateChance = Math.min(0.90, Math.pow(t, 1.5) * 0.90);
+            // Vague fraction rises with comp: low comp → mostly wrong, high comp → mostly vague
+            const vagueFrac = Math.min(0.80, 0.30 + comp / 60 * 0.50);
+            const remaining = 1 - accurateChance;
             const r = Math.random();
             if (r < accurateChance) {
                 cs.enemyIntentHint  = this.ENEMY_INTENT[next] || '';
                 cs.enemyIntentType  = 'accurate';
-            } else if (r < accurateChance + remaining * 0.6) {
+            } else if (r < accurateChance + remaining * vagueFrac) {
                 cs.enemyIntentHint  = this._pick(this.VAGUE_INTENT_MSGS);
                 cs.enemyIntentType  = 'vague';
             } else {
