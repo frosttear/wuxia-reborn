@@ -314,7 +314,10 @@ const Engine = {
             const effectsCopy = Object.assign({}, effects);
             delete effectsCopy.attributes;
             this.applyEffects(effectsCopy);
-            if (effects.narrative) UI.addLog(effects.narrative, 'result');
+            const gainsStr = this.formatAttrGains(effects.attributes);
+            const gainsTag = gainsStr ? `　<span class="attr-gains">⬆ ${gainsStr}</span>` : '';
+            const narrative = effects.narrative ? effects.narrative + gainsTag : (gainsTag || '');
+            if (narrative) UI.addLog(narrative, 'result');
             // Complete chain step (non-combat)
             if (chainStep && !effects.combat) this.completeChainStep(chainStep.chainId, chainStep.stepIdx);
             UI.renderAll(this.state);

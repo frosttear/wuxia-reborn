@@ -160,6 +160,7 @@ body {
 
 .log-system   { color: var(--accent); font-size: 0.82rem; text-align: center; padding: 4px 0; }
 .log-result   { color: var(--green); font-size: 0.82rem; padding: 2px 6px; }
+.attr-gains   { color: var(--accent); font-size: 0.78rem; opacity: 0.85; }
 .log-win      { color: var(--green); font-size: 0.83rem; padding: 2px 6px; }
 .log-lose     { color: var(--red); font-size: 0.83rem; padding: 2px 6px; }
 .log-unlock   { color: var(--accent); font-size: 0.83rem; padding: 2px 6px; }

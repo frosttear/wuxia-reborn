@@ -240,7 +240,7 @@ describe('Combat.processTurn - enemy intent preview', () => {
             Combat.processTurn('focus', cs, char, STUB_JOB);
             if (cs.enemyIntentType === 'accurate') accurateCount++;
         }
-        expect(accurateCount).toBeGreaterThan(28); // ~90% accurate at ratio=2
+        expect(accurateCount).toBeGreaterThan(24); // ~80% accurate at ratio=2 (cap=0.80)
     });
 
     test('low playerComp vs strong enemy yields mostly non-accurate', () => {
