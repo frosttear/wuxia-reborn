@@ -475,6 +475,10 @@ const UI = {
         document.getElementById('combatSkillReady').style.display = 'none';
         document.getElementById('combatMomentumFill').style.width = '0%';
         document.getElementById('combatMomentumVal').textContent = '0';
+        // Restore action buttons and hide return button
+        document.querySelectorAll('#combatActions .combat-btn:not(#combatReturnBtn)').forEach(b => b.style.display = '');
+        const returnBtn = document.getElementById('combatReturnBtn');
+        if (returnBtn) { returnBtn.style.display = 'none'; returnBtn.onclick = null; }
         this.setCombatActionsEnabled(true);
         this.setCombatAutoButton(false);
         if (cs.noFlee) {
@@ -568,13 +572,10 @@ const UI = {
     },
 
     showCombatReturnBtn(callback) {
-        const actionsEl = document.getElementById('combatActions');
-        actionsEl.innerHTML = '';
-        const btn = document.createElement('button');
-        btn.className = 'combat-btn combat-return-btn';
-        btn.textContent = '📋 点击返回';
-        btn.onclick = callback;
-        actionsEl.appendChild(btn);
+        document.querySelectorAll('#combatActions .combat-btn:not(#combatReturnBtn)').forEach(b => b.style.display = 'none');
+        const returnBtn = document.getElementById('combatReturnBtn');
+        returnBtn.style.display = '';
+        returnBtn.onclick = callback;
     },
 
     setCombatActionsEnabled(enabled) {
