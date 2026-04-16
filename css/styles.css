@@ -464,21 +464,37 @@ button:disabled { opacity: 0.4; cursor: not-allowed; }
 .combat-log-entry   { border-bottom: 1px solid rgba(255,255,255,0.05); padding-bottom: 4px; }
 .combat-turn-badge  { color: var(--accent); font-size: 0.72rem; margin-right: 6px; font-weight: bold; }
 
+/* Momentum bar */
+.combat-momentum-wrap { display: flex; flex-direction: column; gap: 4px; padding: 4px 0; }
+.combat-momentum-label { font-size: 0.75rem; color: var(--muted); }
+.combat-momentum-bar-bg { height: 6px; background: rgba(255,255,255,0.08); border-radius: 3px; overflow: hidden; }
+.combat-momentum-fill { height: 100%; background: linear-gradient(90deg, #c9a84c, #f4c430); border-radius: 3px; transition: width 0.2s ease; }
+.combat-skill-ready { font-size: 0.78rem; color: #f4c430; font-weight: bold; padding: 3px 0; animation: pulse-glow 1.2s ease-in-out infinite; }
+@keyframes pulse-glow { 0%,100%{opacity:1} 50%{opacity:0.6} }
+/* Intent hint */
+.combat-intent-hint { font-size: 0.8rem; color: rgba(180,160,220,0.9); min-height: 1.2em; text-align: center; font-style: italic; }
+
 .combat-actions {
     display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 8px;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 6px;
     margin-top: 4px;
 }
-.combat-btn         { padding: 12px 8px; font-size: 0.85rem; border-radius: 6px; text-align: center; }
-.combat-attack      { border-color: rgba(201,168,76,0.5); color: var(--accent2); }
-.combat-attack:hover:not(:disabled)  { background: rgba(201,168,76,0.15); }
-.combat-defend      { border-color: rgba(91,155,213,0.5); color: var(--blue); }
-.combat-defend:hover:not(:disabled)  { background: rgba(91,155,213,0.1); }
-.combat-flee        { border-color: rgba(136,136,136,0.4); color: var(--muted); font-size: 0.78rem; }
-.combat-flee:hover:not(:disabled)    { background: rgba(136,136,136,0.1); }
-.combat-auto        { border-color: rgba(114,137,218,0.5); color: #7289da; font-size: 0.85rem; }
-.combat-auto:hover  { background: rgba(114,137,218,0.12); }
+.combat-btn { padding: 10px 6px; font-size: 0.82rem; border-radius: 6px; text-align: center; }
+.combat-strike { border-color: rgba(201,100,76,0.6); color: #e07050; }
+.combat-strike:hover:not(:disabled) { background: rgba(201,100,76,0.15); }
+.combat-quick  { border-color: rgba(201,168,76,0.5); color: var(--accent2); }
+.combat-quick:hover:not(:disabled)  { background: rgba(201,168,76,0.12); }
+.combat-defend { border-color: rgba(91,155,213,0.5); color: var(--blue); }
+.combat-defend:hover:not(:disabled) { background: rgba(91,155,213,0.1); }
+.combat-parry  { border-color: rgba(140,210,150,0.5); color: #7ecf8e; }
+.combat-parry:hover:not(:disabled)  { background: rgba(140,210,150,0.1); }
+.combat-focus  { border-color: rgba(160,130,220,0.5); color: #b09add; }
+.combat-focus:hover:not(:disabled)  { background: rgba(160,130,220,0.1); }
+.combat-flee   { border-color: rgba(136,136,136,0.4); color: var(--muted); font-size: 0.76rem; }
+.combat-flee:hover:not(:disabled)   { background: rgba(136,136,136,0.1); }
+.combat-auto   { border-color: rgba(114,137,218,0.5); color: #7289da; }
+.combat-auto:hover { background: rgba(114,137,218,0.12); }
 .combat-auto.btn-active { background: rgba(114,137,218,0.25); border-color: #7289da; }
 .injured-badge      { display:inline-block; background:rgba(220,80,60,0.2); color:#e05050; border:1px solid rgba(220,80,60,0.4); border-radius:4px; font-size:0.7rem; padding:1px 6px; margin-left:6px; }
 

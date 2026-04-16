@@ -443,8 +443,12 @@ const UI = {
         document.getElementById('combatPlayerName').textContent = char.name;
         document.getElementById('combatPlayerStats').textContent = `攻 ${atk}  防 ${def}`;
         document.getElementById('combatLog').innerHTML = '';
-        this.setCombatActionsEnabled(true); // re-enable buttons on every new combat
-        this.setCombatAutoButton(false);    // reset auto button state
+        document.getElementById('combatIntentHint').textContent = '';
+        document.getElementById('combatSkillReady').style.display = 'none';
+        document.getElementById('combatMomentumFill').style.width = '0%';
+        document.getElementById('combatMomentumVal').textContent = '0';
+        this.setCombatActionsEnabled(true);
+        this.setCombatAutoButton(false);
         if (cs.noFlee) {
             const fleeBtn = document.getElementById('combatFleeBtn');
             fleeBtn.disabled = true;
@@ -475,6 +479,26 @@ const UI = {
         pBar.style.width = pPct + '%';
         pBar.className = 'hp-fill ' + (pPct > 50 ? 'hp-high' : pPct > 25 ? 'hp-mid' : 'hp-low');
 
+        // Momentum bar
+        const mom = cs.playerMomentum || 0;
+        document.getElementById('combatMomentumVal').textContent = mom;
+        document.getElementById('combatMomentumFill').style.width = (mom / 5 * 100) + '%';
+        const activeSkill = job && job.activeSkill;
+        const skillReady = activeSkill && mom >= activeSkill.momentumCost && cs.skillCooldown === 0;
+        const skillEl = document.getElementById('combatSkillReady');
+        if (activeSkill) {
+            skillEl.style.display = skillReady ? '' : 'none';
+            skillEl.innerHTML = skillReady
+                ? `⚡ 「${activeSkill.name}」蓄势完成，下回合自动发动！`
+                : '';
+        } else {
+            skillEl.style.display = 'none';
+        }
+
+        // Enemy intent hint
+        const intentEl = document.getElementById('combatIntentHint');
+        intentEl.innerHTML = cs.enemyIntentHint ? `🔮 ${cs.enemyIntentHint}` : '';
+
         // Combat log (last 5 entries)
         const logEl = document.getElementById('combatLog');
         logEl.innerHTML = cs.log.slice(-5).map(e =>
@@ -488,7 +512,7 @@ const UI = {
             fleeBtn.disabled = true;
             fleeBtn.textContent = '🔒 无法逃跑';
         } else {
-            fleeBtn.textContent = `💨 逃跑 ${Math.round(cs.fleeChance * 100)}%`;
+            fleeBtn.textContent = `� 逃跑 ${Math.round(cs.fleeChance * 100)}%`;
         }
     },
 

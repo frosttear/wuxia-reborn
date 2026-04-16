@@ -26,6 +26,9 @@ describe('Combat.initState', () => {
         expect(cs.usedSkills).toEqual([]);
         expect(cs.totalDmgDealt).toBe(0);
         expect(cs.totalDmgReceived).toBe(0);
+        expect(cs.playerMomentum).toBe(0);
+        expect(cs.skillCooldown).toBe(0);
+        expect(cs.enemyStunned).toBe(false);
     });
 
     test('enemy HP scales with character age tier', () => {
@@ -36,43 +39,61 @@ describe('Combat.initState', () => {
     });
 });
 
-describe('Combat.processTurn - attack', () => {
+describe('Combat.processTurn - strike (刚攻)', () => {
     test('increments turn counter', () => {
         const { char, cs } = freshCombat();
-        Combat.processTurn('attack', cs, char, STUB_JOB);
+        Combat.processTurn('strike', cs, char, STUB_JOB);
         expect(cs.turn).toBe(1);
     });
 
     test('deals damage to enemy (enemyHp decreases)', () => {
         const { char, cs } = freshCombat();
-        Combat.processTurn('attack', cs, char, STUB_JOB);
+        Combat.processTurn('strike', cs, char, STUB_JOB);
         expect(cs.enemyHp).toBeLessThan(cs.enemyMaxHp);
     });
 
     test('tracks total damage dealt', () => {
         const { char, cs } = freshCombat();
-        Combat.processTurn('attack', cs, char, STUB_JOB);
+        Combat.processTurn('strike', cs, char, STUB_JOB);
         expect(cs.totalDmgDealt).toBeGreaterThan(0);
+    });
+
+    test('increments playerMomentum on hit', () => {
+        const { char, cs } = freshCombat();
+        Combat.processTurn('strike', cs, char, STUB_JOB);
+        expect(cs.playerMomentum).toBeGreaterThanOrEqual(1);
     });
 
     test('returns combatOver and result properties', () => {
         const { char, cs } = freshCombat();
-        const result = Combat.processTurn('attack', cs, char, STUB_JOB);
+        const result = Combat.processTurn('strike', cs, char, STUB_JOB);
         expect(result).toHaveProperty('combatOver');
         expect(result).toHaveProperty('result');
     });
 
     test('winning sets combatOver=true and result=won', () => {
         const { char, cs } = freshCombat();
-        cs.enemyHp = 1; // one hit from death
-        const result = Combat.processTurn('attack', cs, char, STUB_JOB);
-        if (result.combatOver) {
-            expect(result.result).toBe('won');
-        }
+        cs.enemyHp = 1;
+        const result = Combat.processTurn('strike', cs, char, STUB_JOB);
+        if (result.combatOver) expect(result.result).toBe('won');
     });
 });
 
-describe('Combat.processTurn - defend', () => {
+describe('Combat.processTurn - quick (巧攻)', () => {
+    test('deals damage to enemy', () => {
+        const { char, cs } = freshCombat();
+        Combat.processTurn('quick', cs, char, STUB_JOB);
+        expect(cs.enemyHp).toBeLessThan(cs.enemyMaxHp);
+    });
+
+    test('increments playerMomentum', () => {
+        const { char, cs } = freshCombat();
+        Combat.processTurn('quick', cs, char, STUB_JOB);
+        expect(cs.playerMomentum).toBeGreaterThanOrEqual(1);
+    });
+});
+
+describe('Combat.processTurn - defend (防御)', () => {
     test('increments turn counter', () => {
         const { char, cs } = freshCombat();
         Combat.processTurn('defend', cs, char, STUB_JOB);
@@ -80,7 +101,6 @@ describe('Combat.processTurn - defend', () => {
     });
 
     test('player still takes some damage (enemy attacks back)', () => {
-        // Run many times to account for randomness
         let receivedDamage = false;
         for (let i = 0; i < 20; i++) {
             const { char, cs } = freshCombat();
@@ -89,6 +109,70 @@ describe('Combat.processTurn - defend', () => {
             if (char.hp < hpBefore) { receivedDamage = true; break; }
         }
         expect(receivedDamage).toBe(true);
+    });
+});
+
+describe('Combat.processTurn - focus (蓄势)', () => {
+    test('increases playerMomentum by 2', () => {
+        const { char, cs } = freshCombat();
+        Combat.processTurn('focus', cs, char, STUB_JOB);
+        expect(cs.playerMomentum).toBeGreaterThanOrEqual(2);
+    });
+
+    test('does not deal damage to enemy', () => {
+        const { char, cs } = freshCombat();
+        Combat.processTurn('focus', cs, char, STUB_JOB);
+        expect(cs.totalDmgDealt).toBe(0);
+    });
+});
+
+describe('Combat.processTurn - parry (化解) vs heavy', () => {
+    test('counter-attacks when enemy uses heavy', () => {
+        const { char, cs } = freshCombat();
+        cs.enemyNextAction = 'heavy';
+        Combat.processTurn('parry', cs, char, STUB_JOB);
+        expect(cs.totalDmgDealt).toBeGreaterThan(0);
+    });
+
+    test('player takes extra damage when parry fails (swift)', () => {
+        let tookDamage = false;
+        for (let i = 0; i < 10; i++) {
+            const { char, cs } = freshCombat();
+            cs.enemyNextAction = 'swift';
+            const hpBefore = char.hp;
+            Combat.processTurn('parry', cs, char, STUB_JOB);
+            if (char.hp < hpBefore) { tookDamage = true; break; }
+        }
+        expect(tookDamage).toBe(true);
+    });
+});
+
+describe('Combat.processTurn - job active skill auto-trigger', () => {
+    test('skill fires when momentum >= cost and cooldown = 0', () => {
+        const { char, cs } = freshCombat();
+        const jobWithSkill = {
+            ...STUB_JOB,
+            activeSkill: { id: 'test_skill', name: '测试技', momentumCost: 3, type: 'burst', power: 2.0 }
+        };
+        cs.playerMomentum = 3;
+        cs.skillCooldown = 0;
+        const hpBefore = cs.enemyHp;
+        Combat.processTurn('strike', cs, jobWithSkill.activeSkill ? char : char, jobWithSkill);
+        expect(cs.enemyHp).toBeLessThan(hpBefore);
+        expect(cs.skillCooldown).toBe(3);
+        expect(cs.playerMomentum).toBe(0);
+    });
+
+    test('skill does not fire when on cooldown', () => {
+        const { char, cs } = freshCombat();
+        const jobWithSkill = {
+            ...STUB_JOB,
+            activeSkill: { id: 'test_skill', name: '测试技', momentumCost: 3, type: 'burst', power: 2.0 }
+        };
+        cs.playerMomentum = 3;
+        cs.skillCooldown = 2;
+        Combat.processTurn('strike', cs, char, jobWithSkill);
+        expect(cs.skillCooldown).toBe(1); // decremented from 2 to 1
     });
 });
 
@@ -115,16 +199,29 @@ describe('Combat.processTurn - flee', () => {
 describe('Combat.processTurn - lost condition', () => {
     test('sets result=lost when player HP reaches 0', () => {
         const { char, cs } = freshCombat();
-        char.hp = 1; // barely alive
-        // Force a loss by running attacks until char dies
+        char.hp = 1;
         let result;
         for (let i = 0; i < 50; i++) {
-            result = Combat.processTurn('attack', cs, char, STUB_JOB);
+            result = Combat.processTurn('strike', cs, char, STUB_JOB);
             if (result.combatOver) break;
         }
         if (result && result.combatOver) {
             expect(['won', 'lost']).toContain(result.result);
         }
+    });
+});
+
+describe('Combat.processTurn - enemy intent preview', () => {
+    test('sets enemyNextAction after each non-final turn', () => {
+        const { char, cs } = freshCombat();
+        Combat.processTurn('focus', cs, char, STUB_JOB);
+        expect(['heavy', 'swift']).toContain(cs.enemyNextAction);
+    });
+
+    test('sets enemyIntentHint string after each turn', () => {
+        const { char, cs } = freshCombat();
+        Combat.processTurn('focus', cs, char, STUB_JOB);
+        expect(typeof cs.enemyIntentHint).toBe('string');
     });
 });
 

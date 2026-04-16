@@ -692,7 +692,7 @@ const Engine = {
         UI.setCombatAutoButton(true);
         this.state.combatAutoTimer = setInterval(() => {
             if (this.state.gamePhase === 'combat') {
-                this.handleCombatAction('attack');
+                this.handleCombatAction('strike');
             } else {
                 this.stopCombatAuto();
             }
