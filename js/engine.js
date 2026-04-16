@@ -106,6 +106,13 @@ const Engine = {
             }
         }
 
+        // autoHealInjury passive: clear injury automatically each month
+        if (char.injured && (char.passives || []).some(p => p.autoHealInjury)) {
+            char.injured = false;
+            char.injuredMonths = 0;
+            UI.addLog('【青心丹药】苹青的药力帮你迅速消去了伤势。', 'result');
+        }
+
         // Injured state: forced rest, only 养伤 events allowed
         if (char.injured) {
             char.injuredMonths = Math.max(0, (char.injuredMonths || 1) - 1);
@@ -277,6 +284,21 @@ const Engine = {
             char.bondLevels[npcId] = Math.max(char.bondLevels[npcId] || 0, level);
             const npc = this.state.npcs.find(n => n.id === npcId);
             UI.addLog(`💞 与【${npc ? npc.name : npcId}】的羁绊加深！（第${level}章）`, 'unlock');
+
+            // Check for max-bond passive unlock
+            const npcBonds = this.state.bonds[npcId];
+            const maxLevel = npcBonds ? npcBonds.length : 0;
+            if (level >= maxLevel) {
+                const bondChapter = npcBonds.find(b => b.level === level);
+                if (bondChapter && bondChapter.passive) {
+                    const passive = bondChapter.passive;
+                    if (!char.passives) char.passives = [];
+                    if (!char.passives.find(p => p.id === passive.id)) {
+                        char.passives.push(passive);
+                        UI.addLog(`✨ 解锁被动【${passive.name}】：${passive.desc}`, 'unlock');
+                    }
+                }
+            }
         }
 
         const effects = choice.effects || {};
@@ -295,14 +317,13 @@ const Engine = {
         }
 
         // Combat event → start turn-based combat
-        // Apply non-combat side-effects first (npcAffinity, flags, hp)
         if (effects.combat) {
             const enemy = this.getEnemy(effects.combat);
             if (enemy) {
                 const sideEffects = Object.assign({}, effects);
                 delete sideEffects.combat;
                 delete sideEffects.narrative;
-                delete sideEffects.attributes; // already handled above
+                delete sideEffects.attributes;
                 this.applyEffects(sideEffects);
                 this.startCombat(enemy, effects.narrative || '');
                 return;
@@ -310,62 +331,9 @@ const Engine = {
         }
 
         this.applyEffects(effects);
-
-        if (effects.narrative) {
-            UI.addLog(effects.narrative, 'result');
-        }
-
+        if (effects.narrative) UI.addLog(effects.narrative, 'result');
         UI.renderAll(this.state);
         this.saveGame();
-    },
-
-    applyEffects(effects) {
-        const { char } = this.state;
-        if (!effects) return;
-
-        if (effects.attributes) {
-            Character.applyAttributeChanges(char, effects.attributes);
-        }
-
-        if (effects.hp) {
-            const job = this.getJob(char.job);
-            if (effects.hp > 0) {
-                Character.healHP(char, effects.hp, job);
-            } else {
-                Character.takeDamage(char, -effects.hp);
-            }
-        }
-
-        if (effects.flags) {
-            for (const flag in effects.flags) {
-                char.flags[flag] = effects.flags[flag];
-            }
-        }
-
-        if (effects.npcAffinity) {
-            NPCSystem.applyAffinityChanges(char, effects.npcAffinity);
-        }
-    },
-
-    // Return list of NPCs the player can currently visit
-    getAvailableVisits() {
-        const { char, bonds, npcs } = this.state;
-        if (!char || !bonds) return [];
-        const available = [];
-        for (const npcId in bonds) {
-            if (!NPCSystem.isMet(char, npcId)) continue;
-            const npc = npcs.find(n => n.id === npcId);
-            if (!npc) continue;
-            const npcBonds = bonds[npcId];
-            const currentLevel = char.bondLevels[npcId] || 0;
-            const nextEvent = npcBonds.find(b => b.level === currentLevel + 1);
-            const affinity = NPCSystem.getAffinity(char, npcId);
-            const bondReady = !!(nextEvent &&
-                !char.bondEventsDone[`${npcId}_${nextEvent.level}`] &&
-                affinity >= nextEvent.minAffinity);
-            available.push({ npcId, npc, bondEvent: nextEvent || null, affinity, currentLevel, bondReady });
-        }
-        return available;
     },
 
     visitNPC(npcId) {
@@ -373,6 +341,29 @@ const Engine = {
         if (!char || this.state.gamePhase !== 'idle') return;
         const npcBonds = this.state.bonds[npcId];
         if (!npcBonds) return;
+
+        const npc = this.state.npcs.find(n => n.id === npcId);
+        const currentLevel = char.bondLevels[npcId] || 0;
+        const bondEvent = npcBonds.find(b => b.level === currentLevel + 1);
+        const affinity = NPCSystem.getAffinity(char, npcId);
+        const bondReady = !!(bondEvent &&
+            !char.bondEventsDone[`${npcId}_${bondEvent.level}`] &&
+            affinity >= bondEvent.minAffinity);
+
+        // Check casual visit yearly limit BEFORE spending a month
+        if (!bondReady) {
+            if (!char.visitCounts) char.visitCounts = {};
+            const ageYear = Character.getAgeYears(char);
+            const vc = char.visitCounts[npcId] || { year: -1, count: 0 };
+            if (vc.year !== ageYear) { vc.year = ageYear; vc.count = 0; }
+            const MAX_CASUAL = 2;
+            if (vc.count >= MAX_CASUAL) {
+                UI.addLog(`今年已多次拜访【${npc ? npc.name : npcId}】，想来想去，时机还不对，且等明年再说。`, 'info');
+                return;
+            }
+            vc.count++;
+            char.visitCounts[npcId] = vc;
+        }
 
         // Advance 1 month for the visit
         const job = this.getJob(char.job);
@@ -385,32 +376,28 @@ const Engine = {
         }
         UI.renderCharacter(char, this.state.jobs);
 
-        const npc = this.state.npcs.find(n => n.id === npcId);
-        const currentLevel = char.bondLevels[npcId] || 0;
-        const bondEvent = npcBonds.find(b => b.level === currentLevel + 1);
-        const affinity = NPCSystem.getAffinity(char, npcId);
-        const bondReady = !!(bondEvent &&
-            !char.bondEventsDone[`${npcId}_${bondEvent.level}`] &&
-            affinity >= bondEvent.minAffinity);
-
         if (bondReady) {
-            // Trigger full bond chapter event
+            // Trigger full bond chapter event; compute locked choices first
             const inherited = char.inheritedBonds[npcId];
             const prefix = inherited && inherited >= bondEvent.level
-                ? `【前世记忆】你隐约记得与${npc.name}曾有过这一段故事……\n\n`
+                ? `「前世记忆」你隐约记得与${npc.name}曾有过这一段故事……\n\n`
                 : '';
             const displayEvent = Object.assign({}, bondEvent, {
                 text: prefix + bondEvent.text,
                 title: `羁绊·${npc ? npc.name : npcId}·第${bondEvent.level}章`,
                 type: '羁绊'
             });
+            const allChoices = bondEvent.choices.map(c =>
+                ({ ...c, locked: c.requirements ? !this.checkConditions(c.requirements) : false })
+            );
+            const availableChoices = allChoices.filter(c => !c.locked);
             this.state.pendingChoice = {
                 event: displayEvent,
-                choices: bondEvent.choices,
+                choices: availableChoices,
                 bondInfo: { npcId, level: bondEvent.level }
             };
             this.state.gamePhase = 'choosing';
-            UI.showEvent(displayEvent, bondEvent.choices, this.state);
+            UI.showEvent(displayEvent, allChoices, this.state);
         } else {
             // Casual visit: small affinity boost
             NPCSystem.changeAffinity(char, npcId, 3);

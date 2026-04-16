@@ -132,6 +132,24 @@ const UI = {
         } else {
             talentsEl.innerHTML = '<span class="muted">暂无传承天赋</span>';
         }
+
+        // Passives (earned this life via max-bond)
+        const passivesEl = document.getElementById('passives');
+        if (passivesEl) {
+            passivesEl.innerHTML = '';
+            const passives = char.passives || [];
+            if (passives.length > 0) {
+                for (const p of passives) {
+                    const span = document.createElement('span');
+                    span.className = 'talent-tag passive-tag';
+                    span.title = p.desc;
+                    span.textContent = p.name;
+                    passivesEl.appendChild(span);
+                }
+            } else {
+                passivesEl.innerHTML = '<span class="muted">尚无被动</span>';
+            }
+        }
     },
 
     renderRelationships(char, npcs) {
@@ -504,6 +522,8 @@ const UI = {
         if (panel.style.display !== 'none') { panel.style.display = 'none'; return; }
         const visits = Engine.getAvailableVisits();
         if (visits.length === 0) return;
+        const char = Engine.state.char;
+        const ageYear = char ? Character.getAgeYears(char) : 0;
         panel.innerHTML = visits.map(v => {
             const infoText = v.bondReady
                 ? `💞 第${v.bondEvent.level}章「${v.bondEvent.title}」可触发`
@@ -511,9 +531,19 @@ const UI = {
                     ? `好感 ${v.affinity}／${v.bondEvent.minAffinity}（差 ${v.bondEvent.minAffinity - v.affinity}）`
                     : `羁绊圆满  好感 ${v.affinity}`;
             const cls = v.bondReady ? 'visit-npc-btn visit-bond-ready' : 'visit-npc-btn';
+            let visitNote = '';
+            if (!v.bondReady && char) {
+                const vc = (char.visitCounts || {})[v.npcId] || { year: -1, count: 0 };
+                const used = vc.year === ageYear ? vc.count : 0;
+                const remaining = 2 - used;
+                visitNote = remaining > 0
+                    ? `<span class="visit-remain">今年还可拜访 ${remaining} 次</span>`
+                    : `<span class="visit-remain visit-remain-out">今年已达上限</span>`;
+            }
             return `<button class="${cls}" onclick="Engine.visitNPC('${v.npcId}'); UI.visitPanel.style.display='none'">
                 <span class="visit-npc-name">${v.npc.name}</span>
                 <span class="visit-npc-info">${infoText}</span>
+                ${visitNote}
             </button>`;
         }).join('');
         panel.style.display = 'block';

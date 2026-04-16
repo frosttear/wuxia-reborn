@@ -43,7 +43,7 @@
           },
           "effects": {
             "attributes": {
-              "innerForce": 1
+              "innerForce": 2
             },
             "npcAffinity": {
               "wang_tie": 15
@@ -142,6 +142,109 @@
           }
         }
       ]
+    },
+    {
+      "level": 4,
+      "title": "刀碑",
+      "minAffinity": 90,
+      "text": "王铁带你来到城郊一片荒坡，那里立着几块歪斜的木桩，上面刻着模糊的名字。\n\n「当年走镖，一共七个人。」他在木桩前蹲下来，伸手摩挲着其中一块，「就我一个人回来了。」\n\n他许久没有再开口。风吹过荒草，发出细碎的声响。你站在他身后，感觉到那片沉默有多重——三十年的重量，压在一个老人佝偻的背上。\n\n「我想给他们立一块像样的碑。」他最后说，声音很平，「这事，该早些做的。」",
+      "choices": [
+        {
+          "id": "vigil_night",
+          "text": "陪他在碑前守一夜，以酒祭奠",
+          "effects": {
+            "attributes": {
+              "constitution": 1,
+              "innerForce": 2
+            },
+            "npcAffinity": {
+              "wang_tie": 20
+            },
+            "narrative": "你们在荒坡上坐到天明，王铁断断续续说了很多——那七个人的名字、面孔、爱好。你一一记住了。天边泛白时，他拍拍腿站起来：「有你在，他们算是有人记着了。」"
+          }
+        },
+        {
+          "id": "vigil_insight",
+          "text": "在他的追忆中，感悟到生死之间真气运行的秘密",
+          "requirements": {
+            "minAttributes": {
+              "comprehension": 14
+            }
+          },
+          "effects": {
+            "attributes": {
+              "innerForce": 3,
+              "comprehension": 2
+            },
+            "npcAffinity": {
+              "wang_tie": 20
+            },
+            "narrative": "那一夜的感悟难以言说，却让你的真气运行比以往更加绵长。王铁见你闭目入定，也没有打扰，只是静静守在一旁。待你睁眼，他问：「想通了？」你点头，他也点头：「好。」"
+          }
+        },
+        {
+          "id": "vigil_words",
+          "text": "告诉他：他活下来，才有人记得他们",
+          "effects": {
+            "attributes": {
+              "reputation": 1
+            },
+            "npcAffinity": {
+              "wang_tie": 20
+            },
+            "narrative": "他沉默了许久，然后转过身，眼眶有些红：「你这话……老汉记住了。」那之后，他开始张罗立碑的事，动作里有了一种久违的笃定。"
+          }
+        }
+      ]
+    },
+    {
+      "level": 5,
+      "title": "最后的镖路",
+      "minAffinity": 100,
+      "passive": {
+        "id": "wang_tie_legacy",
+        "name": "铁骨真传",
+        "desc": "每月体力恢复额外+3",
+        "hpRegenBonus": 3
+      },
+      "text": "初冬的一个清晨，王铁来找你，背上背着一个旧镖箱，神情比平日郑重许多。\n\n「老弟，我要走最后一趟镖了，」他说，「三十年前，一个快死的兄弟托我带一封信去北边。我答应了，但一直没去成。」\n\n他顿了顿，「如今，我想把这件事了了。就这一趟，不为钱，不为名，就为了当年那句话。」\n\n他抬起头，直视着你：「你愿意陪老汉走一趟吗？」",
+      "choices": [
+        {
+          "id": "walk_with_wang",
+          "text": "二话不说，背上行装，与他同行",
+          "effects": {
+            "attributes": {
+              "strength": 2,
+              "constitution": 2,
+              "reputation": 2
+            },
+            "npcAffinity": {
+              "wang_tie": 22
+            },
+            "narrative": "一路上，王铁话比以往多了些，讲那个兄弟，讲年轻时的事。信送到的那一刻，他在门口站了很久。回来的路上，他把那个旧镖箱传给了你：「以后是你的了，带着它好好走。」"
+          }
+        },
+        {
+          "id": "walk_guard",
+          "text": "全程护在他身旁，不让他受丝毫折损",
+          "requirements": {
+            "minAttributes": {
+              "constitution": 20
+            }
+          },
+          "effects": {
+            "attributes": {
+              "strength": 2,
+              "constitution": 3,
+              "reputation": 3
+            },
+            "npcAffinity": {
+              "wang_tie": 22
+            },
+            "narrative": "沿途你替他挡了不知多少风险，他从头到尾都没有提这件事，只是笑着说路上风景不错。等信送到、踏上归路，他才开口：「老汉这辈子，护过不少人。能被人护着走一回……也挺好的。」那句话，让你心里暖了很久。"
+          }
+        }
+      ]
     }
   ],
   "li_yunshu": [
@@ -188,7 +291,7 @@
           },
           "effects": {
             "attributes": {
-              "agility": 2
+              "agility": 3
             },
             "npcAffinity": {
               "li_yunshu": 15
@@ -241,7 +344,7 @@
           },
           "effects": {
             "attributes": {
-              "reputation": 2,
+              "reputation": 3,
               "comprehension": 1
             },
             "npcAffinity": {
@@ -299,8 +402,8 @@
           },
           "effects": {
             "attributes": {
-              "comprehension": 2,
-              "innerForce": 1
+              "comprehension": 3,
+              "innerForce": 2
             },
             "npcAffinity": {
               "li_yunshu": 22
@@ -309,6 +412,113 @@
               "li_deep_talk": true
             },
             "narrative": "她愣了好一会儿，然后忽然笑了起来——不是苦笑，是真正的笑，比月光还亮。「你这个人，」她说，「有时候真的很烦人。」但你知道，那是最高的夸奖。"
+          }
+        }
+      ]
+    },
+    {
+      "level": 4,
+      "title": "异地之邀",
+      "minAffinity": 85,
+      "text": "李云舒来找你，手里攥着一封信，神情有些纠结。\n\n「南边有个剑宗，派人来请我去入门，」她把信展开给你看，「说我的剑法有慧根，愿意收我为记名弟子。」\n\n她收起信，在屋里踱了几步：「条件是，今年冬天就得动身，至少三年不能回来。」\n\n她转过来看着你：「你说，我该去吗？」\n\n那个问题不只是在问你，她是在说——这个决定，她想让你知道。",
+      "choices": [
+        {
+          "id": "encourage_leave",
+          "text": "告诉她：这是千载难逢的机会，去吧",
+          "effects": {
+            "attributes": {
+              "reputation": 1
+            },
+            "npcAffinity": {
+              "li_yunshu": 20
+            },
+            "narrative": "她沉默了一会儿，最后点了点头：「好，那就去。」走之前，她来找了你一次，什么都没多说，只是道了声：「等我回来。」那句话，你没有忘记。"
+          }
+        },
+        {
+          "id": "let_her_decide",
+          "text": "帮她分析利弊，最终告诉她：答案一直在她心里",
+          "requirements": {
+            "minAttributes": {
+              "comprehension": 16
+            }
+          },
+          "effects": {
+            "attributes": {
+              "comprehension": 3,
+              "luck": 1
+            },
+            "npcAffinity": {
+              "li_yunshu": 20
+            },
+            "narrative": "她听你说完，沉默了很久，然后慢慢笑了：「你真烦，什么都点破。」但那笑容真实而松动，像是下定了什么。你不知道她最后选了什么，但看见她离去时那个步伐，你知道，她想清楚了。"
+          }
+        },
+        {
+          "id": "help_stay",
+          "text": "替她在本地引荐人脉，让她不必远行也能精进",
+          "requirements": {
+            "minAttributes": {
+              "reputation": 15
+            }
+          },
+          "effects": {
+            "attributes": {
+              "reputation": 3,
+              "agility": 2
+            },
+            "npcAffinity": {
+              "li_yunshu": 20
+            },
+            "narrative": "你介绍了几位江湖上的剑法名家，她一一拜访，收获颇丰。事后她来谢你：「我想了很久，决定留下来了。」她没有解释原因，你也没有多问，但那之后，她练剑时的眼神里多了一份沉稳。"
+          }
+        }
+      ]
+    },
+    {
+      "level": 5,
+      "title": "一剑长歌",
+      "minAffinity": 95,
+      "passive": {
+        "id": "li_yunshu_legacy",
+        "name": "云舒剑意",
+        "desc": "敏捷与运气属性获取+20%",
+        "attrGrowthBonus": { "agility": 0.2, "luck": 0.2 }
+      },
+      "text": "一个晴朗的午后，李云舒把你叫到城外一片空地上，手中握着剑，表情里带着一种你从未见过的郑重。\n\n「我最近悟出了一套剑法，」她说，「是我自己想出来的，还没有名字。」\n\n她在你面前演练了一遍，那套剑法轻灵而凌厉，像春风，也像山涧急流——完全是她本人的气质。\n\n「我想把它教给你。」她收剑，看着你，「因为，我觉得……只有你会用好它。」",
+      "choices": [
+        {
+          "id": "learn_sword",
+          "text": "认真跟她学完整套剑法",
+          "effects": {
+            "attributes": {
+              "agility": 3,
+              "luck": 2
+            },
+            "npcAffinity": {
+              "li_yunshu": 22
+            },
+            "narrative": "你们练了整整一下午，她纠正你的姿势，你问她创出这套剑法的心境，她想了想，说：「大概是那种……不管前路如何，都无所畏惧的感觉。」你把这句话记在心里，练剑时想起，总觉得身法又轻了几分。"
+          }
+        },
+        {
+          "id": "fuse_sword",
+          "text": "以自己的身法为根基，融汇出独属于你的变体",
+          "requirements": {
+            "minAttributes": {
+              "agility": 20
+            }
+          },
+          "effects": {
+            "attributes": {
+              "agility": 5,
+              "luck": 2,
+              "reputation": 2
+            },
+            "npcAffinity": {
+              "li_yunshu": 22
+            },
+            "narrative": "你的变体让她愣了一下，然后哈哈大笑：「没想到你学了倒比我练得还好看！」她郑重地说：「咱俩以后各练各的，但这套剑法，就算是咱们两个人的了。」那之后，每次你施展这套身法，都有一种她在旁边看着的感觉。"
           }
         }
       ]
@@ -358,7 +568,7 @@
           },
           "effects": {
             "attributes": {
-              "comprehension": 2
+              "comprehension": 3
             },
             "npcAffinity": {
               "mysterious_elder": 15
@@ -445,6 +655,114 @@
           }
         }
       ]
+    },
+    {
+      "level": 4,
+      "title": "天魔本源",
+      "minAffinity": 90,
+      "text": "老者今日寻到你，表情比以往更加凝重。他在桌旁坐下，端起茶杯，又放下，似乎在斟酌从何说起。\n\n「天魔，」他最终开口，「老夫识得他。」\n\n那句话落下来，空气里似乎凝固了一瞬。\n\n「他年轻时，是老夫最看重的弟子。」老者望着窗外，声音低沉，「世间难得一见的天赋。老夫以为，他会是一代剑宗，甚至更高。但是……」\n\n他停了很久。\n\n「有一条路，他选了，我拦不住。走上那条路的人，最终都会来到那一关口——」他转过头，直视着你，「就是你将要面对的。」",
+      "choices": [
+        {
+          "id": "listen_weakness",
+          "text": "认真聆听，请他告知天魔的弱处",
+          "effects": {
+            "attributes": {
+              "innerForce": 2,
+              "comprehension": 1
+            },
+            "npcAffinity": {
+              "mysterious_elder": 20
+            },
+            "flags": {
+              "tianmo_weakness_known": true
+            },
+            "narrative": "老者说了许多——天魔的执念，他力量的来源，还有一个藏在他功法里的破绽。这些话，老者说得很慢，像是每一句都在消耗他什么。末了，他叹了口气：「我能做的，就这些了。」"
+          }
+        },
+        {
+          "id": "sense_tianmo",
+          "text": "以内力感知天魔之气的轮廓，形成本能的对抗意识",
+          "requirements": {
+            "minAttributes": {
+              "innerForce": 20
+            }
+          },
+          "effects": {
+            "attributes": {
+              "innerForce": 4,
+              "comprehension": 2
+            },
+            "npcAffinity": {
+              "mysterious_elder": 20
+            },
+            "flags": {
+              "tianmo_weakness_known": true
+            },
+            "narrative": "你在聆听的同时，尝试以内力感知老者描述中的那股气息——黑暗、厚重、绝望深处升起的力量。你没有退缩，而是让自己的真气在对比中形成了一种天然的抵触。老者见你眼神的变化，点了点头：「好，这就是你需要的。」"
+          }
+        },
+        {
+          "id": "ask_regret",
+          "text": "问他：你是否后悔当年没能留住他",
+          "effects": {
+            "attributes": {
+              "comprehension": 2
+            },
+            "npcAffinity": {
+              "mysterious_elder": 20
+            },
+            "narrative": "他沉默了很久。「后悔是一回事，」他终于说，「但人做了选择，最终都要自己承担。他如此，我如此，你也如此。」那句话并不像是在讲别人。"
+          }
+        }
+      ]
+    },
+    {
+      "level": 5,
+      "title": "一线天命",
+      "minAffinity": 100,
+      "passive": {
+        "id": "mysterious_elder_legacy",
+        "name": "玄真根基",
+        "desc": "内力与悟性属性获取+20%",
+        "attrGrowthBonus": { "innerForce": 0.2, "comprehension": 0.2 }
+      },
+      "text": "那是一个风平浪静的傍晚，老者把你叫到了院子里。他的步伐比以往慢了几分，但眼神却格外清明。\n\n「我在等一个人，」他说，在石凳上坐下，「等了很多年。老夫年轻时做过一件大事，但只做了一半——剩下的，等待你来完成。」\n\n他伸出一只手，手心里有一团极淡的气息，像将熄的烛火，却温热而绵长。\n\n「这是老夫修行一生留下的最后一丝元气。」他的声音很平静，「我愿意给你。」",
+      "choices": [
+        {
+          "id": "accept_essence",
+          "text": "双手接引，以虔诚之心承受这份传承",
+          "effects": {
+            "attributes": {
+              "innerForce": 4,
+              "comprehension": 3
+            },
+            "npcAffinity": {
+              "mysterious_elder": 22
+            },
+            "narrative": "那丝元气进入你的经脉，如春水融冰——你感觉到体内某条一直紧绷的道路，悄然松动了。老者的面色在传功后苍白了一些，但他笑着，说：「值了。」那个夜晚，你们就这样坐到天亮，什么都没有再说。"
+          }
+        },
+        {
+          "id": "absorb_fully",
+          "text": "以精湛的引气之法完整承纳，不浪费他一丝心血",
+          "requirements": {
+            "minAttributes": {
+              "innerForce": 25
+            }
+          },
+          "effects": {
+            "attributes": {
+              "innerForce": 6,
+              "comprehension": 3,
+              "luck": 2
+            },
+            "npcAffinity": {
+              "mysterious_elder": 22
+            },
+            "narrative": "你的引气之法将那道元气完整纳入，一丝不漏。老者目睹全程，缓缓颔首：「果然是你。」那一刻他的眼神里，没有遗憾。你知道，他等待的事，到此圆满了。"
+          }
+        }
+      ]
     }
   ],
   "han_shuang": [
@@ -491,8 +809,8 @@
           },
           "effects": {
             "attributes": {
-              "innerForce": 1,
-              "comprehension": 1
+              "innerForce": 2,
+              "comprehension": 2
             },
             "npcAffinity": {
               "han_shuang": 15
@@ -543,7 +861,7 @@
           },
           "effects": {
             "attributes": {
-              "reputation": 2
+              "reputation": 3
             },
             "flags": {
               "han_threat_resolved": true
@@ -606,8 +924,8 @@
           },
           "effects": {
             "attributes": {
-              "comprehension": 2,
-              "innerForce": 2
+              "comprehension": 3,
+              "innerForce": 3
             },
             "flags": {
               "han_revelation": true
@@ -616,6 +934,112 @@
               "han_shuang": 22
             },
             "narrative": "他猛地转过头看你，眼神像被什么刺中了。良久，他低下头，双肩微微颤动。「闭嘴，」他说，声音却哑了，「你怎么……」他没有说完。那一夜，他哭了——你装作没看见。但从此之后，他的剑里，那道哀意，淡了一些。"
+          }
+        }
+      ]
+    },
+    {
+      "level": 4,
+      "title": "旧仇归来",
+      "minAffinity": 90,
+      "text": "韩霜来找你时，脸色比平日更沉。他站在门口，没有进来，只是道：「他来了。」\n\n你知道他说的是谁——那个卖掉整个门派的人，那个让他独自活下来的人。\n\n「他在城南。」他的声音平稳得出奇，「我需要去见他一面。」\n\n停了片刻，他补了一句：「我不知道见了面，自己会做什么。」\n\n那是他第一次承认，自己对这件事没有把握。",
+      "choices": [
+        {
+          "id": "stand_with_han",
+          "text": "陪他去，站在他身旁",
+          "effects": {
+            "attributes": {
+              "reputation": 1
+            },
+            "npcAffinity": {
+              "han_shuang": 20
+            },
+            "narrative": "你们并肩到了地方。那个见面的经过，你没有旁听——你只是守在门外。等韩霜出来时，他的神色很难形容，不是愤怒，也不是释然，像是某种说不清的东西终于有了落处。他对你点了点头，没有说话。你也没问。"
+          }
+        },
+        {
+          "id": "guard_han_back",
+          "text": "告诉他：无论他做什么决定，你都守在他背后",
+          "requirements": {
+            "minAttributes": {
+              "strength": 20
+            }
+          },
+          "effects": {
+            "attributes": {
+              "strength": 3,
+              "reputation": 1
+            },
+            "npcAffinity": {
+              "han_shuang": 20
+            },
+            "narrative": "韩霜愣了一下，然后转过头，用你前所未见的目光看了你一眼。「好，」他说，声音有些哑，「那就走。」那次见面，你一步都没有离开他背后。事后他对你说了一句话，只有四个字：「谢你陪我。」"
+          }
+        },
+        {
+          "id": "help_han_think",
+          "text": "察觉到他需要的不是复仇，而是有人帮他梳理心结",
+          "requirements": {
+            "minAttributes": {
+              "comprehension": 18
+            }
+          },
+          "effects": {
+            "attributes": {
+              "comprehension": 3,
+              "innerForce": 2
+            },
+            "npcAffinity": {
+              "han_shuang": 20
+            },
+            "narrative": "你和他在房间里谈了两个时辰，把他心里那团乱麻一件件拆开来。等到快结束时，他说：「好像……没那么要紧了。」你不确定那算不算解脱，但见到他脸上那个很久没有出现的平静，你觉得应该算。"
+          }
+        }
+      ]
+    },
+    {
+      "level": 5,
+      "title": "无名同行",
+      "minAffinity": 100,
+      "passive": {
+        "id": "han_shuang_legacy",
+        "name": "寒霜剑气",
+        "desc": "战斗攻击力+5",
+        "combatAtkBonus": 5
+      },
+      "text": "几日后，韩霜找到你，背上已经包袱整齐。\n\n「我想了想，」他说，「那条路走完了，我不知道下一步去哪里。」\n\n他顿了顿：「你往哪边走？」\n\n那是他用自己的方式说：他想跟你走一段。这句话，从韩霜嘴里说出来，你知道分量。",
+      "choices": [
+        {
+          "id": "walk_together",
+          "text": "告诉他：一起走",
+          "effects": {
+            "attributes": {
+              "strength": 2,
+              "agility": 2
+            },
+            "npcAffinity": {
+              "han_shuang": 22
+            },
+            "narrative": "没有什么仪式，没有什么豪言，两个人就这样上了路。你们很少说话，但走在一起，有种奇异的踏实。后来有次遇上麻烦，他一言不发地站到了你前面。你知道，他这样做，是因为你当初站在了他身后。"
+          }
+        },
+        {
+          "id": "race_with_han",
+          "text": "当场与他比拼身法，告诉他：跟上就行了",
+          "requirements": {
+            "minAttributes": {
+              "agility": 20
+            }
+          },
+          "effects": {
+            "attributes": {
+              "strength": 2,
+              "agility": 4
+            },
+            "npcAffinity": {
+              "han_shuang": 22
+            },
+            "narrative": "他冷眼看着你的身法，然后迅速跟上，速度出乎意料地快。两人你追我赶，跑出去好几里地，等停下来，两人都喘着气，却都没忍住笑了出来——那是你第一次见他真正地笑。那之后，他再也没提过那条旧路。"
           }
         }
       ]
@@ -667,7 +1091,7 @@
           },
           "effects": {
             "attributes": {
-              "comprehension": 1,
+              "comprehension": 2,
               "luck": 1
             },
             "flags": {
@@ -722,7 +1146,7 @@
           },
           "effects": {
             "attributes": {
-              "innerForce": 2,
+              "innerForce": 3,
               "comprehension": 1
             },
             "flags": {
@@ -785,8 +1209,8 @@
           },
           "effects": {
             "attributes": {
-              "comprehension": 2,
-              "innerForce": 1
+              "comprehension": 3,
+              "innerForce": 2
             },
             "flags": {
               "su_enlightenment": true
@@ -795,6 +1219,112 @@
               "su_qing": 22
             },
             "narrative": "她停住了脚步，背对着你，很久没有动。「我知道，」她最后说，声音有些哑，「但我还是得去。」她转过身，眼圈微红，却在笑：「谢谢你告诉我这个——哪怕很残忍。」那一刻，你觉得她真正长大了，或者说，放下了什么。"
+          }
+        }
+      ]
+    },
+    {
+      "level": 4,
+      "title": "师门寻踪",
+      "minAffinity": 85,
+      "text": "苏青来找你，眼神里有一种不寻常的急切。\n\n「找到了，」她说，「我师父，在北边那个山寨里，被人扣押了。」\n\n她把一张草图摊开，那个地方看起来不好惹——据说是一群走投无路的亡命之徒，人数不少，又武装起来了。\n\n「我不是来求你相救，」她说，但话锋一转，「我只是……不知道该怎么办。」\n\n你看见她握图的手，指节有些发白。",
+      "choices": [
+        {
+          "id": "go_rescue",
+          "text": "告诉她：我陪你去",
+          "effects": {
+            "attributes": {
+              "reputation": 1
+            },
+            "npcAffinity": {
+              "su_qing": 20
+            },
+            "narrative": "这一战打得不容易，但最终你们进去了，也出来了。她师父见到她的那一刻，颤声叫了她的名字。你退到一旁，假装看别处，但听见了她哭出声来。回来的路上，她走在你旁边，什么也没说，但脚步轻了很多。"
+          }
+        },
+        {
+          "id": "use_reputation",
+          "text": "以名号联络当地人手，不费刀兵地解决此事",
+          "requirements": {
+            "minAttributes": {
+              "reputation": 15
+            }
+          },
+          "effects": {
+            "attributes": {
+              "reputation": 3
+            },
+            "npcAffinity": {
+              "su_qing": 20
+            },
+            "narrative": "你用声名换来了一些人情，将人围而不攻，逼对方交出人质。事情比想象的顺利，苏青事后半晌没说话，然后道：「你这个名字，还挺管用的。」那是她说过的最接近夸奖的话之一。"
+          }
+        },
+        {
+          "id": "sense_location",
+          "text": "以内力感知，锁定师父确切位置，制定最稳妥的营救方案",
+          "requirements": {
+            "minAttributes": {
+              "innerForce": 18
+            }
+          },
+          "effects": {
+            "attributes": {
+              "innerForce": 3,
+              "comprehension": 1
+            },
+            "npcAffinity": {
+              "su_qing": 20
+            },
+            "narrative": "你闭目凝神，感知那片区域的生气，锁定了一处气息虚弱却还活着的方位。苏青盯着你手指的位置，点了点头，神情沉稳了下来。那次营救几乎没有伤亡。出来时她看了你一眼：「你……还挺有用的。」"
+          }
+        }
+      ]
+    },
+    {
+      "level": 5,
+      "title": "针灸传心",
+      "minAffinity": 95,
+      "passive": {
+        "id": "su_qing_legacy",
+        "name": "青心丹药",
+        "desc": "战后自动恢复伤势",
+        "autoHealInjury": true
+      },
+      "text": "再次见到苏青时，她神色平和了很多，手边多了一个陌生老人——那是她的师父，一个白发苍苍、眼神清亮的老郎中。\n\n「我师父想见见你，」苏青说，「说是想谢你。」\n\n那个老人拉着你的手看了看，点点头：「好手，有慧根。」他转向苏青：「把那套针法教给他，算作谢礼。」\n\n苏青愣了一下，然后望向你。",
+      "choices": [
+        {
+          "id": "learn_needles",
+          "text": "接受这份心意，认真跟她学",
+          "effects": {
+            "attributes": {
+              "constitution": 2,
+              "luck": 2
+            },
+            "npcAffinity": {
+              "su_qing": 22
+            },
+            "narrative": "苏青教得认真，你学得专心，学了将近半个月。最后一堂课结束后，她说：「你悟性不错。」顿了顿，「比我当初好一点。」那句话，是她这辈子说过最难的夸奖，你都看见她说完之后转了头。"
+          }
+        },
+        {
+          "id": "comprehend_life",
+          "text": "在学习中触类旁通，对生命之气有了更深的领悟",
+          "requirements": {
+            "minAttributes": {
+              "comprehension": 18
+            }
+          },
+          "effects": {
+            "attributes": {
+              "constitution": 2,
+              "innerForce": 3,
+              "comprehension": 2
+            },
+            "npcAffinity": {
+              "su_qing": 22
+            },
+            "narrative": "你在学针法的过程中，对生命本质有了一种奇异的领悟——每一处穴位，都连通着一条气脉，那些气脉，和内力运行的经络，本质上是同一回事。苏青看见你悟到这一层，微微睁大了眼：「你……走得比我快。」"
           }
         }
       ]

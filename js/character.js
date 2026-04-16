@@ -45,7 +45,9 @@ const Character = {
             flags: {},            // story flags
             kills: 0,             // cumulative combat wins (hidden stat)
             rebirthCount: 0,
-            eventLog: []
+            eventLog: [],
+            passives: [],         // [{ id, name, desc, ... }] unlocked this life
+            visitCounts: {}       // { npcId: { year, count } } casual visit limiter
         };
     },
 
@@ -84,7 +86,9 @@ const Character = {
             ? Math.floor(char.attributes.innerForce / 10) * 4 : 0;
         // Talent bonus
         const talentBonus = char.legacyTalents.includes('sword_heart') ? Math.floor(base * 0.1) : 0;
-        return base + jobBase + skillBonus + heroBonus + saintBonus + talentBonus;
+        // Passive bonus (e.g. 寒霜剑气)
+        const passiveBonus = (char.passives || []).reduce((s, p) => s + (p.combatAtkBonus || 0), 0);
+        return base + jobBase + skillBonus + heroBonus + saintBonus + talentBonus + passiveBonus;
     },
 
     getDefensePower(char, job) {
@@ -150,6 +154,15 @@ const Character = {
                 }
             }
         }
+        // Passives: attrGrowthBonus scales specific attrs (e.g. 云舒剑意, 玄真根基)
+        for (const p of (char.passives || [])) {
+            if (!p.attrGrowthBonus) continue;
+            for (const [attr, rate] of Object.entries(p.attrGrowthBonus)) {
+                if (changes[attr] && changes[attr] > 0) {
+                    char.attributes[attr] += Math.floor(changes[attr] * rate);
+                }
+            }
+        }
 
         return luckyTriggered;
     },
@@ -198,7 +211,8 @@ const Character = {
 
     monthlyHPRegen(char, job) {
         const innerBonus = Math.floor((char.attributes.innerForce || 0) / 5);
-        const total = 10 + innerBonus;
+        const passiveBonus = (char.passives || []).reduce((s, p) => s + (p.hpRegenBonus || 0), 0);
+        const total = 10 + innerBonus + passiveBonus;
         this.healHP(char, total, job);
         return { total, innerBonus };
     }

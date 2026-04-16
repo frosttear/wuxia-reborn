@@ -57,7 +57,7 @@ const Rebirth = {
     },
 
     // Bond level → starting affinity bonus for next life
-    BOND_AFFINITY_BONUS: { 1: 15, 2: 30, 3: 50 },
+    BOND_AFFINITY_BONUS: { 1: 15, 2: 30, 3: 50, 4: 65, 5: 75 },
 
     // Execute rebirth: returns new character with inherited bonuses
     execute(char, chosenTalentIds, allNpcs) {

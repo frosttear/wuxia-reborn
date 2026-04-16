@@ -120,6 +120,9 @@ body {
 /* Talents */
 .talents-wrap { margin-top: 10px; }
 .talent-tag  { display: inline-block; background: rgba(201,168,76,0.15); border: 1px solid var(--border); border-radius: 4px; padding: 2px 8px; font-size: 0.72rem; color: var(--accent); margin: 2px; cursor: help; }
+.passive-tag { background: rgba(180,100,200,0.15); border-color: rgba(180,100,200,0.5); color: #c87fdf; }
+.visit-remain { display: block; font-size: 0.68rem; color: var(--muted); margin-top: 2px; }
+.visit-remain-out { color: #888; opacity: 0.6; }
 
 /* Center — event log */
 .center-panel {
