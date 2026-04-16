@@ -159,8 +159,8 @@
         <div class="combat-actions" id="combatActions">
             <button class="combat-btn combat-strike" title="刚攻：高伤害，对防御效果更强" onclick="Engine.handleCombatAction('strike')">⚔ 刚攻</button>
             <button class="combat-btn combat-quick"  title="巧攻：穿透30%防御，快速积势" onclick="Engine.handleCombatAction('quick')">💨 巧攻</button>
-            <button class="combat-btn combat-defend" title="防御：大幅减少受击（重击-75%，急袭-50%）" onclick="Engine.handleCombatAction('defend')">🛡 防御</button>
-            <button class="combat-btn combat-parry"  title="化解：克制重击（反击）；被急袭破招」" onclick="Engine.handleCombatAction('parry')">⚡ 化解</button>
+            <button class="combat-btn combat-defend" title="防御：大幅减少受击（对方刚攻-75%，巧攻-50%）" onclick="Engine.handleCombatAction('defend')">🛡 防御</button>
+            <button class="combat-btn combat-parry"  title="化解：克制对方刚攻（反击）；被对方巧攻破招" onclick="Engine.handleCombatAction('parry')">⚡ 化解</button>
             <button class="combat-btn combat-focus"  title="蓄势：势能+2，减伤55%" onclick="Engine.handleCombatAction('focus')">🔮 蓄势</button>
             <button class="combat-btn combat-flee" id="combatFleeBtn" onclick="Engine.handleCombatAction('flee')">� 逃跑 25%</button>
             <button class="combat-btn combat-auto" id="combatAutoBtn" onclick="Engine.toggleCombatAuto()">⚡ 自动</button>
