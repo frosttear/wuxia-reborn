@@ -538,8 +538,7 @@ const UI = {
             } else {
                 const comp = char.attributes.comprehension || 0;
                 const eComp = cs.enemyComp || 0;
-                const ratio = comp / (eComp + 5);
-                const accuratePct = Math.round(Math.min(80, Math.pow(ratio, 1.5) * 80));
+                const accuratePct = Math.round(Math.min(80, 80 * Math.log(1 + comp / (eComp + 10))));
                 intentEl.innerHTML = `<span class="intent-read">🔮 ${cs.enemyIntentHint}</span><span class="intent-comp-label">（悟性${comp}，识破${accuratePct}%）</span>`;
             }
         } else {

@@ -82,8 +82,7 @@ const Combat = {
         } else {
             const playerComp = (char.attributes && char.attributes.comprehension) || 0;
             const enemyComp  = cs.enemyComp;
-            const ratio = playerComp / (enemyComp + 5);
-            const accurateChance = Math.min(0.80, Math.pow(ratio, 1.5) * 0.80);
+            const accurateChance = Math.min(0.80, 0.80 * Math.log(1 + playerComp / (enemyComp + 10)));
             if (Math.random() < accurateChance) {
                 cs.enemyIntentHint = this._getIntentHint(enemy, firstAction);
                 cs.enemyIntentType = 'accurate';
@@ -311,8 +310,7 @@ const Combat = {
             } else {
                 const playerComp    = (char.attributes && char.attributes.comprehension) || 0;
                 const enemyComp     = cs.enemyComp;
-                const ratio         = playerComp / (enemyComp + 5);
-                const accurateChance = Math.min(0.80, Math.pow(ratio, 1.5) * 0.80);
+                const accurateChance = Math.min(0.80, 0.80 * Math.log(1 + playerComp / (enemyComp + 10)));
                 if (Math.random() < accurateChance) {
                     cs.enemyIntentHint = this._getIntentHint(cs.enemy, next);
                     cs.enemyIntentType = 'accurate';
