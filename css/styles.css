@@ -395,6 +395,10 @@ button:disabled { opacity: 0.4; cursor: not-allowed; }
 .chain-step-title { font-size: 0.9rem; color: var(--text); font-weight: bold; }
 .chain-desc { font-size: 0.7rem; color: var(--muted); }
 .chain-boss-tag { font-size: 0.68rem; color: #e05050; background: rgba(224,80,80,0.12); border: 1px solid rgba(224,80,80,0.3); border-radius: 3px; padding: 1px 5px; align-self: flex-start; }
+.chain-step-locked { opacity: 0.6; cursor: default; pointer-events: none; border-color: rgba(100,160,220,0.12) !important; background: rgba(100,160,220,0.03) !important; }
+.chain-lock-reasons { display: flex; flex-direction: column; gap: 2px; margin-top: 2px; }
+.chain-lock-reason { font-size: 0.68rem; color: rgba(200,175,90,0.85); }
+.chain-enemy-stats { font-size: 0.7rem; color: rgba(220,120,90,0.9); margin-top: 3px; }
 .type-线索 { background: rgba(100,160,220,0.18); color: rgba(140,190,240,0.9); }
 
 /* ─── Combat Overlay ─── */

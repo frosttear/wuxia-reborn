@@ -61,7 +61,7 @@
         {
           "id": "harbinger_3",
           "title": "魔影现身",
-          "unlockConditions": { "flags": { "tianmo_sign2": true }, "minAttributes": { "innerForce": 12 } },
+          "unlockConditions": { "flags": { "tianmo_sign2": true }, "minAttributes": { "innerForce": 12 }, "minAgeYears": 17 },
           "text": "数日后，你感到有人在暗中跟踪你。\n\n那个人不急于动手，只是远远跟着，直到一个月黑风高的夜晚，他出现在了你的面前。\n\n黑衣，无面，气息阴冷如寒冰——「你查的事，已经查得太深了。我的主人说，你要么为他所用，要么——死在这里。」\n\n来不及思考，他已经出手了。",
           "choices": [
             {
@@ -113,7 +113,7 @@
         {
           "id": "elder_past_2",
           "title": "故地重游",
-          "unlockConditions": { "flags": { "elder_past1": true } },
+          "unlockConditions": { "flags": { "elder_past1": true }, "minAgeYears": 16 },
           "text": "老者主动找到你，说要带你去一个地方。\n\n他带你来到城外一片废弃山庄——断壁残垣，荒草丛生，但隐约能看出当年的规模。\n\n「这里，」他站在庄子中央，声音很平，「曾经是我的门派。」\n\n那之后，他沉默地站了很长时间。你也没有说话。风吹过荒草，有些声响，像哭，也像笑。",
           "choices": [
             {
@@ -140,7 +140,7 @@
         {
           "id": "elder_past_3",
           "title": "真相浮现",
-          "unlockConditions": { "flags": { "elder_past2": true }, "minAttributes": { "comprehension": 14 } },
+          "unlockConditions": { "flags": { "elder_past2": true }, "minAttributes": { "comprehension": 14 }, "minAgeYears": 17 },
           "text": "老者将你叫来，神情最为郑重。他没有坐下，站在屋子中央，缓缓说出了他从未对任何人说过的事——\n\n当年，他最得意的弟子，开始对一门禁忌功法产生执念。老者拦阻过，但弟子走火入魔，以一场惨烈的反噬毁掉了整个门派，也毁掉了自己。\n\n「天魔不是天生的魔，」老者说，「他是被一种功法改造的人。而那门功法，有一个破绽。」\n\n他抬起头，直视着你：「我等了很多年，才等到一个能听懂这句话的人。」",
           "choices": [
             {
@@ -197,7 +197,7 @@
         {
           "id": "chaos_2",
           "title": "追查幕后",
-          "unlockConditions": { "flags": { "chaos1": true } },
+          "unlockConditions": { "flags": { "chaos1": true }, "minAgeYears": 16 },
           "text": "你循着线索，追到了一处废弃的山神庙。\n\n庙里早已被人清空，但墙上用黑色颜料画满了符文——和龙脊山上的阵纹一模一样。\n\n庙后有一条地道，地道尽头是一间密室，里面关着七八个被锁链缚住的武人，眼神空洞，灵魂尽失。\n\n你在密室角落找到一份残卷，上面记载着一种「炼魂术」——能将人的意志抽取、改造，使之完全服从。\n\n这件事，比你以为的要严重得多。",
           "choices": [
             {
@@ -223,7 +223,7 @@
         {
           "id": "chaos_3",
           "title": "幕后元凶",
-          "unlockConditions": { "flags": { "chaos2": true }, "minAttributes": { "strength": 14 } },
+          "unlockConditions": { "flags": { "chaos2": true }, "minAttributes": { "strength": 14 }, "minAgeYears": 17 },
           "text": "你终于锁定了幕后元凶的下落——一个自称「影堂」堂主的人，正在城郊的庄园里为天魔收集资源。\n\n当你独自闯入时，他已经等待你了。\n\n「你的胆量，我主很欣赏，」他缓缓拔出一柄阴黑的长刀，「可惜，你今天进来，就出不去了。」\n\n他是影堂的核心武力，一位被魔气强化过的武人——比任何你遇到过的敌人都要危险。",
           "choices": [
             {

@@ -497,6 +497,68 @@ const Engine = {
         return available;
     },
 
+    getAllPendingChainSteps() {
+        const { char, chains } = this.state;
+        if (!char || !chains) return [];
+        const ATTR_CN = { strength: '力量', agility: '敏捷', constitution: '体质',
+            innerForce: '内力', comprehension: '悟性', luck: '运气', reputation: '声望' };
+        const FLAG_LABELS = {
+            tianmo_sign1: '完成「路遇奇人」', tianmo_sign2: '完成「探查龙脊山」',
+            met_mysterious_elder: '结识神秘老者', elder_past1: '完成「旧日画像」',
+            elder_past2: '完成「故地重游」', chaos1: '完成「奇怪委托」',
+            chaos2: '完成「追查幕后」',
+        };
+        const result = [];
+        for (const chain of chains) {
+            const progress = char.chainProgress ? char.chainProgress[chain.id] : undefined;
+            if (progress === 'done') continue;
+            const stepIdx = (typeof progress === 'number') ? progress : 0;
+            if (stepIdx >= chain.steps.length) continue;
+            const step = chain.steps[stepIdx];
+            const conditionsMet = this.checkConditions(step.unlockConditions || {});
+            const cond = step.unlockConditions || {};
+            const lockedReasons = [];
+            if (cond.minAgeYears !== undefined) {
+                const age = Character.getAgeYears(char);
+                if (age < cond.minAgeYears) lockedReasons.push(`需年满${cond.minAgeYears}岁（当前${age}岁）`);
+            }
+            if (cond.minAttributes) {
+                for (const [attr, val] of Object.entries(cond.minAttributes)) {
+                    const cur = (char.attributes || {})[attr] || 0;
+                    if (cur < val) lockedReasons.push(`需${ATTR_CN[attr] || attr}达到${val}（当前${cur}）`);
+                }
+            }
+            if (cond.flags) {
+                for (const [flag, needed] of Object.entries(cond.flags)) {
+                    if ((char.flags[flag] || false) !== needed)
+                        lockedReasons.push(FLAG_LABELS[flag] || '需完成前置任务');
+                }
+            }
+            if (cond.npcAffinity) {
+                for (const [npcId, val] of Object.entries(cond.npcAffinity)) {
+                    const cur = NPCSystem.getAffinity(char, npcId);
+                    if (cur < val) {
+                        const npc = this.state.npcs.find(n => n.id === npcId);
+                        lockedReasons.push(`需与${npc ? npc.name : npcId}好感达到${val}（当前${cur}）`);
+                    }
+                }
+            }
+            let enemyInfo = null;
+            for (const choice of step.choices || []) {
+                if (choice.effects && choice.effects.combat) {
+                    const enemy = this.getEnemy(choice.effects.combat);
+                    if (enemy) {
+                        const eff = Combat.getEffectiveStats(enemy, char);
+                        enemyInfo = { name: enemy.name, attack: eff.attack, defense: eff.defense, hp: eff.hp };
+                    }
+                    break;
+                }
+            }
+            result.push({ chain, step, stepIdx, conditionsMet, lockedReasons, enemyInfo });
+        }
+        return result;
+    },
+
     triggerChainStep(chainId, stepIdx) {
         const { char } = this.state;
         if (!char || this.state.gamePhase !== 'idle') return;

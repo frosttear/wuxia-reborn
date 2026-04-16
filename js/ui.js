@@ -520,8 +520,8 @@ const UI = {
         this.visitBtn.style.display = visits.length > 0 ? '' : 'none';
         if (visits.length === 0 && this.visitPanel) this.visitPanel.style.display = 'none';
 
-        // Show chain button only when idle and chain steps are available
-        const chainSteps = state.gamePhase === 'idle' ? Engine.getAvailableChainSteps() : [];
+        // Show chain button if any chain has a pending step (met or locked)
+        const chainSteps = state.gamePhase === 'idle' ? Engine.getAllPendingChainSteps() : [];
         if (this.chainBtn) {
             this.chainBtn.style.display = chainSteps.length > 0 ? '' : 'none';
             if (chainSteps.length === 0 && this.chainPanel) this.chainPanel.style.display = 'none';
@@ -532,15 +532,27 @@ const UI = {
         const panel = this.chainPanel;
         if (!panel) return;
         if (panel.style.display !== 'none') { panel.style.display = 'none'; return; }
-        const steps = Engine.getAvailableChainSteps();
+        const steps = Engine.getAllPendingChainSteps();
         if (steps.length === 0) return;
-        panel.innerHTML = steps.map(({ chain, step, stepIdx }) => {
-            const isBoss = (step.choices || []).some(c => c.effects && c.effects.combat);
-            const bossTag = isBoss ? `<span class="chain-boss-tag">⚔ 含战斗</span>` : '';
+        panel.innerHTML = steps.map(({ chain, step, stepIdx, conditionsMet, lockedReasons, enemyInfo }) => {
+            const bossTag = enemyInfo ? `<span class="chain-boss-tag">⚔ 含战斗</span>` : '';
+            const enemyStats = enemyInfo
+                ? `<span class="chain-enemy-stats">敌方「${enemyInfo.name}」攻击 ${enemyInfo.attack}　防御 ${enemyInfo.defense}　气血 ${enemyInfo.hp}</span>`
+                : '';
+            if (!conditionsMet) {
+                const lockHtml = lockedReasons.map(r => `<span class="chain-lock-reason">⌛ ${r}</span>`).join('');
+                return `<div class="chain-step-btn chain-step-locked">
+                    <span class="chain-name">${chain.name}</span>
+                    <span class="chain-step-title">${step.title}</span>
+                    <div class="chain-lock-reasons">${lockHtml}</div>
+                    ${enemyStats}
+                </div>`;
+            }
             return `<button class="chain-step-btn" onclick="Engine.triggerChainStep('${chain.id}', ${stepIdx}); UI.chainPanel.style.display='none'">
                 <span class="chain-name">${chain.name}</span>
                 <span class="chain-step-title">${step.title}</span>
                 ${bossTag}
+                ${enemyStats}
                 <span class="chain-desc">${chain.desc}</span>
             </button>`;
         }).join('');
