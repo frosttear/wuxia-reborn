@@ -15,10 +15,6 @@ const Combat = {
         heavy: '对方气沉丹田——<b>刚攻将至</b>',
         swift: '对方步法游走——<b>巧攻难测</b>',
     },
-    VAGUE_INTENT: {
-        heavy: '对方步伐似乎沉了下来，像是在蓄力——<b>但你没有把握</b>',
-        swift: '对方身形隐约有游走之意——<b>但你没有把握</b>',
-    },
     UNREADABLE_MSGS: [
         '对方行迹难以捉摸，看不出端倪',
         '对方气势沉敛，完全看不出意图',
@@ -87,16 +83,10 @@ const Combat = {
             const playerComp = (char.attributes && char.attributes.comprehension) || 0;
             const enemyComp  = cs.enemyComp;
             const ratio = playerComp / (enemyComp + 5);
-            const accurateChance = Math.min(0.90, Math.pow(ratio, 1.5) * 0.90);
-            const vagueFrac = 0.6;
-            const r = Math.random();
-            if (r < accurateChance) {
+            const accurateChance = Math.min(0.80, Math.pow(ratio, 1.5) * 0.80);
+            if (Math.random() < accurateChance) {
                 cs.enemyIntentHint = this.ENEMY_INTENT[firstAction] || '';
                 cs.enemyIntentType = 'accurate';
-            } else if (r < accurateChance + (1 - accurateChance) * vagueFrac) {
-                const vagueAction = Math.random() < 0.65 ? firstAction : (firstAction === 'heavy' ? 'swift' : 'heavy');
-                cs.enemyIntentHint = this.VAGUE_INTENT[vagueAction] || '';
-                cs.enemyIntentType = 'vague';
             } else {
                 cs.enemyIntentHint = this._pick(this.UNREADABLE_MSGS);
                 cs.enemyIntentType = 'unreadable';
@@ -322,18 +312,10 @@ const Combat = {
                 const playerComp    = (char.attributes && char.attributes.comprehension) || 0;
                 const enemyComp     = cs.enemyComp;
                 const ratio         = playerComp / (enemyComp + 5);
-                const accurateChance = Math.min(0.90, Math.pow(ratio, 1.5) * 0.90);
-                const vagueFrac     = Math.min(0.80, 0.30 + playerComp / 60 * 0.50);
-                const remaining     = 1 - accurateChance;
-                const r = Math.random();
-                if (r < accurateChance) {
+                const accurateChance = Math.min(0.80, Math.pow(ratio, 1.5) * 0.80);
+                if (Math.random() < accurateChance) {
                     cs.enemyIntentHint = this.ENEMY_INTENT[next] || '';
                     cs.enemyIntentType = 'accurate';
-                } else if (r < accurateChance + remaining * vagueFrac) {
-                    // 65% points to correct action, 35% to wrong — both in uncertain language
-                    const vagueAction = Math.random() < 0.65 ? next : (next === 'heavy' ? 'swift' : 'heavy');
-                    cs.enemyIntentHint = this.VAGUE_INTENT[vagueAction] || '';
-                    cs.enemyIntentType = 'vague';
                 } else {
                     cs.enemyIntentHint = this._pick(this.UNREADABLE_MSGS);
                     cs.enemyIntentType = 'unreadable';

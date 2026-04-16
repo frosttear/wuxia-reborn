@@ -225,10 +225,10 @@ describe('Combat.processTurn - enemy intent preview', () => {
         expect(typeof cs.enemyIntentHint).toBe('string');
     });
 
-    test('sets enemyIntentType to accurate/vague/wrong', () => {
+    test('sets enemyIntentType to accurate or unreadable', () => {
         const { char, cs } = freshCombat();
         Combat.processTurn('focus', cs, char, STUB_JOB);
-        expect(['accurate', 'vague', 'wrong']).toContain(cs.enemyIntentType);
+        expect(['accurate', 'unreadable']).toContain(cs.enemyIntentType);
     });
 
     test('high playerComp vs weak enemy (comp 0) yields accurate most of the time', () => {

@@ -538,12 +538,8 @@ const UI = {
                 const comp = char.attributes.comprehension || 0;
                 const eComp = cs.enemyComp || 0;
                 const ratio = comp / (eComp + 5);
-                const accuratePct = Math.round(Math.min(90, Math.pow(ratio, 1.5) * 90));
-                if (cs.enemyIntentType === 'vague') {
-                    intentEl.innerHTML = `<span class="intent-vague">❓ ${cs.enemyIntentHint}</span><span class="intent-comp-label">（悟性${comp}，洞察${accuratePct}%）</span>`;
-                } else {
-                    intentEl.innerHTML = `<span class="intent-read">🔮 ${cs.enemyIntentHint}</span><span class="intent-comp-label">（悟性${comp}，洞察${accuratePct}%）</span>`;
-                }
+                const accuratePct = Math.round(Math.min(80, Math.pow(ratio, 1.5) * 80));
+                intentEl.innerHTML = `<span class="intent-read">🔮 ${cs.enemyIntentHint}</span><span class="intent-comp-label">（悟性${comp}，识破${accuratePct}%）</span>`;
             }
         } else {
             intentEl.innerHTML = '';
