@@ -77,7 +77,7 @@ const Combat = {
         cs.enemyNextAction = firstAction;
         const hasPerfectRead = (char.passives || []).some(p => p.perfectIntentRead);
         if (hasPerfectRead) {
-            cs.enemyIntentHint = this.ENEMY_INTENT[firstAction] || '';
+            cs.enemyIntentHint = this._getIntentHint(enemy, firstAction);
             cs.enemyIntentType = 'perfect';
         } else {
             const playerComp = (char.attributes && char.attributes.comprehension) || 0;
@@ -85,10 +85,10 @@ const Combat = {
             const ratio = playerComp / (enemyComp + 5);
             const accurateChance = Math.min(0.80, Math.pow(ratio, 1.5) * 0.80);
             if (Math.random() < accurateChance) {
-                cs.enemyIntentHint = this.ENEMY_INTENT[firstAction] || '';
+                cs.enemyIntentHint = this._getIntentHint(enemy, firstAction);
                 cs.enemyIntentType = 'accurate';
             } else {
-                cs.enemyIntentHint = this._pick(this.UNREADABLE_MSGS);
+                cs.enemyIntentHint = this._getUnreadableHint(enemy);
                 cs.enemyIntentType = 'unreadable';
             }
         }
@@ -306,7 +306,7 @@ const Combat = {
             cs.enemyNextAction  = next;
             const hasPerfectRead = (char.passives || []).some(p => p.perfectIntentRead);
             if (hasPerfectRead) {
-                cs.enemyIntentHint = this.ENEMY_INTENT[next] || '';
+                cs.enemyIntentHint = this._getIntentHint(cs.enemy, next);
                 cs.enemyIntentType = 'perfect';
             } else {
                 const playerComp    = (char.attributes && char.attributes.comprehension) || 0;
@@ -314,10 +314,10 @@ const Combat = {
                 const ratio         = playerComp / (enemyComp + 5);
                 const accurateChance = Math.min(0.80, Math.pow(ratio, 1.5) * 0.80);
                 if (Math.random() < accurateChance) {
-                    cs.enemyIntentHint = this.ENEMY_INTENT[next] || '';
+                    cs.enemyIntentHint = this._getIntentHint(cs.enemy, next);
                     cs.enemyIntentType = 'accurate';
                 } else {
-                    cs.enemyIntentHint = this._pick(this.UNREADABLE_MSGS);
+                    cs.enemyIntentHint = this._getUnreadableHint(cs.enemy);
                     cs.enemyIntentType = 'unreadable';
                 }
             }
@@ -329,6 +329,16 @@ const Combat = {
 
     _rand(min, max) { return Math.floor(Math.random() * (max - min + 1)) + min; },
     _pick(arr) { return arr[Math.floor(Math.random() * arr.length)]; },
+    _getIntentHint(enemy, action) {
+        const pool = enemy.intentReadMsgs && enemy.intentReadMsgs[action];
+        if (pool && pool.length) return this._pick(pool);
+        return this.ENEMY_INTENT[action] || '';
+    },
+    _getUnreadableHint(enemy) {
+        const pool = enemy.intentUnreadMsgs;
+        if (pool && pool.length) return this._pick(pool);
+        return this._pick(this.UNREADABLE_MSGS);
+    },
 
     // ── Monte Carlo quick combat ─────────────────────────────────────────────
     // Runs a single headless simulation. The AI uses intent hints the same way
