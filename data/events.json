@@ -1124,6 +1124,45 @@
     ]
   },
   {
+    "id": "meet_lingxue",
+    "type": "奇遇",
+    "weight": 5,
+    "title": "白衣剑客",
+    "text": "城郊偏僻的山道上，你遭遇了影堂的三名刺客。对方来势汹汹，你以一敌三，渐渐落了下风。\n\n就在刺客最后一击即将落下的刹那，一道白影破空而至——三道剑光凌厉如冰刃，转瞬之间三名刺客皆告倒地。\n\n白衣女子收剑回鞘，连头都没转：「运气不错。」\n\n你终于看清了她的面容：眉眼清冷，白衣如雪，腰侧长剑的剑鞘上刻着一朵细小的冰花。她的出手如此流畅，却让你背后生出一层冷汗——那种流畅，不像是身经百战，更像是……从来不曾犹豫过。",
+    "conditions": { "flags": { "met_ling_xue": false }, "minAgeYears": 17 },
+    "choices": [
+      {
+        "id": "approach_grateful",
+        "text": "上前致谢，问她姓名",
+        "effects": {
+          "flags": { "met_ling_xue": true },
+          "npcAffinity": { "ling_xue": 20 },
+          "narrative": "她回头看了你一眼，目光像是在打量，又像是在计算什么。片刻后，她说：「凌雪。」两个字，不冷不热。你说了自己的名字，她点了点头，便转身离去。那背影消失得很快，像雪地里一道浅浅的足迹。"
+        }
+      },
+      {
+        "id": "observe_stance",
+        "text": "道谢之余，暗中观察她的剑法路数",
+        "requirements": { "minAttributes": { "comprehension": 12 } },
+        "effects": {
+          "flags": { "met_ling_xue": true },
+          "npcAffinity": { "ling_xue": 25 },
+          "attributes": { "comprehension": 1 },
+          "narrative": "你在道谢的同时，悄悄回想她方才出手的细节——剑路奇特，路数深不可测，既不似任何你见过的门派，却处处带着一种异样的笃定。是一个对自己所走的路从未动摇过的人，才能练出来的剑。她见你若有所思，眼神里有什么东西一闪而过。「叫凌雪，」她说，「下次最好别再遇上这种麻烦。」"
+        }
+      },
+      {
+        "id": "ask_motive",
+        "text": "压下疑虑，只是拱手道谢，顺口问她为何出手相助",
+        "effects": {
+          "flags": { "met_ling_xue": true },
+          "npcAffinity": { "ling_xue": 18 },
+          "narrative": "她停下脚步，沉默了一会儿，才说：「路见不平，顺手罢了。」语气平淡，听不出情绪。但你注意到，她说这话时，目光在你脸上停了一停，像是在核对某件事。她走了，留下一个说不清是漠然还是若有所思的背影。"
+        }
+      }
+    ]
+  },
+  {
     "id": "tianmo_appears",
     "type": "boss",
     "weight": 0,

@@ -652,7 +652,7 @@ const Engine = {
         cs.postNarrative = postNarrative || '';
         if (enemy.isHiddenBoss && this.allBondsComplete(char)) {
             cs.allBondsBonus = true;
-            UI.addLog('【羁绊之力】王铁、李云舒、神秘老者……这一世结下的所有情谊，此刻化为无形之力，护持于你！', 'unlock');
+            UI.addLog('【羁绊之力】王铁、李云舒、神秘老者、凌雪……这一世结下的所有情谊，此刻化为无形之力，护持于你！', 'unlock');
         } else if (enemy.isHiddenBoss && !this.allBondsComplete(char)) {
             UI.addLog('【羁绊未满】你感到胸中力量空缺……或许，集齐所有羁绊才能撼动此敌。', 'info');
         }

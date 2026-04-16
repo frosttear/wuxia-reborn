@@ -70,6 +70,20 @@
     ]
   },
   {
+    "id": "ling_xue",
+    "name": "凌雪",
+    "title": "游侠剑客",
+    "description": "独行江湖的白衣剑客，出手神速，言辞冷峻。她有自己的一套处世哲学，从不轻易为任何人低头。与她相处，你总有一种感觉——这个人的眼里，藏着比她展示出来的多得多的东西。",
+    "affinityLevels": [
+      { "threshold": -100, "label": "敌视" },
+      { "threshold": -20,  "label": "戒备" },
+      { "threshold": 0,    "label": "陌生人" },
+      { "threshold": 25,   "label": "江湖相识" },
+      { "threshold": 55,   "label": "同道之人" },
+      { "threshold": 85,   "label": "心意相通" }
+    ]
+  },
+  {
     "id": "su_qing",
     "name": "苏青",
     "title": "游方医者",
