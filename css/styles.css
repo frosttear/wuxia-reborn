@@ -499,6 +499,8 @@ button:disabled { opacity: 0.4; cursor: not-allowed; }
 .combat-flee:hover:not(:disabled)   { background: rgba(136,136,136,0.1); }
 .combat-quickbattle   { border-color: rgba(244,196,48,0.5); color: #f4c430; font-size: 0.76rem; }
 .combat-quickbattle:hover:not(:disabled) { background: rgba(244,196,48,0.12); }
+.combat-return-btn    { border-color: rgba(110,180,255,0.5); color: #6eb4ff; font-size: 0.9rem; width: 100%; letter-spacing: 0.04em; }
+.combat-return-btn:hover:not(:disabled) { background: rgba(110,180,255,0.12); }
 .injured-badge      { display:inline-block; background:rgba(220,80,60,0.2); color:#e05050; border:1px solid rgba(220,80,60,0.4); border-radius:4px; font-size:0.7rem; padding:1px 6px; margin-left:6px; }
 
 /* Post-combat settlement card */

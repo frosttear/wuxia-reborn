@@ -560,6 +560,16 @@ const UI = {
         document.getElementById('combatOverlay').classList.remove('visible');
     },
 
+    showCombatReturnBtn(callback) {
+        const actionsEl = document.getElementById('combatActions');
+        actionsEl.innerHTML = '';
+        const btn = document.createElement('button');
+        btn.className = 'combat-btn combat-return-btn';
+        btn.textContent = '📋 点击返回';
+        btn.onclick = callback;
+        actionsEl.appendChild(btn);
+    },
+
     setCombatActionsEnabled(enabled) {
         document.querySelectorAll('.combat-btn').forEach(btn => {
             btn.disabled = !enabled;
@@ -575,6 +585,7 @@ const UI = {
     updateControls(state) {
         const busy = state.gamePhase !== 'idle';
         this.nextBtn.disabled = busy;
+        this.nextBtn.textContent = (state.char && state.char.injured) ? '静心修养 ▶' : '出门探险 ▶';
         this.autoBtn.disabled = (state.gamePhase === 'game_over' || state.gamePhase === 'rebirth' || state.gamePhase === 'victory');
 
         // Show visit button only when idle and visits are available

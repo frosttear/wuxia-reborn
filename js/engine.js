@@ -735,7 +735,6 @@ const Engine = {
         const { char } = this.state;
         const enemy = cs.enemy;
         this.stopCombatAuto();
-        UI.hideCombatOverlay();
         this.state.combatState = null;
         this.state.gamePhase = 'idle';
 
@@ -751,10 +750,11 @@ const Engine = {
             }
             if (enemy.isHiddenBoss) {
                 char.flags.hidden_boss_beaten = true;
+                UI.hideCombatOverlay();
                 this.triggerVictory(true);
                 return;
             }
-            if (enemy.isFinalBoss) { this.triggerVictory(false); return; }
+            if (enemy.isFinalBoss) { UI.hideCombatOverlay(); this.triggerVictory(false); return; }
             UI.addCombatSummary({
                 turns: cs.turn, dmgDealt: cs.totalDmgDealt,
                 dmgReceived: cs.totalDmgReceived, result: 'won',
@@ -771,10 +771,12 @@ const Engine = {
             UI.renderCharacter(char, this.state.jobs);
             if (enemy.isHiddenBoss) {
                 UI.addLog('你击败了天魔，却败于那更深处的剑意。此生功亏一筑。下一世，再来。', 'system');
+                UI.hideCombatOverlay();
                 this.triggerDeath('hidden_boss');
                 return;
             }
             if (enemy.isFinalBoss) {
+                UI.hideCombatOverlay();
                 this.triggerDeath('boss');
                 return;
             }
@@ -788,9 +790,6 @@ const Engine = {
             char.injuredMonths = 2;
             UI.addLog('【重伤】你身负重创，勉强撤退。需静养约两个月，方可恢复。', 'lose');
             UI.renderCharacter(char, this.state.jobs);
-            UI.renderAll(this.state);
-            this.saveGame();
-            return;
 
         } else if (result === 'fled') {
             this.state.pendingChainStep = null; // chain step not completed on flee
@@ -802,8 +801,11 @@ const Engine = {
         }
 
         if (cs.postNarrative) UI.addLog(cs.postNarrative, 'result');
-        UI.renderAll(this.state);
-        this.saveGame();
+        UI.showCombatReturnBtn(() => {
+            UI.hideCombatOverlay();
+            UI.renderAll(this.state);
+            this.saveGame();
+        });
     },
 
     promoteJob(jobId) {
