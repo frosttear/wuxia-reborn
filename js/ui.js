@@ -356,11 +356,15 @@ const UI = {
         const ageYears = Character.getAgeYears(state.char);
         const ageMonths = Character.getAgeMonthsRemainder(state.char);
         const ageStr = `${ageYears}岁${ageMonths}月`;
+        const remaining = 240 - state.char.ageMonths;
+        const countdownHtml = remaining > 0
+            ? `<span class="log-age-countdown${remaining <= 6 ? ' urgent' : ''}">距天魔之日还剩 ${remaining} 月</span>`
+            : '';
 
         // Add event to log
         const entry = document.createElement('div');
         entry.className = 'log-entry event-entry';
-        entry.innerHTML = `<div class="log-age">${ageStr}</div>
+        entry.innerHTML = `<div class="log-age">${ageStr}${countdownHtml}</div>
             <div class="log-type type-${event.type}">${event.type}</div>
             <div class="log-title">${event.title}</div>
             <div class="log-text">${event.text.replace(/\n/g, '<br>')}</div>`;
