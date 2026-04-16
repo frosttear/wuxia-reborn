@@ -325,6 +325,63 @@ const Combat = {
     _rand(min, max) { return Math.floor(Math.random() * (max - min + 1)) + min; },
     _pick(arr) { return arr[Math.floor(Math.random() * arr.length)]; },
 
+    // ── Monte Carlo quick combat ─────────────────────────────────────────────
+    // Runs a single headless simulation. The AI uses intent hints the same way
+    // a player would (wrong hints lead to wrong choices, vague hints → safe defend).
+    _simulateOnce(char, enemy, job) {
+        const simChar = {
+            hp: char.hp,
+            ageMonths: char.ageMonths || 180,
+            attributes: { ...char.attributes },
+            passives: char.passives || [],
+            legacyTalents: char.legacyTalents || [],
+            job: char.job,
+        };
+        const cs = this.initState(simChar, enemy, job);
+        let finalResult = 'lost';
+        for (let t = 0; t < 50; t++) {
+            let action;
+            const type = cs.enemyIntentType;
+            const hint = cs.enemyNextAction;
+            if (!hint || type === 'vague') {
+                // No reliable info: safe rotation
+                action = ['strike', 'strike', 'defend', 'focus'][t % 4];
+            } else {
+                // Use hinted action (could be wrong if type==='wrong')
+                action = hint === 'heavy' ? 'parry' : 'strike';
+            }
+            const r = this.processTurn(action, cs, simChar, job);
+            if (r.combatOver) { finalResult = r.result; break; }
+        }
+        return {
+            result: finalResult,
+            hpLost: Math.max(0, char.hp - simChar.hp),
+            turns: cs.turn,
+            dmgDealt: cs.totalDmgDealt,
+            dmgReceived: cs.totalDmgReceived,
+        };
+    },
+
+    runQuickCombat(char, enemy, job, runs) {
+        runs = runs || 100;
+        let wins = 0, totalHpLost = 0, totalTurns = 0, totalDealt = 0, totalReceived = 0;
+        for (let i = 0; i < runs; i++) {
+            const s = this._simulateOnce(char, enemy, job);
+            if (s.result === 'won') wins++;
+            totalHpLost    += s.hpLost;
+            totalTurns     += s.turns;
+            totalDealt     += s.dmgDealt;
+            totalReceived  += s.dmgReceived;
+        }
+        return {
+            winRate:         wins / runs,
+            avgHpLost:       Math.round(totalHpLost   / runs),
+            avgTurns:        Math.round(totalTurns     / runs),
+            avgDmgDealt:     Math.round(totalDealt     / runs),
+            avgDmgReceived:  Math.round(totalReceived  / runs),
+        };
+    },
+
     getSummaryLine(char, enemy, job) {
         const atk = Character.getAttackPower(char, job);
         const def = Character.getDefensePower(char, job);

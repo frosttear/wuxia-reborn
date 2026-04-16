@@ -687,35 +687,37 @@ const Engine = {
         }
     },
 
-    toggleCombatAuto() {
-        if (this.state.combatAutoActive) {
-            this.stopCombatAuto();
-        } else {
-            this.startCombatAuto();
+    // ── Quick combat (Monte Carlo instant resolution) ───────────────────────
+    handleQuickCombat() {
+        if (this.state.gamePhase !== 'combat' || !this.state.combatState || this.state.combatBusy) return;
+        this.state.combatBusy = true;
+        const { char } = this.state;
+        const job  = this.getJob(char.job);
+        const cs   = this.state.combatState;
+
+        const sim  = Combat.runQuickCombat(char, cs.enemy, job, 100);
+        const won  = Math.random() < sim.winRate;
+        const pct  = Math.round(sim.winRate * 100);
+
+        // Apply expected HP loss to actual char (with ±30% variance)
+        if (won) {
+            const variance = 0.3;
+            const hpLost = Math.round(sim.avgHpLost * (1 - variance + Math.random() * variance * 2));
+            Character.takeDamage(char, Math.min(hpLost, char.hp - 1));
         }
+
+        // Patch cs summary stats for endCombat display
+        cs.turn            = sim.avgTurns;
+        cs.totalDmgDealt   = sim.avgDmgDealt;
+        cs.totalDmgReceived = sim.avgDmgReceived;
+
+        UI.addLog(`⚡ 快速战斗（胜率 ${pct}%）……`, 'system');
+        this.state.combatBusy = false;
+        this.endCombat(won ? 'won' : 'lost', cs);
     },
 
-    startCombatAuto() {
-        if (this.state.combatAutoActive) return;
-        this.state.combatAutoActive = true;
-        UI.setCombatAutoButton(true);
-        this.state.combatAutoTimer = setInterval(() => {
-            if (this.state.gamePhase === 'combat') {
-                this.handleCombatAction('strike');
-            } else {
-                this.stopCombatAuto();
-            }
-        }, 1200);
-    },
-
-    stopCombatAuto() {
-        this.state.combatAutoActive = false;
-        UI.setCombatAutoButton(false);
-        if (this.state.combatAutoTimer) {
-            clearInterval(this.state.combatAutoTimer);
-            this.state.combatAutoTimer = null;
-        }
-    },
+    // kept for endCombat compatibility
+    stopCombatAuto() {},
 
     formatAttrGains(attrs) {
         if (!attrs) return '';

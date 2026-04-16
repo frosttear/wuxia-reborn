@@ -282,6 +282,40 @@ describe('Combat.processTurn - enemy intent preview', () => {
     });
 });
 
+describe('Combat.runQuickCombat', () => {
+    test('returns winRate, avgHpLost, avgTurns, avgDmgDealt, avgDmgReceived', () => {
+        const { char } = freshCombat();
+        const result = Combat.runQuickCombat(char, STUB_ENEMY, STUB_JOB, 20);
+        expect(typeof result.winRate).toBe('number');
+        expect(result.winRate).toBeGreaterThanOrEqual(0);
+        expect(result.winRate).toBeLessThanOrEqual(1);
+        expect(typeof result.avgHpLost).toBe('number');
+        expect(typeof result.avgTurns).toBe('number');
+        expect(typeof result.avgDmgDealt).toBe('number');
+        expect(typeof result.avgDmgReceived).toBe('number');
+    });
+
+    test('strong char wins most simulations vs weak enemy', () => {
+        const { char } = freshCombat();
+        char.attributes.strength = 40;
+        char.attributes.agility = 20;
+        char.attributes.constitution = 20;
+        char.attributes.innerForce = 15;
+        char.hp = 200;
+        const result = Combat.runQuickCombat(char, STUB_ENEMY, STUB_JOB, 50);
+        expect(result.winRate).toBeGreaterThan(0.8);
+    });
+
+    test('weak char loses most simulations vs strong enemy', () => {
+        const STRONG_ENEMY = { ...STUB_ENEMY, attack: 200, defense: 150, hp: 500 };
+        const { char } = freshCombat();
+        char.attributes.strength = 3;
+        char.hp = 20;
+        const result = Combat.runQuickCombat(char, STRONG_ENEMY, STUB_JOB, 50);
+        expect(result.winRate).toBeLessThan(0.2);
+    });
+});
+
 describe('Combat.getEffectiveStats', () => {
     test('returns base stats at age 15 (tier 0)', () => {
         const char = makeChar({ ageMonths: 180 }); // age 15

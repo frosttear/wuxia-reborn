@@ -538,15 +538,13 @@ const UI = {
 
     setCombatActionsEnabled(enabled) {
         document.querySelectorAll('.combat-btn').forEach(btn => {
-            if (!btn.classList.contains('combat-auto')) btn.disabled = !enabled;
+            btn.disabled = !enabled;
         });
     },
 
     setCombatAutoButton(isOn) {
-        const btn = document.getElementById('combatAutoBtn');
-        if (!btn) return;
-        btn.textContent = isOn ? '⏸ 停止' : '⚡ 自动';
-        btn.classList.toggle('btn-active', isOn);
+        // no-op: auto-combat replaced by quick combat button
+        void isOn;
     },
     // ─────────────────────────────────────────────────────────────
 
