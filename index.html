@@ -181,7 +181,16 @@
 
     const saved = Engine.loadGame();
     if (saved) {
-        document.getElementById('continueBtn').style.display = 'block';
+        Engine.state.char = saved;
+        const job = Engine.getJob(saved.job);
+        if (!saved.hp) saved.hp = Character.getHPMax(saved, job);
+        document.getElementById('startScreen').style.display = 'none';
+        document.getElementById('gameScreen').style.display = 'flex';
+        UI.renderAll(Engine.state);
+        try {
+            const savedLog = localStorage.getItem('wuxia_log');
+            if (savedLog) UI.restoreLog(JSON.parse(savedLog));
+        } catch(e) {}
     }
 
     document.getElementById('startBtn').onclick = function() {
