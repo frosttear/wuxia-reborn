@@ -171,3 +171,5 @@ const Combat = {
         return `你的攻击力：${atk} | 防御力：${def} | 敌方：${enemy.name}（攻${eff.attack}/防${eff.defense}）`;
     }
 };
+
+if (typeof module !== 'undefined') module.exports = { Combat };

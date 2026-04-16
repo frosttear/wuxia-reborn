@@ -60,3 +60,5 @@ const NPCSystem = {
         return npcs.filter(npc => this.isMet(char, npc.id));
     }
 };
+
+if (typeof module !== 'undefined') module.exports = { NPCSystem };

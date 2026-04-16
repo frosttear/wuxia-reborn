@@ -218,3 +218,5 @@ const Character = {
         return { total, innerBonus };
     }
 };
+
+if (typeof module !== 'undefined') module.exports = { Character, BIRTH_MONTH_BONUSES };

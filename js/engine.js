@@ -948,3 +948,5 @@ const Engine = {
         localStorage.removeItem('wuxia_save');
     }
 };
+
+if (typeof module !== 'undefined') module.exports = { Engine };

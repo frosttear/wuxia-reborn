@@ -123,3 +123,5 @@ const Rebirth = {
         return lines.join('\n');
     }
 };
+
+if (typeof module !== 'undefined') module.exports = { Rebirth, TALENTS };
