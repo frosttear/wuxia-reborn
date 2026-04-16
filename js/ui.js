@@ -517,13 +517,22 @@ const UI = {
         document.getElementById('combatMomentumVal').textContent = mom;
         document.getElementById('combatMomentumFill').style.width = (mom / 5 * 100) + '%';
         const activeSkill = job && job.activeSkill;
-        const skillReady = activeSkill && mom >= activeSkill.momentumCost && cs.skillCooldown === 0;
         const skillEl = document.getElementById('combatSkillReady');
         if (activeSkill) {
-            skillEl.style.display = skillReady ? '' : 'none';
-            skillEl.innerHTML = skillReady
-                ? `⚡ 「${activeSkill.name}」蓄势完成，下回合自动发动！`
-                : '';
+            skillEl.style.display = '';
+            const skillReady = mom >= activeSkill.momentumCost && cs.skillCooldown === 0;
+            const onCooldown  = cs.skillCooldown > 0;
+            if (skillReady) {
+                skillEl.className = 'combat-skill-ready';
+                skillEl.innerHTML = `⚡ 「${activeSkill.name}」蓄势完成，下回合自动发动！`;
+            } else if (onCooldown) {
+                skillEl.className = 'combat-skill-cooldown';
+                skillEl.innerHTML = `「${activeSkill.name}」${activeSkill.desc}　<span class="skill-cost-tag">冷却中（剩 ${cs.skillCooldown} 回合）</span>`;
+            } else {
+                const needed = activeSkill.momentumCost - mom;
+                skillEl.className = 'combat-skill-charging';
+                skillEl.innerHTML = `「${activeSkill.name}」${activeSkill.desc}　<span class="skill-cost-tag">还差 ${needed} 势</span>`;
+            }
         } else {
             skillEl.style.display = 'none';
         }
