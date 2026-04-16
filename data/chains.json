@@ -8,7 +8,7 @@
         {
           "id": "harbinger_1",
           "title": "路遇奇人",
-          "unlockConditions": { "minAgeYears": 15 },
+          "unlockConditions": { "minAgeYears": 16 },
           "text": "出门时，你在城郊偶遇一个倒在路边的老人，气息奄奄。\n\n他抓住你的手腕，眼神异常清醒：「你……你就是那个注定要阻止他的人……」\n\n他的嘴唇颤抖，断断续续：「天……天魔……他已经醒了。北边……龙脊山……那里有答案……」\n\n话未说完，老人气绝。你在他怀中找到一枚残破的令牌，上面刻着一个你从未见过的符文。",
           "choices": [
             {
@@ -17,16 +17,6 @@
               "effects": {
                 "attributes": { "comprehension": 1 },
                 "narrative": "那枚令牌在你手中隐隐发热，仿佛在呼应着什么。你将它收好，心中埋下一粒种子——有些事，必须弄清楚。"
-              }
-            },
-            {
-              "id": "consult_elder",
-              "text": "带着令牌去请教神秘老者",
-              "requirements": { "flags": { "met_mysterious_elder": true } },
-              "effects": {
-                "attributes": { "comprehension": 2, "innerForce": 1 },
-                "npcAffinity": { "mysterious_elder": 5 },
-                "narrative": "老者见到令牌，神色骤变，沉默良久后说：「你找到他了。」他没有解释是谁，但你看见他握令牌的手在微微颤抖。那一刻你明白，这件事比你想象的更深。"
               }
             }
           ],

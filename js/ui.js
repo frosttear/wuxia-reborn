@@ -248,7 +248,31 @@ const UI = {
 
     FLAG_NAMES: {
         hero_recognized: '武林认可',
-        sword_legacy: '剑意传承'
+        sword_legacy: '剑意传承',
+        met_mysterious_elder: '结识神秘老者',
+        met_wang_tie: '结识王铁',
+        met_li_yunshu: '结识李云舒',
+        met_ling_xue: '结识凌雪',
+        met_zhao_batian: '结识赵霸天',
+        elder_taught: '老者传授心法',
+        wang_taught_basics: '王铁传授基础',
+        tianmo_sign1: '完成「路遇奇人」',
+        tianmo_sign2: '完成「探查龙脊山」',
+        elder_past1: '完成「旧日画像」',
+        elder_past2: '完成「故地重游」',
+        chaos1: '完成「奇怪委托」',
+        chaos2: '完成「追查幕后」',
+        wuxiang_stele_found: '发现无相古碑',
+        wuxiang_comprehending: '参悟无相剑意',
+        temple_awakened: '武神庙感悟',
+        has_secret_manual: '获得秘籍',
+        has_rare_medicine: '持有灵药',
+        jade_tablet_awakened: '玉牌异变',
+        tianmo_trace_known: '追查天魔踪迹',
+        shadow_cult_broken: '摧毁影堂',
+        li_knows_burden: '李云舒了解你的重担',
+        wang_dying_wish: '王铁临终嘱托',
+        hidden_boss_beaten: '击败隐藏Boss'
     },
 
     formatFlagRequirementsWithChar(reqFlags, char) {

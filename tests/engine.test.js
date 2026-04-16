@@ -88,11 +88,19 @@ describe('Engine.checkConditions', () => {
 describe('Engine.getAvailableChainSteps', () => {
     beforeEach(() => resetEngine());
 
-    test('returns first step of tianmo_harbinger at age 15', () => {
+    test('returns first step of tianmo_harbinger at age 16', () => {
+        Engine.state.char.ageMonths = 192; // 16 years old
         const steps = Engine.getAvailableChainSteps();
         const found = steps.find(s => s.chain.id === 'tianmo_harbinger');
         expect(found).toBeDefined();
         expect(found.stepIdx).toBe(0);
+    });
+
+    test('does not return tianmo_harbinger before age 16', () => {
+        Engine.state.char.ageMonths = 180; // 15 years old
+        const steps = Engine.getAvailableChainSteps();
+        const found = steps.find(s => s.chain.id === 'tianmo_harbinger');
+        expect(found).toBeUndefined();
     });
 
     test('does not return chains that are done', () => {
