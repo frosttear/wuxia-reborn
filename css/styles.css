@@ -476,6 +476,7 @@ button:disabled { opacity: 0.4; cursor: not-allowed; }
 .intent-read  { color: rgba(180,160,220,0.9); font-style: italic; }
 .intent-vague { color: rgba(150,150,150,0.7); font-style: italic; }
 .intent-comp-label { font-size: 0.68rem; color: rgba(120,120,120,0.6); margin-left: 4px; }
+.intent-perfect-label { font-size: 0.72rem; color: #f4c430; font-weight: bold; margin-left: 5px; text-shadow: 0 0 6px rgba(244,196,48,0.5); }
 
 .combat-actions {
     display: grid;

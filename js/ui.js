@@ -498,14 +498,18 @@ const UI = {
         // Enemy intent hint (accuracy gated by comprehension)
         const intentEl = document.getElementById('combatIntentHint');
         if (cs.enemyIntentHint) {
-            const comp = char.attributes.comprehension || 0;
-            const eComp = cs.enemyComp || 0;
-            const ratio = comp / (eComp + 5);
-            const accuratePct = Math.round(Math.min(90, Math.pow(ratio, 1.5) * 90));
-            if (cs.enemyIntentType === 'vague') {
-                intentEl.innerHTML = `<span class="intent-vague">❓ ${cs.enemyIntentHint}</span><span class="intent-comp-label">（悟性${comp}，洞察${accuratePct}%）</span>`;
+            if (cs.enemyIntentType === 'perfect') {
+                intentEl.innerHTML = `<span class="intent-read">🔮 ${cs.enemyIntentHint}</span><span class="intent-perfect-label">【无相剑意】</span>`;
             } else {
-                intentEl.innerHTML = `<span class="intent-read">🔮 ${cs.enemyIntentHint}</span><span class="intent-comp-label">（悟性${comp}，洞察${accuratePct}%）</span>`;
+                const comp = char.attributes.comprehension || 0;
+                const eComp = cs.enemyComp || 0;
+                const ratio = comp / (eComp + 5);
+                const accuratePct = Math.round(Math.min(90, Math.pow(ratio, 1.5) * 90));
+                if (cs.enemyIntentType === 'vague') {
+                    intentEl.innerHTML = `<span class="intent-vague">❓ ${cs.enemyIntentHint}</span><span class="intent-comp-label">（悟性${comp}，洞察${accuratePct}%）</span>`;
+                } else {
+                    intentEl.innerHTML = `<span class="intent-read">🔮 ${cs.enemyIntentHint}</span><span class="intent-comp-label">（悟性${comp}，洞察${accuratePct}%）</span>`;
+                }
             }
         } else {
             intentEl.innerHTML = '';

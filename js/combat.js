@@ -288,27 +288,33 @@ const Combat = {
         // ratio = playerComp / (enemyComp + 5), accurateChance = min(0.90, ratio^1.5 * 0.90)
         // Weak enemies (comp 3-5): readable at playerComp ~8-10.
         // Final boss (comp 50): needs playerComp ~55 (3-4 rebirths) for reliable reads.
-        // Low comp vs tough enemy: biased toward deceptive wrong reads.
+        // Passive 「无相剑意」 (perfectIntentRead): bypasses formula → always accurate.
         if (!combatOver) {
             const next = this._enemyChooseAction(cs);
             cs.enemyNextAction  = next;
-            const playerComp    = (char.attributes && char.attributes.comprehension) || 0;
-            const enemyComp     = cs.enemyComp;
-            const ratio         = playerComp / (enemyComp + 5);
-            const accurateChance = Math.min(0.90, Math.pow(ratio, 1.5) * 0.90);
-            const vagueFrac     = Math.min(0.80, 0.30 + playerComp / 60 * 0.50);
-            const remaining     = 1 - accurateChance;
-            const r = Math.random();
-            if (r < accurateChance) {
+            const hasPerfectRead = (char.passives || []).some(p => p.perfectIntentRead);
+            if (hasPerfectRead) {
                 cs.enemyIntentHint = this.ENEMY_INTENT[next] || '';
-                cs.enemyIntentType = 'accurate';
-            } else if (r < accurateChance + remaining * vagueFrac) {
-                cs.enemyIntentHint = this._pick(this.VAGUE_INTENT_MSGS);
-                cs.enemyIntentType = 'vague';
+                cs.enemyIntentType = 'perfect';
             } else {
-                const wrong = next === 'heavy' ? 'swift' : 'heavy';
-                cs.enemyIntentHint = this.ENEMY_INTENT[wrong] || '';
-                cs.enemyIntentType = 'wrong'; // looks identical to 'accurate' in UI
+                const playerComp    = (char.attributes && char.attributes.comprehension) || 0;
+                const enemyComp     = cs.enemyComp;
+                const ratio         = playerComp / (enemyComp + 5);
+                const accurateChance = Math.min(0.90, Math.pow(ratio, 1.5) * 0.90);
+                const vagueFrac     = Math.min(0.80, 0.30 + playerComp / 60 * 0.50);
+                const remaining     = 1 - accurateChance;
+                const r = Math.random();
+                if (r < accurateChance) {
+                    cs.enemyIntentHint = this.ENEMY_INTENT[next] || '';
+                    cs.enemyIntentType = 'accurate';
+                } else if (r < accurateChance + remaining * vagueFrac) {
+                    cs.enemyIntentHint = this._pick(this.VAGUE_INTENT_MSGS);
+                    cs.enemyIntentType = 'vague';
+                } else {
+                    const wrong = next === 'heavy' ? 'swift' : 'heavy';
+                    cs.enemyIntentHint = this.ENEMY_INTENT[wrong] || '';
+                    cs.enemyIntentType = 'wrong'; // looks identical to 'accurate' in UI
+                }
             }
         }
 

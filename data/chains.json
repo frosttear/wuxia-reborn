@@ -240,6 +240,86 @@
         "flags": { "shadow_cult_broken": true },
         "narrative": "影堂覆灭，那些被炼魂术控制的武人陆续苏醒。你的名字在江湖上再次被人提起——不是以英雄，而是以一个知道自己在对抗什么的人。"
       }
+    },
+    {
+      "id": "wuxiang_sword",
+      "name": "无相剑意",
+      "desc": "传说中的无上剑学——不执于形，不拘于招，以心观敌，万变归一。",
+      "steps": [
+        {
+          "id": "wuxiang_1",
+          "title": "荒野古碑",
+          "unlockConditions": { "minAttributes": { "comprehension": 30 } },
+          "text": "你在一处人迹罕至的山谷中独自打坐，忽然察觉附近有一股奇异的气息——不是杀气，而是一种沉寂了不知多少年的剑意残留。\n\n循着感应，你在乱石堆中找到一块几乎被荒草掩埋的石碑。碑面风化严重，只剩下寥寥数行文字，笔划锋锐如刀，气势凌厉：\n\n「剑无定形，意无定势。观敌之心，胜于观敌之招。招从意来，意先招出——知意者，可破天下之剑。」\n\n落款已模糊，只能辨认出最后两字：……无相。",
+          "choices": [
+            {
+              "id": "study_stele",
+              "text": "在碑前静坐，反复体悟碑文中的剑理",
+              "effects": {
+                "attributes": { "comprehension": 2, "innerForce": 1 },
+                "narrative": "你坐在碑前，从正午坐到黄昏。那几行字越看越深，像是一扇门，而你刚刚摸到了门缝。"
+              }
+            },
+            {
+              "id": "copy_stele",
+              "text": "将碑文一字不差地拓印下来，带回仔细钻研",
+              "requirements": { "minAttributes": { "comprehension": 35 } },
+              "effects": {
+                "attributes": { "comprehension": 3 },
+                "narrative": "你将拓本贴在床头，日日揣摩。渐渐地，你开始理解那句「意先招出」——在敌人出招之前，他的意图早已写在了身体的细节里。"
+              }
+            }
+          ],
+          "onComplete": { "flags": { "wuxiang_stele_found": true } }
+        },
+        {
+          "id": "wuxiang_2",
+          "title": "苦参剑意",
+          "unlockConditions": { "flags": { "wuxiang_stele_found": true }, "minAttributes": { "comprehension": 42, "innerForce": 20 } },
+          "text": "你将那碑文中的剑理带入了每一次对战之中，强迫自己不去盯着对方的刀剑，而是去看——他的重心，他的呼吸，他肩膀在出招前那一瞬间的细微变化。\n\n失败了无数次。被人打得狼狈，被人嘲笑多心。\n\n但某一天，你在和一名陌生武人切磋时，忽然清晰地「看见」了他下一招——不是猜，而是一种确定无疑的感知，就像看见了他内心的图谋。\n\n那一刻，你的手心微微发汗。你第一次感受到，那块石碑所指向的，究竟是什么。",
+          "choices": [
+            {
+              "id": "push_further",
+              "text": "废寝忘食，将这一感知打磨到极致",
+              "effects": {
+                "attributes": { "comprehension": 3, "innerForce": 2 },
+                "narrative": "三个月后，你能稳定地感知到多数对手的出招意图。但偶尔遇到心思深沉的高手，那感知仍会失灵——那个边界，还没有突破。"
+              }
+            }
+          ],
+          "onComplete": { "flags": { "wuxiang_comprehending": true } }
+        },
+        {
+          "id": "wuxiang_3",
+          "title": "以无胜有",
+          "unlockConditions": { "flags": { "wuxiang_comprehending": true }, "minAttributes": { "comprehension": 52, "innerForce": 28 } },
+          "text": "又是一年。你在一场与高手的苦战中，被逼到了极限——气力将竭，神识却前所未有地清明。\n\n对方出掌，你看见了他的意图；对方换招，你看见了他的意图；对方虚晃，你依然看见了他的意图。\n\n不是因为你更快，而是因为在那一刻，你彻底放弃了「看招」，转而去感知那个藏在一切招式之下、先于一切动作存在的东西——\n\n意。\n\n战斗结束后，你在原地站了很久。那块石碑上的最后一句话，如今已经刻进了你的骨子里：\n\n「知意者，可破天下之剑。」",
+          "choices": [
+            {
+              "id": "achieve_wuxiang",
+              "text": "沉心体悟，将这一刻的感悟凝固为永久的本能",
+              "effects": {
+                "attributes": { "comprehension": 5, "innerForce": 3 },
+                "narrative": "你闭目良久。当你睁开眼，世界没有变化——但你看世界的方式，已经彻底不同了。"
+              }
+            }
+          ],
+          "onComplete": { "flags": { "wuxiang_mastered": true } }
+        }
+      ],
+      "completionReward": {
+        "attributes": { "comprehension": 5, "innerForce": 3 },
+        "flags": { "wuxiang_sword_mastered": true },
+        "passives": [
+          {
+            "id": "wuxiang_intent",
+            "name": "无相剑意",
+            "desc": "洞察一切，敌方意图在你眼中无所遁形",
+            "perfectIntentRead": true
+          }
+        ],
+        "narrative": "无招胜有招，无形胜有形。\n\n你不再需要去「猜」对方的意图——那意图在他们动作之前，已经如白纸黑字般呈现在你眼中。这是那块无名古碑留下的最后馈赠，也是你用数世积累换来的唯一答案。"
+      }
     }
   ]
 }

@@ -624,6 +624,15 @@ const Engine = {
             UI.addLog(`⬆ ${this.formatAttrGains(reward.attributes)}`, 'result');
         }
         if (reward.flags) Object.assign(char.flags, reward.flags);
+        if (reward.passives) {
+            if (!char.passives) char.passives = [];
+            for (const passive of reward.passives) {
+                if (!char.passives.find(p => p.id === passive.id)) {
+                    char.passives.push(passive);
+                    UI.addLog(`✨ 解锁被动【${passive.name}】：${passive.desc}`, 'unlock');
+                }
+            }
+        }
         UI.renderAll(this.state);
     },
 

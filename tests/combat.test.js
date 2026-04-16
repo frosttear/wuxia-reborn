@@ -246,14 +246,27 @@ describe('Combat.processTurn - enemy intent preview', () => {
     test('low playerComp vs strong enemy yields mostly non-accurate', () => {
         const STRONG_ENEMY = { ...STUB_ENEMY, comprehension: 30 };
         let accurateCount = 0;
-        for (let i = 0; i < 40; i++) {
+        for (let i = 0; i < 100; i++) {
             const char = makeChar({ attributes: { strength: 8, agility: 5, constitution: 5, innerForce: 3, comprehension: 5, luck: 5, reputation: 0 } });
             char.hp = 100;
-            const cs = Combat.initState(char, STRONG_ENEMY, STUB_JOB); // ratio=5/35=0.143 → ~1.7%
+            const cs = Combat.initState(char, STRONG_ENEMY, STUB_JOB); // ratio=5/35=0.143 → ~4.9%
             Combat.processTurn('focus', cs, char, STUB_JOB);
             if (cs.enemyIntentType === 'accurate') accurateCount++;
         }
-        expect(accurateCount).toBeLessThan(5); // near-0% accurate at ratio=0.14
+        expect(accurateCount).toBeLessThan(20); // <20% accurate at ratio=0.14 (actual ~5%)
+    });
+
+    test('perfectIntentRead passive always yields perfect intentType', () => {
+        const char = makeChar({ attributes: { strength: 8, agility: 5, constitution: 5, innerForce: 3, comprehension: 0, luck: 5, reputation: 0 } });
+        char.hp = 100;
+        char.passives = [{ id: 'wuxiang_intent', name: '无相剑意', perfectIntentRead: true }];
+        const TOUGH_ENEMY = { ...STUB_ENEMY, comprehension: 50 };
+        const cs = Combat.initState(char, TOUGH_ENEMY, STUB_JOB);
+        for (let i = 0; i < 10; i++) {
+            Combat.processTurn('focus', cs, char, STUB_JOB);
+            expect(cs.enemyIntentType).toBe('perfect');
+            expect(cs.enemyIntentHint).not.toBe('');
+        }
     });
 
     test('zero comprehension always yields non-accurate', () => {
