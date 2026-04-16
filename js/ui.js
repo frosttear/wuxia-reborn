@@ -87,8 +87,10 @@ const UI = {
         const luckCrit  = Character.getLuckTriggerChance(char);
         const combatEl = document.getElementById('combatStats');
         const atag = (cls, text) => `<span class="attr-tag ${cls}">${text}</span>`;
+        const kills = char.kills || 0;
         combatEl.innerHTML =
             `<span>⚔ 攻击 ${attack}</span><span>🛡 防御 ${defense}</span>` +
+            `<span>☠ 斩杀 ${kills} 人</span>` +
             `<span>📖 属性学习效率 ${compRate > 0 ? '+' : ''}${Math.round(compRate * 100)}% ${atag('at-comprehension', '悟性')}</span>` +
             `<span>💨 闪避率 ${Math.round(luckDodge * 100)}% ${atag('at-luck', '运气')}${atag('at-agility', '敏捷')}</span>` +
             `<span>✨ 会心率 ${Math.round(luckCrit * 100)}% ${atag('at-luck', '运气')}${atag('at-inner-force', '内力')}</span>`;

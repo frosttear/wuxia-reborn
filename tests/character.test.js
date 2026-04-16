@@ -77,15 +77,23 @@ describe('Character.getHPMax', () => {
 });
 
 describe('Character.applyAttributeChanges', () => {
+    // Use luck=0, innerForce=0 so lucky-proc chance is exactly 0% → deterministic
+    function noLuckChar() {
+        const c = makeChar();
+        c.attributes.luck = 0;
+        c.attributes.innerForce = 0;
+        return c;
+    }
+
     test('increments specified attributes', () => {
-        const char = makeChar();
+        const char = noLuckChar();
         Character.applyAttributeChanges(char, { strength: 2, agility: 1 });
         expect(char.attributes.strength).toBe(7); // 5 + 2
         expect(char.attributes.agility).toBe(6);  // 5 + 1
     });
 
     test('does not modify unspecified attributes', () => {
-        const char = makeChar();
+        const char = noLuckChar();
         Character.applyAttributeChanges(char, { strength: 3 });
         expect(char.attributes.comprehension).toBe(5); // unchanged
     });

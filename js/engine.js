@@ -348,6 +348,11 @@ const Engine = {
     applyEffects(effects) {
         if (!effects) return;
         const { char } = this.state;
+        if (effects.attributes) {
+            const lucky = Character.applyAttributeChanges(char, effects.attributes);
+            if (lucky) UI.addLog('✨ 幸运触发！属性收益翻倍！', 'unlock');
+            UI.addLog(`⬆ ${this.formatAttrGains(effects.attributes)}`, 'result');
+        }
         if (effects.npcAffinity) {
             for (const npcId in effects.npcAffinity) {
                 NPCSystem.changeAffinity(char, npcId, effects.npcAffinity[npcId]);
@@ -359,6 +364,27 @@ const Engine = {
         if (typeof effects.hp === 'number') {
             char.hp = Math.max(1, Math.min(char.hp + effects.hp, Character.getHPMax(char, this.getJob(char.job))));
         }
+    },
+
+    getAvailableVisits() {
+        const { char, bonds, npcs } = this.state;
+        if (!char || !bonds || !npcs) return [];
+        const result = [];
+        for (const npcId in bonds) {
+            if (npcId === '_casualVisits') continue;
+            if (!char.flags['met_' + npcId]) continue;
+            const npc = npcs.find(n => n.id === npcId);
+            if (!npc) continue;
+            const npcBonds = bonds[npcId];
+            const currentLevel = (char.bondLevels || {})[npcId] || 0;
+            const bondEvent = Array.isArray(npcBonds) ? npcBonds.find(b => b.level === currentLevel + 1) : null;
+            const affinity = NPCSystem.getAffinity(char, npcId);
+            const bondReady = !!(bondEvent &&
+                !((char.bondEventsDone || {})[`${npcId}_${bondEvent.level}`]) &&
+                affinity >= bondEvent.minAffinity);
+            result.push({ npcId, npc, affinity, bondReady, bondEvent });
+        }
+        return result;
     },
 
     visitNPC(npcId) {
