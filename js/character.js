@@ -124,6 +124,7 @@ const Character = {
         const luckChance = this.getLuckTriggerChance(char);
         const isLucky = Math.random() < luckChance;
         let luckyTriggered = false;
+        const actualGains = {};
 
         for (const attr in changes) {
             if (!(attr in char.attributes)) continue;
@@ -135,6 +136,7 @@ const Character = {
                 if (isLucky) { amount *= 2; luckyTriggered = true; }
             }
             char.attributes[attr] = Math.max(0, char.attributes[attr] + amount);
+            actualGains[attr] = amount;
         }
 
         // Talent: 慧根 boosts innerForce/comprehension gains by 15%
@@ -142,7 +144,9 @@ const Character = {
             const bonus = ['innerForce', 'comprehension'];
             for (const attr of bonus) {
                 if (changes[attr] && changes[attr] > 0) {
-                    char.attributes[attr] += Math.floor(changes[attr] * 0.15);
+                    const extra = Math.floor(changes[attr] * 0.15);
+                    char.attributes[attr] += extra;
+                    actualGains[attr] = (actualGains[attr] || 0) + extra;
                 }
             }
         }
@@ -151,7 +155,9 @@ const Character = {
             const bonus = ['strength', 'agility'];
             for (const attr of bonus) {
                 if (changes[attr] && changes[attr] > 0) {
-                    char.attributes[attr] += Math.floor(changes[attr] * 0.15);
+                    const extra = Math.floor(changes[attr] * 0.15);
+                    char.attributes[attr] += extra;
+                    actualGains[attr] = (actualGains[attr] || 0) + extra;
                 }
             }
         }
@@ -160,12 +166,14 @@ const Character = {
             if (!p.attrGrowthBonus) continue;
             for (const [attr, rate] of Object.entries(p.attrGrowthBonus)) {
                 if (changes[attr] && changes[attr] > 0) {
-                    char.attributes[attr] += Math.floor(changes[attr] * rate);
+                    const extra = Math.floor(changes[attr] * rate);
+                    char.attributes[attr] += extra;
+                    actualGains[attr] = (actualGains[attr] || 0) + extra;
                 }
             }
         }
 
-        return luckyTriggered;
+        return { luckyTriggered, actualGains };
     },
 
     healHP(char, amount, job) {

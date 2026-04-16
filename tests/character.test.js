@@ -98,10 +98,13 @@ describe('Character.applyAttributeChanges', () => {
         expect(char.attributes.comprehension).toBe(5); // unchanged
     });
 
-    test('returns a boolean (lucky proc indicator)', () => {
+    test('returns { luckyTriggered, actualGains } object', () => {
         const char = makeChar();
         const result = Character.applyAttributeChanges(char, { strength: 1 });
-        expect(typeof result).toBe('boolean');
+        expect(typeof result).toBe('object');
+        expect(typeof result.luckyTriggered).toBe('boolean');
+        expect(typeof result.actualGains).toBe('object');
+        expect('strength' in result.actualGains).toBe(true);
     });
 });
 

@@ -309,12 +309,12 @@ const Engine = {
 
         // Log lucky trigger if attributes changed
         if (effects.attributes) {
-            const lucky = Character.applyAttributeChanges(this.state.char, effects.attributes);
-            if (lucky) UI.addLog('✨ 幸运触发！属性收益翻倍！', 'unlock');
+            const { luckyTriggered, actualGains } = Character.applyAttributeChanges(this.state.char, effects.attributes);
+            if (luckyTriggered) UI.addLog('✨ 幸运触发！属性收益翻倍！', 'unlock');
             const effectsCopy = Object.assign({}, effects);
             delete effectsCopy.attributes;
             this.applyEffects(effectsCopy);
-            const gainsStr = this.formatAttrGains(effects.attributes);
+            const gainsStr = this.formatAttrGains(actualGains);
             const gainsTag = gainsStr ? `　<span class="attr-gains">⬆ ${gainsStr}</span>` : '';
             const narrative = effects.narrative ? effects.narrative + gainsTag : (gainsTag || '');
             if (narrative) UI.addLog(narrative, 'result');
@@ -352,9 +352,9 @@ const Engine = {
         if (!effects) return;
         const { char } = this.state;
         if (effects.attributes) {
-            const lucky = Character.applyAttributeChanges(char, effects.attributes);
-            if (lucky) UI.addLog('✨ 幸运触发！属性收益翻倍！', 'unlock');
-            UI.addLog(`⬆ ${this.formatAttrGains(effects.attributes)}`, 'result');
+            const { luckyTriggered, actualGains } = Character.applyAttributeChanges(char, effects.attributes);
+            if (luckyTriggered) UI.addLog('✨ 幸运触发！属性收益翻倍！', 'unlock');
+            UI.addLog(`⬆ ${this.formatAttrGains(actualGains)}`, 'result');
         }
         if (effects.npcAffinity) {
             for (const npcId in effects.npcAffinity) {
