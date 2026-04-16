@@ -15,12 +15,10 @@ const Combat = {
         heavy: '对方气沉丹田——<b>刚攻将至</b>',
         swift: '对方步法游走——<b>巧攻难测</b>',
     },
-    VAGUE_INTENT_MSGS: [
-        '对方行迹难以捉摸',
-        '对方拜式之调难以判断',
-        '对方意图难以看穿',
-        '对方下一招摄格不定',
-    ],
+    VAGUE_INTENT: {
+        heavy: '对方步伐似乎沉了下来，像是在蓄力——<b>但你没有把握</b>',
+        swift: '对方身形隐约有游走之意——<b>但你没有把握</b>',
+    },
     WRONG_READ_MSGS: [
         '糟了！对方出的招和预判的完全相反！',
         '不妙！上回合错判了对方的意图！',
@@ -97,7 +95,7 @@ const Combat = {
                 cs.enemyIntentHint = this.ENEMY_INTENT[firstAction] || '';
                 cs.enemyIntentType = 'accurate';
             } else if (r < accurateChance + (1 - accurateChance) * vagueFrac) {
-                cs.enemyIntentHint = this._pick(this.VAGUE_INTENT_MSGS);
+                cs.enemyIntentHint = this.VAGUE_INTENT[firstAction] || '';
                 cs.enemyIntentType = 'vague';
             } else {
                 const wrong = firstAction === 'heavy' ? 'swift' : 'heavy';
@@ -337,7 +335,7 @@ const Combat = {
                     cs.enemyIntentHint = this.ENEMY_INTENT[next] || '';
                     cs.enemyIntentType = 'accurate';
                 } else if (r < accurateChance + remaining * vagueFrac) {
-                    cs.enemyIntentHint = this._pick(this.VAGUE_INTENT_MSGS);
+                    cs.enemyIntentHint = this.VAGUE_INTENT[next] || '';
                     cs.enemyIntentType = 'vague';
                 } else {
                     const wrong = next === 'heavy' ? 'swift' : 'heavy';
