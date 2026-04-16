@@ -358,7 +358,7 @@ const UI = {
         const ageStr = `${ageYears}岁${ageMonths}月`;
         const remaining = 240 - state.char.ageMonths;
         const countdownHtml = remaining > 0
-            ? `<span class="log-age-countdown${remaining <= 6 ? ' urgent' : ''}">距天魔之日还剩 ${remaining} 月</span>`
+            ? `<div><span class="log-age-countdown${remaining <= 6 ? ' urgent' : ''}">⏳ 距天魔之日还剩 ${remaining} 月</span></div>`
             : '';
 
         // Add event to log

@@ -145,9 +145,9 @@ body {
 /* Log entries */
 .log-entry    { font-size: 0.85rem; line-height: 1.65; }
 .event-entry  { background: var(--surface); border: 1px solid var(--border); border-radius: 6px; padding: 10px 12px; }
-.log-age      { font-size: 0.78rem; font-weight: bold; color: var(--accent); letter-spacing: 0.04em; margin-bottom: 5px; display: flex; align-items: center; gap: 10px; }
-.log-age-countdown { font-size: 0.7rem; font-weight: normal; color: var(--muted); letter-spacing: 0; }
-.log-age-countdown.urgent { color: #e05050; font-weight: bold; }
+.log-age      { font-size: 0.78rem; font-weight: bold; color: var(--accent); letter-spacing: 0.04em; margin-bottom: 4px; }
+.log-age-countdown { display: inline-block; margin-top: 4px; font-size: 0.76rem; font-weight: bold; color: #c8a84b; background: rgba(200,168,75,0.12); border: 1px solid rgba(200,168,75,0.35); border-radius: 4px; padding: 2px 8px; letter-spacing: 0.02em; }
+.log-age-countdown.urgent { color: #e05050; background: rgba(224,80,80,0.12); border-color: rgba(224,80,80,0.4); }
 .log-type     { display: inline-block; font-size: 0.68rem; padding: 1px 7px; border-radius: 3px; margin-bottom: 4px; }
 .type-磨练    { background: rgba(91,155,213,0.2); color: var(--blue); }
 .type-奇遇    { background: rgba(92,191,122,0.2); color: var(--green); }
