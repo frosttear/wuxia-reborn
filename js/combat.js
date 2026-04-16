@@ -95,7 +95,8 @@ const Combat = {
                 cs.enemyIntentHint = this.ENEMY_INTENT[firstAction] || '';
                 cs.enemyIntentType = 'accurate';
             } else if (r < accurateChance + (1 - accurateChance) * vagueFrac) {
-                cs.enemyIntentHint = this.VAGUE_INTENT[firstAction] || '';
+                const vagueAction = Math.random() < 0.65 ? firstAction : (firstAction === 'heavy' ? 'swift' : 'heavy');
+                cs.enemyIntentHint = this.VAGUE_INTENT[vagueAction] || '';
                 cs.enemyIntentType = 'vague';
             } else {
                 const wrong = firstAction === 'heavy' ? 'swift' : 'heavy';
@@ -335,7 +336,9 @@ const Combat = {
                     cs.enemyIntentHint = this.ENEMY_INTENT[next] || '';
                     cs.enemyIntentType = 'accurate';
                 } else if (r < accurateChance + remaining * vagueFrac) {
-                    cs.enemyIntentHint = this.VAGUE_INTENT[next] || '';
+                    // 65% points to correct action, 35% to wrong — both in uncertain language
+                    const vagueAction = Math.random() < 0.65 ? next : (next === 'heavy' ? 'swift' : 'heavy');
+                    cs.enemyIntentHint = this.VAGUE_INTENT[vagueAction] || '';
                     cs.enemyIntentType = 'vague';
                 } else {
                     const wrong = next === 'heavy' ? 'swift' : 'heavy';
