@@ -569,8 +569,8 @@ const Engine = {
             });
             char.hp = 1;
             char.injured = true;
-            char.injuredMonths = 6;
-            UI.addLog('【重伤】你身负重创，勉强撤退。未来数月须静养调息，方可恢复。', 'lose');
+            char.injuredMonths = 2;
+            UI.addLog('【重伤】你身负重创，勉强撤退。需静养约两个月，方可恢复。', 'lose');
             UI.renderCharacter(char, this.state.jobs);
             UI.renderAll(this.state);
             this.saveGame();
