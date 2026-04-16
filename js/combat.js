@@ -82,7 +82,7 @@ const Combat = {
         } else {
             const playerComp = (char.attributes && char.attributes.comprehension) || 0;
             const enemyComp  = cs.enemyComp;
-            const accurateChance = Math.min(0.80, 0.80 * Math.log(1 + playerComp / (enemyComp + 10)));
+            const accurateChance = Math.min(0.80, 0.80 * Math.log(1 + playerComp / (enemyComp + 20)));
             if (Math.random() < accurateChance) {
                 cs.enemyIntentHint = this._getIntentHint(enemy, firstAction);
                 cs.enemyIntentType = 'accurate';
@@ -119,6 +119,10 @@ const Combat = {
 
         // Determine enemy action for THIS turn
         const enemyAction = cs.enemyNextAction || this._enemyChooseAction(cs);
+        // Intent anticipation: accurate/perfect read means player truly knows what's coming
+        const intentAccurate   = cs.enemyIntentType === 'accurate' || cs.enemyIntentType === 'perfect';
+        const swiftAnticipated = intentAccurate && enemyAction === 'swift' && action === 'defend';
+        const heavyAnticipated = intentAccurate && enemyAction === 'heavy' && action === 'parry';
 
         // ── FLEE ────────────────────────────────────────────────────────────
         if (action === 'flee') {
@@ -200,7 +204,11 @@ const Combat = {
                 if (cs.enemyHp <= 0) { result = 'won'; combatOver = true; }
 
             } else if (action === 'defend') {
-                lines.push(this._pick(this.DEFEND_DESCS) + '。');
+                if (swiftAnticipated) {
+                    lines.push('你早已预判对方快攻，' + this._pick(this.DEFEND_DESCS) + '，以守待攻——将攻势引于空处！');
+                } else {
+                    lines.push(this._pick(this.DEFEND_DESCS) + '。');
+                }
 
             } else if (action === 'parry') {
                 lines.push(this._pick(this.PARRY_DESCS) + '。');
@@ -217,12 +225,15 @@ const Combat = {
             if (!combatOver) {
                 if (action === 'parry') {
                     if (enemyAction === 'heavy') {
-                        // Successful parry → counter-hit
-                        const counterDmg = Math.max(1, Math.floor(playerAtk * 0.6) + this._rand(-2, 4));
+                        // Successful parry → counter-hit (boosted if intent was read)
+                        const counterMult = heavyAnticipated ? 0.85 : 0.6;
+                        const counterDmg = Math.max(1, Math.floor(playerAtk * counterMult) + this._rand(-2, 4));
                         cs.enemyHp = Math.max(0, cs.enemyHp - counterDmg);
                         cs.totalDmgDealt += counterDmg;
-                        cs.playerMomentum = Math.min(5, cs.playerMomentum + 1);
-                        lines.push(`${cs.enemy.name}${this._pick(this.ENEMY_HEAVY_DESCS)}——你【<b>化解反击</b>】！借力打力，对方损失 <b>${counterDmg}</b> 气血。`);
+                        cs.playerMomentum = Math.min(5, cs.playerMomentum + (heavyAnticipated ? 2 : 1));
+                        const counterLabel = heavyAnticipated ? '洞察反击' : '化解反击';
+                        const counterNote  = heavyAnticipated ? '你早已洞悉来招，截断蓄力，' : '借力打力，';
+                        lines.push(`${cs.enemy.name}${this._pick(this.ENEMY_HEAVY_DESCS)}——你【<b>${counterLabel}</b>】！${counterNote}对方损失 <b>${counterDmg}</b> 气血。`);
                         if (cs.enemyHp <= 0) { result = 'won'; combatOver = true; }
                     } else {
                         // Parry punished by swift
@@ -249,9 +260,10 @@ const Combat = {
                     if (pend) cs.pendingSkill = null;
 
                     // Reduction based on player stance and enemy attack type
+                    // swiftAnticipated: player read intent accurately → near-perfect block
                     let incomingMult = 1.0;
                     if (action === 'defend') {
-                        incomingMult = enemyAction === 'heavy' ? 0.25 : 0.50;
+                        incomingMult = swiftAnticipated ? 0.20 : (enemyAction === 'heavy' ? 0.25 : 0.50);
                     } else if (action === 'focus') {
                         incomingMult = 0.55;
                     } else if (action === 'quick' && enemyAction === 'heavy') {
@@ -310,7 +322,7 @@ const Combat = {
             } else {
                 const playerComp    = (char.attributes && char.attributes.comprehension) || 0;
                 const enemyComp     = cs.enemyComp;
-                const accurateChance = Math.min(0.80, 0.80 * Math.log(1 + playerComp / (enemyComp + 10)));
+                const accurateChance = Math.min(0.80, 0.80 * Math.log(1 + playerComp / (enemyComp + 20)));
                 if (Math.random() < accurateChance) {
                     cs.enemyIntentHint = this._getIntentHint(cs.enemy, next);
                     cs.enemyIntentType = 'accurate';

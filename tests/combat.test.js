@@ -236,11 +236,11 @@ describe('Combat.processTurn - enemy intent preview', () => {
         for (let i = 0; i < 40; i++) {
             const char = makeChar({ attributes: { strength: 8, agility: 5, constitution: 5, innerForce: 3, comprehension: 10, luck: 5, reputation: 0 } });
             char.hp = 100;
-            const cs = Combat.initState(char, STUB_ENEMY, STUB_JOB); // comp=10 vs comp=0 → 0.80*ln(2)≈55%
+            const cs = Combat.initState(char, STUB_ENEMY, STUB_JOB); // comp=10 vs comp=0 → 0.80*ln(1.5)≈32%
             Combat.processTurn('focus', cs, char, STUB_JOB);
             if (cs.enemyIntentType === 'accurate') accurateCount++;
         }
-        expect(accurateCount).toBeGreaterThan(14); // ~55% accurate (log formula, n=40)
+        expect(accurateCount).toBeGreaterThan(7); // ~32% accurate (log formula constant=20, n=40)
     });
 
     test('low playerComp vs strong enemy yields mostly non-accurate', () => {
@@ -249,7 +249,7 @@ describe('Combat.processTurn - enemy intent preview', () => {
         for (let i = 0; i < 100; i++) {
             const char = makeChar({ attributes: { strength: 8, agility: 5, constitution: 5, innerForce: 3, comprehension: 5, luck: 5, reputation: 0 } });
             char.hp = 100;
-            const cs = Combat.initState(char, STRONG_ENEMY, STUB_JOB); // comp=5 vs comp=30 → 0.80*ln(1.125)≈9.4%
+            const cs = Combat.initState(char, STRONG_ENEMY, STUB_JOB); // comp=5 vs comp=30 → 0.80*ln(1.1)≈7.6%
             Combat.processTurn('focus', cs, char, STUB_JOB);
             if (cs.enemyIntentType === 'accurate') accurateCount++;
         }
