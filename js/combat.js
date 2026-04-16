@@ -19,11 +19,10 @@ const Combat = {
         heavy: '对方步伐似乎沉了下来，像是在蓄力——<b>但你没有把握</b>',
         swift: '对方身形隐约有游走之意——<b>但你没有把握</b>',
     },
-    WRONG_READ_MSGS: [
-        '糟了！对方出的招和预判的完全相反！',
-        '不妙！上回合错判了对方的意图！',
-        '失算！对方虚晦一招，妆弄了你的判断！',
-        '看漏眼了！对方换了路数！',
+    UNREADABLE_MSGS: [
+        '对方行迹难以捉摸，看不出端倪',
+        '对方气势沉敛，完全看不出意图',
+        '对方深藏不露，无从判断下一招',
     ],
 
     // ── Scaled enemy stats ──────────────────────────────────────────────────
@@ -68,7 +67,7 @@ const Combat = {
             enemyComp:    enemy.comprehension || 0, // enemy comprehension (affects intent readability)
             enemyNextAction: null,  // 'heavy'|'swift', previewed for next turn
             enemyIntentHint: '',    // text shown in combat UI
-            enemyIntentType: null,  // 'accurate'|'vague'|'wrong'
+            enemyIntentType: null,  // 'accurate'|'vague'|'unreadable'
             enemyStunned: false,    // skip enemy attack once (stun skill effect)
             totalDmgDealt: 0,
             totalDmgReceived: 0,
@@ -99,9 +98,8 @@ const Combat = {
                 cs.enemyIntentHint = this.VAGUE_INTENT[vagueAction] || '';
                 cs.enemyIntentType = 'vague';
             } else {
-                const wrong = firstAction === 'heavy' ? 'swift' : 'heavy';
-                cs.enemyIntentHint = this.ENEMY_INTENT[wrong] || '';
-                cs.enemyIntentType = 'wrong';
+                cs.enemyIntentHint = this._pick(this.UNREADABLE_MSGS);
+                cs.enemyIntentType = 'unreadable';
             }
         }
         return cs;
@@ -255,10 +253,6 @@ const Combat = {
                     cs.enemyStunned = false;
                     lines.push(`${cs.enemy.name}被震慑，无法出手！`);
                 } else {
-                    // Wrong-read feedback: show before damage resolution
-                    if (cs.enemyIntentType === 'wrong') {
-                        lines.push(`<span style="color:#e05050">⚠ ${this._pick(this.WRONG_READ_MSGS)}</span>`);
-                    }
                     // Normal enemy attack
                     const pend = cs.pendingSkill;
                     const skillMult = pend ? (pend.damageMult || 1.5) : 1.0;
@@ -341,9 +335,8 @@ const Combat = {
                     cs.enemyIntentHint = this.VAGUE_INTENT[vagueAction] || '';
                     cs.enemyIntentType = 'vague';
                 } else {
-                    const wrong = next === 'heavy' ? 'swift' : 'heavy';
-                    cs.enemyIntentHint = this.ENEMY_INTENT[wrong] || '';
-                    cs.enemyIntentType = 'wrong'; // looks identical to 'accurate' in UI
+                    cs.enemyIntentHint = this._pick(this.UNREADABLE_MSGS);
+                    cs.enemyIntentType = 'unreadable';
                 }
             }
         }
@@ -373,11 +366,11 @@ const Combat = {
             let action;
             const type = cs.enemyIntentType;
             const hint = cs.enemyNextAction;
-            if (!hint || type === 'vague') {
+            if (!hint || type === 'vague' || type === 'unreadable') {
                 // No reliable info: safe rotation
                 action = ['strike', 'strike', 'defend', 'focus'][t % 4];
             } else {
-                // Use hinted action (could be wrong if type==='wrong')
+                // Accurate hint: act on it
                 action = hint === 'heavy' ? 'parry' : 'strike';
             }
             const r = this.processTurn(action, cs, simChar, job);

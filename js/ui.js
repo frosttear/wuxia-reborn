@@ -532,6 +532,8 @@ const UI = {
         if (cs.enemyIntentHint) {
             if (cs.enemyIntentType === 'perfect') {
                 intentEl.innerHTML = `<span class="intent-read">🔮 ${cs.enemyIntentHint}</span><span class="intent-perfect-label">【无相剑意】</span>`;
+            } else if (cs.enemyIntentType === 'unreadable') {
+                intentEl.innerHTML = `<span class="intent-none">— ${cs.enemyIntentHint}</span>`;
             } else {
                 const comp = char.attributes.comprehension || 0;
                 const eComp = cs.enemyComp || 0;
