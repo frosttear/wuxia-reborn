@@ -187,11 +187,28 @@
         if (!saved.hp) saved.hp = Character.getHPMax(saved, job);
         document.getElementById('startScreen').style.display = 'none';
         document.getElementById('gameScreen').style.display = 'flex';
-        UI.renderAll(Engine.state);
         try {
             const savedLog = localStorage.getItem('wuxia_log');
             if (savedLog) UI.restoreLog(JSON.parse(savedLog));
         } catch(e) {}
+        // Resume combat if it was active when page was closed
+        let combatResumed = false;
+        try {
+            const savedCombat = localStorage.getItem('wuxia_combat');
+            if (savedCombat) {
+                const { cs, pendingChainStep } = JSON.parse(savedCombat);
+                Engine.state.combatState = cs;
+                Engine.state.pendingChainStep = pendingChainStep || null;
+                Engine.state.gamePhase = 'combat';
+                UI.renderAll(Engine.state);
+                UI.showCombatOverlay(Engine.state);
+                UI.addLog('【战斗恢复】刷新前的战斗已恢复。', 'system');
+                combatResumed = true;
+            }
+        } catch(e) {}
+        if (!combatResumed) {
+            UI.renderAll(Engine.state);
+        }
     }
 
     document.getElementById('startBtn').onclick = function() {

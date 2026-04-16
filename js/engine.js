@@ -661,6 +661,7 @@ const Engine = {
         this.state.gamePhase = 'combat';
         UI.updateControls(this.state);
         UI.showCombatOverlay(this.state);
+        this.saveGame();
     },
 
     handleCombatAction(action) {
@@ -737,6 +738,7 @@ const Engine = {
         this.stopCombatAuto();
         this.state.combatState = null;
         this.state.gamePhase = 'idle';
+        try { localStorage.removeItem('wuxia_combat'); } catch(e) {}
 
         if (result === 'won') {
             UI.addLog(enemy.winNarrative, 'win');
@@ -1034,6 +1036,14 @@ const Engine = {
         try {
             localStorage.setItem('wuxia_save', JSON.stringify(char));
             localStorage.setItem('wuxia_log', JSON.stringify(UI.getLogBuffer()));
+            if (this.state.gamePhase === 'combat' && this.state.combatState) {
+                localStorage.setItem('wuxia_combat', JSON.stringify({
+                    cs: this.state.combatState,
+                    pendingChainStep: this.state.pendingChainStep || null
+                }));
+            } else {
+                localStorage.removeItem('wuxia_combat');
+            }
         } catch(e) {}
     },
 
