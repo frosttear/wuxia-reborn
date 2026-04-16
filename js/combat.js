@@ -384,6 +384,8 @@ const Combat = {
             turns: cs.turn,
             dmgDealt: cs.totalDmgDealt,
             dmgReceived: cs.totalDmgReceived,
+            log: cs.log,
+            enemyHpFinal: cs.enemyHp,
         };
     },
 

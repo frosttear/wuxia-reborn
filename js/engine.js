@@ -703,6 +703,14 @@ const Engine = {
         const won  = Math.random() < sim.winRate;
         const pct  = Math.round(sim.winRate * 100);
 
+        // Run one real simulation for display (log entries + final HP)
+        const disp = Combat._simulateOnce(char, cs.enemy, job);
+        cs.log = [
+            { turn: 0, text: `<span style="color:#888;font-style:italic">⚡ 快速战斗（预计胜率 ${pct}%，约 ${sim.avgTurns} 回合）</span>` },
+            ...disp.log
+        ];
+        cs.enemyHp = won ? 0 : Math.max(1, disp.enemyHpFinal);
+
         // Apply expected HP loss to actual char (with ±30% variance)
         if (won) {
             const variance = 0.3;
@@ -711,11 +719,10 @@ const Engine = {
         }
 
         // Patch cs summary stats for endCombat display
-        cs.turn            = sim.avgTurns;
-        cs.totalDmgDealt   = sim.avgDmgDealt;
+        cs.turn             = sim.avgTurns;
+        cs.totalDmgDealt    = sim.avgDmgDealt;
         cs.totalDmgReceived = sim.avgDmgReceived;
 
-        UI.addLog(`⚡ 快速战斗（胜率 ${pct}%）……`, 'system');
         this.state.combatBusy = false;
         this.endCombat(won ? 'won' : 'lost', cs);
     },
