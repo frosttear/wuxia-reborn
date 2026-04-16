@@ -95,11 +95,13 @@
             <div id="eventLog" class="event-log"></div>
             <div id="choicesPanel" class="choices-panel"></div>
             <div class="controls-bar">
-                <button id="nextMonthBtn" onclick="Engine.advanceMonth()">下一月 ▶</button>
+                <button id="nextMonthBtn" onclick="Engine.advanceMonth()">出门探险 ▶</button>
                 <button id="visitBtn" onclick="UI.toggleVisitPanel()" style="display:none">💞 拜访</button>
+                <button id="chainBtn" onclick="UI.toggleChainPanel()" style="display:none">📜 线索</button>
                 <button id="autoAdvanceBtn" onclick="Engine.toggleAuto()">▶ 自动</button>
             </div>
             <div id="visitPanel" class="visit-panel" style="display:none"></div>
+            <div id="chainPanel" class="chain-panel" style="display:none"></div>
         </div>
 
         <!-- Right: NPC Relationships + Talents -->

@@ -186,6 +186,74 @@
     ]
   },
   {
+    "id": "tianmo_vanguard",
+    "name": "天魔先锋",
+    "description": "天魔麾下的无面刺客，以魔气淬炼身躯，行动如鬼魅",
+    "attack": 38, "defense": 28, "hp": 195,
+    "attackScale": 6, "defenseScale": 4, "hpScale": 0.18,
+    "hpLossOnDefeat": 25, "hpLossOnWin": 12,
+    "attackDescs": [
+      "黑气凝手，无声袭来",
+      "身形错步，残影连击",
+      "魔气弥漫，刀光乍现",
+      "虚实相间，直取咽喉"
+    ],
+    "winNarrative": "无面刺客重创倒地，临死前用一种你无法理解的语言低语了几个字，随即气绝。你站在原地，深吸一口气——天魔的人，已经盯上你了。",
+    "loseNarrative": "刺客的魔气之力远超预估，你力战不敌，带伤脱身。他没有追来，只是消失在黑暗中，留下一句：「我主等着你。」",
+    "winEffects": { "innerForce": 2, "comprehension": 1 },
+    "loseEffects": { "comprehension": 1 },
+    "skills": [
+      {
+        "id": "demon_slash",
+        "name": "魔气一刀",
+        "telegraph": "刺客双目泛起黑光，魔气在刀身骤然凝聚！⚠ 重击将至，务必【防御】！",
+        "damageMult": 2.3,
+        "hpThreshold": 0.55
+      },
+      {
+        "id": "phantom_strike",
+        "name": "鬼影连击",
+        "telegraph": "刺客身形骤然分裂成三道虚影，四面合围！⚠ 连击即至，务必【防御】！",
+        "damageMult": 1.8,
+        "hpThreshold": 0.3
+      }
+    ]
+  },
+  {
+    "id": "shadow_cult_leader",
+    "name": "影堂堂主",
+    "description": "被魔气强化的影堂首领，精通炼魂之术，武力凶横",
+    "attack": 48, "defense": 36, "hp": 255,
+    "attackScale": 7, "defenseScale": 5, "hpScale": 0.2,
+    "hpLossOnDefeat": 28, "hpLossOnWin": 15,
+    "attackDescs": [
+      "阴刀横扫，带起黑色气浪",
+      "炼魂之力注入刀身，沉重劈落",
+      "脚踏阵纹，借地气猛攻",
+      "黑光凝结，疾刺而出"
+    ],
+    "winNarrative": "影堂堂主轰然倒地，黑色的魔气从他体内缓缓消散。那些被炼魂术控制的武人，在他倒下的一刻，眼神里重新浮现出一丝清醒——你赢了。",
+    "loseNarrative": "堂主的炼魂之力侵入你的经脉，让你寸步难行。他将你打倒在地，冷冷地说：「你还不够强。」然后转身离去——他似乎并不打算杀你。",
+    "winEffects": { "reputation": 3, "strength": 2 },
+    "loseEffects": { "comprehension": 1 },
+    "skills": [
+      {
+        "id": "soul_drain",
+        "name": "炼魂刀",
+        "telegraph": "堂主刀身泛起紫黑色光芒，炼魂之力开始运转！⚠ 此招能削弱内力，务必【防御】！",
+        "damageMult": 2.5,
+        "hpThreshold": 0.6
+      },
+      {
+        "id": "dark_array",
+        "name": "影阵封锁",
+        "telegraph": "堂主脚踏玄步，黑色阵纹在地面亮起，将你团团围住！⚠ 威力极大，务必【防御】！",
+        "damageMult": 3.2,
+        "hpThreshold": 0.3
+      }
+    ]
+  },
+  {
     "id": "tianmo",
     "name": "天魔",
     "description": "传说中的魔道宗师，武功通天，邪气滔天，是这个时代最大的祸乱之源",

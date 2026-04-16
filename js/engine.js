@@ -8,6 +8,8 @@ const Engine = {
         events: [],
         enemies: [],
         bonds: {},            // loaded from bonds.json
+        chains: [],           // loaded from chains.json
+        pendingChainStep: null, // { chainId, stepIdx } active during chain combat
         pendingChoice: null,  // event waiting for player input
         gamePhase: 'idle',    // idle | choosing | combat | game_over | rebirth | victory
         combatState: null,
@@ -20,18 +22,20 @@ const Engine = {
     },
 
     async init() {
-        const [jobs, npcs, events, enemies, bonds] = await Promise.all([
+        const [jobs, npcs, events, enemies, bonds, chainsData] = await Promise.all([
             fetch('data/jobs.json').then(r => r.json()),
             fetch('data/npcs.json').then(r => r.json()),
             fetch('data/events.json').then(r => r.json()),
             fetch('data/enemies.json').then(r => r.json()),
-            fetch('data/bonds.json').then(r => r.json())
+            fetch('data/bonds.json').then(r => r.json()),
+            fetch('data/chains.json').then(r => r.json())
         ]);
         this.state.jobs = jobs;
         this.state.npcs = npcs;
         this.state.events = events;
         this.state.enemies = enemies;
         this.state.bonds = bonds;
+        this.state.chains = chainsData.chains || [];
     },
 
     BIRTH_MONTH_NAMES: ['正月','二月','三月','四月','五月','六月','七月','八月','九月','十月','冬月','腊月'],
@@ -269,7 +273,7 @@ const Engine = {
 
     applyChoice(choiceIndex) {
         if (this.state.gamePhase !== 'choosing' || !this.state.pendingChoice) return;
-        const { event, choices, bondInfo } = this.state.pendingChoice;
+        const { event, choices, bondInfo, chainStep } = this.state.pendingChoice;
         const choice = choices[choiceIndex];
         if (!choice) return;
 
@@ -311,6 +315,8 @@ const Engine = {
             delete effectsCopy.attributes;
             this.applyEffects(effectsCopy);
             if (effects.narrative) UI.addLog(effects.narrative, 'result');
+            // Complete chain step (non-combat)
+            if (chainStep && !effects.combat) this.completeChainStep(chainStep.chainId, chainStep.stepIdx);
             UI.renderAll(this.state);
             this.saveGame();
             return;
@@ -325,15 +331,34 @@ const Engine = {
                 delete sideEffects.narrative;
                 delete sideEffects.attributes;
                 this.applyEffects(sideEffects);
+                if (chainStep) this.state.pendingChainStep = chainStep;
                 this.startCombat(enemy, effects.narrative || '');
                 return;
             }
         }
 
+        // Complete chain step (non-combat, no attribute effects)
+        if (chainStep) this.completeChainStep(chainStep.chainId, chainStep.stepIdx);
         this.applyEffects(effects);
         if (effects.narrative) UI.addLog(effects.narrative, 'result');
         UI.renderAll(this.state);
         this.saveGame();
+    },
+
+    applyEffects(effects) {
+        if (!effects) return;
+        const { char } = this.state;
+        if (effects.npcAffinity) {
+            for (const npcId in effects.npcAffinity) {
+                NPCSystem.changeAffinity(char, npcId, effects.npcAffinity[npcId]);
+            }
+        }
+        if (effects.flags) {
+            Object.assign(char.flags, effects.flags);
+        }
+        if (typeof effects.hp === 'number') {
+            char.hp = Math.max(1, Math.min(char.hp + effects.hp, Character.getHPMax(char, this.getJob(char.job))));
+        }
     },
 
     visitNPC(npcId) {
@@ -427,6 +452,91 @@ const Engine = {
             UI.renderAll(this.state);
             this.saveGame();
         }
+    },
+
+    getAvailableChainSteps() {
+        const { char, chains } = this.state;
+        if (!char || !chains) return [];
+        const available = [];
+        for (const chain of chains) {
+            const progress = char.chainProgress ? char.chainProgress[chain.id] : undefined;
+            if (progress === 'done') continue;
+            const stepIdx = (typeof progress === 'number') ? progress : 0;
+            if (stepIdx >= chain.steps.length) continue;
+            const step = chain.steps[stepIdx];
+            if (this.checkConditions(step.unlockConditions || {})) {
+                available.push({ chain, step, stepIdx });
+            }
+        }
+        return available;
+    },
+
+    triggerChainStep(chainId, stepIdx) {
+        const { char } = this.state;
+        if (!char || this.state.gamePhase !== 'idle') return;
+        const chain = this.state.chains.find(c => c.id === chainId);
+        if (!chain) return;
+        const step = chain.steps[stepIdx];
+        if (!step) return;
+
+        // Advance 1 month
+        const job = this.getJob(char.job);
+        char.ageMonths++;
+        Character.monthlyHPRegen(char, job);
+        if (char.ageMonths >= char.maxAgeMonths) { this.triggerNaturalDeath(); return; }
+        UI.renderCharacter(char, this.state.jobs);
+
+        const displayEvent = {
+            id: step.id,
+            title: `【${chain.name}】${step.title}`,
+            type: '线索',
+            text: step.text
+        };
+        const allChoices = (step.choices || []).map(c => ({
+            ...c, locked: c.requirements ? !this.checkConditions(c.requirements) : false
+        }));
+        const availableChoices = allChoices.filter(c => !c.locked);
+        this.state.pendingChoice = {
+            event: displayEvent,
+            choices: availableChoices,
+            chainStep: { chainId, stepIdx }
+        };
+        this.state.gamePhase = 'choosing';
+        UI.showEvent(displayEvent, allChoices, this.state);
+        UI.updateControls(this.state);
+    },
+
+    completeChainStep(chainId, stepIdx) {
+        const { char } = this.state;
+        const chain = this.state.chains.find(c => c.id === chainId);
+        if (!chain) return;
+        const step = chain.steps[stepIdx];
+        // Apply onComplete flags
+        if (step && step.onComplete && step.onComplete.flags) {
+            Object.assign(char.flags, step.onComplete.flags);
+        }
+        const nextStep = stepIdx + 1;
+        if (!char.chainProgress) char.chainProgress = {};
+        if (nextStep >= chain.steps.length) {
+            char.chainProgress[chainId] = 'done';
+            this.completeChain(chain);
+        } else {
+            char.chainProgress[chainId] = nextStep;
+            UI.addLog(`📜 【${chain.name}】进度更新——下一节「${chain.steps[nextStep].title}」可在【线索】中继续。`, 'unlock');
+        }
+    },
+
+    completeChain(chain) {
+        const { char } = this.state;
+        const reward = chain.completionReward || {};
+        UI.addLog(`✦ 事件系列【${chain.name}】全部完成！`, 'unlock');
+        if (reward.narrative) UI.addLog(reward.narrative, 'result');
+        if (reward.attributes) {
+            Character.applyAttributeChanges(char, reward.attributes);
+            UI.addLog(`⬆ ${this.formatAttrGains(reward.attributes)}`, 'result');
+        }
+        if (reward.flags) Object.assign(char.flags, reward.flags);
+        UI.renderAll(this.state);
     },
 
     allBondsComplete(char) {
@@ -534,6 +644,12 @@ const Engine = {
             UI.addLog(enemy.winNarrative, 'win');
             const rewards = enemy.winEffects || {};
             if (Object.keys(rewards).length > 0) this.applyEffects({ attributes: rewards });
+            // Complete chain step on combat victory
+            if (this.state.pendingChainStep) {
+                const { chainId, stepIdx } = this.state.pendingChainStep;
+                this.state.pendingChainStep = null;
+                this.completeChainStep(chainId, stepIdx);
+            }
             if (enemy.isHiddenBoss) {
                 char.flags.hidden_boss_beaten = true;
                 this.triggerVictory(true);
@@ -550,6 +666,7 @@ const Engine = {
 
         } else if (result === 'lost') {
             UI.addLog(enemy.loseNarrative, 'lose');
+            this.state.pendingChainStep = null; // chain step not completed on loss
             const loseRewards = enemy.loseEffects || {};
             if (Object.keys(loseRewards).length > 0) this.applyEffects({ attributes: loseRewards });
             UI.renderCharacter(char, this.state.jobs);
@@ -577,6 +694,7 @@ const Engine = {
             return;
 
         } else if (result === 'fled') {
+            this.state.pendingChainStep = null; // chain step not completed on flee
             UI.addCombatSummary({
                 turns: cs.turn, dmgDealt: cs.totalDmgDealt,
                 dmgReceived: cs.totalDmgReceived, result: 'fled', rewards: ''
@@ -751,6 +869,7 @@ const Engine = {
         if (char.kills === undefined) char.kills = 0;
         if (char.injured === undefined) char.injured = false;
         if (char.injuredMonths === undefined) char.injuredMonths = 0;
+        if (!char.chainProgress) char.chainProgress = {};
         if (char.maxAgeMonths > 246) char.maxAgeMonths = 246; // clamp to 5-year game (15→20)
         // Re-derive jade_tablet_awakened for saves past the 19th birthday
         if (!char.flags.jade_tablet_awakened && char.flags.elder_revelation &&

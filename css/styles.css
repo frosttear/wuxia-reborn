@@ -371,6 +371,32 @@ button:disabled { opacity: 0.4; cursor: not-allowed; }
 .visit-npc-info { font-size: 0.73rem; color: var(--muted); }
 .visit-bond-ready .visit-npc-info { color: var(--green); }
 
+/* ─── Chain Panel ─── */
+.chain-panel {
+    background: rgba(0,0,0,0.3);
+    border-top: 1px solid var(--border);
+    padding: 8px 10px;
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+}
+.chain-step-btn {
+    display: flex;
+    flex-direction: column;
+    gap: 3px;
+    text-align: left;
+    padding: 9px 13px;
+    border-color: rgba(100,160,220,0.35);
+    background: rgba(100,160,220,0.06);
+    width: 100%;
+}
+.chain-step-btn:hover:not(:disabled) { border-color: rgba(100,160,220,0.7); background: rgba(100,160,220,0.13); }
+.chain-name { font-size: 0.75rem; color: rgba(100,160,220,0.8); letter-spacing: 0.04em; }
+.chain-step-title { font-size: 0.9rem; color: var(--text); font-weight: bold; }
+.chain-desc { font-size: 0.7rem; color: var(--muted); }
+.chain-boss-tag { font-size: 0.68rem; color: #e05050; background: rgba(224,80,80,0.12); border: 1px solid rgba(224,80,80,0.3); border-radius: 3px; padding: 1px 5px; align-self: flex-start; }
+.type-线索 { background: rgba(100,160,220,0.18); color: rgba(140,190,240,0.9); }
+
 /* ─── Combat Overlay ─── */
 .combat-overlay {
     position: fixed; inset: 0;

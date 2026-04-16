@@ -13,6 +13,8 @@ const UI = {
         this.autoBtn   = document.getElementById('autoAdvanceBtn');
         this.visitBtn  = document.getElementById('visitBtn');
         this.visitPanel = document.getElementById('visitPanel');
+        this.chainBtn  = document.getElementById('chainBtn');
+        this.chainPanel = document.getElementById('chainPanel');
         this.logBuffer = []; // persisted log entries
     },
 
@@ -173,7 +175,7 @@ const UI = {
             const div = document.createElement('div');
             div.className = 'npc-row';
             const bondLevel = (char.bondLevels || {})[npc.id] || 0;
-            const totalBondLevels = 3;
+            const totalBondLevels = 5;
             const bondDots = Array.from({length: totalBondLevels}, (_, i) =>
                 `<span class="bond-dot ${i < bondLevel ? 'bond-dot-filled' : ''}">◆</span>`
             ).join('');
@@ -515,6 +517,32 @@ const UI = {
         const visits = state.gamePhase === 'idle' ? Engine.getAvailableVisits() : [];
         this.visitBtn.style.display = visits.length > 0 ? '' : 'none';
         if (visits.length === 0 && this.visitPanel) this.visitPanel.style.display = 'none';
+
+        // Show chain button only when idle and chain steps are available
+        const chainSteps = state.gamePhase === 'idle' ? Engine.getAvailableChainSteps() : [];
+        if (this.chainBtn) {
+            this.chainBtn.style.display = chainSteps.length > 0 ? '' : 'none';
+            if (chainSteps.length === 0 && this.chainPanel) this.chainPanel.style.display = 'none';
+        }
+    },
+
+    toggleChainPanel() {
+        const panel = this.chainPanel;
+        if (!panel) return;
+        if (panel.style.display !== 'none') { panel.style.display = 'none'; return; }
+        const steps = Engine.getAvailableChainSteps();
+        if (steps.length === 0) return;
+        panel.innerHTML = steps.map(({ chain, step, stepIdx }) => {
+            const isBoss = (step.choices || []).some(c => c.effects && c.effects.combat);
+            const bossTag = isBoss ? `<span class="chain-boss-tag">⚔ 含战斗</span>` : '';
+            return `<button class="chain-step-btn" onclick="Engine.triggerChainStep('${chain.id}', ${stepIdx}); UI.chainPanel.style.display='none'">
+                <span class="chain-name">${chain.name}</span>
+                <span class="chain-step-title">${step.title}</span>
+                ${bossTag}
+                <span class="chain-desc">${chain.desc}</span>
+            </button>`;
+        }).join('');
+        panel.style.display = 'block';
     },
 
     toggleVisitPanel() {

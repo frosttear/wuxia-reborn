@@ -47,7 +47,8 @@ const Character = {
             rebirthCount: 0,
             eventLog: [],
             passives: [],         // [{ id, name, desc, ... }] unlocked this life
-            visitCounts: {}       // { npcId: { year, count } } casual visit limiter
+            visitCounts: {},      // { npcId: { year, count } } casual visit limiter
+            chainProgress: {}     // { chainId: stepIdx | 'done' }
         };
     },
 

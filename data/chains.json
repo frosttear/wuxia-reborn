@@ -1,0 +1,245 @@
+{
+  "chains": [
+    {
+      "id": "tianmo_harbinger",
+      "name": "天魔之兆",
+      "desc": "江湖中出现种种异象，似乎预示着一股黑暗力量正在觉醒。",
+      "steps": [
+        {
+          "id": "harbinger_1",
+          "title": "路遇奇人",
+          "unlockConditions": { "minAgeYears": 15 },
+          "text": "出门时，你在城郊偶遇一个倒在路边的老人，气息奄奄。\n\n他抓住你的手腕，眼神异常清醒：「你……你就是那个注定要阻止他的人……」\n\n他的嘴唇颤抖，断断续续：「天……天魔……他已经醒了。北边……龙脊山……那里有答案……」\n\n话未说完，老人气绝。你在他怀中找到一枚残破的令牌，上面刻着一个你从未见过的符文。",
+          "choices": [
+            {
+              "id": "investigate",
+              "text": "记住老人的话，将令牌收好，决定追查龙脊山的线索",
+              "effects": {
+                "attributes": { "comprehension": 1 },
+                "narrative": "那枚令牌在你手中隐隐发热，仿佛在呼应着什么。你将它收好，心中埋下一粒种子——有些事，必须弄清楚。"
+              }
+            },
+            {
+              "id": "consult_elder",
+              "text": "带着令牌去请教神秘老者",
+              "requirements": { "flags": { "met_mysterious_elder": true } },
+              "effects": {
+                "attributes": { "comprehension": 2, "innerForce": 1 },
+                "npcAffinity": { "mysterious_elder": 5 },
+                "narrative": "老者见到令牌，神色骤变，沉默良久后说：「你找到他了。」他没有解释是谁，但你看见他握令牌的手在微微颤抖。那一刻你明白，这件事比你想象的更深。"
+              }
+            }
+          ],
+          "onComplete": { "flags": { "tianmo_sign1": true } }
+        },
+        {
+          "id": "harbinger_2",
+          "title": "探查龙脊山",
+          "unlockConditions": { "flags": { "tianmo_sign1": true }, "minAgeYears": 16 },
+          "text": "你循着老人临终的指引，前往城外的龙脊山。\n\n山路陡峭，越往上走，空气越沉，像是有什么无形的东西在压迫着你的呼吸。\n\n在山顶的一处废弃石台上，你发现了大量被焚毁的典籍残骸，以及用黑色矿石刻成的阵纹——那些符文和令牌上的图案完全吻合。\n\n更令你不安的是：阵纹很新，焦痕不超过两个月。有人刚刚在这里做过什么。",
+          "choices": [
+            {
+              "id": "study_ruins",
+              "text": "仔细研究阵纹，尝试推断其用途",
+              "effects": {
+                "attributes": { "comprehension": 2 },
+                "narrative": "阵纹的结构让你越看越不安——这不是普通的法阵，而是一种汲取生命之气的仪式痕迹。不知多少人的气血，被这个阵法吸走了。"
+              }
+            },
+            {
+              "id": "sense_qi",
+              "text": "以内力感知此地残留的气息，试图辨认施术者",
+              "requirements": { "minAttributes": { "innerForce": 12 } },
+              "effects": {
+                "attributes": { "innerForce": 2, "comprehension": 1 },
+                "narrative": "那股气息黑暗、厚重，带着一种异样的熟悉感。你无法形容，但你知道——这个气息，你将来会再次遇到。那一刻，你对即将到来的一切有了真实的预感。"
+              }
+            }
+          ],
+          "onComplete": { "flags": { "tianmo_sign2": true } }
+        },
+        {
+          "id": "harbinger_3",
+          "title": "魔影现身",
+          "unlockConditions": { "flags": { "tianmo_sign2": true }, "minAttributes": { "innerForce": 12 } },
+          "text": "数日后，你感到有人在暗中跟踪你。\n\n那个人不急于动手，只是远远跟着，直到一个月黑风高的夜晚，他出现在了你的面前。\n\n黑衣，无面，气息阴冷如寒冰——「你查的事，已经查得太深了。我的主人说，你要么为他所用，要么——死在这里。」\n\n来不及思考，他已经出手了。",
+          "choices": [
+            {
+              "id": "fight_vanguard",
+              "text": "迎战，决不退缩",
+              "effects": { "combat": "tianmo_vanguard", "narrative": "你深吸一口气，握紧拳头——这一战，是开始，不是结束。" }
+            }
+          ],
+          "onComplete": { "flags": { "tianmo_vanguard_defeated": true } }
+        }
+      ],
+      "completionReward": {
+        "attributes": { "innerForce": 3, "comprehension": 2 },
+        "flags": { "tianmo_trace_known": true },
+        "narrative": "龙脊山的阵纹、老人临终的话语、那个无面刺客——每一块碎片都在告诉你：天魔并非传说，他已在行动了。"
+      }
+    },
+    {
+      "id": "elder_past",
+      "name": "老者往事",
+      "desc": "神秘老者的过去，与天魔有着一段不为人知的渊源。",
+      "steps": [
+        {
+          "id": "elder_past_1",
+          "title": "旧日画像",
+          "unlockConditions": { "flags": { "met_mysterious_elder": true }, "minAgeYears": 15 },
+          "text": "一次偶然，你在老者暂住的屋子里发现了一幅画像——一个年轻人，气宇轩昂，眉眼间隐隐有几分熟悉，却说不出像谁。\n\n画像的背后写着三个字：「此恨长。」\n\n你将画像放回原处，什么也没说。但心里有个念头越来越清晰——老者藏着一个秘密，一个与你的命运有关的秘密。",
+          "choices": [
+            {
+              "id": "ask_directly",
+              "text": "直接问老者画像上的人是谁",
+              "effects": {
+                "attributes": { "reputation": 1 },
+                "npcAffinity": { "mysterious_elder": 8 },
+                "narrative": "他沉默了很久，最终只说了一句：「那是我一个学生。」然后转移了话题。但你注意到，他看你的眼神，比以往多了一分说不清的东西。"
+              }
+            },
+            {
+              "id": "research_records",
+              "text": "去城中书馆查阅旧年江湖记录，寻找画中人的身份",
+              "effects": {
+                "attributes": { "comprehension": 2 },
+                "narrative": "你在发黄的旧册中翻找，终于在二十年前的一条记录里看到了那个名字——天魔。画中那个意气风发的年轻人，就是如今被整个江湖谈之色变的魔道宗师。"
+              }
+            }
+          ],
+          "onComplete": { "flags": { "elder_past1": true } }
+        },
+        {
+          "id": "elder_past_2",
+          "title": "故地重游",
+          "unlockConditions": { "flags": { "elder_past1": true } },
+          "text": "老者主动找到你，说要带你去一个地方。\n\n他带你来到城外一片废弃山庄——断壁残垣，荒草丛生，但隐约能看出当年的规模。\n\n「这里，」他站在庄子中央，声音很平，「曾经是我的门派。」\n\n那之后，他沉默地站了很长时间。你也没有说话。风吹过荒草，有些声响，像哭，也像笑。",
+          "choices": [
+            {
+              "id": "listen_silently",
+              "text": "静静陪着他，等他开口",
+              "effects": {
+                "attributes": { "innerForce": 1, "comprehension": 1 },
+                "npcAffinity": { "mysterious_elder": 10 },
+                "narrative": "他最终开口，断断续续地说起这里曾经的样子。你一句话都没说，只是在一旁听着。那个下午，你们之间的距离，悄悄近了。"
+              }
+            },
+            {
+              "id": "ask_what_happened",
+              "text": "轻声问：这里发生过什么",
+              "effects": {
+                "attributes": { "comprehension": 2 },
+                "npcAffinity": { "mysterious_elder": 8 },
+                "narrative": "「他做的，」老者说，「是我，让他走上那条路的。」那句话说得很平静，却让你觉得，他背负这件事，已经太久了。"
+              }
+            }
+          ],
+          "onComplete": { "flags": { "elder_past2": true } }
+        },
+        {
+          "id": "elder_past_3",
+          "title": "真相浮现",
+          "unlockConditions": { "flags": { "elder_past2": true }, "minAttributes": { "comprehension": 14 } },
+          "text": "老者将你叫来，神情最为郑重。他没有坐下，站在屋子中央，缓缓说出了他从未对任何人说过的事——\n\n当年，他最得意的弟子，开始对一门禁忌功法产生执念。老者拦阻过，但弟子走火入魔，以一场惨烈的反噬毁掉了整个门派，也毁掉了自己。\n\n「天魔不是天生的魔，」老者说，「他是被一种功法改造的人。而那门功法，有一个破绽。」\n\n他抬起头，直视着你：「我等了很多年，才等到一个能听懂这句话的人。」",
+          "choices": [
+            {
+              "id": "learn_weakness",
+              "text": "专注聆听，记住他说的每一个字",
+              "effects": {
+                "attributes": { "comprehension": 3, "innerForce": 2 },
+                "npcAffinity": { "mysterious_elder": 15 },
+                "flags": { "tianmo_weakness_known": true },
+                "narrative": "他讲了整整一个下午，你没有打断，只是将每一句话烙进脑子里。等他说完，天色已暗。「你去吧，」他说，「剩下的，是你的路了。」"
+              }
+            }
+          ],
+          "onComplete": { "flags": { "elder_truth": true } }
+        }
+      ],
+      "completionReward": {
+        "attributes": { "comprehension": 3, "innerForce": 2 },
+        "flags": { "tianmo_weakness_known": true, "elder_truth": true },
+        "narrative": "老者所说的那个破绽，在你心中慢慢清晰起来。这份知识，是他用整个门派的代价换来的——而现在，它传到了你的手中。"
+      }
+    },
+    {
+      "id": "jianghu_chaos",
+      "name": "江湖乱象",
+      "desc": "江湖中接连出现武人失踪、意志被夺的消息，背后似有一双黑手在操控。",
+      "steps": [
+        {
+          "id": "chaos_1",
+          "title": "奇怪委托",
+          "unlockConditions": { "minAttributes": { "reputation": 8 }, "minAgeYears": 15 },
+          "text": "一个商人找到你，神色慌张，声称商队在经过一处山口时遭到了莫名袭击——不是山贼，而是一群眼神空洞、举止反常的江湖武人。\n\n「他们像是……不认识人了，」商人说，「只知道攻击，完全没有理性。」\n\n随后你听说，类似的事在周边几个县已经发生了三次，受害者描述如出一辙。\n\n有人，控制了这些武人。",
+          "choices": [
+            {
+              "id": "accept_investigation",
+              "text": "接受委托，决定调查此事",
+              "effects": {
+                "attributes": { "reputation": 1 },
+                "narrative": "你决定弄清楚这件事的真相——不只是为了那个商人，而是因为这件事的规模，已经超出了普通的江湖纠纷。"
+              }
+            },
+            {
+              "id": "ask_around",
+              "text": "先凭声名广泛打听，收集更多线报",
+              "requirements": { "minAttributes": { "reputation": 12 } },
+              "effects": {
+                "attributes": { "reputation": 2, "comprehension": 1 },
+                "narrative": "消息纷沓而至：失踪者全部出现在三个月内，全都在同一条旧官道附近走失。背后必有组织。"
+              }
+            }
+          ],
+          "onComplete": { "flags": { "chaos1": true } }
+        },
+        {
+          "id": "chaos_2",
+          "title": "追查幕后",
+          "unlockConditions": { "flags": { "chaos1": true } },
+          "text": "你循着线索，追到了一处废弃的山神庙。\n\n庙里早已被人清空，但墙上用黑色颜料画满了符文——和龙脊山上的阵纹一模一样。\n\n庙后有一条地道，地道尽头是一间密室，里面关着七八个被锁链缚住的武人，眼神空洞，灵魂尽失。\n\n你在密室角落找到一份残卷，上面记载着一种「炼魂术」——能将人的意志抽取、改造，使之完全服从。\n\n这件事，比你以为的要严重得多。",
+          "choices": [
+            {
+              "id": "rescue_and_follow",
+              "text": "先将被困武人转移，再追查幕后之人",
+              "effects": {
+                "attributes": { "reputation": 2, "comprehension": 1 },
+                "narrative": "你带着获救的武人下山，回头时发现密室里留下了一个线索——幕后之人还没有走远。"
+              }
+            },
+            {
+              "id": "set_trap",
+              "text": "将密室伪装成原样，等待幕后之人归来",
+              "requirements": { "minAttributes": { "comprehension": 14 } },
+              "effects": {
+                "attributes": { "comprehension": 2, "agility": 1 },
+                "narrative": "你的计谋奏效了。你跟踪他到了另一处据点，掌握了更多情报：这是一个专门为天魔收集气血的组织——影堂。"
+              }
+            }
+          ],
+          "onComplete": { "flags": { "chaos2": true } }
+        },
+        {
+          "id": "chaos_3",
+          "title": "幕后元凶",
+          "unlockConditions": { "flags": { "chaos2": true }, "minAttributes": { "strength": 14 } },
+          "text": "你终于锁定了幕后元凶的下落——一个自称「影堂」堂主的人，正在城郊的庄园里为天魔收集资源。\n\n当你独自闯入时，他已经等待你了。\n\n「你的胆量，我主很欣赏，」他缓缓拔出一柄阴黑的长刀，「可惜，你今天进来，就出不去了。」\n\n他是影堂的核心武力，一位被魔气强化过的武人——比任何你遇到过的敌人都要危险。",
+          "choices": [
+            {
+              "id": "fight_shadow_boss",
+              "text": "迎战影堂堂主",
+              "effects": { "combat": "shadow_cult_leader", "narrative": "你握紧双拳——这一战，是斩断天魔在江湖中一条臂膀的机会。" }
+            }
+          ],
+          "onComplete": { "flags": { "shadow_cult_broken": true } }
+        }
+      ],
+      "completionReward": {
+        "attributes": { "reputation": 3, "strength": 2, "luck": 1 },
+        "flags": { "shadow_cult_broken": true },
+        "narrative": "影堂覆灭，那些被炼魂术控制的武人陆续苏醒。你的名字在江湖上再次被人提起——不是以英雄，而是以一个知道自己在对抗什么的人。"
+      }
+    }
+  ]
+}
