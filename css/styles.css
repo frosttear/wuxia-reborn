@@ -465,6 +465,7 @@ button:disabled { opacity: 0.4; cursor: not-allowed; }
 }
 .combat-log-entry   { border-bottom: 1px solid rgba(255,255,255,0.05); padding-bottom: 4px; }
 .combat-turn-badge  { color: var(--accent); font-size: 0.72rem; margin-right: 6px; font-weight: bold; }
+.combat-turn-open   { color: #7ecf8e; }
 
 /* Momentum bar */
 .combat-momentum-wrap { display: flex; flex-direction: column; gap: 4px; padding: 4px 0; }

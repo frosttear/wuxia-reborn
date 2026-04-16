@@ -545,9 +545,12 @@ const UI = {
 
         // Combat log (last 5 entries)
         const logEl = document.getElementById('combatLog');
-        logEl.innerHTML = cs.log.slice(-5).map(e =>
-            `<div class="combat-log-entry"><span class="combat-turn-badge">第${e.turn}回合</span>${e.text}</div>`
-        ).join('');
+        logEl.innerHTML = cs.log.slice(-5).map(e => {
+            const badge = e.turn === 0
+                ? `<span class="combat-turn-badge combat-turn-open">⚔ 开战</span>`
+                : `<span class="combat-turn-badge">第${e.turn}回合</span>`;
+            return `<div class="combat-log-entry">${badge}${e.text}</div>`;
+        }).join('');
         logEl.scrollTop = logEl.scrollHeight;
 
         // Flee button text

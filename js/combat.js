@@ -55,7 +55,7 @@ const Combat = {
     // ── Build fresh combat state ─────────────────────────────────────────────
     initState(char, enemy, job) {
         const eff = this.getEffectiveStats(enemy, char);
-        return {
+        const cs = {
             enemy,
             enemyHp:    eff.hp,
             enemyMaxHp: eff.hp,
@@ -77,6 +77,35 @@ const Combat = {
             log:          [],
             postNarrative: ''
         };
+        // Opening scene description
+        if (enemy.description) cs.log.push({ turn: 0, text: enemy.description });
+        // Pre-compute turn-1 intent so it shows before the player's first action
+        const firstAction = this._enemyChooseAction(cs);
+        cs.enemyNextAction = firstAction;
+        const hasPerfectRead = (char.passives || []).some(p => p.perfectIntentRead);
+        if (hasPerfectRead) {
+            cs.enemyIntentHint = this.ENEMY_INTENT[firstAction] || '';
+            cs.enemyIntentType = 'perfect';
+        } else {
+            const playerComp = (char.attributes && char.attributes.comprehension) || 0;
+            const enemyComp  = cs.enemyComp;
+            const ratio = playerComp / (enemyComp + 5);
+            const accurateChance = Math.min(0.90, Math.pow(ratio, 1.5) * 0.90);
+            const vagueFrac = 0.6;
+            const r = Math.random();
+            if (r < accurateChance) {
+                cs.enemyIntentHint = this.ENEMY_INTENT[firstAction] || '';
+                cs.enemyIntentType = 'accurate';
+            } else if (r < accurateChance + (1 - accurateChance) * vagueFrac) {
+                cs.enemyIntentHint = this._pick(this.VAGUE_INTENT_MSGS);
+                cs.enemyIntentType = 'vague';
+            } else {
+                const wrong = firstAction === 'heavy' ? 'swift' : 'heavy';
+                cs.enemyIntentHint = this.ENEMY_INTENT[wrong] || '';
+                cs.enemyIntentType = 'wrong';
+            }
+        }
+        return cs;
     },
 
     // ── Enemy AI: choose heavy or swift ─────────────────────────────────────
