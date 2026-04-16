@@ -803,7 +803,7 @@ const Engine = {
         }
 
         if (cs.postNarrative) UI.addLog(cs.postNarrative, 'result');
-        UI.showCombatReturnBtn(() => {
+        UI.showCombatReturnBtn(result, () => {
             UI.hideCombatOverlay();
             UI.renderAll(this.state);
             this.saveGame();

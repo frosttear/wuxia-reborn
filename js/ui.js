@@ -475,10 +475,12 @@ const UI = {
         document.getElementById('combatSkillReady').style.display = 'none';
         document.getElementById('combatMomentumFill').style.width = '0%';
         document.getElementById('combatMomentumVal').textContent = '0';
-        // Restore action buttons and hide return button
+        // Restore action buttons, hide return button and result banner
         document.querySelectorAll('#combatActions .combat-btn:not(#combatReturnBtn)').forEach(b => b.style.display = '');
         const returnBtn = document.getElementById('combatReturnBtn');
         if (returnBtn) { returnBtn.style.display = 'none'; returnBtn.onclick = null; }
+        const bannerEl = document.getElementById('combatResult');
+        if (bannerEl) { bannerEl.style.display = 'none'; bannerEl.textContent = ''; }
         this.setCombatActionsEnabled(true);
         this.setCombatAutoButton(false);
         if (cs.noFlee) {
@@ -569,15 +571,27 @@ const UI = {
         document.getElementById('combatOverlay').classList.remove('visible');
     },
 
-    showCombatReturnBtn(callback) {
+    showCombatReturnBtn(result, callback) {
         document.querySelectorAll('#combatActions .combat-btn:not(#combatReturnBtn)').forEach(b => b.style.display = 'none');
         const returnBtn = document.getElementById('combatReturnBtn');
         returnBtn.style.display = '';
+        returnBtn.disabled = false;
         returnBtn.onclick = callback;
+        const bannerEl = document.getElementById('combatResult');
+        if (bannerEl) {
+            const cfg = {
+                won:  { cls: 'combat-result-won',  text: '⚔ 战斗胜利' },
+                lost: { cls: 'combat-result-lost', text: '💀 战斗落败' },
+                fled: { cls: 'combat-result-fled', text: '🏃 成功脱身' },
+            }[result] || { cls: '', text: '' };
+            bannerEl.className = `combat-result-banner ${cfg.cls}`;
+            bannerEl.textContent = cfg.text;
+            bannerEl.style.display = '';
+        }
     },
 
     setCombatActionsEnabled(enabled) {
-        document.querySelectorAll('.combat-btn').forEach(btn => {
+        document.querySelectorAll('#combatActions .combat-btn:not(#combatReturnBtn)').forEach(btn => {
             btn.disabled = !enabled;
         });
     },
