@@ -89,11 +89,6 @@ const Rebirth = {
         const newChar = Character.create(char.name, inheritedAttrs, newTalents);
         newChar.rebirthCount = char.rebirthCount + 1;
 
-        // Extend lifespan if longevity talent
-        if (newTalents.includes('longevity_secret')) {
-            newChar.maxAgeMonths += 60; // +5 years
-        }
-
         // Inherit bond levels (穿越记忆)
         newChar.inheritedBonds = Object.assign({}, char.bondLevels);
 

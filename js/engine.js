@@ -99,12 +99,6 @@ const Engine = {
         UI.renderCharacter(char, this.state.jobs);
         if (innerBonus > 0) UI.addLog(`【内功】内力护体，本月额外回复 ${innerBonus} 气血。`, 'info');
 
-        // Check death by age
-        if (char.ageMonths >= char.maxAgeMonths) {
-            this.triggerNaturalDeath();
-            return;
-        }
-
         // Check new job unlocks
         const newJobs = Character.checkJobUnlocks(char, this.state.jobs);
         for (const j of newJobs) {
@@ -241,7 +235,6 @@ const Engine = {
             for (let i = 0; i < extraMonths; i++) {
                 char.ageMonths++;
                 Character.monthlyHPRegen(char, job);
-                if (char.ageMonths >= char.maxAgeMonths) { this.triggerNaturalDeath(); return; }
                 if (this._checkBirthdayAndBoss()) return;
             }
             UI.renderCharacter(char, this.state.jobs);
@@ -425,7 +418,6 @@ const Engine = {
         const job = this.getJob(char.job);
         char.ageMonths++;
         Character.monthlyHPRegen(char, job);
-        if (char.ageMonths >= char.maxAgeMonths) { UI.renderCharacter(char, this.state.jobs); this.triggerNaturalDeath(); return; }
         if (this._checkBirthdayAndBoss()) return;
         UI.renderCharacter(char, this.state.jobs);
 
@@ -577,7 +569,6 @@ const Engine = {
         const job = this.getJob(char.job);
         char.ageMonths++;
         Character.monthlyHPRegen(char, job);
-        if (char.ageMonths >= char.maxAgeMonths) { this.triggerNaturalDeath(); return; }
         if (this._checkBirthdayAndBoss()) return;
         UI.renderCharacter(char, this.state.jobs);
 
@@ -878,12 +869,6 @@ const Engine = {
         this.saveGame();
     },
 
-    triggerNaturalDeath() {
-        const { char } = this.state;
-        UI.addLog(`【${char.name}】走完了这一世，寿终正寝，享年${Character.getAgeYears(char)}岁。`, 'system');
-        this.triggerDeath('age');
-    },
-
     triggerDeath(cause) {
         const { char } = this.state;
         this.state.gamePhase = 'rebirth';
@@ -897,11 +882,19 @@ const Engine = {
     triggerVictory(isTrueEnding) {
         const { char } = this.state;
 
-        // Normal ending: check if hidden boss chain unlocks (requires 25th birthday jade_tablet event)
-        if (!isTrueEnding && char.flags.jade_tablet_awakened && !char.flags.hidden_boss_triggered) {
+        if (isTrueEnding) {
+            // True ending: defeated hidden boss
+            this.state.gamePhase = 'victory';
+            this.stopAuto();
+            UI.showVictoryScreen(char, this.state.jobs, this.state.bonds, this.state.npcs);
+            return;
+        }
+
+        // Defeated 天魔 — check if hidden boss chain is available
+        if (char.flags.jade_tablet_awakened && !char.flags.hidden_boss_triggered) {
             char.flags.hidden_boss_triggered = true;
             this.state.gamePhase = 'idle';
-            UI.addLog('天魔倒下。江湖归于平静。', 'win');
+            UI.addLog('天魔轰然倒下。江湖归于平静，风也停了。', 'win');
             UI.addLog('你以为，一切终于结束了……', 'system');
             setTimeout(() => {
                 const hiddenEvent = this.state.events.find(e => e.id === 'hidden_boss_appears');
@@ -910,9 +903,24 @@ const Engine = {
             return;
         }
 
-        this.state.gamePhase = 'victory';
+        // No hidden boss chain: 天下太平 → darkness returns years later → force rebirth
+        this.state.gamePhase = 'idle';
         this.stopAuto();
-        UI.showVictoryScreen(char, isTrueEnding || false);
+        UI.addLog('────────────────────', 'system');
+        UI.addLog('天魔轰然倒下。一阵大风吹散了极天的乌云，天地之间，光重新射入。', 'win');
+        UI.addLog('消息传遍四方，百姓称颂英雄，士子赋诗立传。江湖中，那些映日笼罩于天魔阴影下的人们，纷纷抗起了头。', 'system');
+        UI.addLog('你站在城楼上，望着这片难得的宁静，觉得这一世，或许算是圆满了。', 'system');
+        setTimeout(() => {
+            UI.addLog('────────────────────', 'system');
+            UI.addLog('然而，平静之下，暗流未息。', 'system');
+            UI.addLog('五年后。', 'system');
+            UI.addLog('天魔的骸骨深处，一股更古老的恶意悬然苏醒。它在无人察觉之时，情然在人间落地生根。', 'system');
+            UI.addLog('荔毒蝓延，山河变色。此次，你的躯体已衰，无力回天……', 'lose');
+            UI.addLog('「轮回吧。」驱使世界运行的意志似乎在说，「等你再强一些。」', 'system');
+            setTimeout(() => {
+                this.triggerDeath('boss_aftermath');
+            }, 3500);
+        }, 3500);
     },
 
     KILL_THRESHOLDS: [
@@ -991,7 +999,6 @@ const Engine = {
         if (char.injured === undefined) char.injured = false;
         if (char.injuredMonths === undefined) char.injuredMonths = 0;
         if (!char.chainProgress) char.chainProgress = {};
-        if (char.maxAgeMonths > 246) char.maxAgeMonths = 246; // clamp to 5-year game (15→20)
         // Re-derive jade_tablet_awakened for saves past the 19th birthday
         if (!char.flags.jade_tablet_awakened && char.flags.elder_revelation &&
             Character.getAgeYears(char) > 19) {

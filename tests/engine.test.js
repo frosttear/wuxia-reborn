@@ -242,9 +242,4 @@ describe('Engine.migrateChar', () => {
         expect(char.chainProgress.tianmo_harbinger).toBe(1);
     });
 
-    test('clamps maxAgeMonths to 246', () => {
-        const char = makeChar({ maxAgeMonths: 300 });
-        Engine.migrateChar(char);
-        expect(char.maxAgeMonths).toBe(246);
-    });
 });
