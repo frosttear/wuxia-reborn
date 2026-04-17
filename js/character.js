@@ -68,8 +68,7 @@ const Character = {
     getHPMax(char, job) {
         const base = char.attributes.constitution * 20;
         const jobBonus = job ? job.hpBonus : 0;
-        const talentBonus = char.legacyTalents.includes('longevity_secret') ? 50 : 0;
-        return base + jobBonus + talentBonus;
+        return base + jobBonus;
     },
 
     getAttackPower(char, job) {

@@ -14,12 +14,6 @@ const TALENTS = [
         condition: (char) => char.attributes.innerForce >= 20 || char.attributes.comprehension >= 20
     },
     {
-        id: 'longevity_secret',
-        name: '长生诀',
-        desc: '最大血量+50，寿命延长5年',
-        condition: (char) => char.attributes.constitution >= 22
-    },
-    {
         id: 'battle_hardened',
         name: '百战余生',
         desc: '百战磨练，每场战斗开始时即有3点气力（不需蓄势）',
