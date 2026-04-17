@@ -359,6 +359,8 @@ button:disabled { opacity: 0.4; cursor: not-allowed; }
     flex-direction: row;
     flex-wrap: wrap;
     gap: 6px;
+    max-height: 260px;
+    overflow-y: auto;
 }
 .visit-npc-btn {
     display: flex;

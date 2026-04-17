@@ -99,9 +99,11 @@
                 <button id="visitBtn" onclick="UI.toggleVisitPanel()" style="display:none">💞 拜访</button>
                 <button id="chainBtn" onclick="UI.toggleChainPanel()" style="display:none">📜 线索</button>
                 <button id="autoAdvanceBtn" onclick="Engine.toggleAuto()">▶ 自动</button>
+                <button id="testCombatBtn" onclick="UI.toggleTestCombatPanel()" style="font-size:0.75rem">⚔ 模拟</button>
             </div>
             <div id="visitPanel" class="visit-panel" style="display:none"></div>
             <div id="chainPanel" class="chain-panel" style="display:none"></div>
+            <div id="testCombatPanel" class="visit-panel" style="display:none; flex-direction:column; max-height:260px; overflow-y:auto"></div>
         </div>
 
         <!-- Right: NPC Relationships + Talents -->

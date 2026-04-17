@@ -8,6 +8,14 @@
     "baseAttack": 3,
     "baseDefense": 2,
     "hpBonus": 0,
+    "activeSkill": {
+      "id": "wild_swing",
+      "name": "奋力一击",
+      "desc": "拼尽全力挥出一拳一脚",
+      "momentumCost": 5,
+      "type": "burst",
+      "power": 1.8
+    },
     "skills": [],
     "unlockText": ""
   },

@@ -90,7 +90,7 @@ const UI = {
         const kills = char.kills || 0;
         combatEl.innerHTML =
             `<span>⚔ 攻击 ${attack}</span><span>🛡 防御 ${defense}</span>` +
-            `<span>☠ 斩杀 ${kills} 人</span>` +
+            `<span>🏆 战胜 ${kills} 次</span>` +
             `<span>📖 属性学习效率 ${compRate > 0 ? '+' : ''}${Math.round(compRate * 100)}% ${atag('at-comprehension', '悟性')}</span>` +
             `<span>💨 闪避率 ${Math.round(luckDodge * 100)}% ${atag('at-luck', '运气')}${atag('at-agility', '敏捷')}</span>` +
             `<span>✨ 会心率 ${Math.round(luckCrit * 100)}% ${atag('at-luck', '运气')}${atag('at-inner-force', '内力')}</span>`;
@@ -703,6 +703,28 @@ const UI = {
                 ${visitNote}
             </button>`;
         }).join('');
+        panel.style.display = 'block';
+    },
+
+    toggleTestCombatPanel() {
+        const panel = document.getElementById('testCombatPanel');
+        if (panel.style.display !== 'none') { panel.style.display = 'none'; return; }
+        if (Engine.state.gamePhase === 'combat') return;
+        const enemies = Engine.state.enemies || [];
+        const char = Engine.state.char;
+        const job = Engine.getJob(char.job);
+        panel.innerHTML = '<div style="font-weight:bold;margin-bottom:6px">⚔ 选择对手（战斗模拟）</div>' +
+            enemies.map(e => {
+                const eff = Combat.getEffectiveStats(e, char);
+                const winPct = Combat.calcWinChance(char, e, job);
+                return { e, eff, winPct };
+            }).sort((a, b) => b.winPct - a.winPct || (a.eff.attack + a.eff.defense + a.eff.hp) - (b.eff.attack + b.eff.defense + b.eff.hp)).map(({ e, eff, winPct }) => {
+                const pctColor = winPct >= 70 ? '🟢' : winPct >= 40 ? '🟡' : '🔴';
+                return `<button class="visit-npc-btn" onclick="Engine.startTestCombat('${e.id}'); document.getElementById('testCombatPanel').style.display='none'">
+                    <span class="visit-npc-name">${e.name}</span>
+                    <span class="visit-npc-info">攻${eff.attack} 防${eff.defense} 血${eff.hp}  ${pctColor}胜率${winPct}%</span>
+                </button>`;
+            }).join('');
         panel.style.display = 'block';
     },
 

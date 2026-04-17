@@ -699,6 +699,23 @@ const Engine = {
         return true;
     },
 
+    // ── Test combat (no consequences) ────────────────────────────────────────
+    startTestCombat(enemyId) {
+        if (this.state.gamePhase === 'combat') return;
+        const enemy = this.getEnemy(enemyId);
+        if (!enemy) return;
+        const { char } = this.state;
+        // Snapshot char state to restore after combat
+        this.state._testCombatSnapshot = {
+            hp: char.hp,
+            attributes: JSON.parse(JSON.stringify(char.attributes)),
+            flags: JSON.parse(JSON.stringify(char.flags || {})),
+        };
+        this.state._isTestCombat = true;
+        this.startCombat(enemy, '');
+        UI.addLog('【⚔ 战斗模拟】结果不影响角色状态。', 'system');
+    },
+
     startCombat(enemy, postNarrative) {
         const { char } = this.state;
         const job = this.getJob(char.job);
@@ -800,6 +817,30 @@ const Engine = {
         this.state.combatState = null;
         this.state.gamePhase = 'idle';
         try { localStorage.removeItem('wuxia_combat'); } catch(e) {}
+
+        // ── Test combat: restore snapshot, skip all consequences ─────────
+        if (this.state._isTestCombat) {
+            const snap = this.state._testCombatSnapshot;
+            if (snap) {
+                char.hp = snap.hp;
+                Object.assign(char.attributes, snap.attributes);
+                char.flags = snap.flags;
+            }
+            this.state._isTestCombat = false;
+            this.state._testCombatSnapshot = null;
+            const resultText = result === 'won' ? '胜利' : result === 'fled' ? '逃跑' : '落败';
+            UI.addLog(`【⚔ 模拟结束】结果：${resultText}（${cs.turn}回合）。角色状态已恢复。`, 'system');
+            UI.addCombatSummary({
+                turns: cs.turn, dmgDealt: cs.totalDmgDealt,
+                dmgReceived: cs.totalDmgReceived, result: result === 'won' ? 'won' : 'lost',
+                rewards: '（战斗模拟，无奖励）'
+            });
+            UI.showCombatReturnBtn(result, () => {
+                UI.hideCombatOverlay();
+                UI.renderAll(this.state);
+            });
+            return;
+        }
 
         // Capture pendingBondStep here (outer scope) so the return-button closure can access it
         const postBondStep = this.state.pendingBondStep;
