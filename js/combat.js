@@ -191,10 +191,12 @@ const Combat = {
                 if (cs.enemyHp <= 0) { result = 'won'; combatOver = true; }
 
             } else if (action === 'defend') {
+                const defMomGain = swiftAnticipated ? 2 : 1;
+                cs.playerMomentum = Math.min(5, cs.playerMomentum + defMomGain);
                 if (swiftAnticipated) {
-                    lines.push('你早已预判对方快攻，' + this._pick(this.DEFEND_DESCS) + '，以守待攻——将攻势引于空处！');
+                    lines.push('你早已预判对方快攻，' + this._pick(this.DEFEND_DESCS) + `，以守待攻——将攻势引于空处！势能 +${defMomGain}（${cs.playerMomentum}/5）`);
                 } else {
-                    lines.push(this._pick(this.DEFEND_DESCS) + '。');
+                    lines.push(this._pick(this.DEFEND_DESCS) + `，势能 +${defMomGain}（${cs.playerMomentum}/5）。`);
                 }
 
             } else if (action === 'parry') {
@@ -212,16 +214,26 @@ const Combat = {
             if (!combatOver) {
                 if (action === 'parry') {
                     if (enemyAction === 'heavy') {
-                        // Successful parry → counter-hit (boosted if intent was read)
+                        // Successful parry → player takes 20% incoming + counter-hit
+                        const pend = cs.pendingSkill;
+                        const skillMult = pend ? (pend.damageMult || 1.5) : 1.0;
+                        const skillName = pend ? pend.name : null;
+                        if (pend) cs.pendingSkill = null;
+                        const rawIncoming = Math.max(1, Math.floor(cs.enemyEffAtk * skillMult) - Math.floor(playerDef * 0.5) + this._rand(-2, 6));
+                        const parryDmg = Math.max(1, Math.floor(rawIncoming * 0.20));
+                        Character.takeDamage(char, parryDmg);
+                        cs.totalDmgReceived += parryDmg;
                         const counterMult = heavyAnticipated ? 0.85 : 0.6;
                         const counterDmg = Math.max(1, Math.floor(playerAtk * counterMult) + this._rand(-2, 4));
                         cs.enemyHp = Math.max(0, cs.enemyHp - counterDmg);
                         cs.totalDmgDealt += counterDmg;
-                        cs.playerMomentum = Math.min(5, cs.playerMomentum + (heavyAnticipated ? 2 : 1));
+                        cs.playerMomentum = Math.min(5, cs.playerMomentum + 1);
                         const counterLabel = heavyAnticipated ? '洞察反击' : '化解反击';
                         const counterNote  = heavyAnticipated ? '你早已洞悉来招，截断蓄力，' : '借力打力，';
-                        lines.push(`${cs.enemy.name}${this._pick(this.ENEMY_HEAVY_DESCS)}——你【<b>${counterLabel}</b>】！${counterNote}对方损失 <b>${counterDmg}</b> 气血。`);
-                        if (cs.enemyHp <= 0) { result = 'won'; combatOver = true; }
+                        const skillNote = skillName ? `【<b style="color:#e07b39">${skillName}</b>】` : '';
+                        lines.push(`${cs.enemy.name}${skillNote}${this._pick(this.ENEMY_HEAVY_DESCS)}——你【<b>${counterLabel}</b>】！${counterNote}对方损失 <b>${counterDmg}</b> 气血，你承受 <b>${parryDmg}</b> 点冲击。`);
+                        if (char.hp <= 0) { result = 'lost'; combatOver = true; }
+                        if (!combatOver && cs.enemyHp <= 0) { result = 'won'; combatOver = true; }
                     } else {
                         // Parry punished by swift
                         const pend = cs.pendingSkill;
