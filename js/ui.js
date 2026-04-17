@@ -272,7 +272,12 @@ const UI = {
         shadow_cult_broken: '摧毁影堂',
         li_knows_burden: '李云舒了解你的重担',
         wang_dying_wish: '王铁临终嘱托',
-        hidden_boss_beaten: '击败隐藏Boss'
+        hidden_boss_beaten: '击败隐藏Boss',
+        sword_tomb_found: '发现古剑冢',
+        sword_master_met: '拜访老剑师',
+        sword_trial_passed: '通过剑道试炼',
+        hero_relief: '义救灾民',
+        hero_tyrant_defeated: '击败铁面判官'
     },
 
     formatFlagRequirementsWithChar(reqFlags, char) {

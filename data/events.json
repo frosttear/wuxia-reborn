@@ -634,36 +634,6 @@
     ]
   },
   {
-    "id": "swordsman_legacy",
-    "type": "机缘",
-    "weight": 3,
-    "title": "剑客传承",
-    "text": "你在古剑冢中偶然发现了一位已故剑客的遗物，其中有一封信：「得此信者，若有缘，愿将我毕生剑意相授。」",
-    "conditions": { "jobs": ["wanderer"], "minAttributes": { "strength": 15, "agility": 10 } },
-    "choices": [
-      {
-        "id": "inherit_sword_intent",
-        "text": "凝神感悟，接受剑意传承",
-        "effects": { "attributes": { "strength": 2, "agility": 2, "innerForce": 2 }, "flags": { "sword_legacy": true }, "narrative": "那股剑意如同一道闪电注入你的心神，你对剑道的理解骤然深邃。" }
-      }
-    ]
-  },
-  {
-    "id": "hero_recognition",
-    "type": "机缘",
-    "weight": 2,
-    "title": "武林认可",
-    "text": "武林中多位德高望重的前辈联袂来访，其中一位抱拳道：「阁下行侠仗义多年，武艺超群，我等特来邀请入盟，共商江湖大事。」",
-    "conditions": { "jobs": ["swordsman"], "minAttributes": { "strength": 22, "reputation": 15 } },
-    "choices": [
-      {
-        "id": "accept_recognition",
-        "text": "受宠若惊，欣然接受",
-        "effects": { "attributes": { "reputation": 2, "innerForce": 1 }, "flags": { "hero_recognized": true }, "narrative": "武林的认可让你声威大震，剑侠之名远播四方。" }
-      }
-    ]
-  },
-  {
     "id": "mountain_trek",
     "type": "磨练",
     "weight": 8,

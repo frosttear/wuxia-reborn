@@ -336,6 +336,184 @@
         ],
         "narrative": "无招胜有招，无形胜有形。\n\n你不再需要去「猜」对方的意图——那意图在他们动作之前，已经如白纸黑字般呈现在你眼中。这是那块无名古碑留下的最后馈赠，也是你用数世积累换来的唯一答案。"
       }
+    },
+    {
+      "id": "sword_path",
+      "name": "剑道传承",
+      "desc": "寻访古剑遗迹，领悟剑道真意，获得前辈认可，成为真正的剑客。",
+      "steps": [
+        {
+          "id": "sword_path_1",
+          "title": "古剑冢",
+          "unlockConditions": { "jobs": ["wanderer"], "minAgeYears": 16 },
+          "text": "你在一处偏僻山谷中发现了一座古剑冢——数十柄锈迹斑斑的长剑插在石台上，排列成阵。\n\n石台中央有一面残碑，上书：「剑者，心也。身可老朽，剑心不灭。后来者，若能悟此，可继吾道。」\n\n一股沉寂了不知多少年的剑意从石台中涌出，在你周身盘旋，仿佛在审视你的资质。",
+          "choices": [
+            {
+              "id": "meditate_sword",
+              "text": "在剑冢中静坐，感受残留的剑意",
+              "effects": {
+                "attributes": { "comprehension": 1, "innerForce": 1 },
+                "narrative": "你闭目静坐，那些残剑仿佛在低语。你隐约领悟到：真正的剑术，不在于招式，而在于手握长剑时的信念。"
+              }
+            },
+            {
+              "id": "draw_sword",
+              "text": "拔出石台上最锈的那柄剑，以内力试探",
+              "requirements": { "minAttributes": { "innerForce": 10 } },
+              "effects": {
+                "attributes": { "innerForce": 2, "strength": 1 },
+                "narrative": "当你内力灌入剑身的瞬间，锈斑簌簌脱落，露出剑身上隐约的花纹——这不是普通的剑，是某位前辈的佩剑。剑身微微震鸣，似乎在回应你。"
+              }
+            }
+          ],
+          "onComplete": { "flags": { "sword_tomb_found": true } }
+        },
+        {
+          "id": "sword_path_2",
+          "title": "寻访剑师",
+          "unlockConditions": { "flags": { "sword_tomb_found": true }, "minAttributes": { "strength": 14, "agility": 10 }, "minAgeYears": 16 },
+          "text": "古剑冢的经历让你心中萌生了一个念头——你需要一位真正的剑道前辈指点。\n\n你四处打听，终于得知城外青岩峰上住着一位隐居多年的老剑师。据说他年轻时是江湖上赫赫有名的高手，后因一场变故归隐山林。\n\n你攀上青岩峰，在一间简陋的茅屋前见到了他——白发苍苍，背脊却挺得笔直，手边一柄长剑，锋刃未钝。\n\n他看了你一眼：「你是来学剑的？先让我看看你的底子。」",
+          "choices": [
+            {
+              "id": "show_skill",
+              "text": "当场演练一套你最拿手的招式",
+              "effects": {
+                "attributes": { "strength": 1, "agility": 1 },
+                "narrative": "老人看完，沉吟片刻：「根基不错，但剑路太散。你有力量，有速度，却没有剑心。」他指了指山下：「去找三个人切磋，赢了再来见我。」"
+              }
+            },
+            {
+              "id": "speak_honestly",
+              "text": "坦言自己在古剑冢中的感悟",
+              "requirements": { "minAttributes": { "comprehension": 12 } },
+              "effects": {
+                "attributes": { "comprehension": 2 },
+                "narrative": "老人听完，眼神微微一变：「你能在那里感受到剑意？有意思。」他顿了顿：「不过光有感悟不够，剑道终归要在战斗中证明。去吧，用你的剑击败一个真正的对手，再回来。」"
+              }
+            }
+          ],
+          "onComplete": { "flags": { "sword_master_met": true } }
+        },
+        {
+          "id": "sword_path_3",
+          "title": "剑道试炼",
+          "unlockConditions": { "flags": { "sword_master_met": true }, "minAttributes": { "strength": 16, "agility": 12 }, "minAgeYears": 17 },
+          "text": "按照老剑师的指示，你回到江湖中寻找真正的对手。\n\n几天后，一个青衣剑客在酒馆中主动向你挑战：「听说你在青岩峰拜了师？那老头的弟子，总不能太弱吧。」\n\n他拔剑而立，剑光凛然——这是一个真正精通剑术的人，每一个动作都干净利落。\n\n你知道，这一战不仅是为了自己，也是为了证明老剑师没有看错人。",
+          "choices": [
+            {
+              "id": "fight_sword_trial",
+              "text": "拔剑迎战，以实战证明自己的剑道",
+              "effects": {
+                "combat": "sword_trial_challenger",
+                "narrative": "剑光交错，你在这场对决中拼尽全力。无论胜负，你的剑心在这一战中变得更加坚定。"
+              }
+            }
+          ],
+          "onComplete": { "flags": { "sword_trial_passed": true } }
+        },
+        {
+          "id": "sword_path_4",
+          "title": "剑道传承",
+          "unlockConditions": { "flags": { "sword_trial_passed": true }, "minAgeYears": 17 },
+          "text": "你带着一身战斗的痕迹回到青岩峰。老剑师看着你，没有问你是赢是输，只说了一句：「你的眼神变了。」\n\n那天，他第一次认真地教你剑法——不是招式，而是如何将你的信念、你的经历、你对剑道的理解，全部贯注到每一剑之中。\n\n「剑客不是靠招式强的，」他说，「是靠一颗不退缩的心。记住这句话。」\n\n他将自己的佩剑解下，递到你手中：「这把剑跟了我四十年。从今天起，它是你的了。」",
+          "choices": [
+            {
+              "id": "accept_legacy",
+              "text": "双手接过佩剑，郑重拜谢",
+              "effects": {
+                "attributes": { "strength": 2, "agility": 2, "innerForce": 2 },
+                "narrative": "剑身入手的那一刻，你感到一股温热的剑意从柄端涌入，与你自身的内力融为一体。你知道，从这一刻起，你不再只是一个会使剑的人——你是一个真正的剑客。"
+              }
+            }
+          ],
+          "onComplete": { "flags": { "sword_legacy": true } }
+        }
+      ],
+      "completionReward": {
+        "attributes": { "strength": 2, "agility": 1 },
+        "flags": { "sword_legacy": true },
+        "narrative": "青岩峰上的老剑师目送你下山，嘴角带着一丝笑意。他知道，他的剑道不会断在这里——因为他找到了一个真正的传人。"
+      }
+    },
+    {
+      "id": "hero_path",
+      "name": "侠名之路",
+      "desc": "以武行侠，以德服人。在一次次考验中赢得江湖的认可，成为真正的剑侠。",
+      "steps": [
+        {
+          "id": "hero_path_1",
+          "title": "义救灾民",
+          "unlockConditions": { "jobs": ["swordsman"], "minAgeYears": 17 },
+          "text": "南方水患，大批灾民涌入城中。官府赈灾不力，城中粮商趁火打劫，囤积居奇，哄抬粮价。\n\n灾民饥寒交迫，有老人跪在路边哭泣。你路过时，几名灾民认出了你——「那是剑客！求您帮帮我们！」\n\n你望向那间粮行紧闭的大门，心中已有了决定。",
+          "choices": [
+            {
+              "id": "confront_merchant",
+              "text": "直接找粮商交涉，要求平价售粮",
+              "effects": {
+                "attributes": { "reputation": 2 },
+                "narrative": "粮商在你的威势下不得不让步。消息传开，灾民纷纷感恩，你的名声在民间悄悄传开了。"
+              }
+            },
+            {
+              "id": "organize_relief",
+              "text": "召集江湖朋友，组织民间赈灾",
+              "requirements": { "minAttributes": { "reputation": 14 } },
+              "effects": {
+                "attributes": { "reputation": 3, "comprehension": 1 },
+                "narrative": "你的号召力超出自己的想象——短短数日，各路侠客纷纷响应，粮食物资源源不断运来。灾民中开始有人叫你「侠士」。"
+              }
+            }
+          ],
+          "onComplete": { "flags": { "hero_relief": true } }
+        },
+        {
+          "id": "hero_path_2",
+          "title": "除暴安良",
+          "unlockConditions": { "flags": { "hero_relief": true }, "minAttributes": { "strength": 22, "reputation": 12 }, "minAgeYears": 17 },
+          "text": "你的善行引来了更多的求助。一个小镇的里长带着乡亲们找到你，说镇上来了一伙恶人，为首的是一个自号「铁面判官」的武人，烧杀抢掠，无恶不作。\n\n官兵不敢管，其他侠客不愿趟这浑水。里长跪在你面前：「只有您能救我们了。」\n\n你带剑赶到小镇，铁面判官已经在镇中广场上公然设擂，扬言「谁不服，上来领死」。",
+          "choices": [
+            {
+              "id": "fight_iron_judge",
+              "text": "登台迎战铁面判官",
+              "effects": {
+                "combat": "iron_judge",
+                "narrative": "你踏上擂台，拔剑而立。铁面判官看着你，冷笑一声：「又一个送死的。」"
+              }
+            }
+          ],
+          "onComplete": { "flags": { "hero_tyrant_defeated": true } }
+        },
+        {
+          "id": "hero_path_3",
+          "title": "武林公认",
+          "unlockConditions": { "flags": { "hero_tyrant_defeated": true }, "minAttributes": { "reputation": 16 }, "minAgeYears": 18 },
+          "text": "你的事迹传遍了江湖——义救灾民、除暴安良、击败铁面判官。这些事迹被说书人编成段子，在各个酒楼茶馆流传。\n\n一日，数位德高望重的江湖前辈联袂来访。为首的白发老者抱拳道：\n\n「阁下武艺超群，更难得的是心怀天下。我等商议已久，愿联名举荐阁下为江湖侠义联盟的座上宾。」\n\n他身后的几位前辈纷纷点头。这不是一般的邀请——这意味着，你已经得到了整个武林的认可。",
+          "choices": [
+            {
+              "id": "accept_honor",
+              "text": "抱拳回礼，欣然接受",
+              "effects": {
+                "attributes": { "reputation": 3, "innerForce": 1 },
+                "narrative": "众前辈抚掌大笑。消息传出，江湖上下无不敬服。你不再只是一个剑客——你是被武林公认的侠士。"
+              }
+            },
+            {
+              "id": "humble_accept",
+              "text": "谦虚推辞一番后接受",
+              "effects": {
+                "attributes": { "reputation": 2, "comprehension": 1, "innerForce": 1 },
+                "narrative": "你的谦逊反而让前辈们更加赞赏。「有实力而不骄傲，难得。」这份认可，来得恰如其分。"
+              }
+            }
+          ],
+          "onComplete": { "flags": { "hero_recognized": true } }
+        }
+      ],
+      "completionReward": {
+        "attributes": { "reputation": 2, "strength": 1 },
+        "flags": { "hero_recognized": true },
+        "narrative": "从赈灾济民到除暴安良，你用行动证明了什么是真正的侠义。武林的认可不是施舍，而是你一步步赢来的。剑侠之名，实至名归。"
+      }
     }
   ]
 }

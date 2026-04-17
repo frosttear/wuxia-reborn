@@ -561,6 +561,9 @@ const Engine = {
             met_mysterious_elder: '结识神秘老者', elder_past1: '完成「旧日画像」',
             elder_past2: '完成「故地重游」', chaos1: '完成「奇怪委托」',
             chaos2: '完成「追查幕后」',
+            sword_tomb_found: '完成「古剑冢」', sword_master_met: '完成「寻访剑师」',
+            sword_trial_passed: '完成「剑道试炼」',
+            hero_relief: '完成「义救灾民」', hero_tyrant_defeated: '完成「除暴安良」',
         };
         const result = [];
         for (const chain of chains) {
@@ -596,6 +599,13 @@ const Engine = {
                         lockedReasons.push(`需与${npc ? npc.name : npcId}好感达到${val}（当前${cur}）`);
                     }
                 }
+            }
+            if (cond.jobs && !cond.jobs.includes(char.job)) {
+                const jobNames = cond.jobs.map(jid => {
+                    const j = this.getJob(jid);
+                    return j ? j.name : jid;
+                });
+                lockedReasons.push(`需职业：${jobNames.join('或')}`);
             }
             let enemyInfo = null;
             for (const choice of step.choices || []) {
