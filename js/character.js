@@ -227,7 +227,10 @@ const Character = {
     monthlyHPRegen(char, job) {
         const innerBonus = Math.floor((char.attributes.innerForce || 0) / 5);
         const passiveBonus = (char.passives || []).reduce((s, p) => s + (p.hpRegenBonus || 0), 0);
-        const total = 10 + innerBonus + passiveBonus;
+        const hpMax = this.getHPMax(char, job);
+        const missingPct = (char.passives || []).reduce((max, p) => Math.max(max, p.hpRegenPctMissing || 0), 0);
+        const missingBonus = Math.floor((hpMax - char.hp) * missingPct);
+        const total = 10 + innerBonus + passiveBonus + missingBonus;
         this.healHP(char, total, job);
         return { total, innerBonus };
     }

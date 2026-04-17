@@ -220,14 +220,14 @@ describe('Combat.processTurn - enemy intent preview', () => {
 
     test('high playerComp vs weak enemy (comp 0) yields accurate most of the time', () => {
         let accurateCount = 0;
-        for (let i = 0; i < 40; i++) {
+        for (let i = 0; i < 100; i++) {
             const char = makeChar({ attributes: { strength: 8, agility: 5, constitution: 5, innerForce: 3, comprehension: 10, luck: 5, reputation: 0 } });
             char.hp = 100;
             const cs = Combat.initState(char, STUB_ENEMY, STUB_JOB); // comp=10 vs comp=0 → 0.80*ln(1.5)≈32%
             Combat.processTurn('focus', cs, char, STUB_JOB);
             if (cs.enemyIntentType === 'accurate') accurateCount++;
         }
-        expect(accurateCount).toBeGreaterThan(7); // ~32% accurate (log formula constant=20, n=40)
+        expect(accurateCount).toBeGreaterThan(15); // ~32% accurate (log formula constant=20, n=100)
     });
 
     test('low playerComp vs strong enemy yields mostly non-accurate', () => {
