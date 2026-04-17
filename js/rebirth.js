@@ -22,7 +22,7 @@ const TALENTS = [
     {
         id: 'battle_hardened',
         name: '百战余生',
-        desc: '百战磨练，每场战斗开始时即有则1点势能（不需蓄势）',
+        desc: '百战磨练，每场战斗开始时即有3点气力（不需蓄势）',
         condition: (char) => (char.kills || 0) >= 3
     },
     {

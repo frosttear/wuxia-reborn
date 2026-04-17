@@ -10,6 +10,7 @@ const Engine = {
         bonds: {},            // loaded from bonds.json
         chains: [],           // loaded from chains.json
         pendingChainStep: null, // { chainId, stepIdx } active during chain combat
+        pendingBondStep: null,  // { npcId, level, stepIdx, steps } — next bond step after combat win
         pendingChoice: null,  // event waiting for player input
         gamePhase: 'idle',    // idle | choosing | combat | game_over | rebirth | victory
         combatState: null,
@@ -266,9 +267,33 @@ const Engine = {
         }
     },
 
+    _showBondStep(npcId, steps, stepIdx, level, prefix) {
+        const step = steps[stepIdx];
+        const npc = this.state.npcs.find(n => n.id === npcId);
+        const isLast = stepIdx === steps.length - 1;
+        const chapterNote = steps.length > 1 ? `（${stepIdx + 1}/${steps.length}）` : '';
+        const displayEvent = {
+            title: `羁绊·${npc ? npc.name : npcId}·第${level}章${chapterNote}`,
+            text: (prefix || '') + step.text,
+            type: '羁绊'
+        };
+        const allChoices = (step.choices || []).map(c =>
+            ({ ...c, locked: c.requirements ? !this.checkConditions(c.requirements) : false })
+        );
+        const availableChoices = allChoices.filter(c => !c.locked);
+        this.state.pendingChoice = {
+            event: displayEvent,
+            choices: availableChoices,
+            bondStep: { npcId, level, stepIdx, steps },
+            bondInfo: isLast ? { npcId, level } : null
+        };
+        this.state.gamePhase = 'choosing';
+        UI.showEvent(displayEvent, allChoices, this.state);
+    },
+
     applyChoice(choiceIndex) {
         if (this.state.gamePhase !== 'choosing' || !this.state.pendingChoice) return;
-        const { event, choices, bondInfo, chainStep } = this.state.pendingChoice;
+        const { event, choices, bondInfo, bondStep, chainStep } = this.state.pendingChoice;
         const choice = choices[choiceIndex];
         if (!choice) return;
 
@@ -302,6 +327,8 @@ const Engine = {
 
         const effects = choice.effects || {};
 
+        const isNonFinalStep = bondStep && bondStep.stepIdx < bondStep.steps.length - 1;
+
         // Log lucky trigger if attributes changed
         if (effects.attributes) {
             const { luckyTriggered, actualGains } = Character.applyAttributeChanges(this.state.char, effects.attributes);
@@ -313,8 +340,11 @@ const Engine = {
             const gainsTag = gainsStr ? `　<span class="attr-gains">⬆ ${gainsStr}</span>` : '';
             const narrative = effects.narrative ? effects.narrative + gainsTag : (gainsTag || '');
             if (narrative) UI.addLog(narrative, 'result');
-            // Complete chain step (non-combat)
             if (chainStep && !effects.combat) this.completeChainStep(chainStep.chainId, chainStep.stepIdx);
+            if (!effects.combat && isNonFinalStep) {
+                this._showBondStep(bondStep.npcId, bondStep.steps, bondStep.stepIdx + 1, bondStep.level, '');
+                return;
+            }
             UI.renderAll(this.state);
             this.saveGame();
             return;
@@ -330,6 +360,12 @@ const Engine = {
                 delete sideEffects.attributes;
                 this.applyEffects(sideEffects);
                 if (chainStep) this.state.pendingChainStep = chainStep;
+                if (isNonFinalStep) {
+                    this.state.pendingBondStep = {
+                        npcId: bondStep.npcId, level: bondStep.level,
+                        stepIdx: bondStep.stepIdx + 1, steps: bondStep.steps
+                    };
+                }
                 this.startCombat(enemy, effects.narrative || '');
                 return;
             }
@@ -339,6 +375,10 @@ const Engine = {
         if (chainStep) this.completeChainStep(chainStep.chainId, chainStep.stepIdx);
         this.applyEffects(effects);
         if (effects.narrative) UI.addLog(effects.narrative, 'result');
+        if (isNonFinalStep) {
+            this._showBondStep(bondStep.npcId, bondStep.steps, bondStep.stepIdx + 1, bondStep.level, '');
+            return;
+        }
         UI.renderAll(this.state);
         this.saveGame();
     },
@@ -422,27 +462,30 @@ const Engine = {
         UI.renderCharacter(char, this.state.jobs);
 
         if (bondReady) {
-            // Trigger full bond chapter event; compute locked choices first
             const inherited = char.inheritedBonds[npcId];
             const prefix = inherited && inherited >= bondEvent.level
                 ? `「前世记忆」你隐约记得与${npc.name}曾有过这一段故事……\n\n`
                 : '';
-            const displayEvent = Object.assign({}, bondEvent, {
-                text: prefix + bondEvent.text,
-                title: `羁绊·${npc ? npc.name : npcId}·第${bondEvent.level}章`,
-                type: '羁绊'
-            });
-            const allChoices = bondEvent.choices.map(c =>
-                ({ ...c, locked: c.requirements ? !this.checkConditions(c.requirements) : false })
-            );
-            const availableChoices = allChoices.filter(c => !c.locked);
-            this.state.pendingChoice = {
-                event: displayEvent,
-                choices: availableChoices,
-                bondInfo: { npcId, level: bondEvent.level }
-            };
-            this.state.gamePhase = 'choosing';
-            UI.showEvent(displayEvent, allChoices, this.state);
+            if (bondEvent.steps && bondEvent.steps.length > 0) {
+                this._showBondStep(npcId, bondEvent.steps, 0, bondEvent.level, prefix);
+            } else {
+                const displayEvent = Object.assign({}, bondEvent, {
+                    text: prefix + bondEvent.text,
+                    title: `羁绊·${npc ? npc.name : npcId}·第${bondEvent.level}章`,
+                    type: '羁绊'
+                });
+                const allChoices = bondEvent.choices.map(c =>
+                    ({ ...c, locked: c.requirements ? !this.checkConditions(c.requirements) : false })
+                );
+                const availableChoices = allChoices.filter(c => !c.locked);
+                this.state.pendingChoice = {
+                    event: displayEvent,
+                    choices: availableChoices,
+                    bondInfo: { npcId, level: bondEvent.level }
+                };
+                this.state.gamePhase = 'choosing';
+                UI.showEvent(displayEvent, allChoices, this.state);
+            }
         } else {
             // Casual visit: affinity boost — bigger if NPC is remembered from a past life
             const inheritedLevel = (char.inheritedBonds || {})[npcId] || 0;
@@ -745,6 +788,10 @@ const Engine = {
         this.state.gamePhase = 'idle';
         try { localStorage.removeItem('wuxia_combat'); } catch(e) {}
 
+        // Capture pendingBondStep here (outer scope) so the return-button closure can access it
+        const postBondStep = this.state.pendingBondStep;
+        if (postBondStep) this.state.pendingBondStep = null;
+
         if (result === 'won') {
             UI.addLog(enemy.winNarrative, 'win');
             const rewards = enemy.winEffects || {};
@@ -814,8 +861,12 @@ const Engine = {
         if (cs.postNarrative) UI.addLog(cs.postNarrative, 'result');
         UI.showCombatReturnBtn(result, () => {
             UI.hideCombatOverlay();
-            UI.renderAll(this.state);
-            this.saveGame();
+            if (result === 'won' && postBondStep) {
+                this._showBondStep(postBondStep.npcId, postBondStep.steps, postBondStep.stepIdx, postBondStep.level, '');
+            } else {
+                UI.renderAll(this.state);
+                this.saveGame();
+            }
         });
     },
 

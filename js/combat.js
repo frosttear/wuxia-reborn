@@ -57,7 +57,7 @@ const Combat = {
             fleeChance:  0.25,
             pendingSkill: null,
             usedSkills:   [],
-            playerMomentum: (char.legacyTalents || []).includes('battle_hardened') ? 1 : 0,
+            playerMomentum: (char.legacyTalents || []).includes('battle_hardened') ? 3 : 0,
             skillCooldown:  0,      // turns until job active skill can fire again
             enemyComp:    enemy.comprehension || 0, // enemy comprehension (affects intent readability)
             enemyNextAction: null,  // 'heavy'|'swift', previewed for next turn
@@ -194,9 +194,9 @@ const Combat = {
                 const defMomGain = swiftAnticipated ? 2 : 1;
                 cs.playerMomentum = Math.min(5, cs.playerMomentum + defMomGain);
                 if (swiftAnticipated) {
-                    lines.push('你早已预判对方快攻，' + this._pick(this.DEFEND_DESCS) + `，以守待攻——将攻势引于空处！势能 +${defMomGain}（${cs.playerMomentum}/5）`);
+                    lines.push('你早已预判对方快攻，' + this._pick(this.DEFEND_DESCS) + `，以守待攻——将攻势引于空处！气力 +${defMomGain}（${cs.playerMomentum}/5）`);
                 } else {
-                    lines.push(this._pick(this.DEFEND_DESCS) + `，势能 +${defMomGain}（${cs.playerMomentum}/5）。`);
+                    lines.push(this._pick(this.DEFEND_DESCS) + `，气力 +${defMomGain}（${cs.playerMomentum}/5）。`);
                 }
 
             } else if (action === 'parry') {
@@ -207,7 +207,7 @@ const Combat = {
                 const fd = this._pick(this.FOCUS_DESCS);
                 const readyHint = activeSkill && cs.playerMomentum >= activeSkill.momentumCost
                     ? `——<b style="color:#f4c430">【${activeSkill.name}】蓄势完成！</b>` : '';
-                lines.push(`${fd}，势能积聚（${cs.playerMomentum}/5）${readyHint}。`);
+                lines.push(`${fd}，气力积聚（${cs.playerMomentum}/5）${readyHint}。`);
             }
 
             // ── Enemy phase ──────────────────────────────────────────────────

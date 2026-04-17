@@ -720,7 +720,7 @@ const UI = {
                 </div>
                 ${availableTalents.length > 0 ? `
                 <div class="modal-section">
-                    <div class="modal-label">解锁了新的传承天赋（最多选2个）：</div>
+                    <div class="modal-label">解锁了新的传承天赋（选择1个）：</div>
                     <div id="talentChoices" class="talent-choices"></div>
                 </div>` : ''}
                 <button id="rebirthConfirmBtn" class="btn-confirm">踏入轮回</button>
@@ -738,7 +738,7 @@ const UI = {
                     if (selected.has(talent.id)) {
                         selected.delete(talent.id);
                         btn.classList.remove('selected');
-                    } else if (selected.size < 2) {
+                    } else if (selected.size < 1) {
                         selected.add(talent.id);
                         btn.classList.add('selected');
                     }
