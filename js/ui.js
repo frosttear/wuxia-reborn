@@ -129,7 +129,7 @@ const UI = {
                     const span = document.createElement('span');
                     span.className = 'talent-tag';
                     span.title = talent.desc;
-                    span.textContent = talent.name;
+                    span.textContent = `${talent.name}：${talent.desc}`;
                     talentsEl.appendChild(span);
                 }
             }

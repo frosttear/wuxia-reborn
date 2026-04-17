@@ -68,7 +68,10 @@ const Character = {
     getHPMax(char, job) {
         const base = char.attributes.constitution * 20;
         const jobBonus = job ? job.hpBonus : 0;
-        return base + jobBonus;
+        const subtotal = base + jobBonus;
+        const longevityBonus = char.legacyTalents && char.legacyTalents.includes('longevity_art')
+            ? Math.floor(subtotal * 0.15) : 0;
+        return subtotal + longevityBonus;
     },
 
     getAttackPower(char, job) {
@@ -163,6 +166,14 @@ const Character = {
                     char.attributes[attr] += extra;
                     actualGains[attr] = (actualGains[attr] || 0) + extra;
                 }
+            }
+        }
+        // Talent: 气运之子 boosts luck gains by 15%
+        if (char.legacyTalents.includes('fortune_child')) {
+            if (changes.luck && changes.luck > 0) {
+                const extra = Math.floor(changes.luck * 0.15);
+                char.attributes.luck += extra;
+                actualGains.luck = (actualGains.luck || 0) + extra;
             }
         }
         // Passives: attrGrowthBonus scales specific attrs (e.g. 云舒剑意, 玄真根基)

@@ -11,13 +11,13 @@ const TALENTS = [
         id: 'spiritual_root',
         name: '慧根',
         desc: '内力与悟性获取效率+15%',
-        condition: (char) => char.attributes.innerForce >= 20 || char.attributes.comprehension >= 20
+        condition: (char) => char.attributes.innerForce >= 30 || char.attributes.comprehension >= 30
     },
     {
         id: 'battle_hardened',
         name: '百战余生',
         desc: '百战磨练，每场战斗开始时即有3点气力（不需蓄势）',
-        condition: (char) => (char.kills || 0) >= 3
+        condition: (char) => (char.kills || 0) >= 5
     },
     {
         id: 'deep_bonds',
@@ -38,10 +38,16 @@ const TALENTS = [
         condition: (char) => char.rebirthCount >= 2
     },
     {
-        id: 'jianghu_wisdom',
-        name: '江湖阅历',
-        desc: '声望初始值+5，运气+2',
-        condition: (char) => char.attributes.reputation >= 15
+        id: 'fortune_child',
+        name: '气运之子',
+        desc: '开局运气+5，运气获取效率+15%',
+        condition: (char) => char.attributes.luck >= 20
+    },
+    {
+        id: 'longevity_art',
+        name: '长生诀',
+        desc: '最大气血+15%',
+        condition: (char) => char.attributes.constitution >= 30
     }
 ];
 
@@ -60,10 +66,9 @@ const Rebirth = {
         for (const attr in char.attributes) {
             inherited[attr] = Math.floor(char.attributes[attr] * rate);
         }
-        // Bonus from jianghu_wisdom talent
-        if (char.legacyTalents.includes('jianghu_wisdom')) {
-            inherited.reputation = (inherited.reputation || 0) + 5;
-            inherited.luck = (inherited.luck || 0) + 2;
+        // Bonus from fortune_child talent
+        if (char.legacyTalents.includes('fortune_child')) {
+            inherited.luck = (inherited.luck || 0) + 5;
         }
         // Bonus from inherited_name talent
         if (char.legacyTalents.includes('inherited_name')) {
