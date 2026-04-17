@@ -114,7 +114,7 @@ const Engine = {
         if (char.injured && (char.passives || []).some(p => p.autoHealInjury)) {
             char.injured = false;
             char.injuredMonths = 0;
-            UI.addLog('【青心丹药】苹青的药力帮你迅速消去了伤势。', 'result');
+            UI.addLog('【青心丹药】苏青的药力帮你迅速消去了伤势。', 'result');
         }
 
         // Injured state: forced rest, only 养伤 events allowed
@@ -799,8 +799,12 @@ const Engine = {
             });
             char.hp = 1;
             char.injured = true;
-            char.injuredMonths = 2;
-            UI.addLog('【重伤】你身负重创，勉强撤退。需静养约两个月，方可恢复。', 'lose');
+            const hasIronBones = (char.passives || []).some(p => p.injuryHalfDuration);
+            char.injuredMonths = hasIronBones ? 2 : 4;
+            const injuryMsg = hasIronBones
+                ? '【重伤】你身负重创，但铁骨镖魂撑着你——估计两个月便可复原。'
+                : '【重伤】你身负重创，勉强撤退。需静养三至四个月，方可恢复。';
+            UI.addLog(injuryMsg, 'lose');
             UI.renderCharacter(char, this.state.jobs);
 
         } else if (result === 'fled') {

@@ -89,7 +89,13 @@ const Character = {
         const talentBonus = char.legacyTalents.includes('sword_heart') ? Math.floor(base * 0.1) : 0;
         // Passive bonus (e.g. 寒霜剑气)
         const passiveBonus = (char.passives || []).reduce((s, p) => s + (p.combatAtkBonus || 0), 0);
-        return base + jobBase + skillBonus + heroBonus + saintBonus + talentBonus + passiveBonus;
+        // lowHpAtkBonus: active when HP ≤ 25% of max (e.g. 三十年铁骨)
+        const job_ = null; // avoid circular; hpMax computed inline
+        const hpMax = 80 + (char.attributes.constitution || 0) * 3 + (char.job !== 'rookie' ? 0 : 0);
+        const lowHpBonus = (char.hp <= Math.floor(hpMax * 0.25))
+            ? (char.passives || []).reduce((s, p) => s + (p.lowHpAtkBonus || 0), 0)
+            : 0;
+        return base + jobBase + skillBonus + heroBonus + saintBonus + talentBonus + passiveBonus + lowHpBonus;
     },
 
     getDefensePower(char, job) {
