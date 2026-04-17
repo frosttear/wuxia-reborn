@@ -80,19 +80,6 @@ describe('Combat.processTurn - strike (刚攻)', () => {
     });
 });
 
-describe('Combat.processTurn - quick (巧攻)', () => {
-    test('deals damage to enemy', () => {
-        const { char, cs } = freshCombat();
-        Combat.processTurn('quick', cs, char, STUB_JOB);
-        expect(cs.enemyHp).toBeLessThan(cs.enemyMaxHp);
-    });
-
-    test('increments playerMomentum', () => {
-        const { char, cs } = freshCombat();
-        Combat.processTurn('quick', cs, char, STUB_JOB);
-        expect(cs.playerMomentum).toBeGreaterThanOrEqual(1);
-    });
-});
 
 describe('Combat.processTurn - defend (防御)', () => {
     test('increments turn counter', () => {

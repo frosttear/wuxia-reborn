@@ -239,7 +239,7 @@
         {
           "id": "wuxiang_1",
           "title": "荒野古碑",
-          "unlockConditions": { "minAttributes": { "comprehension": 30 } },
+          "unlockConditions": { "minAttributes": { "comprehension": 30, "strength": 20, "agility": 12, "innerForce": 10 } },
           "text": "你在一处人迹罕至的山谷中独自打坐，忽然察觉附近有一股奇异的气息——不是杀气，而是一种沉寂了不知多少年的剑意残留。\n\n循着感应，你在乱石堆中找到一块几乎被荒草掩埋的石碑。碑面风化严重，只剩下寥寥数行文字，笔划锋锐如刀，气势凌厉：\n\n「剑无定形，意无定势。观敌之心，胜于观敌之招。招从意来，意先招出——知意者，可破天下之剑。」\n\n落款已模糊，只能辨认出最后两字：……无相。",
           "choices": [
             {
@@ -280,9 +280,35 @@
           "onComplete": { "flags": { "wuxiang_comprehending": true } }
         },
         {
+          "id": "wuxiang_combat_test",
+          "title": "以战证道",
+          "unlockConditions": { "flags": { "wuxiang_comprehending": true }, "minAttributes": { "comprehension": 48, "innerForce": 24 } },
+          "text": "你在客栈独坐，把酒揣摩「意先招出」四个字。悟了许多，但心底始终有一个疑问悬而未决：你对「意」的感知，真的能在实战中发挥作用吗？\n\n消遣之际，一个陌生剑客在你对面坐下，沉默片刻，开口道：「你身上有一种东西——那种东西，我见过，但不多。」\n\n他把一壶酒推到你面前：「若你能在这场过招中接下我三成真气，我便告诉你，那块古碑的来历。」\n\n你不知道他是谁，但那双眼睛告诉你，这是一个你无法拒绝的机会——也是一次真正的考验。",
+          "choices": [
+            {
+              "id": "accept_duel",
+              "text": "拔剑迎战，以实战检验自己的感知",
+              "effects": {
+                "combat": "wuxiang_challenger",
+                "narrative": "你收剑，心中某个疑虑悄然落地。不论胜负，你已经知道——那感知，是真实的。"
+              }
+            },
+            {
+              "id": "reputation_bypass",
+              "text": "你的声名已足够，剑客点头认可，无需过招",
+              "requirements": { "minAttributes": { "reputation": 28 } },
+              "effects": {
+                "attributes": { "comprehension": 2 },
+                "narrative": "剑客看了你许久，最终把酒杯推开：「罢了，你的名声已经替你证明了不少事。」他站起身，留下一句话：「你已经够格去找那个答案了。」"
+              }
+            }
+          ],
+          "onComplete": { "flags": { "wuxiang_tested": true } }
+        },
+        {
           "id": "wuxiang_3",
           "title": "以无胜有",
-          "unlockConditions": { "flags": { "wuxiang_comprehending": true }, "minAttributes": { "comprehension": 52, "innerForce": 28 } },
+          "unlockConditions": { "flags": { "wuxiang_tested": true }, "minAttributes": { "comprehension": 58, "innerForce": 32 } },
           "text": "又是一年。你在一场与高手的苦战中，被逼到了极限——气力将竭，神识却前所未有地清明。\n\n对方出掌，你看见了他的意图；对方换招，你看见了他的意图；对方虚晃，你依然看见了他的意图。\n\n不是因为你更快，而是因为在那一刻，你彻底放弃了「看招」，转而去感知那个藏在一切招式之下、先于一切动作存在的东西——\n\n意。\n\n战斗结束后，你在原地站了很久。那块石碑上的最后一句话，如今已经刻进了你的骨子里：\n\n「知意者，可破天下之剑。」",
           "choices": [
             {

@@ -338,6 +338,97 @@
     ]
   },
   {
+    "id": "wuxiang_challenger",
+    "name": "无名剑客",
+    "description": "此人气息内敛，不怒自威，一双眼睛如渊似海——你感到，眼前这个人，正是你「意先招出」能否真正落地的试金石。",
+    "comprehension": 38,
+    "attack": 46, "defense": 34, "hp": 190,
+    "attackScale": 0, "defenseScale": 0, "hpScale": 0,
+    "intentReadMsgs": {
+      "heavy": ["剑客腰胯微沉，真气运于右臂——<b>重击将至</b>", "剑尖悄然下压，内劲暗涌——<b>重击将至</b>"],
+      "swift": ["剑客脚尖一转，重心陡然前移——<b>快攻将至</b>", "对方目光锁定你左肋，快攻已蓄势——<b>快攻将至</b>"]
+    },
+    "intentUnreadMsgs": ["此人气机浑厚，完全无懈可击，意图无从捕捉", "你静静感知，什么也看不出——此人已将意图隐入虚无"],
+    "attackDescs": ["剑光一闪，简洁凌厉", "无声踏步，剑尖已至咽喉", "以退为进，突然斜刺而来"],
+    "winNarrative": "最后一招落定，无名剑客缓缓收剑，神情平静：「意先招出，你做到了。」他点了点头，转身而去，再不多言。",
+    "loseNarrative": "剑客收剑负手：「你对「意」的感知还未入骨，继续磨砺。」那话不是嘲讽，是实情。你默默退开，再次沉心钻研。",
+    "winEffects": { "comprehension": 3, "innerForce": 2 },
+    "loseEffects": { "comprehension": 1 },
+    "noFlee": true,
+    "skills": [
+      {
+        "id": "void_sword",
+        "name": "虚实一线",
+        "telegraph": "无名剑客眼神骤然深邃，气机收束于一点——⚠ 无法判断虚实，下回合须【招架】！",
+        "damageMult": 2.0,
+        "hpThreshold": 0.45
+      }
+    ]
+  },
+  {
+    "id": "li_yunshu_sparring",
+    "name": "李云舒",
+    "description": "李云舒按剑而立，眼神清亮，这是一场点到即止的切磋——但她的剑，绝不会手下留情。",
+    "comprehension": 18,
+    "attack": 28, "defense": 22, "hp": 120,
+    "attackScale": 0, "defenseScale": 0, "hpScale": 0,
+    "intentReadMsgs": {
+      "heavy": ["云舒步伐稳沉，握剑手背微微用力——<b>重剑将至</b>", "她眼神收紧，剑势已蓄——<b>重击将至</b>"],
+      "swift": ["云舒脚步轻盈错动，抢攻意图明显——<b>快攻将至</b>", "她侧身移步，剑尖游走——<b>快攻将至</b>"]
+    },
+    "intentUnreadMsgs": ["云舒走位飘逸，看不出下一招", "她的剑路灵动多变，暂时无法捉摸"],
+    "attackDescs": ["剑光轻盈，如风如影", "回旋一剑，意到剑至", "步法灵动，侧击而来"],
+    "winNarrative": "李云舒收剑，愣了一瞬，随即爽快笑道：「好，你真的进步了！」她把剑插回剑鞘，看着你的眼神里，带着真诚的赞许。",
+    "loseNarrative": "李云舒收招，伸手拍了拍你肩膀：「不错了，差一点。再练。」语气是轻松的，眼神里却是认真的勉励。",
+    "winEffects": { "agility": 2, "comprehension": 1 },
+    "loseEffects": { "agility": 1 }
+  },
+  {
+    "id": "local_bully_gang",
+    "name": "地头蛇爪牙",
+    "description": "本地势力的几个打手，仗势欺人惯了，见你单枪匹马前来，嚣张之气未减。",
+    "comprehension": 6,
+    "attack": 20, "defense": 14, "hp": 88,
+    "attackScale": 3, "defenseScale": 2, "hpScale": 0.1,
+    "intentReadMsgs": {
+      "heavy": ["打手咬牙抡拳，憋了股狠劲——<b>重击将至</b>", "几人交换眼色，准备合力重攻——<b>重击将至</b>"],
+      "swift": ["打手见你有所防备，改变策略想偷袭——<b>快攻将至</b>", "一个打手趁乱想从侧面突袭——<b>快攻将至</b>"]
+    },
+    "intentUnreadMsgs": ["几个打手七嘴八舌，行动散乱，难以判断", "地痞横冲直撞，毫无章法"],
+    "attackDescs": ["挥拳横扫，蛮横无比", "几人围攻，乱棍打来", "冲上来就是一通乱打"],
+    "winNarrative": "打手们被你打得东倒西歪，有人已经开始往后退。领头的人指着你，声音却不稳了：「你……走着瞧！」转头便逃。",
+    "loseNarrative": "人多势众，你寡不敌众，被迫撤退。此事暂时搁置，但李云舒家的困境还在。",
+    "winEffects": { "reputation": 2 },
+    "loseEffects": {}
+  },
+  {
+    "id": "han_night_attackers",
+    "name": "夜袭黑衣人",
+    "description": "三个训练有素的黑衣人，步伐整齐，配合默契——这不是随机的街头混混，是专门来寻仇的。",
+    "comprehension": 14,
+    "attack": 26, "defense": 20, "hp": 110,
+    "attackScale": 0, "defenseScale": 0, "hpScale": 0,
+    "intentReadMsgs": {
+      "heavy": ["黑衣人暗号一出，三人同时蓄势——<b>合击将至</b>", "领头者眼神一定，其余两人收势待命——<b>重击将至</b>"],
+      "swift": ["黑衣人变阵，一人绕后，一人佯攻——<b>快攻将至</b>", "三人散开包围，快攻意图明显——<b>快攻将至</b>"]
+    },
+    "intentUnreadMsgs": ["黑衣人无声无息，行动训练有素，难以捉摸", "三人配合严密，看不出破绽"],
+    "attackDescs": ["三人协同，刀光连闪", "无声夹击，来势凶猛", "两刀引开注意，一刀从背后偷袭"],
+    "winNarrative": "三人被你一一击退，最后的黑衣人俯首落地，喘着粗气，再无余力。巷子里，韩霜静静注视着这一切。",
+    "loseNarrative": "三人合击，你左支右绌，终究还是负了伤。韩霜挡在你身前：「走！」他用身体替你挡住最后一击。",
+    "winEffects": { "reputation": 1, "agility": 1 },
+    "loseEffects": {},
+    "skills": [
+      {
+        "id": "triple_assault",
+        "name": "三重围攻",
+        "telegraph": "黑衣人互换眼色，同时收势——⚠ 【三重围攻】即将发动！建议【防御】！",
+        "damageMult": 2.0,
+        "hpThreshold": 0.5
+      }
+    ]
+  },
+  {
     "id": "tianmo",
     "name": "天魔",
     "description": "传说中的魔道宗师，武功通天，邪气滔天，是这个时代最大的祸乱之源",

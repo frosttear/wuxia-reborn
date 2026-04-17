@@ -159,10 +159,9 @@
         <div id="combatResult" class="combat-result-banner" style="display:none"></div>
         <!-- Stance buttons -->
         <div class="combat-actions" id="combatActions">
-            <button class="combat-btn combat-strike" title="刚攻：高伤害，对防御效果更强" onclick="Engine.handleCombatAction('strike')">⚔ 刚攻</button>
-            <button class="combat-btn combat-quick"  title="巧攻：穿透30%防御，快速积势" onclick="Engine.handleCombatAction('quick')">💨 巧攻</button>
-            <button class="combat-btn combat-defend" title="防御：大幅减少受击（对方刚攻-75%，巧攻-50%）" onclick="Engine.handleCombatAction('defend')">🛡 防御</button>
-            <button class="combat-btn combat-parry"  title="化解：克制对方刚攻（反击）；被对方巧攻破招" onclick="Engine.handleCombatAction('parry')">⚡ 化解</button>
+            <button class="combat-btn combat-strike" title="强攻：全力一击，伤害最高" onclick="Engine.handleCombatAction('strike')">⚔ 强攻</button>
+            <button class="combat-btn combat-defend" title="防御：大幅减少受击（对方强攻-75%，巧攻-50%）" onclick="Engine.handleCombatAction('defend')">🛡 防御</button>
+            <button class="combat-btn combat-parry"  title="招架：克制对方重攻（反击）；被对方快攻破招" onclick="Engine.handleCombatAction('parry')">⚡ 招架</button>
             <button class="combat-btn combat-focus"  title="蓄势：势能+2，减伤55%" onclick="Engine.handleCombatAction('focus')">🔮 蓄势</button>
             <button class="combat-btn combat-flee" id="combatFleeBtn" onclick="Engine.handleCombatAction('flee')">� 逃跑 25%</button>
             <button class="combat-btn combat-quickbattle" id="combatQuickBtn" onclick="Engine.handleQuickCombat()" title="快速战斗：蒙特卡洛模拟，立即得出结果">⚡ 快战</button>

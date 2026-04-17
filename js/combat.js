@@ -4,7 +4,6 @@ const Combat = {
     // ── Narration pools ────────────────────────────────────────────────────
     STANCE_ATTACK_DESCS: {
         strike: ['你蓄力挥出一击，气势如虹', '你横刀一斩，剑光凛冽', '你凌空跃起，自上而下猛劈', '你运气于掌，拍出一道劲风'],
-        quick:  ['你身形疾掠，抢先出手', '你以快打慢，剑走偏锋', '你绕至侧翼，斜刺里出剑', '你步伐连动，轻灵刺出'],
     },
     DEFEND_DESCS: ['你凝神守势，以逸待劳', '你侧身化解，以柔克刚', '你内力护体，顶住冲击'],
     PARRY_DESCS:  ['你屏息凝神，等待来招', '你蓄势收势，准备化解'],
@@ -153,14 +152,15 @@ const Combat = {
                 const sk = activeSkill;
 
                 if (sk.type === 'multi') {
+                    const hits = sk.hits || 3;
+                    const defMit = Math.floor(cs.enemyEffDef * (1 - (sk.armorBreak || 0.5)) * 0.5);
                     let total = 0;
                     const parts = [];
-                    for (let i = 0; i < (sk.hits || 3); i++) {
-                        const h = Math.max(1, Math.floor(playerAtk * sk.power)
-                            - Math.floor(cs.enemyEffDef * (1 - (sk.armorBreak || 0.5)))
-                            + this._rand(-1, 4));
+                    for (let i = 0; i < hits; i++) {
+                        const h = Math.max(1, Math.floor(playerAtk * sk.power) + this._rand(-1, 4));
                         total += h; parts.push(h);
                     }
+                    total = Math.max(1, total - defMit);
                     cs.enemyHp = Math.max(0, cs.enemyHp - total);
                     cs.totalDmgDealt += total;
                     lines.push(`【<b style="color:#f4c430">${sk.name}</b>】连击（${parts.join('+')}=<b>${total}</b>），对方剩余气血 ${Math.max(0, cs.enemyHp)}。`);
@@ -180,26 +180,13 @@ const Combat = {
             } else if (action === 'strike') {
                 const lv    = 1 + (Math.random() - 0.5) * (char.attributes.luck / 100);
                 const isCrit = Math.random() < Character.getLuckTriggerChance(char);
-                let dmg = Math.max(1, Math.floor(playerAtk * 1.2 * lv)
-                    - Math.floor(cs.enemyEffDef * 0.5) + this._rand(-2, 8));
+                let dmg = Math.max(1, Math.floor(playerAtk * lv)
+                    - Math.floor(cs.enemyEffDef * 0.75) + this._rand(-2, 8));
                 if (isCrit) dmg = Math.floor(dmg * 1.5);
                 cs.enemyHp = Math.max(0, cs.enemyHp - dmg);
                 cs.totalDmgDealt += dmg;
                 cs.playerMomentum = Math.min(5, cs.playerMomentum + 1);
                 const pd = this._pick(this.STANCE_ATTACK_DESCS.strike);
-                lines.push(`${pd}${isCrit ? '【<b>会心一击</b>】' : ''}，对方损失 <b>${dmg}</b> 气血（剩余 ${Math.max(0, cs.enemyHp)}）。`);
-                if (cs.enemyHp <= 0) { result = 'won'; combatOver = true; }
-
-            } else if (action === 'quick') {
-                const lv    = 1 + (Math.random() - 0.5) * (char.attributes.luck / 100);
-                const isCrit = Math.random() < Character.getLuckTriggerChance(char);
-                let dmg = Math.max(1, Math.floor(playerAtk * 0.85 * lv)
-                    - Math.floor(cs.enemyEffDef * 0.35) + this._rand(-2, 6));
-                if (isCrit) dmg = Math.floor(dmg * 1.5);
-                cs.enemyHp = Math.max(0, cs.enemyHp - dmg);
-                cs.totalDmgDealt += dmg;
-                cs.playerMomentum = Math.min(5, cs.playerMomentum + 1);
-                const pd = this._pick(this.STANCE_ATTACK_DESCS.quick);
                 lines.push(`${pd}${isCrit ? '【<b>会心一击</b>】' : ''}，对方损失 <b>${dmg}</b> 气血（剩余 ${Math.max(0, cs.enemyHp)}）。`);
                 if (cs.enemyHp <= 0) { result = 'won'; combatOver = true; }
 
@@ -266,8 +253,6 @@ const Combat = {
                         incomingMult = swiftAnticipated ? 0.20 : (enemyAction === 'heavy' ? 0.25 : 0.50);
                     } else if (action === 'focus') {
                         incomingMult = 0.55;
-                    } else if (action === 'quick' && enemyAction === 'heavy') {
-                        incomingMult = 0.80;
                     }
 
                     const rawDmg = Math.max(1,

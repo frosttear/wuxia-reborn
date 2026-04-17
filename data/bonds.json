@@ -256,16 +256,13 @@
       "choices": [
         {
           "id": "accept_spar",
-          "text": "欣然接受，全力以赴",
+          "text": "欣然接受，拔剑应战",
           "effects": {
-            "attributes": {
-              "agility": 1,
-              "strength": 1
-            },
+            "combat": "li_yunshu_sparring",
             "npcAffinity": {
               "li_yunshu": 15
             },
-            "narrative": "两人过了数十招，你虽落了下风，却悟到身法上诸多不足。李云舒收招，点头道：「有进步，真的不错。」语气里带着一丝藏不住的赞许。"
+            "narrative": "无论胜负，你们都在这场切磋里看清了彼此的真实水准。李云舒把剑插回鞘，神情里多了一分认真：「好，你值得我认真对待。」"
           }
         },
         {
@@ -309,15 +306,13 @@
       "choices": [
         {
           "id": "help_directly",
-          "text": "我去替你出头，不必多说",
+          "text": "二话不说，直接登门打服他们",
           "effects": {
-            "attributes": {
-              "reputation": 2
-            },
+            "combat": "local_bully_gang",
             "npcAffinity": {
               "li_yunshu": 18
             },
-            "narrative": "你登门交涉，气场沉稳而凌厉，将对方的算盘一一点破。对方掂量了一番，悻悻而去。李云舒望着你的背影，沉默了很久，声音有些轻：「谢谢。」"
+            "narrative": "打完之后，李云舒望着你的背影，沉默了很久，声音有些轻：「谢谢。我不知道……你会真的动手。」"
           }
         },
         {
@@ -830,7 +825,7 @@
           "id": "charge_in",
           "text": "不由分说，冲入战圈护住他的侧翼",
           "effects": {
-            "combat": "escort_leader",
+            "combat": "han_night_attackers",
             "npcAffinity": {
               "han_shuang": 18
             },
