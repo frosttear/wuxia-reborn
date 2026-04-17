@@ -285,6 +285,7 @@
               "text": "迎战！让王铁先走，你断后",
               "effects": {
                 "combat": "skilled_bandit",
+                "flags": { "wang_dying_wish": true },
                 "narrative": "信送到的那一刻，王铁在门口站了很久。回来的路上，他把旧镖箱传给了你：「以后是你的了——带着它好好走。」"
               }
             },
@@ -295,6 +296,7 @@
               "effects": {
                 "attributes": { "strength": 2, "constitution": 3, "reputation": 2 },
                 "npcAffinity": { "wang_tie": 10 },
+                "flags": { "wang_dying_wish": true },
                 "narrative": "你运转内力，气势陡然充盈山道。那几人面色骤变，最终散去，无一人敢踏前一步。王铁看着你，眼神里有骄傲，也有一丝释然：「老汉这辈子，护过不少人。能被人护着走一回……也挺好的。」"
               }
             }

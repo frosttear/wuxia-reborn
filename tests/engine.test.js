@@ -127,17 +127,6 @@ describe('Engine.getAvailableChainSteps', () => {
         expect(steps.find(s => s.chain.id === 'tianmo_harbinger')).toBeUndefined();
     });
 
-    test('elder_past chain: not available without met_mysterious_elder flag', () => {
-        const steps = Engine.getAvailableChainSteps();
-        expect(steps.find(s => s.chain.id === 'elder_past')).toBeUndefined();
-    });
-
-    test('elder_past chain: available when met_mysterious_elder is set', () => {
-        Engine.state.char.flags.met_mysterious_elder = true;
-        const steps = Engine.getAvailableChainSteps();
-        expect(steps.find(s => s.chain.id === 'elder_past')).toBeDefined();
-    });
-
     test('jianghu_chaos chain: not available without enough reputation', () => {
         Engine.state.char.attributes.reputation = 5; // needs 8
         const steps = Engine.getAvailableChainSteps();

@@ -567,12 +567,11 @@ const Engine = {
             innerForce: '内力', comprehension: '悟性', luck: '运气', reputation: '声望' };
         const FLAG_LABELS = {
             tianmo_sign1: '完成「路遇奇人」', tianmo_sign2: '完成「探查龙脊山」',
-            met_mysterious_elder: '结识神秘老者', elder_past1: '完成「旧日画像」',
-            elder_past2: '完成「故地重游」', chaos1: '完成「奇怪委托」',
-            chaos2: '完成「追查幕后」',
+            chaos1: '完成「奇怪委托」', chaos2: '完成「追查幕后」',
             sword_tomb_found: '完成「古剑冢」', sword_master_met: '完成「寻访剑师」',
             sword_trial_passed: '完成「剑道试炼」',
             hero_relief: '完成「义救灾民」', hero_tyrant_defeated: '完成「除暴安良」',
+            wang_dying_wish: '王铁遗愿（羁绊Lv5）', zhao_traced: '完成「追踪赵霸天」',
         };
         const result = [];
         for (const chain of chains) {

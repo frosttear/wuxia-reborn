@@ -15,7 +15,6 @@ describe('chains.json - top-level structure', () => {
     test('contains the three expected chains', () => {
         const ids = chains.chains.map(c => c.id);
         expect(ids).toContain('tianmo_harbinger');
-        expect(ids).toContain('elder_past');
         expect(ids).toContain('jianghu_chaos');
     });
 });

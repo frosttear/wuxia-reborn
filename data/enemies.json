@@ -581,9 +581,9 @@
     "id": "sword_trial_challenger",
     "name": "青衣剑客",
     "description": "精通剑术的江湖剑客，剑法凌厉且章法分明",
-    "comprehension": 14,
-    "innerForce": 10,
-    "attack": 24, "defense": 18, "hp": 105,
+    "comprehension": 22,
+    "innerForce": 25,
+    "attack": 42, "defense": 32, "hp": 220,
     "attackScale": 5, "defenseScale": 3, "hpScale": 0.16,
     "attackDescs": [
       "横剑一抹，剑光如练",
@@ -605,7 +605,7 @@
         "id": "triple_thrust",
         "name": "三连刺",
         "telegraph": "剑客深吸一气，剑尖连颤三下，三连刺之势已成！⚠ 连招即至，建议【防御】！",
-        "damageMult": 2.0,
+        "damageMult": 2.5,
         "hpThreshold": 0.5
       }
     ]
@@ -614,9 +614,9 @@
     "id": "iron_judge",
     "name": "铁面判官",
     "description": "自号铁面判官的恶人，铁拳配重刀，凶狠无情",
-    "comprehension": 15,
-    "innerForce": 8,
-    "attack": 30, "defense": 22, "hp": 140,
+    "comprehension": 18,
+    "innerForce": 15,
+    "attack": 36, "defense": 26, "hp": 180,
     "attackScale": 5, "defenseScale": 3, "hpScale": 0.16,
     "attackDescs": [
       "重刀横扫，刀势沉猛",

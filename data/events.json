@@ -484,21 +484,6 @@
     ]
   },
   {
-    "id": "wang_dying_wish",
-    "type": "交友",
-    "weight": 3,
-    "title": "王铁临终托付",
-    "text": "你得到消息，王铁病倒了，时日无多。你赶到他的床前，他握住你的手，眼神清澈：「我这一生走镖无数，唯一放不下的，是那些被赵霸天欺压的百姓……」",
-    "conditions": { "flags": { "wang_taught_advanced": true }, "npcAffinity": { "wang_tie": 70 }, "minAgeYears": 19 },
-    "choices": [
-      {
-        "id": "promise",
-        "text": "含泪答应，誓为老人了却心愿",
-        "effects": { "attributes": { "reputation": 3, "innerForce": 2 }, "flags": { "wang_dying_wish": true, "wang_dead": true }, "npcAffinity": { "wang_tie": 10 }, "narrative": "王铁面带微笑，平静离世。这份托付成为你心中永恒的信念。" }
-      }
-    ]
-  },
-  {
     "id": "meet_li_yunshu",
     "type": "交友",
     "weight": 8,
