@@ -13,7 +13,7 @@
               "text": "静静聆听，不打断",
               "effects": {
                 "attributes": { "comprehension": 1 },
-                "npcAffinity": { "wang_tie": 3 },
+                "npcAffinity": { "wang_tie": 10 },
                 "narrative": ""
               }
             },
@@ -22,7 +22,7 @@
               "text": "趁机请教走镖时应对险境的心得",
               "effects": {
                 "attributes": { "strength": 1, "comprehension": 1 },
-                "npcAffinity": { "wang_tie": 3 },
+                "npcAffinity": { "wang_tie": 10 },
                 "narrative": ""
               }
             },
@@ -32,7 +32,7 @@
               "requirements": { "minAttributes": { "innerForce": 8 } },
               "effects": {
                 "attributes": { "innerForce": 2 },
-                "npcAffinity": { "wang_tie": 3 },
+                "npcAffinity": { "wang_tie": 10 },
                 "narrative": ""
               }
             }
@@ -46,7 +46,7 @@
               "text": "郑重接过，说自己会配得上它",
               "effects": {
                 "attributes": { "constitution": 1, "reputation": 1 },
-                "npcAffinity": { "wang_tie": 3 },
+                "npcAffinity": { "wang_tie": 10 },
                 "narrative": "王铁点了点头，没有再多说。那块铁牌沉甸甸的，像一份重托，也像一个没有说完的故事。"
               }
             },
@@ -55,7 +55,7 @@
               "text": "问铁牌的来历，想听那个兄弟的故事",
               "effects": {
                 "attributes": { "comprehension": 2 },
-                "npcAffinity": { "wang_tie": 3 },
+                "npcAffinity": { "wang_tie": 10 },
                 "narrative": "王铁沉默了一下，然后笑了——那是一种苦涩又宽慰交织的笑。他说了很多，直到天色黑透。你觉得，那些故事你不该忘记。"
               }
             }
@@ -75,7 +75,7 @@
               "id": "go_immediately",
               "text": "二话不说，随他出发",
               "effects": {
-                "npcAffinity": { "wang_tie": 3 },
+                "npcAffinity": { "wang_tie": 10 },
                 "narrative": ""
               }
             },
@@ -85,7 +85,7 @@
               "requirements": { "minAttributes": { "comprehension": 8 } },
               "effects": {
                 "attributes": { "comprehension": 1 },
-                "npcAffinity": { "wang_tie": 3 },
+                "npcAffinity": { "wang_tie": 10 },
                 "narrative": ""
               }
             }
@@ -108,7 +108,7 @@
               "requirements": { "minAttributes": { "comprehension": 10 } },
               "effects": {
                 "attributes": { "comprehension": 2, "reputation": 2 },
-                "npcAffinity": { "wang_tie": 5 },
+                "npcAffinity": { "wang_tie": 10 },
                 "narrative": "你设下巧计，趁夜摸清营地分布，悄无声息地收回货物，几乎未动刀兵。王铁叹道：「老汉这辈子，认识的人里，你算聪明的。」"
               }
             },
@@ -117,7 +117,7 @@
               "text": "只身上前谈条件，以言辞瓦解对方意志",
               "effects": {
                 "attributes": { "reputation": 2, "comprehension": 1 },
-                "npcAffinity": { "wang_tie": 5 },
+                "npcAffinity": { "wang_tie": 10 },
                 "narrative": "你只身赴前，言辞犀利，将对方的退路和代价一一点明。头目沉默良久，最终放货。王铁望着你：「后生，你这张嘴比刀还厉害。」"
               }
             }
@@ -139,7 +139,7 @@
               "effects": {
                 "attributes": { "strength": 1, "constitution": 1 },
                 "flags": { "wang_final_teaching": true },
-                "npcAffinity": { "wang_tie": 3 },
+                "npcAffinity": { "wang_tie": 10 },
                 "narrative": ""
               }
             },
@@ -149,7 +149,7 @@
               "effects": {
                 "attributes": { "comprehension": 1, "luck": 1 },
                 "flags": { "wang_heart_talk": true },
-                "npcAffinity": { "wang_tie": 3 },
+                "npcAffinity": { "wang_tie": 10 },
                 "narrative": ""
               }
             }
@@ -172,7 +172,7 @@
               "requirements": { "minAttributes": { "innerForce": 12 } },
               "effects": {
                 "attributes": { "innerForce": 2, "strength": 2, "constitution": 1 },
-                "npcAffinity": { "wang_tie": 5 },
+                "npcAffinity": { "wang_tie": 10 },
                 "narrative": "你在他面前运气，将内力流转成可见的轮廓。王铁沉默良久，点了点头：「比我当年强。」他又站了许久，才说：「走吧，你这条路，老汉帮不了太多了——但你不需要了。」"
               }
             }
@@ -193,7 +193,7 @@
               "text": "陪他在碑前守一夜，以酒祭奠",
               "effects": {
                 "attributes": { "constitution": 1, "innerForce": 2 },
-                "npcAffinity": { "wang_tie": 3 },
+                "npcAffinity": { "wang_tie": 10 },
                 "narrative": ""
               }
             },
@@ -203,7 +203,7 @@
               "requirements": { "minAttributes": { "comprehension": 14 } },
               "effects": {
                 "attributes": { "innerForce": 3, "comprehension": 2 },
-                "npcAffinity": { "wang_tie": 3 },
+                "npcAffinity": { "wang_tie": 10 },
                 "narrative": ""
               }
             },
@@ -212,7 +212,7 @@
               "text": "告诉他：他活下来，才有人记得他们",
               "effects": {
                 "attributes": { "reputation": 1, "comprehension": 1 },
-                "npcAffinity": { "wang_tie": 3 },
+                "npcAffinity": { "wang_tie": 10 },
                 "narrative": ""
               }
             }
@@ -235,7 +235,7 @@
               "requirements": { "minAttributes": { "reputation": 15 } },
               "effects": {
                 "attributes": { "reputation": 2, "constitution": 1 },
-                "npcAffinity": { "wang_tie": 5 },
+                "npcAffinity": { "wang_tie": 10 },
                 "narrative": "你踏前一步，沉声报出自己的名号，将眼前几人的底细一一点破。为首的悍汉僵在原地，终于挥手带人离去。王铁看着你：「你这份气场，比刀有用。」"
               }
             }
@@ -262,7 +262,7 @@
               "id": "walk_with_wang",
               "text": "背上行装，二话不说随他同行",
               "effects": {
-                "npcAffinity": { "wang_tie": 3 },
+                "npcAffinity": { "wang_tie": 10 },
                 "narrative": ""
               }
             },
@@ -271,7 +271,7 @@
               "text": "全程护在他身旁，不让他受丝毫折损",
               "requirements": { "minAttributes": { "constitution": 20 } },
               "effects": {
-                "npcAffinity": { "wang_tie": 3 },
+                "npcAffinity": { "wang_tie": 10 },
                 "narrative": ""
               }
             }
@@ -294,7 +294,7 @@
               "requirements": { "minAttributes": { "innerForce": 18 } },
               "effects": {
                 "attributes": { "strength": 2, "constitution": 3, "reputation": 2 },
-                "npcAffinity": { "wang_tie": 5 },
+                "npcAffinity": { "wang_tie": 10 },
                 "narrative": "你运转内力，气势陡然充盈山道。那几人面色骤变，最终散去，无一人敢踏前一步。王铁看着你，眼神里有骄傲，也有一丝释然：「老汉这辈子，护过不少人。能被人护着走一回……也挺好的。」"
               }
             }
@@ -589,7 +589,7 @@
               "text": "请教武道的终极境界",
               "effects": {
                 "attributes": { "comprehension": 2, "innerForce": 1 },
-                "npcAffinity": { "mysterious_elder": 3 },
+                "npcAffinity": { "mysterious_elder": 10 },
                 "narrative": ""
               }
             },
@@ -598,7 +598,7 @@
               "text": "好奇地问他究竟是什么人",
               "effects": {
                 "attributes": { "comprehension": 1 },
-                "npcAffinity": { "mysterious_elder": 3 },
+                "npcAffinity": { "mysterious_elder": 10 },
                 "narrative": ""
               }
             },
@@ -608,7 +608,7 @@
               "requirements": { "minAttributes": { "comprehension": 10 } },
               "effects": {
                 "attributes": { "comprehension": 3 },
-                "npcAffinity": { "mysterious_elder": 3 },
+                "npcAffinity": { "mysterious_elder": 10 },
                 "narrative": ""
               }
             }
@@ -622,7 +622,7 @@
               "text": "「继续走。路的价值，不只在于终点。」",
               "effects": {
                 "attributes": { "comprehension": 1, "innerForce": 1 },
-                "npcAffinity": { "mysterious_elder": 3 },
+                "npcAffinity": { "mysterious_elder": 10 },
                 "narrative": "老者沉默片刻，点了点头：「这个答案，老夫等了许多年。」他没有再多说，端起茶杯，继续喝。但那之后，你们之间，多了一种说不清的默契。"
               }
             },
@@ -632,7 +632,7 @@
               "requirements": { "minAttributes": { "comprehension": 10 } },
               "effects": {
                 "attributes": { "comprehension": 2 },
-                "npcAffinity": { "mysterious_elder": 3 },
+                "npcAffinity": { "mysterious_elder": 10 },
                 "narrative": "老者愣了一下，随即大笑——那是真正被问住的笑，带着几分意外与赞许。「聪明，」他说，「但这个问题，老夫要欠你一段时间。」"
               }
             }
@@ -653,7 +653,7 @@
               "text": "虚心受教，从头再来",
               "effects": {
                 "attributes": { "innerForce": 2, "comprehension": 1 },
-                "npcAffinity": { "mysterious_elder": 3 },
+                "npcAffinity": { "mysterious_elder": 10 },
                 "narrative": ""
               }
             },
@@ -662,7 +662,7 @@
               "text": "谨慎询问重修内功的风险，确认后再答应",
               "effects": {
                 "attributes": { "innerForce": 1, "comprehension": 2 },
-                "npcAffinity": { "mysterious_elder": 3 },
+                "npcAffinity": { "mysterious_elder": 10 },
                 "narrative": ""
               }
             }
@@ -685,7 +685,7 @@
               "requirements": { "minAttributes": { "innerForce": 15 } },
               "effects": {
                 "attributes": { "innerForce": 3, "comprehension": 1 },
-                "npcAffinity": { "mysterious_elder": 5 },
+                "npcAffinity": { "mysterious_elder": 10 },
                 "narrative": "你运气，将内力流转成可见的轮廓，绕身一周，无半点泄漏。老者看了许久，缓缓点头：「你用了三日，走完了别人三年的路。」那句话，让你感到一种踏实。"
               }
             }
@@ -707,7 +707,7 @@
               "effects": {
                 "attributes": { "innerForce": 2, "comprehension": 2 },
                 "flags": { "elder_revelation": true },
-                "npcAffinity": { "mysterious_elder": 3 },
+                "npcAffinity": { "mysterious_elder": 10 },
                 "narrative": ""
               }
             },
@@ -717,7 +717,7 @@
               "effects": {
                 "attributes": { "comprehension": 2, "innerForce": 1 },
                 "flags": { "tianmo_intel": true },
-                "npcAffinity": { "mysterious_elder": 3 },
+                "npcAffinity": { "mysterious_elder": 10 },
                 "narrative": ""
               }
             }
@@ -740,7 +740,7 @@
               "requirements": { "minAttributes": { "innerForce": 18 } },
               "effects": {
                 "attributes": { "innerForce": 3, "comprehension": 1 },
-                "npcAffinity": { "mysterious_elder": 5 },
+                "npcAffinity": { "mysterious_elder": 10 },
                 "narrative": "你运转内力，将魔气反压，细作无法近身，悄然撤退。老者看着你，沉默良久：「老夫终于没有选错人。」他将玉牌取出，双手交给你。"
               }
             }
@@ -762,7 +762,7 @@
               "effects": {
                 "attributes": { "innerForce": 2, "comprehension": 2 },
                 "flags": { "tianmo_weakness_known": true },
-                "npcAffinity": { "mysterious_elder": 3 },
+                "npcAffinity": { "mysterious_elder": 10 },
                 "narrative": ""
               }
             },
@@ -773,7 +773,7 @@
               "effects": {
                 "attributes": { "innerForce": 4, "comprehension": 2 },
                 "flags": { "tianmo_weakness_known": true },
-                "npcAffinity": { "mysterious_elder": 3 },
+                "npcAffinity": { "mysterious_elder": 10 },
                 "narrative": ""
               }
             },
@@ -782,7 +782,7 @@
               "text": "问他：你是否后悔当年没能留住他",
               "effects": {
                 "attributes": { "comprehension": 2 },
-                "npcAffinity": { "mysterious_elder": 3 },
+                "npcAffinity": { "mysterious_elder": 10 },
                 "narrative": ""
               }
             }
@@ -805,7 +805,7 @@
               "requirements": { "flags": { "tianmo_weakness_known": true }, "minAttributes": { "innerForce": 22 } },
               "effects": {
                 "attributes": { "innerForce": 4, "comprehension": 2 },
-                "npcAffinity": { "mysterious_elder": 5 },
+                "npcAffinity": { "mysterious_elder": 10 },
                 "narrative": "你运转内力，以老者传授的天魔弱点为引，直接瓦解先锋的魔气核心。他愕然愣住，而后颓然倒地。老者看着你：「好。你已经准备好了。」"
               }
             }
@@ -832,7 +832,7 @@
               "text": "双手接引，以虔诚之心承受这份传承",
               "effects": {
                 "attributes": { "innerForce": 4, "comprehension": 3 },
-                "npcAffinity": { "mysterious_elder": 3 },
+                "npcAffinity": { "mysterious_elder": 10 },
                 "narrative": ""
               }
             },
@@ -842,7 +842,7 @@
               "requirements": { "minAttributes": { "innerForce": 25 } },
               "effects": {
                 "attributes": { "innerForce": 6, "comprehension": 3, "luck": 2 },
-                "npcAffinity": { "mysterious_elder": 3 },
+                "npcAffinity": { "mysterious_elder": 10 },
                 "narrative": ""
               }
             }
@@ -865,7 +865,7 @@
               "requirements": { "minAttributes": { "innerForce": 30 } },
               "effects": {
                 "attributes": { "innerForce": 5, "comprehension": 3, "luck": 1 },
-                "npcAffinity": { "mysterious_elder": 5 },
+                "npcAffinity": { "mysterious_elder": 10 },
                 "narrative": "你的意志如山，心魔在接触的瞬间便烟消云散。老者目睹全程，缓缓颔首：「果然是你。」那一刻他的眼神里，没有遗憾。你知道，他等待的事，到此圆满了。"
               }
             }
@@ -888,7 +888,7 @@
               "text": "迎上他的目光，点头应战",
               "effects": {
                 "attributes": { "agility": 1, "strength": 1 },
-                "npcAffinity": { "han_shuang": 3 },
+                "npcAffinity": { "han_shuang": 10 },
                 "narrative": ""
               }
             },
@@ -897,7 +897,7 @@
               "text": "沉静地摇头：「时机不对，我先看看你的剑法。」",
               "effects": {
                 "attributes": { "comprehension": 1 },
-                "npcAffinity": { "han_shuang": 3 },
+                "npcAffinity": { "han_shuang": 10 },
                 "narrative": ""
               }
             },
@@ -907,7 +907,7 @@
               "requirements": { "minAttributes": { "innerForce": 10 } },
               "effects": {
                 "attributes": { "innerForce": 2, "comprehension": 1 },
-                "npcAffinity": { "han_shuang": 3 },
+                "npcAffinity": { "han_shuang": 10 },
                 "narrative": ""
               }
             }
@@ -930,7 +930,7 @@
               "requirements": { "minAttributes": { "constitution": 10 } },
               "effects": {
                 "attributes": { "constitution": 1, "agility": 1, "comprehension": 1 },
-                "npcAffinity": { "han_shuang": 5 },
+                "npcAffinity": { "han_shuang": 10 },
                 "narrative": "你守了十招，把他的刀法摸得七七八八。他收刀，沉默了一会儿：「你不愚蠢。」对韩霜而言，这就是很高的评价了。"
               }
             }
@@ -951,7 +951,7 @@
               "text": "直接冲入战圈，护住他的侧翼",
               "effects": {
                 "attributes": { "strength": 1 },
-                "npcAffinity": { "han_shuang": 3 },
+                "npcAffinity": { "han_shuang": 10 },
                 "narrative": ""
               }
             },
@@ -961,7 +961,7 @@
               "requirements": { "minAttributes": { "comprehension": 8 } },
               "effects": {
                 "attributes": { "agility": 1, "comprehension": 1 },
-                "npcAffinity": { "han_shuang": 3 },
+                "npcAffinity": { "han_shuang": 10 },
                 "narrative": ""
               }
             }
@@ -985,7 +985,7 @@
               "effects": {
                 "attributes": { "reputation": 3 },
                 "flags": { "han_threat_resolved": true },
-                "npcAffinity": { "han_shuang": 5 },
+                "npcAffinity": { "han_shuang": 10 },
                 "narrative": "你踏前一步，将眼前的局势点透三分。三人相顾，脚步踌躇，悻悻散去。韩霜望着你，神色复杂：「你这法子，比剑还有用。」"
               }
             }
@@ -1007,7 +1007,7 @@
               "effects": {
                 "attributes": { "strength": 1, "reputation": 1 },
                 "flags": { "han_vengeance_path": true },
-                "npcAffinity": { "han_shuang": 3 },
+                "npcAffinity": { "han_shuang": 10 },
                 "narrative": ""
               }
             },
@@ -1017,7 +1017,7 @@
               "effects": {
                 "attributes": { "comprehension": 2, "luck": 1 },
                 "flags": { "han_peace_path": true },
-                "npcAffinity": { "han_shuang": 3 },
+                "npcAffinity": { "han_shuang": 10 },
                 "narrative": ""
               }
             },
@@ -1028,7 +1028,7 @@
               "effects": {
                 "attributes": { "comprehension": 3, "innerForce": 3 },
                 "flags": { "han_revelation": true },
-                "npcAffinity": { "han_shuang": 3 },
+                "npcAffinity": { "han_shuang": 10 },
                 "narrative": ""
               }
             }
@@ -1051,7 +1051,7 @@
               "requirements": { "minAttributes": { "reputation": 15 } },
               "effects": {
                 "attributes": { "reputation": 2, "comprehension": 1 },
-                "npcAffinity": { "han_shuang": 5 },
+                "npcAffinity": { "han_shuang": 10 },
                 "narrative": "你沉声报出名号，将对方可能面对的后果一一点明。猎人犹豫片刻，最终收起画像离去。韩霜看了你许久：「你每次都不用动手。」说不清是羡慕还是别的什么。"
               }
             }
@@ -1072,7 +1072,7 @@
               "text": "陪他去，站在他身旁",
               "effects": {
                 "attributes": { "reputation": 1 },
-                "npcAffinity": { "han_shuang": 3 },
+                "npcAffinity": { "han_shuang": 10 },
                 "narrative": ""
               }
             },
@@ -1082,7 +1082,7 @@
               "requirements": { "minAttributes": { "strength": 20 } },
               "effects": {
                 "attributes": { "strength": 2, "reputation": 1 },
-                "npcAffinity": { "han_shuang": 3 },
+                "npcAffinity": { "han_shuang": 10 },
                 "narrative": ""
               }
             },
@@ -1092,7 +1092,7 @@
               "requirements": { "minAttributes": { "comprehension": 18 } },
               "effects": {
                 "attributes": { "comprehension": 2, "innerForce": 1 },
-                "npcAffinity": { "han_shuang": 3 },
+                "npcAffinity": { "han_shuang": 10 },
                 "narrative": ""
               }
             }
@@ -1116,7 +1116,7 @@
               "effects": {
                 "attributes": { "comprehension": 3, "innerForce": 2 },
                 "flags": { "han_confrontation_resolved": true },
-                "npcAffinity": { "han_shuang": 5 },
+                "npcAffinity": { "han_shuang": 10 },
                 "narrative": "你说出了韩霜心底那个他自己都没开口的答案。那人愣住，韩霜放下了刀。「走，」韩霜对你说，声音平静得出奇，「没有必要了。」那一刻，你知道他真的放下了。"
               }
             }
@@ -1143,7 +1143,7 @@
               "text": "告诉他：一起走",
               "effects": {
                 "attributes": { "strength": 1, "agility": 1 },
-                "npcAffinity": { "han_shuang": 3 },
+                "npcAffinity": { "han_shuang": 10 },
                 "narrative": ""
               }
             },
@@ -1153,7 +1153,7 @@
               "requirements": { "minAttributes": { "agility": 20 } },
               "effects": {
                 "attributes": { "agility": 2 },
-                "npcAffinity": { "han_shuang": 3 },
+                "npcAffinity": { "han_shuang": 10 },
                 "narrative": ""
               }
             }
@@ -1176,7 +1176,7 @@
               "requirements": { "minAttributes": { "strength": 18 } },
               "effects": {
                 "attributes": { "strength": 2, "agility": 2, "reputation": 2 },
-                "npcAffinity": { "han_shuang": 5 },
+                "npcAffinity": { "han_shuang": 10 },
                 "narrative": "两人的气势合在一处，那股无言的压力让对方迟疑了——最终散去，没有人敢动。韩霜看了你一眼，笑了——那是你第一次见他真正地笑。那之后，他再也没提过那条旧路。"
               }
             }
@@ -1483,7 +1483,7 @@
           "text": "直接问她：为何要帮自己",
           "effects": {
             "attributes": { "comprehension": 1 },
-            "npcAffinity": { "ling_xue": 3 },
+            "npcAffinity": { "ling_xue": 10 },
             "narrative": "她沉默了片刻，才说：「你这个人，我想多看几眼。」\n\n那语气平淡，像在说天气，却莫名让你心里一紧。她没有再解释，你也没有再追问。"
           }
         },
@@ -1492,7 +1492,7 @@
           "text": "不追问，只是点头，与她静静坐了一会儿",
           "effects": {
             "attributes": { "innerForce": 1 },
-            "npcAffinity": { "ling_xue": 3 },
+            "npcAffinity": { "ling_xue": 10 },
             "narrative": "两人就这样相对无言，却并不觉得尴尬。她偶尔瞥你一眼，你感觉到那目光里有一丝她自己可能都没察觉到的放松。\n\n临走，她说了一句话：「你比我想的……安静。」算是某种赞许，或许。"
           }
         },
@@ -1502,7 +1502,7 @@
           "requirements": { "minAttributes": { "agility": 10 } },
           "effects": {
             "attributes": { "agility": 2, "comprehension": 1 },
-            "npcAffinity": { "ling_xue": 5 },
+            "npcAffinity": { "ling_xue": 10 },
             "narrative": "她抬眼看了你一眼，随即放下茶杯，随手演示了一个动作。\n\n那个动作很简单，却在你心里炸开了——你隐约感受到其中流转的力，和自己的路数截然不同，却有某种奇异的相通之处。\n\n「你有悟性，」她说，「只是方向没找对。」"
           }
         }
@@ -1519,7 +1519,7 @@
           "text": "据理力争：真正的侠义不在强弱，而在人心",
           "effects": {
             "attributes": { "comprehension": 2, "reputation": 1 },
-            "npcAffinity": { "ling_xue": 3 },
+            "npcAffinity": { "ling_xue": 10 },
             "narrative": "你没有退缩，把心里的想法一条条说出来。她没有说话，只是抬着眼，认真地听。\n\n等你说完，她沉默了很久，最后开口：「有意思。」那两个字里，你听不清是反驳还是某种她自己没意识到的动摇。她给自己倒了一杯酒，喝了，不再说话了。"
           }
         },
@@ -1528,7 +1528,7 @@
           "text": "不置可否，反问她：你真的信这一套吗",
           "effects": {
             "attributes": { "comprehension": 1, "innerForce": 1 },
-            "npcAffinity": { "ling_xue": 5 },
+            "npcAffinity": { "ling_xue": 10 },
             "narrative": "她愣了一下。那一秒的愣神，是你第一次在她脸上看到不在掌控之中的表情。\n\n随即，她恢复了平静：「当然。」\n\n但那一秒，你看见了。"
           }
         },
@@ -1538,7 +1538,7 @@
           "requirements": { "minAttributes": { "comprehension": 15 } },
           "effects": {
             "attributes": { "comprehension": 2, "innerForce": 2 },
-            "npcAffinity": { "ling_xue": 5 },
+            "npcAffinity": { "ling_xue": 10 },
             "narrative": "那句话落下，她手里的酒杯停住了。\n\n很长一段沉默。窗外雨声哗哗，里面只剩下两个人的呼吸。\n\n「你……」她终于开口，却没有说完，把最后一口酒喝了，放下杯子，「太多话了。」\n\n但她没有走。你们又坐了一个时辰，谁也没有再提这个问题，却都知道它还在那里。"
           }
         }
@@ -1555,7 +1555,7 @@
           "text": "不追问，默默将这段话记在心里",
           "effects": {
             "attributes": { "innerForce": 2, "comprehension": 1 },
-            "npcAffinity": { "ling_xue": 3 },
+            "npcAffinity": { "ling_xue": 10 },
             "narrative": "你没有开口。雪继续落，两人都不说话了。过了很久，她轻轻叹了口气——不像是释然，更像是某种下定决心前的最后一次叹息。\n\n临走时，她把自己的剑拔出来一寸，又推了回去，像是要说什么，最终还是没有说。"
           }
         },
@@ -1564,7 +1564,7 @@
           "text": "问她是否遇上了麻烦，告诉她你愿意帮忙",
           "effects": {
             "attributes": { "reputation": 1, "innerForce": 2 },
-            "npcAffinity": { "ling_xue": 5 },
+            "npcAffinity": { "ling_xue": 10 },
             "narrative": "她看着你，目光里有一种说不清的复杂。\n\n「帮我？」她重复了一遍，像是觉得这两个字有点陌生，「……你不知道，你在帮什么。」\n\n她转过身，往外走。在门口，她停了一下，没有回头：「谢谢你。」\n\n那是她第一次，也是目前为止唯一一次，对你说谢谢。"
           }
         },
@@ -1574,7 +1574,7 @@
           "requirements": { "minAttributes": { "comprehension": 18 } },
           "effects": {
             "attributes": { "comprehension": 3, "innerForce": 2 },
-            "npcAffinity": { "ling_xue": 5 },
+            "npcAffinity": { "ling_xue": 10 },
             "narrative": "你忽然想起来：第一次她「顺手」相救，第二次在茶馆等着你，然后是雨夜的偶遇，现在又主动来找你……\n\n那不是缘分。那是一份职责。\n\n你开口：「你是来看着我的，对吗？」\n\n她怔了很久，脸上的表情是你见过的最复杂的一种，像是终于被人看破，又像是……松了口气。\n\n「你比我以为的聪明，」她说，声音低了很多，「也……比我以为的，难下手。」"
           }
         }
@@ -1591,7 +1591,7 @@
           "text": "平静回应：你没有骗到任何东西，因为没有什么可骗的",
           "effects": {
             "attributes": { "innerForce": 2, "comprehension": 1 },
-            "npcAffinity": { "ling_xue": 3 },
+            "npcAffinity": { "ling_xue": 10 },
             "narrative": "她的背影停了一下，很快又动了。出门之前，你听见她轻声说了一句话，声音很低，低到几乎被风吹散：「……我知道。」"
           }
         },
@@ -1600,7 +1600,7 @@
           "text": "问她：你真的相信天魔说的那一套，还是只是没有别的选择",
           "effects": {
             "attributes": { "comprehension": 2, "reputation": 1 },
-            "npcAffinity": { "ling_xue": 3 },
+            "npcAffinity": { "ling_xue": 10 },
             "narrative": "她在门口站了很久，久到你以为她不会回答了。最后，她开口：「他把我从乱葬岗捡回来，教我活下去的方法。这两件事，我都欠他的。」\n\n她走了。你站在原地，忽然明白了——她信的不是那套道理，她信的是那个人。这两件事，分量不一样。"
           }
         },
@@ -1610,7 +1610,7 @@
           "requirements": { "minAttributes": { "comprehension": 20 } },
           "effects": {
             "attributes": { "comprehension": 3, "innerForce": 2 },
-            "npcAffinity": { "ling_xue": 5 },
+            "npcAffinity": { "ling_xue": 10 },
             "narrative": "她终于回过头，第一次，你在她脸上看到了一种她没有防备的神情——像是被人拆穿了一个自己一直在骗自己相信的谎言。\n\n「……」她没有说话，把门推开，走了出去。\n\n但在院门合上的最后一刻，你看见她手边的剑柄，松开了。"
           }
         }

@@ -502,7 +502,7 @@ const Engine = {
             // Casual visit: affinity boost — bigger if NPC is remembered from a past life
             const inheritedLevel = (char.inheritedBonds || {})[npcId] || 0;
             const hasDeepBonds = (char.legacyTalents || []).includes('deep_bonds');
-            const affinityGain = inheritedLevel >= 1 ? (hasDeepBonds ? 8 : 5) : 3;
+            const affinityGain = inheritedLevel >= 1 ? (hasDeepBonds ? 16 : 8) : 5;
             NPCSystem.changeAffinity(char, npcId, affinityGain);
             const newAffinity = NPCSystem.getAffinity(char, npcId);
             const needed = bondEvent ? bondEvent.minAffinity : null;

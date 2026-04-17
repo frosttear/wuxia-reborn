@@ -309,7 +309,10 @@ const Combat = {
         // Weak enemies (comp 3-5): readable at playerComp ~8-10.
         // Final boss (comp 50): needs playerComp ~55 (3-4 rebirths) for reliable reads.
         // Passive 「无相剑意」 (perfectIntentRead): bypasses formula → always accurate.
-        if (!combatOver) {
+        if (combatOver) {
+            cs.enemyIntentHint = '';
+            cs.enemyIntentType = '';
+        } else {
             const next = this._enemyChooseAction(cs);
             cs.enemyNextAction  = next;
             const hasPerfectRead = (char.passives || []).some(p => p.perfectIntentRead);
