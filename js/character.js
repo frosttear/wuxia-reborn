@@ -107,11 +107,6 @@ const Character = {
         return base + jobBase + skillBonus;
     },
 
-    // 悟性：每10点提升5%属性学习效率
-    getComprehensionRate(char) {
-        return Math.floor(char.attributes.comprehension / 10) * 0.05;
-    },
-
     // 运气+内力：会心率（属性双倍触发），上限35%
     getLuckTriggerChance(char) {
         const luckPart       = char.attributes.luck / 200;
@@ -141,7 +136,6 @@ const Character = {
     },
 
     applyAttributeChanges(char, changes) {
-        const compRate = this.getComprehensionRate(char);
         const luckChance = this.getLuckTriggerChance(char);
         const isLucky = Math.random() < luckChance;
         let luckyTriggered = false;
@@ -151,8 +145,6 @@ const Character = {
             if (!(attr in char.attributes)) continue;
             let amount = changes[attr];
             if (amount > 0) {
-                // 悟性加成
-                amount = Math.round(amount * (1 + compRate));
                 // 运气幸运触发：双倍
                 if (isLucky) { amount *= 2; luckyTriggered = true; }
             }
@@ -271,8 +263,10 @@ const Character = {
         const missingPct = (char.passives || []).reduce((max, p) => Math.max(max, p.hpRegenPctMissing || 0), 0);
         const missingBonus = Math.floor((hpMax - char.hp) * missingPct);
         const total = 10 + conBonus + innerBonus + passiveBonus + missingBonus;
+        const hpBefore = char.hp;
         this.healHP(char, total, job);
-        return { total, innerBonus, conBonus };
+        const actualHealed = char.hp - hpBefore;
+        return { total, actualHealed, innerBonus, conBonus };
     }
 };
 

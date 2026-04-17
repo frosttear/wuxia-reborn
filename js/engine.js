@@ -96,9 +96,18 @@ const Engine = {
 
         // Monthly HP regen
         const job = this.getJob(char.job);
-        const { innerBonus } = Character.monthlyHPRegen(char, job);
+        const { actualHealed, innerBonus, conBonus } = Character.monthlyHPRegen(char, job);
         UI.renderCharacter(char, this.state.jobs);
-        if (innerBonus > 0) UI.addLog(`【内功】内力护体，本月额外回复 ${innerBonus} 气血。`, 'info');
+        if (actualHealed > 0) {
+            const parts = [`回复 ${actualHealed} 气血`];
+            if (innerBonus > 0 || conBonus > 0) {
+                const details = [];
+                if (innerBonus > 0) details.push(`内力+${innerBonus}`);
+                if (conBonus > 0) details.push(`体质+${conBonus}`);
+                parts.push(`（${details.join('，')}）`);
+            }
+            UI.addLog(`【内功】内力护体，本月${parts.join('')}。`, 'info');
+        }
 
         // Check new job unlocks
         const newJobs = Character.checkJobUnlocks(char, this.state.jobs);
