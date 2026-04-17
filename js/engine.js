@@ -59,6 +59,25 @@ const Engine = {
         if (bBonus) UI.addLog(`✦ 【${bBonus.label}】生于${mName}，${bBonus.tagline}。`, 'unlock');
     },
 
+    // Returns true if it handled a birthday/boss event (caller should return immediately).
+    _checkBirthdayAndBoss() {
+        const { char } = this.state;
+        const isBirthday = char.ageMonths > 180 && char.ageMonths % 12 === 0;
+        if (!isBirthday) return false;
+        const ageYears = Character.getAgeYears(char);
+        if (ageYears >= 20) {
+            if (!char.flags.boss_triggered) {
+                char.flags.boss_triggered = true;
+                const bossEvent = this.state.events.find(e => e.id === 'tianmo_appears');
+                if (bossEvent) { this.triggerEvent(bossEvent); return true; }
+            }
+        } else {
+            this.triggerBirthdayEvent(ageYears);
+            char.flags._is_birthday = true;
+        }
+        return false;
+    },
+
     getJob(jobId) {
         return this.state.jobs.find(j => j.id === jobId) || null;
     },
@@ -92,23 +111,8 @@ const Engine = {
             UI.addLog(`⚔ 你已满足晋升【${j.name}】的条件！可在右侧面板切换职业。`, 'unlock');
         }
 
-        // Birthday system: fires when ageMonths % 12 === 0; display shows 16岁0月 etc.
-        const isBirthday = char.ageMonths > 180 && char.ageMonths % 12 === 0;
-        if (isBirthday) {
-            const ageYears = Character.getAgeYears(char);  // e.g. 16 at ageMonths=192
-
-            if (ageYears >= 20) {
-                // 20th birthday — final boss (5-year game, 15→20)
-                if (!char.flags.boss_triggered) {
-                    char.flags.boss_triggered = true;
-                    const bossEvent = this.state.events.find(e => e.id === 'tianmo_appears');
-                    if (bossEvent) { this.triggerEvent(bossEvent); return; }
-                }
-            } else {
-                this.triggerBirthdayEvent(ageYears);
-                char.flags._is_birthday = true;
-            }
-        }
+        // Birthday system: fires when ageMonths % 12 === 0
+        if (this._checkBirthdayAndBoss()) return;
 
         // autoHealInjury passive: clear injury automatically each month
         if (char.injured && (char.passives || []).some(p => p.autoHealInjury)) {
@@ -237,10 +241,8 @@ const Engine = {
             for (let i = 0; i < extraMonths; i++) {
                 char.ageMonths++;
                 Character.monthlyHPRegen(char, job);
-                if (char.ageMonths >= char.maxAgeMonths) {
-                    this.triggerNaturalDeath();
-                    return;
-                }
+                if (char.ageMonths >= char.maxAgeMonths) { this.triggerNaturalDeath(); return; }
+                if (this._checkBirthdayAndBoss()) return;
             }
             UI.renderCharacter(char, this.state.jobs);
             UI.addLog(`（此事耗时约${event.monthCost}个月）`, 'info');
@@ -423,11 +425,8 @@ const Engine = {
         const job = this.getJob(char.job);
         char.ageMonths++;
         Character.monthlyHPRegen(char, job);
-        if (char.ageMonths >= char.maxAgeMonths) {
-            UI.renderCharacter(char, this.state.jobs);
-            this.triggerNaturalDeath();
-            return;
-        }
+        if (char.ageMonths >= char.maxAgeMonths) { UI.renderCharacter(char, this.state.jobs); this.triggerNaturalDeath(); return; }
+        if (this._checkBirthdayAndBoss()) return;
         UI.renderCharacter(char, this.state.jobs);
 
         if (bondReady) {
@@ -575,6 +574,7 @@ const Engine = {
         char.ageMonths++;
         Character.monthlyHPRegen(char, job);
         if (char.ageMonths >= char.maxAgeMonths) { this.triggerNaturalDeath(); return; }
+        if (this._checkBirthdayAndBoss()) return;
         UI.renderCharacter(char, this.state.jobs);
 
         const displayEvent = {
@@ -1010,7 +1010,7 @@ const Engine = {
         UI.clearLog();
         UI.renderAll(this.state);
         const mName = this.BIRTH_MONTH_NAMES[newChar.birthMonth - 1];
-        UI.addLog(`✨ 轮回第 ${newChar.rebirthCount} 世。【${newChar.name}】再度降生。和上一世一样，生于${mName}。天魔之约，依然在候。`, 'system');
+        UI.addLog(`✨ 第 ${newChar.rebirthCount + 1} 世。【${newChar.name}】再度降生。和上一世一样，生于${mName}。天魔之约，依然在候。`, 'system');
         this.saveGame();
     },
 

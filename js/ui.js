@@ -56,7 +56,7 @@ const UI = {
         document.getElementById('charAge').textContent = `${ageYears}岁${ageMonths}月`;
         const injuredBadge = char.injured ? ' <span class="injured-badge">重伤休养</span>' : '';
         document.getElementById('charJob').innerHTML = (job ? job.name : '无名小卒') + injuredBadge;
-        document.getElementById('charRebirth').textContent = char.rebirthCount > 0 ? `第${char.rebirthCount}世轮回` : '初入江湖';
+        document.getElementById('charRebirth').textContent = char.rebirthCount > 0 ? `第${char.rebirthCount + 1}世轮回` : '初入江湖';
 
         // HP bar
         const hpPct = Math.max(0, Math.min(100, Math.floor(char.hp / hpMax * 100)));
