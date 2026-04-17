@@ -257,7 +257,6 @@ const UI = {
         met_wang_tie: '结识王铁',
         met_li_yunshu: '结识李云舒',
         met_ling_xue: '结识凌雪',
-        met_zhao_batian: '结识赵霸天',
         elder_taught: '老者传授心法',
         wang_taught_basics: '王铁传授基础',
         tianmo_sign1: '完成「路遇奇人」',
@@ -493,7 +492,8 @@ const UI = {
         const atk = Character.getAttackPower(char, job);
         const def = Character.getDefensePower(char, job);
         document.getElementById('combatEnemyName').textContent  = cs.enemy.name;
-        document.getElementById('combatEnemyStats').textContent = `攻 ${cs.enemyEffAtk}  防 ${cs.enemyEffDef}`;
+        const eqsText = cs.enemyQiShield > 0 ? `  盾 ${cs.enemyQiShield}` : '';
+        document.getElementById('combatEnemyStats').textContent = `攻 ${cs.enemyEffAtk}  防 ${cs.enemyEffDef}${eqsText}`;
         document.getElementById('combatPlayerName').textContent = char.name;
         document.getElementById('combatPlayerStats').textContent = `攻 ${atk}  防 ${def}`;
         document.getElementById('combatLog').innerHTML = '';

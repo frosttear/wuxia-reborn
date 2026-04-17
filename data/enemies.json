@@ -4,6 +4,7 @@
     "name": "山贼",
     "description": "横行山道的普通山贼，武艺平平",
     "comprehension": 4,
+    "innerForce": 0,
     "attack": 12, "defense": 9, "hp": 68,
     "attackScale": 3, "defenseScale": 2, "hpScale": 0.15,
     "attackDescs": [
@@ -27,6 +28,7 @@
     "name": "悍匪",
     "description": "身手不凡的江湖悍匪，经历过大风大浪",
     "comprehension": 10,
+    "innerForce": 8,
     "attack": 21, "defense": 16, "hp": 100,
     "attackScale": 5, "defenseScale": 3, "hpScale": 0.18,
     "attackDescs": [
@@ -59,6 +61,7 @@
     "name": "野虎",
     "description": "山中出没的猛虎，爪牙锋利，凶猛异常",
     "comprehension": 4,
+    "innerForce": 0,
     "attack": 18, "defense": 12, "hp": 85,
     "attackScale": 4, "defenseScale": 3, "hpScale": 0.15,
     "attackDescs": [
@@ -91,6 +94,7 @@
     "name": "江湖挑战者",
     "description": "慕名而来的江湖武人，身手矫健，来者不善",
     "comprehension": 12,
+    "innerForce": 12,
     "attack": 26, "defense": 20, "hp": 118,
     "attackScale": 6, "defenseScale": 4, "hpScale": 0.18,
     "attackDescs": [
@@ -123,6 +127,7 @@
     "name": "赵霸天",
     "description": "横行一方的江湖恶霸，铁拳无情",
     "comprehension": 18,
+    "innerForce": 10,
     "attack": 34, "defense": 25, "hp": 168,
     "attackScale": 4, "defenseScale": 2, "hpScale": 0.12,
     "attackDescs": [
@@ -162,6 +167,7 @@
     "name": "劫镖头目",
     "description": "率领手下劫镖的江湖人，刀法凌厉",
     "comprehension": 10,
+    "innerForce": 6,
     "attack": 19, "defense": 14, "hp": 92,
     "attackScale": 5, "defenseScale": 3, "hpScale": 0.15,
     "attackDescs": [
@@ -185,6 +191,7 @@
     "name": "剑魂",
     "description": "神秘老者昔年留下的未竟之敌。以剑意凝聚而成，无形无质，却锋锐如渊。",
     "comprehension": 50,
+    "innerForce": 60,
     "attack": 105, "defense": 128, "hp": 580,
     "attackScale": 0, "defenseScale": 0, "hpScale": 0,
     "intentReadMsgs": {
@@ -225,6 +232,7 @@
     "name": "天魔先锋",
     "description": "天魔麾下的无面刺客，以魔气淬炼身躯，行动如鬼魅",
     "comprehension": 22,
+    "innerForce": 20,
     "attack": 38, "defense": 28, "hp": 195,
     "attackScale": 6, "defenseScale": 4, "hpScale": 0.18,
     "intentReadMsgs": {
@@ -264,6 +272,7 @@
     "name": "影堂堂主",
     "description": "被魔气强化的影堂首领，精通炼魂之术，武力凶横",
     "comprehension": 25,
+    "innerForce": 30,
     "attack": 48, "defense": 36, "hp": 255,
     "attackScale": 7, "defenseScale": 5, "hpScale": 0.2,
     "intentReadMsgs": {
@@ -305,6 +314,7 @@
     "attack": 58, "defense": 44, "hp": 300,
     "attackScale": 6, "defenseScale": 4, "hpScale": 0.18,
     "comprehension": 38,
+    "innerForce": 35,
     "intentReadMsgs": {
       "heavy": ["凌雪步伐忽然停住，寒意骤聚于剑尖——<b>重击将至</b>", "她剑身凝起冰蓝光芒，重击蓄势——<b>重击将至</b>"],
       "swift": ["凌雪步伐如雪花漫舞，疾刺之势已成——<b>快攻将至</b>", "她身形轻盈一转，快若流星——<b>快攻将至</b>"]
@@ -342,6 +352,7 @@
     "name": "无名剑客",
     "description": "此人气息内敛，不怒自威，一双眼睛如渊似海——你感到，眼前这个人，正是你「意先招出」能否真正落地的试金石。",
     "comprehension": 38,
+    "innerForce": 30,
     "attack": 46, "defense": 34, "hp": 190,
     "attackScale": 0, "defenseScale": 0, "hpScale": 0,
     "intentReadMsgs": {
@@ -370,6 +381,7 @@
     "name": "李云舒",
     "description": "李云舒按剑而立，眼神清亮，这是一场点到即止的切磋——但她的剑，绝不会手下留情。",
     "comprehension": 18,
+    "innerForce": 14,
     "attack": 28, "defense": 22, "hp": 120,
     "attackScale": 0, "defenseScale": 0, "hpScale": 0,
     "intentReadMsgs": {
@@ -388,6 +400,7 @@
     "name": "地头蛇爪牙",
     "description": "本地势力的几个打手，仗势欺人惯了，见你单枪匹马前来，嚣张之气未减。",
     "comprehension": 6,
+    "innerForce": 0,
     "attack": 20, "defense": 14, "hp": 88,
     "attackScale": 3, "defenseScale": 2, "hpScale": 0.1,
     "intentReadMsgs": {
@@ -406,6 +419,7 @@
     "name": "夜袭黑衣人",
     "description": "三个训练有素的黑衣人，步伐整齐，配合默契——这不是随机的街头混混，是专门来寻仇的。",
     "comprehension": 14,
+    "innerForce": 8,
     "attack": 26, "defense": 20, "hp": 110,
     "attackScale": 0, "defenseScale": 0, "hpScale": 0,
     "intentReadMsgs": {
@@ -433,6 +447,7 @@
     "name": "王铁",
     "description": "三十年走镖磨练出的硬功夫，架子稳、出手狠，点到为止——这是老镖师对你的考验。",
     "comprehension": 16,
+    "innerForce": 12,
     "attack": 32, "defense": 26, "hp": 140,
     "attackScale": 0, "defenseScale": 0, "hpScale": 0,
     "intentReadMsgs": {
@@ -460,6 +475,7 @@
     "name": "韩霜",
     "description": "韩霜按刀而立，目光如刀。这场切磋，他不会手下留情——但你知道，这是他在认真对待你。",
     "comprehension": 14,
+    "innerForce": 10,
     "attack": 28, "defense": 20, "hp": 110,
     "attackScale": 0, "defenseScale": 0, "hpScale": 0,
     "intentReadMsgs": {
@@ -478,6 +494,7 @@
     "name": "天魔细作",
     "description": "天魔安插各处的眼线，任务是刺探情报——并杀灭任何可能威胁天魔的人。",
     "comprehension": 16,
+    "innerForce": 16,
     "attack": 30, "defense": 22, "hp": 130,
     "attackScale": 5, "defenseScale": 3, "hpScale": 0.14,
     "intentReadMsgs": {
@@ -505,6 +522,7 @@
     "name": "背叛者",
     "description": "那个卖掉整个门派的人。见到你们，他没有逃，也没有认错——他觉得自己有理由，一直都是。",
     "comprehension": 14,
+    "innerForce": 8,
     "attack": 24, "defense": 18, "hp": 105,
     "attackScale": 0, "defenseScale": 0, "hpScale": 0,
     "intentReadMsgs": {
@@ -523,6 +541,7 @@
     "name": "天魔",
     "description": "传说中的魔道宗师，武功通天，邪气滔天，是这个时代最大的祸乱之源",
     "comprehension": 50,
+    "innerForce": 50,
     "attack": 82, "defense": 72, "hp": 420,
     "attackScale": 0, "defenseScale": 0, "hpScale": 0,
     "intentReadMsgs": {
@@ -563,6 +582,7 @@
     "name": "青衣剑客",
     "description": "精通剑术的江湖剑客，剑法凌厉且章法分明",
     "comprehension": 14,
+    "innerForce": 10,
     "attack": 24, "defense": 18, "hp": 105,
     "attackScale": 5, "defenseScale": 3, "hpScale": 0.16,
     "attackDescs": [
@@ -595,6 +615,7 @@
     "name": "铁面判官",
     "description": "自号铁面判官的恶人，铁拳配重刀，凶狠无情",
     "comprehension": 15,
+    "innerForce": 8,
     "attack": 30, "defense": 22, "hp": 140,
     "attackScale": 5, "defenseScale": 3, "hpScale": 0.16,
     "attackDescs": [

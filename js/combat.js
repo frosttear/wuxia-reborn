@@ -24,10 +24,13 @@ const Combat = {
     getEffectiveStats(enemy, char) {
         const tier = Math.max(0, Character.getAgeYears(char) - 15);
         const hp = Math.round((enemy.hp || 80) * (1 + tier * (enemy.hpScale || 0.15)));
+        const innerForce = enemy.innerForce || 0;
         return {
             attack:  enemy.attack  + tier * (enemy.attackScale  || 0),
             defense: enemy.defense + tier * (enemy.defenseScale || 0),
-            hp
+            hp,
+            innerForce,
+            qiShield: Math.floor(innerForce / 8)
         };
     },
 
@@ -53,6 +56,7 @@ const Combat = {
             enemyMaxHp: eff.hp,
             enemyEffAtk: eff.attack,
             enemyEffDef: eff.defense,
+            enemyQiShield: eff.qiShield,
             turn:        0,
             fleeChance:  0.25,
             pendingSkill: null,
@@ -111,6 +115,7 @@ const Combat = {
         const playerDef = Character.getDefensePower(char, job);
         const qiShield  = Character.getQiShield(char);       // flat reduction per hit
         const skillAmp  = Character.getSkillAmplify(char);    // % bonus on skill dmg
+        const enemyQS   = cs.enemyQiShield || 0;             // enemy qi shield
 
         if (cs.allBondsBonus && cs.turn === 1) {
             lines.push('<b style="color:#c9a84c">【羁绊之力】江湖情谊化为无形刃芒——攻击力+60！</b>');
@@ -164,7 +169,7 @@ const Combat = {
                         const h = Math.max(1, Math.floor(playerAtk * sk.power * (1 + skillAmp)) + this._rand(-1, 4));
                         total += h; parts.push(h);
                     }
-                    total = Math.max(1, total - defMit);
+                    total = Math.max(1, total - defMit - enemyQS);
                     cs.enemyHp = Math.max(0, cs.enemyHp - total);
                     cs.totalDmgDealt += total;
                     const ampNote = skillAmp >= 0.10 ? `　<span style="color:#a0d8ef">内力增幅+${Math.round(skillAmp * 100)}%</span>` : '';
@@ -173,6 +178,7 @@ const Combat = {
                     const defFactor = 1 - (sk.armorBreak || 0);
                     const dmg = Math.max(1, Math.floor(playerAtk * sk.power * (1 + skillAmp))
                         - Math.floor(cs.enemyEffDef * defFactor * 0.5)
+                        - enemyQS
                         + this._rand(-2, 8));
                     cs.enemyHp = Math.max(0, cs.enemyHp - dmg);
                     cs.totalDmgDealt += dmg;
@@ -186,7 +192,7 @@ const Combat = {
                 const lv    = 1 + (Math.random() - 0.5) * (char.attributes.luck / 100);
                 const isCrit = Math.random() < Character.getLuckTriggerChance(char);
                 let dmg = Math.max(1, Math.floor(playerAtk * lv)
-                    - Math.floor(cs.enemyEffDef * 0.75) + this._rand(-2, 8));
+                    - Math.floor(cs.enemyEffDef * 0.75) - enemyQS + this._rand(-2, 8));
                 if (isCrit) dmg = Math.floor(dmg * 1.5);
                 cs.enemyHp = Math.max(0, cs.enemyHp - dmg);
                 cs.totalDmgDealt += dmg;
@@ -219,6 +225,7 @@ const Combat = {
                 if (action === 'parry') {
                     if (enemyAction === 'heavy') {
                         // Successful parry → player takes 20% incoming + counter-hit
+                        // If skill is ready, use skill as counter instead of basic counter
                         const pend = cs.pendingSkill;
                         const skillMult = pend ? (pend.damageMult || 1.5) : 1.0;
                         const skillName = pend ? pend.name : null;
@@ -227,15 +234,41 @@ const Combat = {
                         const parryDmg = Math.max(1, Math.floor(rawIncoming * 0.20) - qiShield);
                         Character.takeDamage(char, parryDmg);
                         cs.totalDmgReceived += parryDmg;
-                        const counterMult = heavyAnticipated ? 0.85 : 0.6;
-                        const counterDmg = Math.max(1, Math.floor(playerAtk * counterMult) + this._rand(-2, 4));
+
+                        // Check if player's active skill fires as counter
+                        const activeSkill = job && job.activeSkill;
+                        const skillCounterFires = activeSkill
+                            && cs.playerMomentum >= activeSkill.momentumCost
+                            && cs.skillCooldown === 0;
+
+                        let counterDmg;
+                        let counterText;
+                        if (skillCounterFires) {
+                            // Skill counter
+                            cs.playerMomentum -= activeSkill.momentumCost;
+                            cs.skillCooldown = 3;
+                            const sk = activeSkill;
+                            counterDmg = Math.max(1, Math.floor(playerAtk * sk.power * (1 + skillAmp))
+                                - Math.floor(cs.enemyEffDef * (1 - (sk.armorBreak || 0)) * 0.5)
+                                - enemyQS + this._rand(-2, 6));
+                            const ampNote = skillAmp >= 0.10 ? `内力增幅+${Math.round(skillAmp * 100)}%` : '';
+                            counterText = heavyAnticipated
+                                ? `你早已洞悉来招，顺势以【<b style="color:#f4c430">${sk.name}</b>】反击！${ampNote}对方损失 <b>${counterDmg}</b> 气血`
+                                : `借力打力，以【<b style="color:#f4c430">${sk.name}</b>】反击！${ampNote}对方损失 <b>${counterDmg}</b> 气血`;
+                        } else {
+                            // Basic counter
+                            const counterMult = heavyAnticipated ? 0.85 : 0.6;
+                            counterDmg = Math.max(1, Math.floor(playerAtk * counterMult) - enemyQS + this._rand(-2, 4));
+                            counterText = heavyAnticipated
+                                ? `你早已洞悉来招，截断蓄力，对方损失 <b>${counterDmg}</b> 气血`
+                                : `借力打力，对方损失 <b>${counterDmg}</b> 气血`;
+                        }
                         cs.enemyHp = Math.max(0, cs.enemyHp - counterDmg);
                         cs.totalDmgDealt += counterDmg;
                         cs.playerMomentum = Math.min(5, cs.playerMomentum + 1);
                         const counterLabel = heavyAnticipated ? '洞察反击' : '化解反击';
-                        const counterNote  = heavyAnticipated ? '你早已洞悉来招，截断蓄力，' : '借力打力，';
                         const skillNote = skillName ? `【<b style="color:#e07b39">${skillName}</b>】` : '';
-                        lines.push(`${cs.enemy.name}${skillNote}${this._pick(this.ENEMY_HEAVY_DESCS)}——你【<b>${counterLabel}</b>】！${counterNote}对方损失 <b>${counterDmg}</b> 气血，你承受 <b>${parryDmg}</b> 点冲击。`);
+                        lines.push(`${cs.enemy.name}${skillNote}${this._pick(this.ENEMY_HEAVY_DESCS)}——你【<b>${counterLabel}</b>】！${counterText}，你承受 <b>${parryDmg}</b> 点冲击。`);
                         if (char.hp <= 0) { result = 'lost'; combatOver = true; }
                         if (!combatOver && cs.enemyHp <= 0) { result = 'won'; combatOver = true; }
                     } else {
@@ -264,12 +297,19 @@ const Combat = {
                     if (pend) cs.pendingSkill = null;
 
                     // Reduction based on player stance and enemy attack type
-                    // swiftAnticipated: player read intent accurately → near-perfect block
+                    // Scale reduction with defense/attack ratio: strong enemies punch through defense
+                    // Base: defend vs swift=50%, defend vs heavy=25%, focus=55%
+                    // Power gap penalty: if enemyAtk >> playerDef, reduction is capped lower
+                    const powerRatio = Math.min(1, playerDef / Math.max(1, cs.enemyEffAtk));
+                    // defCap: when ratio=1 (equal), cap=0.75; when ratio=0.3 (outmatched), cap≈0.36
+                    const defCap = Math.min(0.75, powerRatio * 0.75 + 0.10);
                     let incomingMult = 1.0;
                     if (action === 'defend') {
-                        incomingMult = swiftAnticipated ? 0.20 : (enemyAction === 'heavy' ? 0.25 : 0.50);
+                        const baseReduce = swiftAnticipated ? 0.80 : (enemyAction === 'heavy' ? 0.75 : 0.50);
+                        const cappedReduce = Math.min(baseReduce, defCap);
+                        incomingMult = 1.0 - cappedReduce;
                     } else if (action === 'focus') {
-                        incomingMult = 0.55;
+                        incomingMult = 1.0 - Math.min(0.55, defCap);
                     }
 
                     const rawDmg = Math.max(1,

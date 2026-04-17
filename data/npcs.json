@@ -30,20 +30,6 @@
     ]
   },
   {
-    "id": "zhao_batian",
-    "name": "赵霸天",
-    "title": "江湖恶霸",
-    "description": "横行一方的江湖恶霸，力大无穷，性格残忍，素有\"铁拳赵\"之称。",
-    "affinityLevels": [
-      { "threshold": -100, "label": "不共戴天" },
-      { "threshold": -60,  "label": "死敌" },
-      { "threshold": -30,  "label": "宿敌" },
-      { "threshold": -10,  "label": "敌视" },
-      { "threshold": 0,   "label": "陌生人" },
-      { "threshold": 20,  "label": "相识" }
-    ]
-  },
-  {
     "id": "mysterious_elder",
     "name": "神秘老者",
     "title": "世外高人",
