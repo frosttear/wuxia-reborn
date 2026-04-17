@@ -141,6 +141,7 @@ const Combat = {
         } else {
             const activeSkill = job && job.activeSkill;
             const skillFires  = activeSkill
+                && action !== 'defend'
                 && cs.playerMomentum >= activeSkill.momentumCost
                 && cs.skillCooldown === 0;
 
@@ -185,25 +186,24 @@ const Combat = {
                 if (isCrit) dmg = Math.floor(dmg * 1.5);
                 cs.enemyHp = Math.max(0, cs.enemyHp - dmg);
                 cs.totalDmgDealt += dmg;
-                cs.playerMomentum = Math.min(5, cs.playerMomentum + 1);
+                cs.playerMomentum = Math.min(5, cs.playerMomentum + 2);
                 const pd = this._pick(this.STANCE_ATTACK_DESCS.strike);
                 lines.push(`${pd}${isCrit ? '【<b>会心一击</b>】' : ''}，对方损失 <b>${dmg}</b> 气血（剩余 ${Math.max(0, cs.enemyHp)}）。`);
                 if (cs.enemyHp <= 0) { result = 'won'; combatOver = true; }
 
             } else if (action === 'defend') {
-                const defMomGain = swiftAnticipated ? 2 : 1;
-                cs.playerMomentum = Math.min(5, cs.playerMomentum + defMomGain);
                 if (swiftAnticipated) {
-                    lines.push('你早已预判对方快攻，' + this._pick(this.DEFEND_DESCS) + `，以守待攻——将攻势引于空处！气力 +${defMomGain}（${cs.playerMomentum}/5）`);
+                    cs.playerMomentum = Math.min(5, cs.playerMomentum + 1);
+                    lines.push('你早已预判对方快攻，' + this._pick(this.DEFEND_DESCS) + `，以守待攻——将攻势引于空处！气力 +1（${cs.playerMomentum}/5）`);
                 } else {
-                    lines.push(this._pick(this.DEFEND_DESCS) + `，气力 +${defMomGain}（${cs.playerMomentum}/5）。`);
+                    lines.push(this._pick(this.DEFEND_DESCS) + '。');
                 }
 
             } else if (action === 'parry') {
                 lines.push(this._pick(this.PARRY_DESCS) + '。');
 
             } else if (action === 'focus') {
-                cs.playerMomentum = Math.min(5, cs.playerMomentum + 2);
+                cs.playerMomentum = Math.min(5, cs.playerMomentum + 3);
                 const fd = this._pick(this.FOCUS_DESCS);
                 const readyHint = activeSkill && cs.playerMomentum >= activeSkill.momentumCost
                     ? `——<b style="color:#f4c430">【${activeSkill.name}】蓄势完成！</b>` : '';
