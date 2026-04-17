@@ -17,7 +17,25 @@ const TALENTS = [
         id: 'longevity_secret',
         name: '长生诀',
         desc: '最大血量+50，寿命延长5年',
-        condition: (char) => Character.getAgeYears(char) >= 38
+        condition: (char) => char.attributes.constitution >= 22
+    },
+    {
+        id: 'battle_hardened',
+        name: '百战余生',
+        desc: '百战磨练，每场战斗开始时即有则1点势能（不需蓄势）',
+        condition: (char) => (char.kills || 0) >= 3
+    },
+    {
+        id: 'deep_bonds',
+        name: '情深意重',
+        desc: '前世羁绊记忆传承，拜访记得的NPC时好感加成加倍',
+        condition: (char) => Object.values(char.bondLevels || {}).some(lv => lv >= 3)
+    },
+    {
+        id: 'inherited_name',
+        name: '传世之名',
+        desc: '前世声望尚存，初始声望+8',
+        condition: (char) => char.attributes.reputation >= 20
     },
     {
         id: 'destiny_mark',
@@ -52,6 +70,10 @@ const Rebirth = {
         if (char.legacyTalents.includes('jianghu_wisdom')) {
             inherited.reputation = (inherited.reputation || 0) + 5;
             inherited.luck = (inherited.luck || 0) + 2;
+        }
+        // Bonus from inherited_name talent
+        if (char.legacyTalents.includes('inherited_name')) {
+            inherited.reputation = (inherited.reputation || 0) + 8;
         }
         return inherited;
     },

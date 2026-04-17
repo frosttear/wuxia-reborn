@@ -452,14 +452,18 @@ const Engine = {
             this.state.gamePhase = 'choosing';
             UI.showEvent(displayEvent, allChoices, this.state);
         } else {
-            // Casual visit: small affinity boost
-            NPCSystem.changeAffinity(char, npcId, 3);
+            // Casual visit: affinity boost — bigger if NPC is remembered from a past life
+            const inheritedLevel = (char.inheritedBonds || {})[npcId] || 0;
+            const hasDeepBonds = (char.legacyTalents || []).includes('deep_bonds');
+            const affinityGain = inheritedLevel >= 1 ? (hasDeepBonds ? 8 : 5) : 3;
+            NPCSystem.changeAffinity(char, npcId, affinityGain);
             const newAffinity = NPCSystem.getAffinity(char, npcId);
             const needed = bondEvent ? bondEvent.minAffinity : null;
             const gap = needed !== null ? needed - newAffinity : null;
+            const memoryTag = inheritedLevel >= 1 ? (hasDeepBonds ? '【情深意重】' : '【前世记忆】') : '';
             const gapNote = gap > 0
-                ? `好感 +3（当前 ${newAffinity}，距第${bondEvent.level}章还差 ${gap}）`
-                : `好感 +3（当前 ${newAffinity}）`;
+                ? `${memoryTag}好感 +${affinityGain}（当前 ${newAffinity}，距第${bondEvent.level}章还差 ${gap}）`
+                : `${memoryTag}好感 +${affinityGain}（当前 ${newAffinity}）`;
 
             // Pick from per-NPC affinity-tiered casual visit pool
             const pools = this.state.bonds._casualVisits;

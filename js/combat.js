@@ -57,7 +57,7 @@ const Combat = {
             fleeChance:  0.25,
             pendingSkill: null,
             usedSkills:   [],
-            playerMomentum: 0,      // 0–5, builds with attacks / focus
+            playerMomentum: (char.legacyTalents || []).includes('battle_hardened') ? 1 : 0,
             skillCooldown:  0,      // turns until job active skill can fire again
             enemyComp:    enemy.comprehension || 0, // enemy comprehension (affects intent readability)
             enemyNextAction: null,  // 'heavy'|'swift', previewed for next turn
