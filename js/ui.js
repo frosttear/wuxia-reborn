@@ -82,7 +82,6 @@ const UI = {
             attrsEl.appendChild(row);
         }
         // Combat stats + derived stat effects
-        const compRate  = Character.getComprehensionRate(char);
         const luckDodge = Character.getLuckDodgeChance(char);
         const luckCrit  = Character.getLuckTriggerChance(char);
         const qiShield  = Character.getQiShield(char);
@@ -95,8 +94,7 @@ const UI = {
             `<span>🏆 战胜 ${kills} 次</span>` +
             (qiShield > 0 ? `<span>🔮 气盾 -${qiShield} ${atag('at-inner-force', '内力')}</span>` : '') +
             (skillAmp >= 0.10 ? `<span>💠 内力增幅 +${Math.round(skillAmp * 100)}% ${atag('at-inner-force', '内力')}</span>` : '') +
-            `<span>📖 属性学习效率 ${compRate > 0 ? '+' : ''}${Math.round(compRate * 100)}% ${atag('at-comprehension', '悟性')}</span>` +
-            `<span>💨 闪避率 ${Math.round(luckDodge * 100)}% ${atag('at-luck', '运气')}${atag('at-agility', '敏捷')}</span>` +
+            `<span> 闪避率 ${Math.round(luckDodge * 100)}% ${atag('at-luck', '运气')}${atag('at-agility', '敏捷')}</span>` +
             `<span>✨ 会心率 ${Math.round(luckCrit * 100)}% ${atag('at-luck', '运气')}${atag('at-inner-force', '内力')}</span>`;
 
         // Learned skills
@@ -288,7 +286,7 @@ const UI = {
             const have = (char.flags[flag] || false) === needed;
             const cls = have ? 'req-tag req-ok' : 'req-tag req-no req-flag';
             const label = this.FLAG_NAMES[flag] || flag;
-            return `<span class="${cls}">${label} ${have ? '✓' : '（事件）'}</span>`;
+            return `<span class="${cls}">${label} ${have ? '✓' : '（任务）'}</span>`;
         }).join('');
     },
 
