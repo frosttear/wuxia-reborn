@@ -514,6 +514,78 @@
         "flags": { "hero_recognized": true },
         "narrative": "从赈灾济民到除暴安良，你用行动证明了什么是真正的侠义。武林的认可不是施舍，而是你一步步赢来的。剑侠之名，实至名归。"
       }
+    },
+    {
+      "id": "wang_revenge",
+      "name": "王铁遗愿",
+      "desc": "王铁临终之托——为被赵霸天欺压的百姓讨回公道。",
+      "steps": [
+        {
+          "id": "wang_revenge_1",
+          "title": "追踪赵霸天",
+          "unlockConditions": { "flags": { "wang_dying_wish": true }, "minAgeYears": 19 },
+          "text": "王铁去世后，你始终没有忘记他的遗愿。你开始四处打探赵霸天的下落。\n\n几天后，一个曾被赵霸天欺压的商人悄悄告诉你：「赵霸天最近在城西的黑鹰寨落脚，身边养了一批打手，无人敢去招惹。」\n\n你握紧了拳头。王铁一辈子护镖行侠，临终最放不下的就是这个人。你不能让老人死不瞑目。",
+          "choices": [
+            {
+              "id": "scout_hideout",
+              "text": "先去黑鹰寨附近侦察，摸清情况",
+              "effects": {
+                "attributes": { "agility": 1, "comprehension": 1 },
+                "narrative": "你在寨子外潜伏了两日，摸清了赵霸天的作息和手下的布防。他比你想象中更谨慎——但也更嚣张。"
+              }
+            },
+            {
+              "id": "gather_allies",
+              "text": "联络周围被欺压的百姓和商人，收集赵霸天的罪证",
+              "requirements": { "minAttributes": { "reputation": 16 } },
+              "effects": {
+                "attributes": { "reputation": 2, "comprehension": 1 },
+                "narrative": "你的声望让百姓们愿意站出来。一桩桩血泪控诉摆在面前，赵霸天的恶行比你知道的还要触目惊心。这件事，非做不可。"
+              }
+            }
+          ],
+          "onComplete": { "flags": { "zhao_traced": true } }
+        },
+        {
+          "id": "wang_revenge_2",
+          "title": "黑鹰寨对峙",
+          "unlockConditions": { "flags": { "zhao_traced": true }, "minAttributes": { "strength": 24, "constitution": 18 }, "minAgeYears": 19 },
+          "text": "你只身前往黑鹰寨。寨门前，几个守卫拦住了你。\n\n「你就是那个到处打听赵爷的愣头青？」为首的打手冷笑，「赵爷早就知道你会来。他说了——让你有来无回。」\n\n话音未落，十几个人从暗处涌出，将你团团围住。\n\n就在这时，寨门大开，赵霸天慢步走出。他比你记忆中更加壮硕，双目如铜铃，满脸横肉上带着不屑的笑容。\n\n「王铁那个老东西的徒弟？」他拍了拍胸口，「今天你要替他出头，赵某奉陪到底。」",
+          "choices": [
+            {
+              "id": "fight_zhao",
+              "text": "拔剑迎战，为王铁了却遗愿",
+              "effects": {
+                "combat": "zhao_batian_enemy",
+                "narrative": "这一战，你不是为了自己的名声，而是为了一个老人临终前最后的心愿。"
+              }
+            }
+          ],
+          "onComplete": { "flags": { "zhao_defeated_for_wang": true } }
+        },
+        {
+          "id": "wang_revenge_3",
+          "title": "告慰英灵",
+          "unlockConditions": { "flags": { "zhao_defeated_for_wang": true }, "minAgeYears": 19 },
+          "text": "赵霸天倒在地上，再也嚣张不起来。周围被欺压已久的百姓纷纷涌来，有人哭，有人笑，有人跪在地上磕头。\n\n你没有多留。你独自来到王铁的坟前，将他最爱的一壶烧刀子慢慢洒在碑前。\n\n「王叔，你的遗愿，我替你了了。」\n\n风吹过坟头的枯草，沙沙作响，仿佛老人在那边微微点了点头。\n\n你在坟前坐了很久，直到月上中天。你知道，从这一刻起，你再也不只是一个习武之人——你是一个真正扛起了责任的人。",
+          "choices": [
+            {
+              "id": "remember_wang",
+              "text": "将王铁的教诲永远铭记于心",
+              "effects": {
+                "attributes": { "strength": 2, "innerForce": 2, "reputation": 3 },
+                "narrative": "你起身离去，心中无比平静。王铁的刀法、他的为人、他最后的话，都化为了你骨血中不可磨灭的一部分。"
+              }
+            }
+          ],
+          "onComplete": { "flags": { "wang_wish_fulfilled": true } }
+        }
+      ],
+      "completionReward": {
+        "attributes": { "strength": 2, "reputation": 2, "innerForce": 1 },
+        "flags": { "wang_wish_fulfilled": true },
+        "narrative": "王铁的遗愿已了。那个横行霸道的赵霸天再也无法欺压百姓。你站在老人的坟前，感到一阵前所未有的轻松——这条路，你走对了。"
+      }
     }
   ]
 }

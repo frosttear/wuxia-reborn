@@ -476,7 +476,7 @@ const Engine = {
         if (bondReady) {
             const inherited = char.inheritedBonds[npcId];
             const prefix = inherited && inherited >= bondEvent.level
-                ? `「前世记忆」你隐约记得与${npc.name}曾有过这一段故事……\n\n`
+                ? `「世界线记忆」你隐约记得，在另一条时间线上与${npc.name}曾有过这一段故事……\n\n`
                 : '';
             if (bondEvent.steps && bondEvent.steps.length > 0) {
                 this._showBondStep(npcId, bondEvent.steps, 0, bondEvent.level, prefix);
@@ -507,7 +507,7 @@ const Engine = {
             const newAffinity = NPCSystem.getAffinity(char, npcId);
             const needed = bondEvent ? bondEvent.minAffinity : null;
             const gap = needed !== null ? needed - newAffinity : null;
-            const memoryTag = inheritedLevel >= 1 ? (hasDeepBonds ? '【情深意重】' : '【前世记忆】') : '';
+            const memoryTag = inheritedLevel >= 1 ? (hasDeepBonds ? '【情深意重】' : '【世界线记忆】') : '';
             const gapNote = gap > 0
                 ? `${memoryTag}好感 +${affinityGain}（当前 ${newAffinity}，距第${bondEvent.level}章还差 ${gap}）`
                 : `${memoryTag}好感 +${affinityGain}（当前 ${newAffinity}）`;
@@ -906,9 +906,12 @@ const Engine = {
             char.hp = 1;
             char.injured = true;
             const hasIronBones = (char.passives || []).some(p => p.injuryHalfDuration);
-            char.injuredMonths = hasIronBones ? 2 : 4;
+            const hasIronWill  = (char.legacyTalents || []).includes('iron_will');
+            char.injuredMonths = hasIronBones ? 2 : hasIronWill ? 2 : 4;
             const injuryMsg = hasIronBones
                 ? '【重伤】你身负重创，但铁骨镖魂撑着你——估计两个月便可复原。'
+                : hasIronWill
+                ? '【重伤】你身负重创，但凭借跨世界线磨练的意志，恢复速度比常人快上一倍。'
                 : '【重伤】你身负重创，勉强撤退。需静养三至四个月，方可恢复。';
             UI.addLog(injuryMsg, 'lose');
             UI.renderCharacter(char, this.state.jobs);
@@ -1031,7 +1034,7 @@ const Engine = {
             UI.addLog('五年后。', 'system');
             UI.addLog('天魔的骸骨深处，一股更古老的恶意悬然苏醒。它在无人察觉之时，情然在人间落地生根。', 'system');
             UI.addLog('荔毒蝓延，山河变色。此次，你的躯体已衰，无力回天……', 'lose');
-            UI.addLog('「轮回吧。」驱使世界运行的意志似乎在说，「等你再强一些。」', 'system');
+            UI.addLog('「回溯吧。」驱使世界运行的意志似乎在说，「在另一条世界线上，等你再强一些。」', 'system');
             setTimeout(() => {
                 this.triggerDeath('boss_aftermath');
             }, 3500);

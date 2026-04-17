@@ -126,6 +126,20 @@ const Character = {
         return Math.min(0.25, luckPart + agilityPart);
     },
 
+    // 内力·气盾：每次受击扁平减伤 = floor(innerForce / 8)，独立于防御力
+    getQiShield(char) {
+        const base = Math.floor((char.attributes.innerForce || 0) / 8);
+        const talentBonus = (char.legacyTalents || []).includes('qi_mastery') ? 2 : 0;
+        return base + talentBonus;
+    },
+
+    // 内力·增幅：技能伤害加成 = innerForce%（如30内力 = +30%技能伤害）
+    getSkillAmplify(char) {
+        const base = (char.attributes.innerForce || 0) / 100;
+        const talentBonus = (char.legacyTalents || []).includes('qi_mastery') ? 0.10 : 0;
+        return base + talentBonus;
+    },
+
     applyAttributeChanges(char, changes) {
         const compRate = this.getComprehensionRate(char);
         const luckChance = this.getLuckTriggerChance(char);
@@ -174,6 +188,22 @@ const Character = {
                 const extra = Math.floor(changes.luck * 0.15);
                 char.attributes.luck += extra;
                 actualGains.luck = (actualGains.luck || 0) + extra;
+            }
+        }
+        // Talent: 触类旁通 boosts comprehension gains by 20%
+        if (char.legacyTalents.includes('swift_learner')) {
+            if (changes.comprehension && changes.comprehension > 0) {
+                const extra = Math.floor(changes.comprehension * 0.20);
+                char.attributes.comprehension += extra;
+                actualGains.comprehension = (actualGains.comprehension || 0) + extra;
+            }
+        }
+        // Talent: 王者之气 boosts reputation gains by 25%
+        if (char.legacyTalents.includes('kings_aura')) {
+            if (changes.reputation && changes.reputation > 0) {
+                const extra = Math.floor(changes.reputation * 0.25);
+                char.attributes.reputation += extra;
+                actualGains.reputation = (actualGains.reputation || 0) + extra;
             }
         }
         // Passives: attrGrowthBonus scales specific attrs (e.g. 云舒剑意, 玄真根基)

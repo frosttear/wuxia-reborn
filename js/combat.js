@@ -109,6 +109,8 @@ const Combat = {
         let playerAtk = Character.getAttackPower(char, job);
         if (cs.allBondsBonus) playerAtk += 60;
         const playerDef = Character.getDefensePower(char, job);
+        const qiShield  = Character.getQiShield(char);       // flat reduction per hit
+        const skillAmp  = Character.getSkillAmplify(char);    // % bonus on skill dmg
 
         if (cs.allBondsBonus && cs.turn === 1) {
             lines.push('<b style="color:#c9a84c">【羁绊之力】江湖情谊化为无形刃芒——攻击力+60！</b>');
@@ -129,7 +131,8 @@ const Combat = {
                 lines.push(`趁${cs.enemy.name}换招之际，你拼命脱身——<b>逃跑成功！</b>`);
                 result = 'fled'; combatOver = true;
             } else {
-                const dmg = Math.max(1, cs.enemyEffAtk - Math.floor(playerDef / 2) + this._rand(-1, 5));
+                const rawDmgFlee = Math.max(1, cs.enemyEffAtk - Math.floor(playerDef / 2) + this._rand(-1, 5));
+                const dmg = Math.max(1, rawDmgFlee - qiShield);
                 Character.takeDamage(char, dmg);
                 cs.totalDmgReceived += dmg;
                 lines.push(`逃跑失败！${cs.enemy.name}${this._pick(this.ENEMY_HEAVY_DESCS)}，你仓皇受击，损失 <b>${dmg}</b> 气血。`);
@@ -158,16 +161,17 @@ const Combat = {
                     let total = 0;
                     const parts = [];
                     for (let i = 0; i < hits; i++) {
-                        const h = Math.max(1, Math.floor(playerAtk * sk.power) + this._rand(-1, 4));
+                        const h = Math.max(1, Math.floor(playerAtk * sk.power * (1 + skillAmp)) + this._rand(-1, 4));
                         total += h; parts.push(h);
                     }
                     total = Math.max(1, total - defMit);
                     cs.enemyHp = Math.max(0, cs.enemyHp - total);
                     cs.totalDmgDealt += total;
-                    lines.push(`【<b style="color:#f4c430">${sk.name}</b>】连击（${parts.join('+')}=<b>${total}</b>），对方剩余气血 ${Math.max(0, cs.enemyHp)}。`);
+                    const ampNote = skillAmp >= 0.10 ? `　<span style="color:#a0d8ef">内力增幅+${Math.round(skillAmp * 100)}%</span>` : '';
+                    lines.push(`【<b style="color:#f4c430">${sk.name}</b>】连击（${parts.join('+')}=<b>${total}</b>），对方剩余气血 ${Math.max(0, cs.enemyHp)}。${ampNote}`);
                 } else {
                     const defFactor = 1 - (sk.armorBreak || 0);
-                    const dmg = Math.max(1, Math.floor(playerAtk * sk.power)
+                    const dmg = Math.max(1, Math.floor(playerAtk * sk.power * (1 + skillAmp))
                         - Math.floor(cs.enemyEffDef * defFactor * 0.5)
                         + this._rand(-2, 8));
                     cs.enemyHp = Math.max(0, cs.enemyHp - dmg);
@@ -220,7 +224,7 @@ const Combat = {
                         const skillName = pend ? pend.name : null;
                         if (pend) cs.pendingSkill = null;
                         const rawIncoming = Math.max(1, Math.floor(cs.enemyEffAtk * skillMult) - Math.floor(playerDef * 0.5) + this._rand(-2, 6));
-                        const parryDmg = Math.max(1, Math.floor(rawIncoming * 0.20));
+                        const parryDmg = Math.max(1, Math.floor(rawIncoming * 0.20) - qiShield);
                         Character.takeDamage(char, parryDmg);
                         cs.totalDmgReceived += parryDmg;
                         const counterMult = heavyAnticipated ? 0.85 : 0.6;
@@ -241,11 +245,12 @@ const Combat = {
                         if (pend) cs.pendingSkill = null;
                         const rawDmg = Math.max(1, Math.floor(cs.enemyEffAtk * 1.3 * skillMult)
                             - Math.floor(playerDef * 0.25) + this._rand(-2, 5));
-                        Character.takeDamage(char, rawDmg);
-                        cs.totalDmgReceived += rawDmg;
+                        const parryPunishDmg = Math.max(1, rawDmg - qiShield);
+                        Character.takeDamage(char, parryPunishDmg);
+                        cs.totalDmgReceived += parryPunishDmg;
                         cs.playerMomentum = Math.max(0, cs.playerMomentum - 1);
                         const sl = pend ? `【<b style="color:#e07b39">${pend.name}</b>】` : '';
-                        lines.push(`化解失败！${cs.enemy.name}${sl}${this._pick(this.ENEMY_SWIFT_DESCS)}，打破你的架势，你受到 <b>${rawDmg}</b> 伤害！`);
+                        lines.push(`化解失败！${cs.enemy.name}${sl}${this._pick(this.ENEMY_SWIFT_DESCS)}，打破你的架势，你受到 <b>${parryPunishDmg}</b> 伤害！`);
                         if (char.hp <= 0) { result = 'lost'; combatOver = true; }
                     }
                 } else if (cs.enemyStunned) {
@@ -270,7 +275,7 @@ const Combat = {
                     const rawDmg = Math.max(1,
                         Math.floor(cs.enemyEffAtk * skillMult) - Math.floor(playerDef * 0.5)
                         + this._rand(-2, 6));
-                    const finalDmg = Math.max(1, Math.floor(rawDmg * incomingMult));
+                    const finalDmg = Math.max(1, Math.floor(rawDmg * incomingMult) - qiShield);
                     const attackPool = enemyAction === 'swift' ? this.ENEMY_SWIFT_DESCS : this.ENEMY_HEAVY_DESCS;
                     const customPool = cs.enemy.attackDescs && cs.enemy.attackDescs.length ? cs.enemy.attackDescs : null;
                     const ed = skillName
