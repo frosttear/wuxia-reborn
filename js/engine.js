@@ -801,6 +801,18 @@ const Engine = {
         cs.totalDmgDealt    = sim.avgDmgDealt;
         cs.totalDmgReceived = sim.avgDmgReceived;
 
+        // Render the full combat log in the overlay before ending
+        const logEl = document.getElementById('combatLog');
+        if (logEl) {
+            logEl.innerHTML = cs.log.map(e => {
+                const badge = e.turn === 0
+                    ? `<span class="combat-turn-badge combat-turn-open">⚔ 开战</span>`
+                    : `<span class="combat-turn-badge">第${e.turn}回合</span>`;
+                return `<div class="combat-log-entry">${badge}${e.text}</div>`;
+            }).join('');
+            logEl.scrollTop = logEl.scrollHeight;
+        }
+
         this.state.combatBusy = false;
         this.endCombat(won ? 'won' : 'lost', cs);
     },

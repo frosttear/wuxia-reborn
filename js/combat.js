@@ -57,6 +57,7 @@ const Combat = {
             enemyEffAtk: eff.attack,
             enemyEffDef: eff.defense,
             enemyQiShield: eff.qiShield,
+            enemyInnerForce: eff.innerForce,
             turn:        0,
             fleeChance:  0.25,
             pendingSkill: null,
@@ -116,6 +117,7 @@ const Combat = {
         const qiShield  = Character.getQiShield(char);       // flat reduction per hit
         const skillAmp  = Character.getSkillAmplify(char);    // % bonus on skill dmg
         const enemyQS   = cs.enemyQiShield || 0;             // enemy qi shield
+        const enemySkillAmp = (cs.enemyInnerForce || 0) / 100; // enemy skill amplify
 
         if (cs.allBondsBonus && cs.turn === 1) {
             lines.push('<b style="color:#c9a84c">【羁绊之力】江湖情谊化为无形刃芒——攻击力+60！</b>');
@@ -150,6 +152,7 @@ const Combat = {
             const activeSkill = job && job.activeSkill;
             const skillFires  = activeSkill
                 && action !== 'defend'
+                && action !== 'parry'
                 && cs.playerMomentum >= activeSkill.momentumCost
                 && cs.skillCooldown === 0;
 
@@ -227,7 +230,7 @@ const Combat = {
                         // Successful parry → player takes 20% incoming + counter-hit
                         // If skill is ready, use skill as counter instead of basic counter
                         const pend = cs.pendingSkill;
-                        const skillMult = pend ? (pend.damageMult || 1.5) : 1.0;
+                        const skillMult = pend ? (pend.damageMult || 1.5) * (1 + enemySkillAmp) : 1.0;
                         const skillName = pend ? pend.name : null;
                         if (pend) cs.pendingSkill = null;
                         const rawIncoming = Math.max(1, Math.floor(cs.enemyEffAtk * skillMult) - Math.floor(playerDef * 0.5) + this._rand(-2, 6));
@@ -274,7 +277,7 @@ const Combat = {
                     } else {
                         // Parry punished by swift
                         const pend = cs.pendingSkill;
-                        const skillMult = pend ? (pend.damageMult || 1.5) : 1.0;
+                        const skillMult = pend ? (pend.damageMult || 1.5) * (1 + enemySkillAmp) : 1.0;
                         if (pend) cs.pendingSkill = null;
                         const rawDmg = Math.max(1, Math.floor(cs.enemyEffAtk * 1.3 * skillMult)
                             - Math.floor(playerDef * 0.25) + this._rand(-2, 5));
@@ -292,7 +295,7 @@ const Combat = {
                 } else {
                     // Normal enemy attack
                     const pend = cs.pendingSkill;
-                    const skillMult = pend ? (pend.damageMult || 1.5) : 1.0;
+                    const skillMult = pend ? (pend.damageMult || 1.5) * (1 + enemySkillAmp) : 1.0;
                     const skillName = pend ? pend.name : null;
                     if (pend) cs.pendingSkill = null;
 

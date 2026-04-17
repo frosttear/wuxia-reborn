@@ -171,13 +171,10 @@ const UI = {
         for (const npc of metNPCs) {
             const affinity = NPCSystem.getAffinity(char, npc.id);
             const label = NPCSystem.getAffinityLabel(char, npc.id, npcs);
-            // Centered bar: 0 is at 50%, range -100..+100
-            const halfPct = Math.abs(affinity) / 2; // max 50%
-            const isPos = affinity >= 0;
-            const fillStyle = isPos
-                ? `left:50%; width:${halfPct}%`
-                : `right:50%; width:${halfPct}%`;
-            const fillClass = isPos ? 'affinity-bar-fill pos' : 'affinity-bar-fill neg';
+            // Simple 0-100 bar starting from left
+            const pct = Math.min(100, Math.max(0, affinity));
+            const fillStyle = `left:0; width:${pct}%`;
+            const fillClass = 'affinity-bar-fill pos';
             const div = document.createElement('div');
             div.className = 'npc-row';
             const bondLevel = (char.bondLevels || {})[npc.id] || 0;
@@ -189,11 +186,10 @@ const UI = {
                 <div class="npc-header">
                     <span class="npc-name">${npc.name}</span>
                     <span class="npc-title">${npc.title}</span>
-                    <span class="npc-affinity-val ${isPos ? 'label-pos' : 'label-neg'}">${affinity > 0 ? '+' : ''}${affinity}</span>
-                    <span class="npc-label ${isPos ? 'label-pos' : 'label-neg'}">${label}</span>
+                    <span class="npc-affinity-val label-pos">${affinity}</span>
+                    <span class="npc-label label-pos">${label}</span>
                 </div>
                 <div class="affinity-bar-bg">
-                    <div class="affinity-center-line"></div>
                     <div class="${fillClass}" style="${fillStyle}"></div>
                 </div>
                 <div class="bond-level-row">羁绊 ${bondDots}</div>`;

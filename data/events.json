@@ -553,41 +553,7 @@
       }
     ]
   },
-  {
-    "id": "meet_zhao_batian",
-    "type": "交友",
-    "weight": 6,
-    "title": "初遇赵霸天",
-    "text": "你在镇上目睹一个粗壮的大汉当街欺压小商贩，大声喝道：「这是老子的地盘，每月孝敬少一文，就打断你的腿！」他的手下在旁哄笑。附近人群皆噤若寒蝉。",
-    "conditions": { "flags": { "met_zhao_batian": false } },
-    "choices": [
-      {
-        "id": "confront",
-        "text": "挺身而出，为商贩说话",
-        "effects": { "flags": { "met_zhao_batian": true }, "attributes": { "reputation": 2 }, "narrative": "赵霸天转头打量你，冷笑道：「小子，你是不想在这片地界混了？」双方就此结仇。" }
-      },
-      {
-        "id": "watch",
-        "text": "暗记此人，不轻举妄动",
-        "effects": { "flags": { "met_zhao_batian": true }, "narrative": "你默默记住了赵霸天的样貌，心想日后必有一番交锋。" }
-      }
-    ]
-  },
-  {
-    "id": "zhao_batian_challenge",
-    "type": "遭遇战",
-    "weight": 5,
-    "title": "赵霸天寻仇",
-    "text": "赵霸天带着几名手下将你堵在巷中，他把刀往地上一插：「上次让你走，是给你机会。今日，你给我乖乖受死！」他脱去外衣，露出满身腱子肉。",
-    "conditions": { "flags": { "met_zhao_batian": true }, "minAgeYears": 18 },
-    "choices": [
-      {
-        "id": "fight_zhao",
-        "text": "握紧兵刃，迎战赵霸天",
-        "effects": { "combat": "zhao_batian_enemy", "narrative": "" }
-      }
-    ]
-  },
+
   {
     "id": "meet_mysterious_elder",
     "type": "机缘",
