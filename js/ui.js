@@ -352,6 +352,21 @@ const UI = {
         return parts.join('  |  ');
     },
 
+    addVisitAgeHeader(char) {
+        const ageYears = Character.getAgeYears(char);
+        const ageMonths = Character.getAgeMonthsRemainder(char);
+        const ageStr = `${ageYears}岁${ageMonths}月`;
+        const remaining = 240 - char.ageMonths;
+        const countdownHtml = remaining > 0
+            ? `<span class="log-age-countdown${remaining <= 6 ? ' urgent' : ''}">⏳ 距天魔之日还剩 ${remaining} 月</span>`
+            : '';
+        const entry = document.createElement('div');
+        entry.className = 'log-entry';
+        entry.innerHTML = `<div class="log-age">${ageStr}${countdownHtml}</div>`;
+        this.logEl.appendChild(entry);
+        this.logEl.scrollTop = this.logEl.scrollHeight;
+    },
+
     showEvent(event, choices, state) {
         const ageYears = Character.getAgeYears(state.char);
         const ageMonths = Character.getAgeMonthsRemainder(state.char);

@@ -140,6 +140,18 @@ const Engine = {
         }
 
         const eligible = this.selectEvents();
+        // On birthday months, force a birthday-specific event if available
+        if (char.flags._is_birthday && eligible.length > 0) {
+            const birthdayEvents = this.state.events.filter(e =>
+                e.conditions && e.conditions.flags && e.conditions.flags._is_birthday &&
+                this.checkConditions(e.conditions)
+            );
+            if (birthdayEvents.length > 0) {
+                const picked = birthdayEvents[Math.floor(Math.random() * birthdayEvents.length)];
+                this.triggerEvent(picked);
+                return;
+            }
+        }
         if (eligible.length > 0) {
             this.triggerEvent(eligible[0]);
         } else {
@@ -514,6 +526,7 @@ const Engine = {
                 }
             }
 
+            UI.addVisitAgeHeader(char);
             UI.addLog(visitText || `拜访了【${npc.name}】，闲聊了一会儿。`, 'result');
             UI.addLog(gapNote, 'info');
             UI.renderAll(this.state);
@@ -1003,12 +1016,13 @@ const Engine = {
 
         if (age === 16) {
             msg = `【生辰】${mName}，你已${age}岁。初入江湖一年，天地广阔，前途未知。`;
+            attrs = { strength: 2 };
         } else if (age === 17) {
             msg = `【生辰】${mName}，${age}岁。少年老成，已能独当一面。`;
-            attrs = { comprehension: 1 };
+            attrs = { comprehension: 2 };
         } else if (age === 18) {
             msg = `【生辰】${mName}，年满18岁。弱冠之年，江湖人人目，可建功立业了。`;
-            attrs = { reputation: 1, strength: 1 };
+            attrs = { reputation: 2, strength: 2 };
         } else if (age === 19) {
             if (char.flags.elder_revelation && !char.flags.jade_tablet_awakened) {
                 char.flags.jade_tablet_awakened = true;
@@ -1021,14 +1035,16 @@ const Engine = {
 「……还不够。」那意志似乎在说，「但你已经能让我有所感应了。等你走完这一世。」
 
 玉牌重归平静，但你知道：有什么事情，已经开始了。`;
-                attrs = { comprehension: 1 };
+                attrs = { comprehension: 2, strength: 2, reputation: 2, agility: 2 };
             } else {
                 msg = `【生辰】${mName}，${age}岁。最后一年——天魔之约，如期将至。`;
+                attrs = { comprehension: 2, strength: 2, reputation: 2, agility: 2 };
             }
         } else {
             msg = `【生辰】${mName}，${age}岁。天魔之约还有 ${remaining} 年。`;
         }
 
+        UI.addVisitAgeHeader(char);
         UI.addLog(msg, 'system');
         if (attrs) {
             Character.applyAttributeChanges(char, attrs);
