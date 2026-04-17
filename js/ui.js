@@ -321,7 +321,7 @@ const UI = {
                 const eff = Combat.getEffectiveStats(enemy, char);
                 const winPct = Combat.calcWinChance(char, enemy, job);
                 const pctColor = winPct >= 70 ? '🟢' : winPct >= 40 ? '🟡' : '🔴';
-                parts.push(`⚔ 与【${eName}】战斗（攻${eff.attack}/防${eff.defense}） ${pctColor}胜率${winPct}%`);
+                parts.push(`⚔ 与【${eName}】战斗（攻${eff.attack}/防${eff.defense}/血${eff.hp}） ${pctColor}胜率${winPct}%`);
             } else {
                 parts.push(`⚔ 与【${eName}】战斗`);
             }
