@@ -1167,6 +1167,15 @@ const Engine = {
             Character.getAgeYears(char) > 19) {
             char.flags.jade_tablet_awakened = true;
         }
+        // Migrate old battle_hardened (was ≥5 kills) to new 3-tier system
+        if (char.legacyTalents && char.legacyTalents.includes('battle_hardened')) {
+            const kills = char.kills || 0;
+            if (kills < 15) {
+                char.legacyTalents = char.legacyTalents.filter(t => t !== 'battle_hardened');
+                if (kills >= 10) char.legacyTalents.push('battle_veteran');
+                else char.legacyTalents.push('battle_novice');
+            }
+        }
         return char;
     },
 
