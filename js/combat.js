@@ -289,11 +289,9 @@ const Combat = {
                                     : `借力打力，以【<b style="color:#f4c430">${sk.name}</b>】反击！${ampNote}对方损失 <b>${counterDmg}</b> 气血`;
                             }
                         } else {
-                            // Basic counter (defense ignore scales with atk/def ratio, lower than strike)
+                            // Basic counter — uses same defIgnore as strike; lower multiplier ensures less dmg
                             const counterMult = heavyAnticipated ? 0.85 : 0.6;
-                            const cAtkRatio = Math.min(1, playerAtk / Math.max(1, cs.enemyEffDef));
-                            const cDefIgnore = Math.min(0.55, cAtkRatio * 0.40 + 0.10);
-                            counterDmg = Math.max(1, Math.floor(playerAtk * counterMult) - Math.floor(cs.enemyEffDef * (1 - cDefIgnore)) - enemyQS + this._rand(-2, 4));
+                            counterDmg = Math.max(1, Math.floor(playerAtk * counterMult) - Math.floor(cs.enemyEffDef * (1 - defIgnore)) - enemyQS + this._rand(-2, 4));
                             counterText = heavyAnticipated
                                 ? `你早已洞悉来招，截断蓄力，对方损失 <b>${counterDmg}</b> 气血`
                                 : `借力打力，对方损失 <b>${counterDmg}</b> 气血`;
