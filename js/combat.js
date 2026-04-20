@@ -133,7 +133,7 @@ const Combat = {
                 lines.push(`趁${cs.enemy.name}换招之际，你拼命脱身——<b>逃跑成功！</b>`);
                 result = 'fled'; combatOver = true;
             } else {
-                const rawDmgFlee = Math.max(1, cs.enemyEffAtk - Math.floor(playerDef / 2) + this._rand(-1, 5));
+                const rawDmgFlee = Math.max(1, cs.enemyEffAtk - Math.floor(playerDef / 2));
                 const dmg = Math.max(1, rawDmgFlee - qiShield);
                 Character.takeDamage(char, dmg);
                 cs.totalDmgReceived += dmg;
@@ -170,7 +170,7 @@ const Combat = {
                     let total = 0;
                     const parts = [];
                     for (let i = 0; i < hits; i++) {
-                        const h = Math.max(1, Math.floor(playerAtk * sk.power * (1 + skillAmp)) + this._rand(-1, 4));
+                        const h = Math.max(1, Math.floor(playerAtk * sk.power * (1 + skillAmp)));
                         total += h; parts.push(h);
                     }
                     total = Math.max(1, total - defMit - enemyQS);
@@ -183,8 +183,7 @@ const Combat = {
                     const skillDefIgnore = Math.min(0.90, defIgnore + (sk.armorBreak || 0));
                     const dmg = Math.max(1, Math.floor(playerAtk * sk.power * (1 + skillAmp))
                         - Math.floor(cs.enemyEffDef * (1 - skillDefIgnore))
-                        - enemyQS
-                        + this._rand(-2, 8));
+                        - enemyQS);
                     cs.enemyHp = Math.max(0, cs.enemyHp - dmg);
                     cs.totalDmgDealt += dmg;
                     const stunNote = sk.type === 'stun' ? '  【<b style="color:#a0d8ef">震慑</b>】' : '';
@@ -198,7 +197,7 @@ const Combat = {
                 const isCrit = Math.random() < Character.getLuckTriggerChance(char);
                 // Dynamic defense ignore: scales with atk/def ratio (symmetric with defend's defCap)
                 let dmg = Math.max(1, Math.floor(playerAtk * lv)
-                    - Math.floor(cs.enemyEffDef * (1 - defIgnore)) - enemyQS + this._rand(-2, 8));
+                    - Math.floor(cs.enemyEffDef * (1 - defIgnore)) - enemyQS);
                 if (isCrit) dmg = Math.floor(dmg * 1.5);
                 cs.enemyHp = Math.max(0, cs.enemyHp - dmg);
                 cs.totalDmgDealt += dmg;
@@ -240,7 +239,7 @@ const Combat = {
                         const skillMult = pend ? (pend.damageMult || 1.5) * (1 + enemySkillAmp) : 1.0;
                         const skillName = pend ? pend.name : null;
                         if (pend) cs.pendingSkill = null;
-                        const rawIncoming = Math.max(1, Math.floor(cs.enemyEffAtk * skillMult) - Math.floor(playerDef * (1 - enemyDefIgnore)) + this._rand(-2, 6));
+                        const rawIncoming = Math.max(1, Math.floor(cs.enemyEffAtk * skillMult) - Math.floor(playerDef * (1 - enemyDefIgnore)));
                         const parryDmg = Math.max(1, Math.floor(rawIncoming * 0.20) - qiShield);
                         Character.takeDamage(char, parryDmg);
                         cs.totalDmgReceived += parryDmg;
@@ -258,7 +257,9 @@ const Combat = {
                             cs.playerMomentum -= activeSkill.momentumCost;
                             cs.skillCooldown = 3;
                             const sk = activeSkill;
+                            const isCrit = Math.random() < Character.getLuckTriggerChance(char);
                             const ampNote = skillAmp >= 0.10 ? `内力增幅+${Math.round(skillAmp * 100)}%` : '';
+                            const critTag = isCrit ? '【<b>会心一击</b>】' : '';
                             // Reuse dynamic defIgnore; armorBreak stacks on top
                             const ctrAtkRatio = Math.min(1, playerAtk / Math.max(1, cs.enemyEffDef));
                             const ctrDefIgnore = Math.min(0.75, ctrAtkRatio * 0.60 + 0.10);
@@ -269,38 +270,45 @@ const Combat = {
                                 let total = 0;
                                 const parts = [];
                                 for (let i = 0; i < hits; i++) {
-                                    const h = Math.max(1, Math.floor(playerAtk * sk.power * (1 + skillAmp)) + this._rand(-1, 4));
+                                    const h = Math.max(1, Math.floor(playerAtk * sk.power * (1 + skillAmp)));
                                     total += h; parts.push(h);
                                 }
                                 counterDmg = Math.max(1, total - defMit - enemyQS);
+                                if (isCrit) counterDmg = Math.floor(counterDmg * 1.5);
                                 if (sk.type === 'stun') cs.enemyStunned = true;
                                 counterText = heavyAnticipated
-                                    ? `你早已洞悉来招，顺势以【<b style="color:#f4c430">${sk.name}</b>】反击！${ampNote}连击（${parts.join('+')}=<b>${counterDmg}</b>）`
-                                    : `借力打力，以【<b style="color:#f4c430">${sk.name}</b>】反击！${ampNote}连击（${parts.join('+')}=<b>${counterDmg}</b>）`;
+                                    ? `你早已洞悉来招，顺势以【<b style="color:#f4c430">${sk.name}</b>】反击！${critTag}${ampNote}连击（${parts.join('+')}=<b>${counterDmg}</b>）`
+                                    : `凭直觉化解来招，以【<b style="color:#f4c430">${sk.name}</b>】反击！${critTag}${ampNote}连击（${parts.join('+')}=<b>${counterDmg}</b>）`;
                             } else {
                                 const skillCtrIgnore = Math.min(0.90, ctrDefIgnore + (sk.armorBreak || 0));
                                 counterDmg = Math.max(1, Math.floor(playerAtk * sk.power * (1 + skillAmp))
                                     - Math.floor(cs.enemyEffDef * (1 - skillCtrIgnore))
-                                    - enemyQS + this._rand(-2, 6));
+                                    - enemyQS);
+                                if (isCrit) counterDmg = Math.floor(counterDmg * 1.5);
                                 if (sk.type === 'stun') cs.enemyStunned = true;
                                 counterText = heavyAnticipated
-                                    ? `你早已洞悉来招，顺势以【<b style="color:#f4c430">${sk.name}</b>】反击！${ampNote}对方损失 <b>${counterDmg}</b> 气血`
-                                    : `借力打力，以【<b style="color:#f4c430">${sk.name}</b>】反击！${ampNote}对方损失 <b>${counterDmg}</b> 气血`;
+                                    ? `你早已洞悉来招，顺势以【<b style="color:#f4c430">${sk.name}</b>】反击！${critTag}${ampNote}对方损失 <b>${counterDmg}</b> 气血`
+                                    : `凭直觉化解来招，以【<b style="color:#f4c430">${sk.name}</b>】反击！${critTag}${ampNote}对方损失 <b>${counterDmg}</b> 气血`;
                             }
                         } else {
-                            // Basic counter — uses same defIgnore as strike; lower multiplier ensures less dmg
-                            const counterMult = heavyAnticipated ? 0.85 : 0.6;
-                            counterDmg = Math.max(1, Math.floor(playerAtk * counterMult) - Math.floor(cs.enemyEffDef * (1 - defIgnore)) - enemyQS + this._rand(-2, 4));
+                            // Basic counter — uses same defIgnore as strike
+                            const counterMult = heavyAnticipated ? 1.0 : 0.75;
+                            const isCrit = Math.random() < Character.getLuckTriggerChance(char);
+                            counterDmg = Math.max(1, Math.floor(playerAtk * counterMult) - Math.floor(cs.enemyEffDef * (1 - defIgnore)) - enemyQS);
+                            if (isCrit) counterDmg = Math.floor(counterDmg * 1.5);
+                            const critTag = isCrit ? '【<b>会心一击</b>】' : '';
                             counterText = heavyAnticipated
-                                ? `你早已洞悉来招，截断蓄力，对方损失 <b>${counterDmg}</b> 气血`
-                                : `借力打力，对方损失 <b>${counterDmg}</b> 气血`;
+                                ? `你早已洞悉来招，截断蓄力，${critTag}对方损失 <b>${counterDmg}</b> 气血`
+                                : `你凭直觉化解来招，借力反击，${critTag}对方损失 <b>${counterDmg}</b> 气血`;
                         }
                         cs.enemyHp = Math.max(0, cs.enemyHp - counterDmg);
                         cs.totalDmgDealt += counterDmg;
                         cs.playerMomentum = Math.min(5, cs.playerMomentum + 1);
-                        const counterLabel = heavyAnticipated ? '洞察反击' : '化解反击';
+                        const counterLabel = heavyAnticipated
+                            ? '<b style="color:#6fcf97">洞察反击</b>'
+                            : '<b style="color:#e0c060">化解反击</b>';
                         const skillNote = skillName ? `【<b style="color:#e07b39">${skillName}</b>】` : '';
-                        lines.push(`${cs.enemy.name}${skillNote}${this._pick(this.ENEMY_HEAVY_DESCS)}——你【<b>${counterLabel}</b>】！${counterText}，你承受 <b>${parryDmg}</b> 点冲击。`);
+                        lines.push(`${cs.enemy.name}${skillNote}${this._pick(this.ENEMY_HEAVY_DESCS)}——你【${counterLabel}】！${counterText}，你承受 <b>${parryDmg}</b> 点冲击。`);
                         if (char.hp <= 0) { result = 'lost'; combatOver = true; }
                         if (!combatOver && cs.enemyHp <= 0) { result = 'won'; combatOver = true; }
                     } else {
@@ -308,15 +316,14 @@ const Combat = {
                         const pend = cs.pendingSkill;
                         const skillMult = pend ? (pend.damageMult || 1.5) * (1 + enemySkillAmp) : 1.0;
                         if (pend) cs.pendingSkill = null;
-                        const swiftPunishIgnore = Math.min(0.85, enemyDefIgnore + 0.15);
-                        const rawDmg = Math.max(1, Math.floor(cs.enemyEffAtk * 1.3 * skillMult)
-                            - Math.floor(playerDef * (1 - swiftPunishIgnore)) + this._rand(-2, 5));
+                        const swiftPunishIgnore = Math.min(0.85, enemyDefIgnore + 0.10);
+                        const rawDmg = Math.max(1, Math.floor(cs.enemyEffAtk * 1.15 * skillMult)
+                            - Math.floor(playerDef * (1 - swiftPunishIgnore)));
                         const parryPunishDmg = Math.max(1, rawDmg - qiShield);
                         Character.takeDamage(char, parryPunishDmg);
                         cs.totalDmgReceived += parryPunishDmg;
-                        cs.playerMomentum = Math.max(0, cs.playerMomentum - 1);
                         const sl = pend ? `【<b style="color:#e07b39">${pend.name}</b>】` : '';
-                        lines.push(`化解失败！${cs.enemy.name}${sl}${this._pick(this.ENEMY_SWIFT_DESCS)}，打破你的架势，你受到 <b>${parryPunishDmg}</b> 伤害！`);
+                        lines.push(`破招失败！${cs.enemy.name}${sl}${this._pick(this.ENEMY_SWIFT_DESCS)}，打破你的架势，你受到 <b>${parryPunishDmg}</b> 伤害！`);
                         if (char.hp <= 0) { result = 'lost'; combatOver = true; }
                     }
                 } else if (cs.enemyStunned) {
@@ -346,8 +353,7 @@ const Combat = {
                     }
 
                     const rawDmg = Math.max(1,
-                        Math.floor(cs.enemyEffAtk * skillMult) - Math.floor(playerDef * (1 - enemyDefIgnore))
-                        + this._rand(-2, 6));
+                        Math.floor(cs.enemyEffAtk * skillMult) - Math.floor(playerDef * (1 - enemyDefIgnore)));
                     const finalDmg = Math.max(1, Math.floor(rawDmg * incomingMult) - qiShield);
                     const attackPool = enemyAction === 'swift' ? this.ENEMY_SWIFT_DESCS : this.ENEMY_HEAVY_DESCS;
                     const customPool = cs.enemy.attackDescs && cs.enemy.attackDescs.length ? cs.enemy.attackDescs : null;
@@ -449,10 +455,10 @@ const Combat = {
         const defCap = Math.min(0.75, powerRatio * 0.75 + 0.10);
 
         // Estimated raw enemy damage (no reduction)
-        const rawEnemyDmg = Math.max(1, cs.enemyEffAtk - Math.floor(playerDef * (1 - enemyDefIgnore)) + 2);
+        const rawEnemyDmg = Math.max(1, cs.enemyEffAtk - Math.floor(playerDef * (1 - enemyDefIgnore)));
 
         // ── Strike ──
-        const strikeDmg = Math.max(1, playerAtk - Math.floor(cs.enemyEffDef * (1 - defIgnore)) - enemyQS + 3);
+        const strikeDmg = Math.max(1, playerAtk - Math.floor(cs.enemyEffDef * (1 - defIgnore)) - enemyQS);
         const strikeCrit = Math.floor(strikeDmg * 1.5);
 
         // ── Skill preview ──
@@ -469,7 +475,7 @@ const Combat = {
                 skillPreview = { name: sk.name, dmg: total, hits };
             } else {
                 const dmg = Math.max(1, Math.floor(playerAtk * sk.power * (1 + skillAmp))
-                    - Math.floor(cs.enemyEffDef * (1 - skDefIgnore)) - enemyQS + 3);
+                    - Math.floor(cs.enemyEffDef * (1 - skDefIgnore)) - enemyQS);
                 skillPreview = { name: sk.name, dmg, hits: 1 };
             }
         }
@@ -481,12 +487,13 @@ const Combat = {
         const defendDmgSwift = Math.max(1, Math.floor(rawEnemyDmg * (1 - Math.min(0.50, defCap))) - qiShield);
 
         // ── Parry ──
-        // Counter (vs heavy): 0.6x atk - def*(1-defIgnore)
-        const counterDmg = Math.max(1, Math.floor(playerAtk * 0.6) - Math.floor(cs.enemyEffDef * (1 - defIgnore)) - enemyQS + 1);
+        // Counter (vs heavy): 0.75x atk - def*(1-defIgnore)
+        const counterDmg = Math.max(1, Math.floor(playerAtk * 0.75) - Math.floor(cs.enemyEffDef * (1 - defIgnore)) - enemyQS);
+        const counterCrit = Math.floor(counterDmg * 1.5);
         const parrySelfDmg = Math.max(1, Math.floor(rawEnemyDmg * 0.20) - qiShield);
-        // Punished (vs swift): 1.3x enemy, swiftPunishIgnore
-        const swiftPunishIgnore = Math.min(0.85, enemyDefIgnore + 0.15);
-        const punishRaw = Math.max(1, Math.floor(cs.enemyEffAtk * 1.3) - Math.floor(playerDef * (1 - swiftPunishIgnore)) + 1);
+        // Punished (vs swift): 1.15x enemy, swiftPunishIgnore
+        const swiftPunishIgnore = Math.min(0.85, enemyDefIgnore + 0.10);
+        const punishRaw = Math.max(1, Math.floor(cs.enemyEffAtk * 1.15) - Math.floor(playerDef * (1 - swiftPunishIgnore)));
         const punishDmg = Math.max(1, punishRaw - qiShield);
 
         // ── Focus ──
@@ -500,7 +507,7 @@ const Combat = {
         return {
             strike: { dmg: strikeDmg, critDmg: strikeCrit, defIgnorePct, critChance, skillPreview },
             defend: { vsHeavy: defendVsHeavy, vsSwift: defendVsSwift, dmgHeavy: defendDmgHeavy, dmgSwift: defendDmgSwift, dodgeChance },
-            parry:  { counterDmg, selfDmg: parrySelfDmg, punishDmg, dodgeChance },
+            parry:  { counterDmg, counterCrit, selfDmg: parrySelfDmg, punishDmg, critChance, dodgeChance },
             focus:  { reduction: focusReduction, dmg: focusDmg, momAfter, dodgeChance },
             incoming: { fullDmg, dodgeChance },
         };

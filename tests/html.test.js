@@ -101,3 +101,26 @@ describe('index.html - no corruption', () => {
         expect(duplicates).toEqual([]);
     });
 });
+
+describe('index.html - cache busting', () => {
+    test('all JS scripts use consistent cache version', () => {
+        const jsVersions = [...html.matchAll(/src="js\/\w+\.js\?v=([^"]+)"/g)].map(m => m[1]);
+        expect(jsVersions.length).toBeGreaterThanOrEqual(6);
+        const unique = [...new Set(jsVersions)];
+        expect(unique).toHaveLength(1);
+    });
+
+    test('CSS stylesheet uses cache version', () => {
+        expect(html).toMatch(/href="css\/styles\.css\?v=[\d.]+"/);
+    });
+});
+
+describe('index.html - button text', () => {
+    test('nextMonthBtn uses emoji prefix style', () => {
+        expect(html).toMatch(/id="nextMonthBtn"[^>]*>🚶 出门探险</);
+    });
+
+    test('testCombatBtn shows 模拟战斗 not just 模拟', () => {
+        expect(html).toMatch(/id="testCombatBtn"[^>]*>⚔ 模拟战斗</);
+    });
+});

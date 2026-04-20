@@ -6,7 +6,7 @@
     <title>轮回江湖</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link href="https://fonts.googleapis.com/css2?family=Noto+Serif+SC:wght@400;700&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="css/styles.css?v=0.9.7">
+    <link rel="stylesheet" href="css/styles.css?v=0.9.8">
 </head>
 <body>
 
@@ -97,10 +97,10 @@
             <div id="eventLog" class="event-log"></div>
             <div id="choicesPanel" class="choices-panel"></div>
             <div class="controls-bar">
-                <button id="nextMonthBtn" onclick="Engine.advanceMonth()">出门探险 ▶</button>
+                <button id="nextMonthBtn" onclick="Engine.advanceMonth()">🚶 出门探险</button>
                 <button id="visitBtn" onclick="UI.toggleVisitPanel()" style="display:none">💞 拜访</button>
                 <button id="chainBtn" onclick="UI.toggleChainPanel()" style="display:none">📋 任务</button>
-                <button id="testCombatBtn" onclick="UI.toggleTestCombatPanel()" style="font-size:0.75rem">⚔ 模拟</button>
+                <button id="testCombatBtn" onclick="UI.toggleTestCombatPanel()" style="font-size:0.75rem">⚔ 模拟战斗</button>
             </div>
             <div id="visitPanel" class="visit-panel" style="display:none"></div>
             <div id="chainPanel" class="chain-panel" style="display:none"></div>
@@ -166,7 +166,7 @@
         <div class="combat-actions" id="combatActions">
             <button class="combat-btn combat-strike" onclick="UI.selectCombatAction('strike')">⚔ 强攻</button>
             <button class="combat-btn combat-defend" onclick="UI.selectCombatAction('defend')">🛡 防御</button>
-            <button class="combat-btn combat-parry"  onclick="UI.selectCombatAction('parry')">⚡ 招架</button>
+            <button class="combat-btn combat-parry"  onclick="UI.selectCombatAction('parry')">⚡ 破招</button>
             <button class="combat-btn combat-focus"  onclick="UI.selectCombatAction('focus')">🔮 蓄势</button>
             <button class="combat-btn combat-flee" id="combatFleeBtn" onclick="UI.selectCombatAction('flee')">🏃 逃跑 25%</button>
             <button class="combat-btn combat-quickbattle" id="combatQuickBtn" onclick="Engine.handleQuickCombat()" title="快速战斗：蒙特卡洛模拟，立即得出结果">⚡ 快速战斗</button>
@@ -175,12 +175,12 @@
     </div>
 </div>
 
-<script src="js/character.js?v=0.5.1"></script>
-<script src="js/npc.js?v=0.5.1"></script>
-<script src="js/combat.js?v=0.5.1"></script>
-<script src="js/rebirth.js?v=0.5.1"></script>
-<script src="js/engine.js?v=0.5.1"></script>
-<script src="js/ui.js?v=0.5.1"></script>
+<script src="js/character.js?v=0.9.8"></script>
+<script src="js/npc.js?v=0.9.8"></script>
+<script src="js/combat.js?v=0.9.8"></script>
+<script src="js/rebirth.js?v=0.9.8"></script>
+<script src="js/engine.js?v=0.9.8"></script>
+<script src="js/ui.js?v=0.9.8"></script>
 <script>
 (async function() {
     await Engine.init();

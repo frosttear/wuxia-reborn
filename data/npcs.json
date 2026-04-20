@@ -24,8 +24,8 @@
       { "threshold": -40,  "label": "不快" },
       { "threshold": 0,   "label": "陌生人" },
       { "threshold": 20,  "label": "点头之交" },
-      { "threshold": 40,  "label": "朋友" },
-      { "threshold": 60,  "label": "挚友" },
+      { "threshold": 40,  "label": "相识" },
+      { "threshold": 60,  "label": "朋友" },
       { "threshold": 80,  "label": "知己" }
     ]
   },

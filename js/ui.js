@@ -219,11 +219,10 @@ const UI = {
                 </div>
                 <div class="job-reqs">${reqHtml}${flagHtml}</div>`;
             if (!isCurrent && (unlocked || meetsReq)) {
-                const btn = document.createElement('button');
-                btn.className = 'btn-small';
-                btn.textContent = '切换';
-                btn.onclick = () => Engine.promoteJob(job.id);
-                div.appendChild(btn);
+                const indicator = document.createElement('span');
+                indicator.className = 'unlock-ready';
+                indicator.textContent = '✓ 已解锁';
+                div.appendChild(indicator);
             } else if (!isCurrent && !unlocked && !meetsReq) {
                 const indicator = document.createElement('span');
                 indicator.className = 'unlock-locked';
@@ -619,8 +618,8 @@ const UI = {
 
     // ── Combat action selection & preview ──────────────────────────────────
     _selectedCombatAction: null,
-    _ACTION_LABELS: { strike: '⚔ 强攻', defend: '🛡 防御', parry: '⚡ 招架', focus: '🔮 蓄势', flee: '🏃 逃跑' },
-    _ACTION_CONFIRM: { strike: '⚔ 再点强攻', defend: '🛡 再点防御', parry: '⚡ 再点招架', focus: '🔮 再点蓄势', flee: '🏃 再点逃跑' },
+    _ACTION_LABELS: { strike: '⚔ 强攻', defend: '🛡 防御', parry: '⚡ 破招', focus: '🔮 蓄势', flee: '🏃 逃跑' },
+    _ACTION_CONFIRM: { strike: '⚔ 再点强攻', defend: '🛡 再点防御', parry: '⚡ 再点破招', focus: '🔮 再点蓄势', flee: '🏃 再点逃跑' },
 
     selectCombatAction(action) {
         // If same action clicked again, execute immediately
@@ -657,31 +656,33 @@ const UI = {
             const p = preview.strike;
             const sk = p.skillPreview;
             html = `<span class="preview-label">⚔ 强攻</span>`;
-            html += `预估伤害 <span class="preview-good">~${p.dmg}</span>`;
-            html += `　暴击 <span class="preview-good">~${p.critDmg}</span>（${p.critChance}%）`;
-            html += `　无视防御 ${p.defIgnorePct}%　气力+2`;
-            if (sk) html += `<br><span class="preview-label">⚡ ${sk.name}</span>自动发动，预估 <span class="preview-good">~${sk.dmg}</span>`;
-            html += `<br><span class="preview-muted">承受敌方攻击 ~${preview.incoming.fullDmg}${preview.incoming.dodgeChance > 0 ? `　闪避${preview.incoming.dodgeChance}%` : ''}</span>`;
+            html += `伤害 <span class="preview-good">${p.dmg}</span>`;
+            if (p.critChance > 0) html += ` · 会心 <span class="preview-good">${p.critDmg}</span>（${p.critChance}%）`;
+            html += ` · 无视防御 ${p.defIgnorePct}% · 气力+2`;
+            if (sk) html += `<br><span class="preview-label">⚡ ${sk.name}</span>自动发动，伤害 <span class="preview-good">${sk.dmg}</span>`;
+            html += `<br><span class="preview-muted">承受敌方攻击 ${preview.incoming.fullDmg}${preview.incoming.dodgeChance > 0 ? ` · 闪避 ${preview.incoming.dodgeChance}%` : ''}</span>`;
         } else if (action === 'defend') {
             const p = preview.defend;
             html = `<span class="preview-label">🛡 防御</span>`;
-            html += `对重攻减伤 ${p.vsHeavy}%（受 <span class="preview-good">~${p.dmgHeavy}</span>）`;
-            html += `　对快攻减伤 ${p.vsSwift}%（受 <span class="preview-good">~${p.dmgSwift}</span>）`;
+            html += `对重攻减伤 ${p.vsHeavy}%（受 <span class="preview-good">${p.dmgHeavy}</span>）`;
+            html += ` · 对快攻减伤 ${p.vsSwift}%（受 <span class="preview-good">${p.dmgSwift}</span>）`;
             html += `<br><span class="preview-muted">不造成伤害，不获得气力。识破快攻时减伤80%</span>`;
         } else if (action === 'parry') {
             const p = preview.parry;
-            html = `<span class="preview-label">⚡ 招架</span>`;
-            html += `成功反击 <span class="preview-good">~${p.counterDmg}</span>（自受冲击 ~${p.selfDmg}）　气力+1`;
-            html += `<br>被快攻破招：受 <span class="preview-bad">~${p.punishDmg}</span>　气力-1`;
+            html = `<span class="preview-label">⚡ 破招</span>`;
+            html += `成功反击 <span class="preview-good">${p.counterDmg}</span>`;
+            if (p.critChance > 0) html += `（会心 ${p.counterCrit}，${p.critChance}%）`;
+            html += ` · 自受冲击 ${p.selfDmg} · 气力+1`;
+            html += `<br>破招失败：受 <span class="preview-bad">${p.punishDmg}</span>`;
             html += `<br><span class="preview-muted">克制重攻，被快攻克制。技能就绪时作为反击招式发动</span>`;
         } else if (action === 'focus') {
             const p = preview.focus;
             html = `<span class="preview-label">🔮 蓄势</span>`;
-            html += `气力 → ${p.momAfter}/5　减伤 ${p.reduction}%（受 <span class="preview-good">~${p.dmg}</span>）`;
+            html += `气力 → ${p.momAfter}/5 · 减伤 ${p.reduction}%（受 <span class="preview-good">${p.dmg}</span>）`;
             html += `<br><span class="preview-muted">快速积攒气力以发动技能，减伤略低于防御</span>`;
         } else if (action === 'flee') {
             html = `<span class="preview-label">🏃 逃跑</span>`;
-            html += `成功率 ${Math.round(cs.fleeChance * 100)}%　失败受 ~${preview.incoming.fullDmg} 伤害`;
+            html += `成功率 ${Math.round(cs.fleeChance * 100)}% · 失败受 ${preview.incoming.fullDmg} 伤害`;
             html += `<br><span class="preview-muted">每次失败+15%成功率</span>`;
         }
         bar.innerHTML = html;
@@ -750,18 +751,48 @@ const UI = {
     updateControls(state) {
         const busy = state.gamePhase !== 'idle';
         this.nextBtn.disabled = busy;
-        this.nextBtn.textContent = (state.char && state.char.injured) ? '静心修养 ▶' : '出门探险 ▶';
+        this.nextBtn.textContent = (state.char && state.char.injured) ? '🛌 静心修养' : '🚶 出门探险';
 
-        // Show visit button only when idle and visits are available
-        const visits = state.gamePhase === 'idle' ? Engine.getAvailableVisits() : [];
-        this.visitBtn.style.display = visits.length > 0 ? '' : 'none';
-        if (visits.length === 0 && this.visitPanel) this.visitPanel.style.display = 'none';
+        // Show/hide visit button: only re-evaluate visibility when idle
+        if (!busy) {
+            const visits = Engine.getAvailableVisits();
+            this.visitBtn.style.display = visits.length > 0 ? '' : 'none';
+            if (visits.length === 0 && this.visitPanel) this.visitPanel.style.display = 'none';
+        }
+        // Disable visit button when busy (but keep visible so UI doesn't jump)
+        this.visitBtn.disabled = busy;
 
-        // Show chain button if any chain has a pending step (met or locked)
-        const chainSteps = state.gamePhase === 'idle' ? Engine.getAllPendingChainSteps() : [];
+        // Show/hide chain button: only re-evaluate visibility when idle
         if (this.chainBtn) {
-            this.chainBtn.style.display = chainSteps.length > 0 ? '' : 'none';
-            if (chainSteps.length === 0 && this.chainPanel) this.chainPanel.style.display = 'none';
+            if (!busy) {
+                const chainSteps = Engine.getAllPendingChainSteps();
+                this.chainBtn.style.display = chainSteps.length > 0 ? '' : 'none';
+                if (chainSteps.length === 0 && this.chainPanel) this.chainPanel.style.display = 'none';
+            }
+            this.chainBtn.disabled = busy;
+        }
+
+        // Disable test combat button when busy
+        const testCombatBtn = document.getElementById('testCombatBtn');
+        if (testCombatBtn) testCombatBtn.disabled = busy;
+
+        // Close open panels when busy
+        if (busy) {
+            if (this.visitPanel) this.visitPanel.style.display = 'none';
+            if (this.chainPanel) this.chainPanel.style.display = 'none';
+            const testPanel = document.getElementById('testCombatPanel');
+            if (testPanel) testPanel.style.display = 'none';
+        }
+    },
+
+    _closeAllPanels(except) {
+        const panels = [
+            this.visitPanel,
+            this.chainPanel,
+            document.getElementById('testCombatPanel')
+        ];
+        for (const p of panels) {
+            if (p && p !== except) p.style.display = 'none';
         }
     },
 
@@ -769,6 +800,7 @@ const UI = {
         const panel = this.chainPanel;
         if (!panel) return;
         if (panel.style.display !== 'none') { panel.style.display = 'none'; return; }
+        this._closeAllPanels(panel);
         const steps = Engine.getAllPendingChainSteps();
         if (steps.length === 0) return;
         panel.innerHTML = steps.map(({ chain, step, stepIdx, conditionsMet, lockedReasons, enemyInfo }) => {
@@ -799,6 +831,7 @@ const UI = {
     toggleVisitPanel() {
         const panel = this.visitPanel;
         if (panel.style.display !== 'none') { panel.style.display = 'none'; return; }
+        this._closeAllPanels(panel);
         const visits = Engine.getAvailableVisits();
         if (visits.length === 0) return;
         const char = Engine.state.char;
@@ -831,6 +864,7 @@ const UI = {
     toggleTestCombatPanel() {
         const panel = document.getElementById('testCombatPanel');
         if (panel.style.display !== 'none') { panel.style.display = 'none'; return; }
+        this._closeAllPanels(panel);
         if (Engine.state.gamePhase === 'combat') return;
         const enemies = Engine.state.enemies || [];
         const char = Engine.state.char;

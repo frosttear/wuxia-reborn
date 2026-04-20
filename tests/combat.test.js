@@ -245,7 +245,7 @@ describe('Combat.processTurn - enemy intent preview', () => {
 
     test('perfectIntentRead passive always yields perfect intentType', () => {
         const char = makeChar({ attributes: { strength: 8, agility: 5, constitution: 5, innerForce: 3, comprehension: 0, luck: 5, reputation: 0 } });
-        char.hp = 100;
+        char.hp = 500;
         char.passives = [{ id: 'wuxiang_intent', name: '无相剑意', perfectIntentRead: true }];
         const TOUGH_ENEMY = { ...STUB_ENEMY, comprehension: 50 };
         const cs = Combat.initState(char, TOUGH_ENEMY, STUB_JOB);

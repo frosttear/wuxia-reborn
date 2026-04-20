@@ -99,20 +99,24 @@ const Engine = {
         const { actualHealed, innerBonus, conBonus } = Character.monthlyHPRegen(char, job);
         UI.renderCharacter(char, this.state.jobs);
         if (actualHealed > 0) {
-            const parts = [`回复 ${actualHealed} 气血`];
+            const baseHealed = actualHealed - innerBonus - conBonus;
+            let msg = `回复 ${actualHealed} 气血`;
             if (innerBonus > 0 || conBonus > 0) {
                 const details = [];
-                if (innerBonus > 0) details.push(`内力+${innerBonus}`);
-                if (conBonus > 0) details.push(`体质+${conBonus}`);
-                parts.push(`（${details.join('，')}）`);
+                details.push(`基础${baseHealed}`);
+                if (innerBonus > 0) details.push(`内力加成+${innerBonus}`);
+                if (conBonus > 0) details.push(`体质加成+${conBonus}`);
+                msg += `（${details.join('，')}）`;
             }
-            UI.addLog(`【内功】内力护体，本月${parts.join('')}。`, 'info');
+            UI.addLog(`【内功】内力护体，本月${msg}。`, 'info');
         }
 
-        // Check new job unlocks
+        // Check new job unlocks — auto-promote to highest unlocked job
         const newJobs = Character.checkJobUnlocks(char, this.state.jobs);
-        for (const j of newJobs) {
-            UI.addLog(`⚔ 你已满足晋升【${j.name}】的条件！可在右侧面板切换职业。`, 'unlock');
+        if (newJobs.length > 0) {
+            // Pick the last (highest-tier) newly unlocked job
+            const best = newJobs[newJobs.length - 1];
+            this.promoteJob(best.id);
         }
 
         // Birthday system: fires when ageMonths % 12 === 0

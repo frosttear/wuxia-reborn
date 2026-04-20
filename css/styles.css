@@ -498,13 +498,13 @@ button:disabled { opacity: 0.4; cursor: not-allowed; }
 .combat-btn .action-skill-hint { font-size: 0.62rem; color: #f4c430; opacity: 0.85; }
 .combat-preview-bar {
     background: rgba(0,0,0,0.35); border: 1px solid var(--border); border-radius: 6px;
-    padding: 8px 12px; margin-bottom: 4px; font-size: 0.78rem; line-height: 1.6;
+    padding: 10px 14px; margin-bottom: 4px; font-size: 0.88rem; line-height: 1.7;
     color: var(--text); min-height: 36px;
 }
-.combat-preview-bar .preview-label { color: var(--accent); font-weight: bold; margin-right: 6px; }
-.combat-preview-bar .preview-good { color: var(--green); }
-.combat-preview-bar .preview-bad { color: var(--red); }
-.combat-preview-bar .preview-muted { color: var(--muted); font-size: 0.72rem; }
+.combat-preview-bar .preview-label { color: var(--accent); font-weight: bold; margin-right: 6px; font-size: 0.92rem; }
+.combat-preview-bar .preview-good { color: var(--green); font-weight: bold; }
+.combat-preview-bar .preview-bad { color: var(--red); font-weight: bold; }
+.combat-preview-bar .preview-muted { color: var(--muted); font-size: 0.82rem; }
 .combat-strike { border-color: rgba(201,100,76,0.6); color: #e07050; }
 .combat-strike:hover:not(:disabled) { background: rgba(201,100,76,0.15); }
 .combat-quick  { border-color: rgba(201,168,76,0.5); color: var(--accent2); }

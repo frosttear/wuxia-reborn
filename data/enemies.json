@@ -192,7 +192,7 @@
     "description": "神秘老者昔年留下的未竟之敌。以剑意凝聚而成，无形无质，却锋锐如渊。",
     "comprehension": 50,
     "innerForce": 60,
-    "attack": 105, "defense": 128, "hp": 580,
+    "attack": 135, "defense": 160, "hp": 720,
     "attackScale": 0, "defenseScale": 0, "hpScale": 0,
     "intentReadMsgs": {
       "heavy": ["剑魂剑意骤然收敛内聚，磅礴剑气即将爆发——<b>重击将至</b>", "那道剑光骤然加重，如渊如岳——<b>重击将至</b>"],
@@ -212,18 +212,25 @@
     "isHiddenBoss": true,
     "skills": [
       {
+        "id": "sword_intent_wave",
+        "name": "剑意横空",
+        "telegraph": "剑魂周身剑意骤然扩散，空气中浮现无数透明剑痕……⚠ 【剑意横空】即将席卷，务必【防御】！",
+        "damageMult": 2.0,
+        "hpThreshold": 0.8
+      },
+      {
         "id": "void_sword",
         "name": "虚空一剑",
         "telegraph": "剑魂缓缓抬起长剑，剑身白光大盛，无形剑意弥漫四方……⚠ 【虚空一剑】蓄势，务必【防御】！",
-        "damageMult": 2.8,
-        "hpThreshold": 0.6
+        "damageMult": 3.2,
+        "hpThreshold": 0.5
       },
       {
         "id": "thousand_cuts",
         "name": "万剑归宗",
         "telegraph": "剑魂双手合拢，周围虚空中浮现无数剑影……⚠ 【万剑归宗】即发，危急！务必【防御】！",
-        "damageMult": 4.0,
-        "hpThreshold": 0.25
+        "damageMult": 4.5,
+        "hpThreshold": 0.2
       }
     ]
   },
@@ -370,7 +377,7 @@
       {
         "id": "void_sword",
         "name": "虚实一线",
-        "telegraph": "无名剑客眼神骤然深邃，气机收束于一点——⚠ 无法判断虚实，下回合须【招架】！",
+        "telegraph": "无名剑客眼神骤然深邃，气机收束于一点——⚠ 无法判断虚实，下回合须【破招】！",
         "damageMult": 2.0,
         "hpThreshold": 0.45
       }

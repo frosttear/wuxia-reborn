@@ -494,12 +494,12 @@
       {
         "id": "help",
         "text": "上前搭话，确认她没事",
-        "effects": { "flags": { "met_li_yunshu": true }, "npcAffinity": { "li_yunshu": 20 }, "narrative": "她笑着抱拳道：「多谢，在下李云舒。」声音爽朗，令人如沐春风。" }
+        "effects": { "flags": { "met_li_yunshu": true }, "npcAffinity": { "li_yunshu": 15 }, "narrative": "她笑着抱拳道：「多谢，在下李云舒。」声音爽朗，令人如沐春风。" }
       },
       {
         "id": "pass_by",
         "text": "默默路过，不多打扰",
-        "effects": { "flags": { "met_li_yunshu": true }, "npcAffinity": { "li_yunshu": 8 }, "narrative": "你擦肩而过，她回头看了你一眼，点了点头。" }
+        "effects": { "flags": { "met_li_yunshu": true }, "npcAffinity": { "li_yunshu": 5 }, "narrative": "你擦肩而过，她回头看了你一眼，点了点头。" }
       }
     ]
   },
