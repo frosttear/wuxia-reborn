@@ -524,11 +524,12 @@ const Combat = {
             hp: char.hp,
             ageMonths: char.ageMonths || 180,
             attributes: { ...char.attributes },
-            passives: char.passives || [],
-            legacyTalents: char.legacyTalents || [],
+            passives: (char.passives || []).slice(),
+            legacyTalents: (char.legacyTalents || []).slice(),
             job: char.job,
         };
-        const cs = this.initState(simChar, enemy, job);
+        const simEnemy = JSON.parse(JSON.stringify(enemy));
+        const cs = this.initState(simChar, simEnemy, job);
         let finalResult = 'lost';
         for (let t = 0; t < 50; t++) {
             let action;

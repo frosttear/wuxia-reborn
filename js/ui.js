@@ -514,6 +514,7 @@ const UI = {
             fleeBtn.textContent = '🔒 无法逃跑';
         }
         this.updateCombatOverlay(state);
+        this._selectedCombatAction = null;  // prevent auto-execute from double selectCombatAction
         this.selectCombatAction('strike');  // default selection
         document.getElementById('combatOverlay').classList.add('visible');
         if (window.innerWidth <= 768) this.switchTab('event');
@@ -584,9 +585,9 @@ const UI = {
             intentEl.innerHTML = '';
         }
 
-        // Combat log (last 5 entries)
+        // Combat log (full history, scrollable)
         const logEl = document.getElementById('combatLog');
-        logEl.innerHTML = cs.log.slice(-5).map(e => {
+        logEl.innerHTML = cs.log.map(e => {
             const badge = e.turn === 0
                 ? `<span class="combat-turn-badge combat-turn-open">⚔ 开战</span>`
                 : `<span class="combat-turn-badge">第${e.turn}回合</span>`;

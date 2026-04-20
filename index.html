@@ -186,6 +186,9 @@
     await Engine.init();
     UI.init();
 
+    // Save combat state on page close/refresh
+    window.addEventListener('beforeunload', () => { Engine.saveGame(); });
+
     const saved = Engine.loadGame();
     if (saved) {
         Engine.state.char = saved;

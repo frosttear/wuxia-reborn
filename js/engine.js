@@ -722,6 +722,10 @@ const Engine = {
         if (this.state.gamePhase === 'combat') return;
         const enemy = this.getEnemy(enemyId);
         if (!enemy) return;
+        // Clear any stale combat data before starting fresh
+        try { localStorage.removeItem('wuxia_combat'); } catch(e) {}
+        this.state.combatState = null;
+
         const { char } = this.state;
         // Snapshot char state to restore after combat
         this.state._testCombatSnapshot = {
@@ -735,6 +739,10 @@ const Engine = {
     },
 
     startCombat(enemy, postNarrative) {
+        // Clear any stale combat data before starting fresh
+        try { localStorage.removeItem('wuxia_combat'); } catch(e) {}
+        this.state.combatState = null;
+
         const { char } = this.state;
         const job = this.getJob(char.job);
         const cs = Combat.initState(char, enemy, job);
@@ -774,6 +782,7 @@ const Engine = {
         } else {
             this.state.combatBusy = false;
             UI.setCombatActionsEnabled(true);
+            this.saveGame(); // persist current combat state for resume on refresh
         }
     },
 
