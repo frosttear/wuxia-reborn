@@ -225,6 +225,10 @@ const Combat = {
             }
 
             // ── Enemy phase ──────────────────────────────────────────────────
+            // Dynamic defense ignore for all enemy-vs-player damage (symmetric with player's strike)
+            const enemyAtkRatio = Math.min(1, cs.enemyEffAtk / Math.max(1, playerDef));
+            const enemyDefIgnore = Math.min(0.75, enemyAtkRatio * 0.60 + 0.10);
+
             if (!combatOver) {
                 if (action === 'parry') {
                     if (enemyAction === 'heavy') {
@@ -234,7 +238,7 @@ const Combat = {
                         const skillMult = pend ? (pend.damageMult || 1.5) * (1 + enemySkillAmp) : 1.0;
                         const skillName = pend ? pend.name : null;
                         if (pend) cs.pendingSkill = null;
-                        const rawIncoming = Math.max(1, Math.floor(cs.enemyEffAtk * skillMult) - Math.floor(playerDef * 0.5) + this._rand(-2, 6));
+                        const rawIncoming = Math.max(1, Math.floor(cs.enemyEffAtk * skillMult) - Math.floor(playerDef * (1 - enemyDefIgnore)) + this._rand(-2, 6));
                         const parryDmg = Math.max(1, Math.floor(rawIncoming * 0.20) - qiShield);
                         Character.takeDamage(char, parryDmg);
                         cs.totalDmgReceived += parryDmg;
@@ -302,8 +306,9 @@ const Combat = {
                         const pend = cs.pendingSkill;
                         const skillMult = pend ? (pend.damageMult || 1.5) * (1 + enemySkillAmp) : 1.0;
                         if (pend) cs.pendingSkill = null;
+                        const swiftPunishIgnore = Math.min(0.85, enemyDefIgnore + 0.15);
                         const rawDmg = Math.max(1, Math.floor(cs.enemyEffAtk * 1.3 * skillMult)
-                            - Math.floor(playerDef * 0.25) + this._rand(-2, 5));
+                            - Math.floor(playerDef * (1 - swiftPunishIgnore)) + this._rand(-2, 5));
                         const parryPunishDmg = Math.max(1, rawDmg - qiShield);
                         Character.takeDamage(char, parryPunishDmg);
                         cs.totalDmgReceived += parryPunishDmg;
@@ -339,7 +344,7 @@ const Combat = {
                     }
 
                     const rawDmg = Math.max(1,
-                        Math.floor(cs.enemyEffAtk * skillMult) - Math.floor(playerDef * 0.5)
+                        Math.floor(cs.enemyEffAtk * skillMult) - Math.floor(playerDef * (1 - enemyDefIgnore))
                         + this._rand(-2, 6));
                     const finalDmg = Math.max(1, Math.floor(rawDmg * incomingMult) - qiShield);
                     const attackPool = enemyAction === 'swift' ? this.ENEMY_SWIFT_DESCS : this.ENEMY_HEAVY_DESCS;
