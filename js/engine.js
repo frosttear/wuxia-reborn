@@ -1204,7 +1204,7 @@ const Engine = {
         try {
             localStorage.setItem('wuxia_save', JSON.stringify(char));
             localStorage.setItem('wuxia_log', JSON.stringify(UI.getLogBuffer()));
-            if (this.state.gamePhase === 'combat' && this.state.combatState) {
+            if (this.state.gamePhase === 'combat' && this.state.combatState && !this.state._isTestCombat) {
                 localStorage.setItem('wuxia_combat', JSON.stringify({
                     cs: this.state.combatState,
                     pendingChainStep: this.state.pendingChainStep || null
