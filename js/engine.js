@@ -1213,10 +1213,12 @@ const Engine = {
         try {
             localStorage.setItem('wuxia_save', JSON.stringify(char));
             localStorage.setItem('wuxia_log', JSON.stringify(UI.getLogBuffer()));
-            if (this.state.gamePhase === 'combat' && this.state.combatState && !this.state._isTestCombat) {
+            if (this.state.gamePhase === 'combat' && this.state.combatState) {
                 localStorage.setItem('wuxia_combat', JSON.stringify({
                     cs: this.state.combatState,
-                    pendingChainStep: this.state.pendingChainStep || null
+                    pendingChainStep: this.state.pendingChainStep || null,
+                    isTestCombat: this.state._isTestCombat || false,
+                    testCombatSnapshot: this.state._testCombatSnapshot || null
                 }));
             } else {
                 localStorage.removeItem('wuxia_combat');

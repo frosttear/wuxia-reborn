@@ -202,9 +202,12 @@
         try {
             const savedCombat = localStorage.getItem('wuxia_combat');
             if (savedCombat) {
-                const { cs, pendingChainStep } = JSON.parse(savedCombat);
+                const parsed = JSON.parse(savedCombat);
+                const { cs, pendingChainStep } = parsed;
                 Engine.state.combatState = cs;
                 Engine.state.pendingChainStep = pendingChainStep || null;
+                Engine.state._isTestCombat = parsed.isTestCombat || false;
+                Engine.state._testCombatSnapshot = parsed.testCombatSnapshot || null;
                 Engine.state.gamePhase = 'combat';
                 UI.renderAll(Engine.state);
                 UI.showCombatOverlay(Engine.state);
