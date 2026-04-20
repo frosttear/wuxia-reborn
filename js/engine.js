@@ -1085,6 +1085,7 @@ const Engine = {
         const { char } = this.state;
         this.state.gamePhase = 'rebirth';
         this.stopAuto();
+        this.saveGame(); // persist rebirth state so it survives page refresh
 
         const availableTalents = Rebirth.getAvailableTalents(char);
         const summary = Rebirth.getSummaryText(char, this.state.jobs, this.state.bonds, this.state.npcs);
@@ -1120,6 +1121,7 @@ const Engine = {
         // No hidden boss chain: 天下太平 → darkness returns years later → force rebirth
         this.state.gamePhase = 'victory';   // block all player actions during narrative
         this.stopAuto();
+        this.saveGame(); // persist victory state so it survives page refresh
         UI.addLog('────────────────────', 'system');
         UI.addLog('天魔轰然倒下。一阵大风吹散了极天的乌云，天地之间，光重新射入。', 'win');
         UI.addLog('消息传遍四方，百姓称颂英雄，士子赋诗立传。江湖中，那些映日笼罩于天魔阴影下的人们，纷纷抗起了头。', 'system');
@@ -1248,7 +1250,7 @@ const Engine = {
         UI.clearLog();
         UI.renderAll(this.state);
         const mName = this.BIRTH_MONTH_NAMES[newChar.birthMonth - 1];
-        UI.addLog(`✨ 第 ${newChar.rebirthCount + 1} 世。【${newChar.name}】再度降生。和上一世一样，生于${mName}。天魔之约，依然在候。`, 'system');
+        UI.addLog(`✨ ${newChar.rebirthCount + 1}周目。【${newChar.name}】再度降生。和上一世一样，生于${mName}。天魔之约，依然在候。`, 'system');
         this.saveGame();
     },
 
@@ -1268,6 +1270,8 @@ const Engine = {
         try {
             localStorage.setItem('wuxia_save', JSON.stringify(char));
             localStorage.setItem('wuxia_log', JSON.stringify(UI.getLogBuffer()));
+            // Persist gamePhase so victory/rebirth states survive refresh
+            localStorage.setItem('wuxia_phase', this.state.gamePhase || 'idle');
             if (this.state.gamePhase === 'combat' && this.state.combatState) {
                 localStorage.setItem('wuxia_combat', JSON.stringify({
                     cs: this.state.combatState,
@@ -1291,6 +1295,8 @@ const Engine = {
 
     deleteSave() {
         localStorage.removeItem('wuxia_save');
+        localStorage.removeItem('wuxia_phase');
+        localStorage.removeItem('wuxia_combat');
     },
 
     exportSave() {
@@ -1317,9 +1323,14 @@ const Engine = {
             const json = decodeURIComponent(escape(atob(code.trim())));
             const data = JSON.parse(json);
             if (!data.char || !data.char.name) { alert('无效的存档码'); return; }
-            if (!confirm(`确定导入存档？当前进度将被覆盖。\n角色：${data.char.name}（第${(data.char.rebirthCount || 0) + 1}世）`)) return;
+            if (!confirm(`确定导入存档？当前进度将被覆盖。\n角色：${data.char.name}（${(data.char.rebirthCount || 0) + 1}周目）`)) return;
+            // Update in-memory state so beforeunload saveGame won't overwrite
+            this.state.char = data.char;
             localStorage.setItem('wuxia_save', JSON.stringify(data.char));
             if (data.log) localStorage.setItem('wuxia_log', JSON.stringify(data.log));
+            // Clear stale combat/phase data from previous save
+            localStorage.removeItem('wuxia_combat');
+            localStorage.setItem('wuxia_phase', 'idle');
             location.reload();
         } catch (err) {
             alert('存档码无效：' + err.message);

@@ -190,9 +190,9 @@
     "id": "sword_soul",
     "name": "剑魂",
     "description": "神秘老者昔年留下的未竟之敌。以剑意凝聚而成，无形无质，却锋锐如渊。",
-    "comprehension": 50,
-    "innerForce": 60,
-    "attack": 135, "defense": 160, "hp": 720,
+    "comprehension": 60,
+    "innerForce": 80,
+    "attack": 145, "defense": 180, "hp": 880,
     "attackScale": 0, "defenseScale": 0, "hpScale": 0,
     "intentReadMsgs": {
       "heavy": ["剑魂剑意骤然收敛内聚，磅礴剑气即将爆发——<b>重击将至</b>", "那道剑光骤然加重，如渊如岳——<b>重击将至</b>"],
@@ -279,8 +279,8 @@
     "name": "影堂堂主",
     "description": "被魔气强化的影堂首领，精通炼魂之术，武力凶横",
     "comprehension": 25,
-    "innerForce": 30,
-    "attack": 48, "defense": 36, "hp": 255,
+    "innerForce": 40,
+    "attack": 52, "defense": 40, "hp": 280,
     "attackScale": 7, "defenseScale": 5, "hpScale": 0.2,
     "intentReadMsgs": {
       "heavy": ["堂主炼魂之力汇聚于刀，沉重一击将至——<b>重击将至</b>", "对方阵纹骤亮，刀势蓄满——<b>重击将至</b>"],
@@ -318,10 +318,10 @@
     "id": "lingxue_enemy",
     "name": "凌雪",
     "description": "天魔门下首席弟子，以冰属剑意纵横江湖，正邪难辨，却自有一套不可动摇的信念与准则。",
-    "attack": 58, "defense": 44, "hp": 300,
+    "attack": 62, "defense": 48, "hp": 340,
     "attackScale": 6, "defenseScale": 4, "hpScale": 0.18,
     "comprehension": 38,
-    "innerForce": 35,
+    "innerForce": 45,
     "intentReadMsgs": {
       "heavy": ["凌雪步伐忽然停住，寒意骤聚于剑尖——<b>重击将至</b>", "她剑身凝起冰蓝光芒，重击蓄势——<b>重击将至</b>"],
       "swift": ["凌雪步伐如雪花漫舞，疾刺之势已成——<b>快攻将至</b>", "她身形轻盈一转，快若流星——<b>快攻将至</b>"]
@@ -359,8 +359,8 @@
     "name": "无名剑客",
     "description": "此人气息内敛，不怒自威，一双眼睛如渊似海——你感到，眼前这个人，正是你「意先招出」能否真正落地的试金石。",
     "comprehension": 60,
-    "innerForce": 35,
-    "attack": 58, "defense": 42, "hp": 260,
+    "innerForce": 50,
+    "attack": 68, "defense": 52, "hp": 340,
     "attackScale": 0, "defenseScale": 0, "hpScale": 0,
     "intentReadMsgs": {
       "heavy": ["剑客腰胯微沉，真气运于右臂——<b>重击将至</b>", "剑尖悄然下压，内劲暗涌——<b>重击将至</b>"],
@@ -569,8 +569,8 @@
     "name": "天魔",
     "description": "传说中的魔道宗师，武功通天，邪气滔天，是这个时代最大的祸乱之源",
     "comprehension": 50,
-    "innerForce": 50,
-    "attack": 82, "defense": 72, "hp": 420,
+    "innerForce": 65,
+    "attack": 88, "defense": 80, "hp": 520,
     "attackScale": 0, "defenseScale": 0, "hpScale": 0,
     "intentReadMsgs": {
       "heavy": ["天魔魔气骤然内敛，磅礴重击将至——<b>重击将至</b>", "天魔双掌缓缓合拢，魔劲深藏将发——<b>重击将至</b>"],

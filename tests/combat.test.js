@@ -321,3 +321,26 @@ describe('Combat.getEffectiveStats', () => {
         expect(eff.hp).toBeGreaterThan(60);
     });
 });
+
+describe('Combat._effectiveSkillAmp', () => {
+    test('no dampening when enemy IF is 0', () => {
+        const result = Combat._effectiveSkillAmp(0.43, 0);
+        expect(result).toBeCloseTo(0.43, 2);
+    });
+
+    test('dampened by enemy innerForce', () => {
+        // 43% raw vs enemy IF 50 → 43% * 100/(100+150) = 17.2%
+        const result = Combat._effectiveSkillAmp(0.43, 50);
+        expect(result).toBeCloseTo(0.172, 2);
+    });
+
+    test('symmetric: enemy skill amp dampened by player IF', () => {
+        // enemy IF 60 → rawAmp 0.60, dampened by player IF 40 → 0.60 * 100/220 = 0.2727
+        const result = Combat._effectiveSkillAmp(0.60, 40);
+        expect(result).toBeCloseTo(0.2727, 2);
+    });
+
+    test('zero raw amp returns zero', () => {
+        expect(Combat._effectiveSkillAmp(0, 50)).toBe(0);
+    });
+});

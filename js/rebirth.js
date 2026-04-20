@@ -162,7 +162,7 @@ const INHERIT_BASE_RATE = 0.10; // 10% base attribute inheritance
 const Rebirth = {
     // Calculate which talents are available this rebirth
     getAvailableTalents(char) {
-        return TALENTS.filter(t => {
+        const eligible = TALENTS.filter(t => {
             if (!t.condition(char)) return false;
             if (char.legacyTalents.includes(t.id)) return false;
             // Hide base talent if player already has its upgrade
@@ -171,6 +171,12 @@ const Rebirth = {
                 if (upgrader && char.legacyTalents.includes(upgrader.id)) return false;
             }
             return true;
+        });
+        // Hide lower-tier talent if higher-tier is also available this rebirth
+        return eligible.filter(t => {
+            if (!t.upgradedBy) return true;
+            // If the upgrade talent is also in the eligible list, hide this one
+            return !eligible.some(u => u.id === t.upgradedBy);
         });
     },
 

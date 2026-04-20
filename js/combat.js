@@ -99,6 +99,13 @@ const Combat = {
         return Math.random() < (hpPct < 0.35 ? 0.65 : 0.45) ? 'heavy' : 'swift';
     },
 
+    // ── Effective skill amplification (dampened by opponent's innerForce) ────
+    // Formula: effectiveAmp = rawAmp * 100 / (100 + opponentIF * 3)
+    // High-IF enemies resist more of your skill amp; your IF also dampens enemy skills.
+    _effectiveSkillAmp(rawAmp, opponentInnerForce) {
+        return rawAmp * 100 / (100 + (opponentInnerForce || 0) * 3);
+    },
+
     // ── Main turn processor ──────────────────────────────────────────────────
     // action: 'strike'|'quick'|'defend'|'parry'|'focus'|'flee'
     processTurn(action, cs, char, job) {
@@ -110,9 +117,11 @@ const Combat = {
         if (cs.allBondsBonus) playerAtk += 60;
         const playerDef = Character.getDefensePower(char, job);
         const qiShield  = Character.getQiShield(char);       // flat reduction per hit
-        const skillAmp  = Character.getSkillAmplify(char);    // % bonus on skill dmg
+        const rawSkillAmp = Character.getSkillAmplify(char);  // raw % bonus on skill dmg
+        const skillAmp  = this._effectiveSkillAmp(rawSkillAmp, cs.enemyInnerForce); // dampened by enemy IF
         const enemyQS   = cs.enemyQiShield || 0;             // enemy qi shield
-        const enemySkillAmp = (cs.enemyInnerForce || 0) / 100; // enemy skill amplify
+        const rawEnemySkillAmp = (cs.enemyInnerForce || 0) / 100;
+        const enemySkillAmp = this._effectiveSkillAmp(rawEnemySkillAmp, char.attributes.innerForce || 0); // dampened by player IF
 
         if (cs.allBondsBonus && cs.turn === 1) {
             lines.push('<b style="color:#c9a84c">【羁绊之力】江湖情谊化为无形刃芒——攻击力+60！</b>');
@@ -152,9 +161,10 @@ const Combat = {
                 && cs.skillCooldown === 0;
 
             // ── Player attack phase ──────────────────────────────────────────
-            // Shared dynamic defense ignore (used by both strike and skills)
-            const atkRatio = Math.min(1, playerAtk / Math.max(1, cs.enemyEffDef));
-            const defIgnore = Math.min(0.75, atkRatio * 0.60 + 0.10);
+            // Shared flat defense penetration (used by both strike and skills)
+            // defPen = floor(ATK * 0.3), effectiveDef = max(0, enemyDef - defPen)
+            const defPen = Math.floor(playerAtk * 0.3);
+            const effectiveDef = Math.max(0, cs.enemyEffDef - defPen);
 
             if (skillFires) {
                 // Auto-trigger job skill
@@ -164,9 +174,7 @@ const Combat = {
 
                 if (sk.type === 'multi') {
                     const hits = sk.hits || 3;
-                    // armorBreak stacks on top of defIgnore
-                    const skillDefIgnore = Math.min(0.90, defIgnore + (sk.armorBreak || 0.5));
-                    const defMit = Math.floor(cs.enemyEffDef * (1 - skillDefIgnore));
+                    const defMit = effectiveDef;
                     let total = 0;
                     const parts = [];
                     for (let i = 0; i < hits; i++) {
@@ -179,10 +187,8 @@ const Combat = {
                     const ampNote = skillAmp >= 0.10 ? `　<span style="color:#a0d8ef">内力增幅+${Math.round(skillAmp * 100)}%</span>` : '';
                     lines.push(`【<b style="color:#f4c430">${sk.name}</b>】连击（${parts.join('+')}=<b>${total}</b>），对方剩余气血 ${Math.max(0, cs.enemyHp)}。${ampNote}`);
                 } else {
-                    // armorBreak stacks on top of defIgnore
-                    const skillDefIgnore = Math.min(0.90, defIgnore + (sk.armorBreak || 0));
                     const dmg = Math.max(1, Math.floor(playerAtk * sk.power * (1 + skillAmp))
-                        - Math.floor(cs.enemyEffDef * (1 - skillDefIgnore))
+                        - effectiveDef
                         - enemyQS);
                     cs.enemyHp = Math.max(0, cs.enemyHp - dmg);
                     cs.totalDmgDealt += dmg;
@@ -197,7 +203,7 @@ const Combat = {
                 const isCrit = Math.random() < Character.getLuckTriggerChance(char);
                 // Dynamic defense ignore: scales with atk/def ratio (symmetric with defend's defCap)
                 let dmg = Math.max(1, Math.floor(playerAtk * lv)
-                    - Math.floor(cs.enemyEffDef * (1 - defIgnore)) - enemyQS);
+                    - effectiveDef - enemyQS);
                 if (isCrit) dmg = Math.floor(dmg * 1.5);
                 cs.enemyHp = Math.max(0, cs.enemyHp - dmg);
                 cs.totalDmgDealt += dmg;
@@ -226,9 +232,9 @@ const Combat = {
             }
 
             // ── Enemy phase ──────────────────────────────────────────────────
-            // Dynamic defense ignore for all enemy-vs-player damage (symmetric with player's strike)
-            const enemyAtkRatio = Math.min(1, cs.enemyEffAtk / Math.max(1, playerDef));
-            const enemyDefIgnore = Math.min(0.75, enemyAtkRatio * 0.60 + 0.10);
+            // Flat defense penetration for enemy-vs-player (symmetric with player's)
+            const enemyDefPen = Math.floor(cs.enemyEffAtk * 0.3);
+            const effectivePlayerDef = Math.max(0, playerDef - enemyDefPen);
 
             if (!combatOver) {
                 if (action === 'parry') {
@@ -239,7 +245,7 @@ const Combat = {
                         const skillMult = pend ? (pend.damageMult || 1.5) * (1 + enemySkillAmp) : 1.0;
                         const skillName = pend ? pend.name : null;
                         if (pend) cs.pendingSkill = null;
-                        const rawIncoming = Math.max(1, Math.floor(cs.enemyEffAtk * skillMult) - Math.floor(playerDef * (1 - enemyDefIgnore)));
+                        const rawIncoming = Math.max(1, Math.floor(cs.enemyEffAtk * skillMult) - effectivePlayerDef);
                         const parryDmg = Math.max(1, Math.floor(rawIncoming * 0.20) - qiShield);
                         Character.takeDamage(char, parryDmg);
                         cs.totalDmgReceived += parryDmg;
@@ -260,13 +266,12 @@ const Combat = {
                             const isCrit = Math.random() < Character.getLuckTriggerChance(char);
                             const ampNote = skillAmp >= 0.10 ? `内力增幅+${Math.round(skillAmp * 100)}%` : '';
                             const critTag = isCrit ? '【<b>会心一击</b>】' : '';
-                            // Reuse dynamic defIgnore; armorBreak stacks on top
-                            const ctrAtkRatio = Math.min(1, playerAtk / Math.max(1, cs.enemyEffDef));
-                            const ctrDefIgnore = Math.min(0.75, ctrAtkRatio * 0.60 + 0.10);
+                            // Reuse flat defPen for counter
+                            const ctrDefPen = Math.floor(playerAtk * 0.3);
+                            const ctrEffectiveDef = Math.max(0, cs.enemyEffDef - ctrDefPen);
                             if (sk.type === 'multi') {
                                 const hits = sk.hits || 3;
-                                const skillCtrIgnore = Math.min(0.90, ctrDefIgnore + (sk.armorBreak || 0.5));
-                                const defMit = Math.floor(cs.enemyEffDef * (1 - skillCtrIgnore));
+                                const defMit = ctrEffectiveDef;
                                 let total = 0;
                                 const parts = [];
                                 for (let i = 0; i < hits; i++) {
@@ -280,9 +285,8 @@ const Combat = {
                                     ? `你早已洞悉来招，顺势以【<b style="color:#f4c430">${sk.name}</b>】反击！${critTag}${ampNote}连击（${parts.join('+')}=<b>${counterDmg}</b>）`
                                     : `凭直觉化解来招，以【<b style="color:#f4c430">${sk.name}</b>】反击！${critTag}${ampNote}连击（${parts.join('+')}=<b>${counterDmg}</b>）`;
                             } else {
-                                const skillCtrIgnore = Math.min(0.90, ctrDefIgnore + (sk.armorBreak || 0));
                                 counterDmg = Math.max(1, Math.floor(playerAtk * sk.power * (1 + skillAmp))
-                                    - Math.floor(cs.enemyEffDef * (1 - skillCtrIgnore))
+                                    - ctrEffectiveDef
                                     - enemyQS);
                                 if (isCrit) counterDmg = Math.floor(counterDmg * 1.5);
                                 if (sk.type === 'stun') cs.enemyStunned = true;
@@ -291,10 +295,10 @@ const Combat = {
                                     : `凭直觉化解来招，以【<b style="color:#f4c430">${sk.name}</b>】反击！${critTag}${ampNote}对方损失 <b>${counterDmg}</b> 气血`;
                             }
                         } else {
-                            // Basic counter — uses same defIgnore as strike
+                            // Basic counter — uses same defPen as strike
                             const counterMult = heavyAnticipated ? 1.0 : 0.75;
                             const isCrit = Math.random() < Character.getLuckTriggerChance(char);
-                            counterDmg = Math.max(1, Math.floor(playerAtk * counterMult) - Math.floor(cs.enemyEffDef * (1 - defIgnore)) - enemyQS);
+                            counterDmg = Math.max(1, Math.floor(playerAtk * counterMult) - effectiveDef - enemyQS);
                             if (isCrit) counterDmg = Math.floor(counterDmg * 1.5);
                             const critTag = isCrit ? '【<b>会心一击</b>】' : '';
                             counterText = heavyAnticipated
@@ -312,13 +316,14 @@ const Combat = {
                         if (char.hp <= 0) { result = 'lost'; combatOver = true; }
                         if (!combatOver && cs.enemyHp <= 0) { result = 'won'; combatOver = true; }
                     } else {
-                        // Parry punished by swift
+                        // Parry punished by swift — extra penetration
                         const pend = cs.pendingSkill;
                         const skillMult = pend ? (pend.damageMult || 1.5) * (1 + enemySkillAmp) : 1.0;
                         if (pend) cs.pendingSkill = null;
-                        const swiftPunishIgnore = Math.min(0.85, enemyDefIgnore + 0.10);
+                        const swiftPunishPen = Math.floor(cs.enemyEffAtk * 0.4);
+                        const swiftPunishDef = Math.max(0, playerDef - swiftPunishPen);
                         const rawDmg = Math.max(1, Math.floor(cs.enemyEffAtk * 1.15 * skillMult)
-                            - Math.floor(playerDef * (1 - swiftPunishIgnore)));
+                            - swiftPunishDef);
                         const parryPunishDmg = Math.max(1, rawDmg - qiShield);
                         Character.takeDamage(char, parryPunishDmg);
                         cs.totalDmgReceived += parryPunishDmg;
@@ -353,7 +358,7 @@ const Combat = {
                     }
 
                     const rawDmg = Math.max(1,
-                        Math.floor(cs.enemyEffAtk * skillMult) - Math.floor(playerDef * (1 - enemyDefIgnore)));
+                        Math.floor(cs.enemyEffAtk * skillMult) - effectivePlayerDef);
                     const finalDmg = Math.max(1, Math.floor(rawDmg * incomingMult) - qiShield);
                     const attackPool = enemyAction === 'swift' ? this.ENEMY_SWIFT_DESCS : this.ENEMY_HEAVY_DESCS;
                     const customPool = cs.enemy.attackDescs && cs.enemy.attackDescs.length ? cs.enemy.attackDescs : null;
@@ -424,10 +429,10 @@ const Combat = {
     _rand(min, max) { return Math.floor(Math.random() * (max - min + 1)) + min; },
     _pick(arr) { return arr[Math.floor(Math.random() * arr.length)]; },
 
-    // Compute dynamic defense ignore % for strike (used by UI tooltip)
+    // Compute flat defense penetration for strike (used by UI tooltip)
     getStrikeDefIgnore(playerAtk, enemyDef) {
-        const atkRatio = Math.min(1, playerAtk / Math.max(1, enemyDef));
-        return Math.min(0.75, atkRatio * 0.60 + 0.10);
+        const defPen = Math.floor(playerAtk * 0.3);
+        return Math.min(defPen, enemyDef);
     },
 
     // ── Action preview for UI ────────────────────────────────────────────────
@@ -436,29 +441,30 @@ const Combat = {
         const playerAtk = Character.getAttackPower(char, job) + (cs.allBondsBonus ? 60 : 0);
         const playerDef = Character.getDefensePower(char, job);
         const qiShield  = Character.getQiShield(char);
-        const skillAmp  = Character.getSkillAmplify(char);
+        const rawSkillAmp = Character.getSkillAmplify(char);
+        const skillAmp  = this._effectiveSkillAmp(rawSkillAmp, cs.enemyInnerForce);
         const enemyQS   = cs.enemyQiShield || 0;
         const critChance = Math.round(Character.getLuckTriggerChance(char) * 100);
         const dodgeChance = Math.round(Character.getLuckDodgeChance(char) * 100);
 
-        // Player → enemy defIgnore
-        const atkRatio = Math.min(1, playerAtk / Math.max(1, cs.enemyEffDef));
-        const defIgnore = Math.min(0.75, atkRatio * 0.60 + 0.10);
-        const defIgnorePct = Math.round(defIgnore * 100);
+        // Player → enemy flat defense penetration
+        const defPen = Math.floor(playerAtk * 0.3);
+        const effectiveDef = Math.max(0, cs.enemyEffDef - defPen);
+        const defIgnorePct = cs.enemyEffDef > 0 ? Math.round(Math.min(defPen, cs.enemyEffDef) / cs.enemyEffDef * 100) : 0;
 
-        // Enemy → player defIgnore
-        const enemyAtkRatio = Math.min(1, cs.enemyEffAtk / Math.max(1, playerDef));
-        const enemyDefIgnore = Math.min(0.75, enemyAtkRatio * 0.60 + 0.10);
+        // Enemy → player flat defense penetration
+        const enemyDefPen = Math.floor(cs.enemyEffAtk * 0.3);
+        const effectivePlayerDef = Math.max(0, playerDef - enemyDefPen);
 
         // Defend defCap (enemy power ratio)
         const powerRatio = Math.min(1, playerDef / Math.max(1, cs.enemyEffAtk));
         const defCap = Math.min(0.75, powerRatio * 0.75 + 0.10);
 
         // Estimated raw enemy damage (no reduction)
-        const rawEnemyDmg = Math.max(1, cs.enemyEffAtk - Math.floor(playerDef * (1 - enemyDefIgnore)));
+        const rawEnemyDmg = Math.max(1, cs.enemyEffAtk - effectivePlayerDef);
 
         // ── Strike ──
-        const strikeDmg = Math.max(1, playerAtk - Math.floor(cs.enemyEffDef * (1 - defIgnore)) - enemyQS);
+        const strikeDmg = Math.max(1, playerAtk - effectiveDef - enemyQS);
         const strikeCrit = Math.floor(strikeDmg * 1.5);
 
         // ── Skill preview ──
@@ -466,16 +472,15 @@ const Combat = {
         let skillPreview = null;
         if (activeSkill && cs.playerMomentum >= activeSkill.momentumCost && cs.skillCooldown === 0) {
             const sk = activeSkill;
-            const skDefIgnore = Math.min(0.90, defIgnore + (sk.armorBreak || (sk.type === 'multi' ? 0.5 : 0)));
             if (sk.type === 'multi') {
                 const hits = sk.hits || 3;
                 const perHit = Math.max(1, Math.floor(playerAtk * sk.power * (1 + skillAmp)) + 1);
-                const defMit = Math.floor(cs.enemyEffDef * (1 - skDefIgnore));
+                const defMit = effectiveDef;
                 const total = Math.max(1, perHit * hits - defMit - enemyQS);
                 skillPreview = { name: sk.name, dmg: total, hits };
             } else {
                 const dmg = Math.max(1, Math.floor(playerAtk * sk.power * (1 + skillAmp))
-                    - Math.floor(cs.enemyEffDef * (1 - skDefIgnore)) - enemyQS);
+                    - effectiveDef - enemyQS);
                 skillPreview = { name: sk.name, dmg, hits: 1 };
             }
         }
@@ -487,13 +492,14 @@ const Combat = {
         const defendDmgSwift = Math.max(1, Math.floor(rawEnemyDmg * (1 - Math.min(0.50, defCap))) - qiShield);
 
         // ── Parry ──
-        // Counter (vs heavy): 0.75x atk - def*(1-defIgnore)
-        const counterDmg = Math.max(1, Math.floor(playerAtk * 0.75) - Math.floor(cs.enemyEffDef * (1 - defIgnore)) - enemyQS);
+        // Counter (vs heavy): 0.75x atk - effectiveDef
+        const counterDmg = Math.max(1, Math.floor(playerAtk * 0.75) - effectiveDef - enemyQS);
         const counterCrit = Math.floor(counterDmg * 1.5);
         const parrySelfDmg = Math.max(1, Math.floor(rawEnemyDmg * 0.20) - qiShield);
-        // Punished (vs swift): 1.15x enemy, swiftPunishIgnore
-        const swiftPunishIgnore = Math.min(0.85, enemyDefIgnore + 0.10);
-        const punishRaw = Math.max(1, Math.floor(cs.enemyEffAtk * 1.15) - Math.floor(playerDef * (1 - swiftPunishIgnore)));
+        // Punished (vs swift): 1.15x enemy, extra pen
+        const swiftPunishPen = Math.floor(cs.enemyEffAtk * 0.4);
+        const swiftPunishDef = Math.max(0, playerDef - swiftPunishPen);
+        const punishRaw = Math.max(1, Math.floor(cs.enemyEffAtk * 1.15) - swiftPunishDef);
         const punishDmg = Math.max(1, punishRaw - qiShield);
 
         // ── Focus ──

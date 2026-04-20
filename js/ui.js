@@ -55,7 +55,7 @@ const UI = {
         document.getElementById('charAge').textContent = `${ageYears}岁${ageMonths}月`;
         const injuredBadge = char.injured ? ' <span class="injured-badge">重伤休养</span>' : '';
         document.getElementById('charJob').innerHTML = (job ? job.name : '无名小卒') + injuredBadge;
-        document.getElementById('charRebirth').textContent = char.rebirthCount > 0 ? `第${char.rebirthCount + 1}条世界线` : '初入江湖';
+        document.getElementById('charRebirth').textContent = char.rebirthCount > 0 ? `${char.rebirthCount + 1}周目` : '初入江湖';
 
         // HP bar
         const hpPct = Math.max(0, Math.min(100, Math.floor(char.hp / hpMax * 100)));
@@ -893,11 +893,17 @@ const UI = {
 
         const modal = document.createElement('div');
         modal.className = 'modal-overlay';
-        const causeText = cause === 'boss' ? '败于天魔' : cause === 'hidden_boss' ? '功亏一篑，败于剑魂' : '力战身陨';
+        const causeText = cause === 'boss' ? '败于天魔'
+            : cause === 'hidden_boss' ? '功亏一篑，败于剑魂'
+            : cause === 'boss_aftermath' ? '击败天魔，但未能阻止更深处的恶意'
+            : cause === 'page_reload' ? '世界线中断'
+            : '力战身陨';
         const rebirthNarrative = cause === 'boss'
             ? '天魔最后一击将你轰飞，血气殆尽，意识正在消散……就在这一刻，胸口的家传双鱼玉佩骤然亮起。白光如潮水般涌出，时间开始倒流——周围的一切像被按下了回退键，剑痕愈合、血液倒流、天魔的身影渐渐模糊。你感到自己被拉回到了某个更早的时间节点。这不是来世，而是另一条世界线——你带着这一世的记忆，回到了一切尚未发生的起点。'
             : cause === 'hidden_boss'
             ? '剑魂的虚空剑意贯穿了你最后的防线，你轰然倒下……恍惚中，胸口的双鱼玉佩剧烈震动，白光骤起。时间仿佛被撕裂，碎裂的剑影在光中倒转重组。你知道这不是死亡——而是世界线的回溯。在另一条时间线上，你将带着此刻的记忆重新出发。'
+            : cause === 'boss_aftermath'
+            ? '你击败了天魔，以为一切终于结束了。然而数年之后，天魔骸骨深处沉睡的更古老的恶意苏醒了——你未曾察觉那枚玉牌中封印的秘密。这一世的你已无力回天……胸口的双鱼玉佩再次亮起，白光涌出，时间开始倒流。也许在下一条世界线上，你能找到那个被忽视的线索。'
             : '你在江湖的厮杀中倒下，鲜血浸透衣衫。正当一切归于黑暗之际，胸口的双鱼玉佩忽然震动，柔和的白光将周围的时间冻结。血从地上回流、伤口缓缓合拢——然后，一切都在倒退。你并非死去，而是被送回了另一条世界线的起点，带着这一世的经历与记忆。';
         modal.innerHTML = `
             <div class="modal-box">
@@ -981,7 +987,7 @@ const UI = {
                 <p style="margin-bottom:16px">【${char.name}】的传奇，从此刻起，永远流传于世。</p>
                 <hr style="border-color:#444;margin:12px 0">
                 <h3 style="color:#aaa;font-size:0.95em;margin-bottom:8px">── 生涯总结 ──</h3>
-                <p>历经 <b>${char.rebirthCount}</b> 次世界线回溯，终于走完了最后一世。</p>
+                <p>历经 <b>${char.rebirthCount}</b> 次世界线回溯（${char.rebirthCount + 1}周目），终于走完了最后一世。</p>
                 <p>最终职业：<b>${jobName}</b> · 享年 <b>${Character.getAgeYears(char)}</b> 岁</p>
                 <p style="font-size:0.88em;color:#aaa;margin:6px 0">${statLine}</p>
                 ${bondsHtml ? `<p style="margin-top:10px;color:#aaa;font-size:0.9em">羁绊：</p><ul style="color:#ccc;font-size:0.88em;margin:4px 0 10px 16px">${bondsHtml}</ul>` : ''}

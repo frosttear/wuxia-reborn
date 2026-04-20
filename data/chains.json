@@ -795,21 +795,6 @@
                 "combat": "wuxiang_challenger",
                 "narrative": "你收剑，心中某个疑虑悄然落地。不论胜负，你已经知道——那感知，是真实的。"
               }
-            },
-            {
-              "id": "reputation_bypass",
-              "text": "你的声名已足够，剑客点头认可，无需过招",
-              "requirements": {
-                "minAttributes": {
-                  "reputation": 35
-                }
-              },
-              "effects": {
-                "attributes": {
-                  "comprehension": 2
-                },
-                "narrative": "剑客看了你许久，最终把酒杯推开：「罢了，你的名声已经替你证明了不少事。」他站起身，留下一句话：「你已经够格去找那个答案了。」"
-              }
             }
           ],
           "onComplete": {

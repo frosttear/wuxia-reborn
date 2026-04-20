@@ -200,6 +200,8 @@
             const savedLog = localStorage.getItem('wuxia_log');
             if (savedLog) UI.restoreLog(JSON.parse(savedLog));
         } catch(e) {}
+        // Restore gamePhase from localStorage
+        const savedPhase = localStorage.getItem('wuxia_phase') || 'idle';
         // Resume combat if it was active when page was closed
         let combatResumed = false;
         try {
@@ -219,7 +221,15 @@
             }
         } catch(e) {}
         if (!combatResumed) {
-            UI.renderAll(Engine.state);
+            // If saved phase was victory/rebirth, re-trigger the rebirth screen
+            if (savedPhase === 'victory' || savedPhase === 'rebirth') {
+                Engine.state.gamePhase = 'idle'; // temporarily idle for renderAll
+                UI.renderAll(Engine.state);
+                Engine.triggerDeath('page_reload');
+            } else {
+                Engine.state.gamePhase = savedPhase;
+                UI.renderAll(Engine.state);
+            }
         }
     }
 
