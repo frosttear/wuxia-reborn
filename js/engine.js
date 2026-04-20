@@ -821,6 +821,9 @@ const Engine = {
             logEl.scrollTop = logEl.scrollHeight;
         }
 
+        // Update HP bars to reflect final state
+        UI.updateCombatOverlay(this.state);
+
         this.state.combatBusy = false;
         this.endCombat(won ? 'won' : 'lost', cs);
     },
@@ -888,11 +891,19 @@ const Engine = {
             }
             if (enemy.isHiddenBoss) {
                 char.flags.hidden_boss_beaten = true;
-                UI.hideCombatOverlay();
-                this.triggerVictory(true);
+                UI.showCombatReturnBtn('won', () => {
+                    UI.hideCombatOverlay();
+                    this.triggerVictory(true);
+                });
                 return;
             }
-            if (enemy.isFinalBoss) { UI.hideCombatOverlay(); this.triggerVictory(false); return; }
+            if (enemy.isFinalBoss) {
+                UI.showCombatReturnBtn('won', () => {
+                    UI.hideCombatOverlay();
+                    this.triggerVictory(false);
+                });
+                return;
+            }
             UI.addCombatSummary({
                 turns: cs.turn, dmgDealt: cs.totalDmgDealt,
                 dmgReceived: cs.totalDmgReceived, result: 'won',
@@ -909,13 +920,17 @@ const Engine = {
             UI.renderCharacter(char, this.state.jobs);
             if (enemy.isHiddenBoss) {
                 UI.addLog('你击败了天魔，却败于那更深处的剑意。此生功亏一筑。下一世，再来。', 'system');
-                UI.hideCombatOverlay();
-                this.triggerDeath('hidden_boss');
+                UI.showCombatReturnBtn('lost', () => {
+                    UI.hideCombatOverlay();
+                    this.triggerDeath('hidden_boss');
+                });
                 return;
             }
             if (enemy.isFinalBoss) {
-                UI.hideCombatOverlay();
-                this.triggerDeath('boss');
+                UI.showCombatReturnBtn('lost', () => {
+                    UI.hideCombatOverlay();
+                    this.triggerDeath('boss');
+                });
                 return;
             }
             UI.addCombatSummary({
@@ -1031,10 +1046,12 @@ const Engine = {
         // Defeated 天魔 — check if hidden boss chain is available
         if (char.flags.jade_tablet_awakened && !char.flags.hidden_boss_triggered) {
             char.flags.hidden_boss_triggered = true;
-            this.state.gamePhase = 'idle';
+            this.state.gamePhase = 'victory';   // block player actions during transition
+            UI.updateControls(this.state);
             UI.addLog('天魔轰然倒下。江湖归于平静，风也停了。', 'win');
             UI.addLog('你以为，一切终于结束了……', 'system');
             setTimeout(() => {
+                this.state.gamePhase = 'idle';  // restore before triggering event
                 const hiddenEvent = this.state.events.find(e => e.id === 'hidden_boss_appears');
                 if (hiddenEvent) this.triggerEvent(hiddenEvent);
             }, 2000);
@@ -1042,12 +1059,13 @@ const Engine = {
         }
 
         // No hidden boss chain: 天下太平 → darkness returns years later → force rebirth
-        this.state.gamePhase = 'idle';
+        this.state.gamePhase = 'victory';   // block all player actions during narrative
         this.stopAuto();
         UI.addLog('────────────────────', 'system');
         UI.addLog('天魔轰然倒下。一阵大风吹散了极天的乌云，天地之间，光重新射入。', 'win');
         UI.addLog('消息传遍四方，百姓称颂英雄，士子赋诗立传。江湖中，那些映日笼罩于天魔阴影下的人们，纷纷抗起了头。', 'system');
         UI.addLog('你站在城楼上，望着这片难得的宁静，觉得这一世，或许算是圆满了。', 'system');
+        UI.updateControls(this.state);
         setTimeout(() => {
             UI.addLog('────────────────────', 'system');
             UI.addLog('然而，平静之下，暗流未息。', 'system');
@@ -1166,30 +1184,10 @@ const Engine = {
         this.saveGame();
     },
 
-    toggleAuto() {
-        if (this.state.autoAdvance) {
-            this.stopAuto();
-        } else {
-            this.startAuto();
-        }
-    },
-
-    startAuto() {
-        if (this.state.autoAdvance) return;
-        this.state.autoAdvance = true;
-        UI.setAutoButton(true);
-        this.state.autoTimer = setInterval(() => {
-            if (this.state.gamePhase === 'idle') {
-                this.advanceMonth();
-            } else if (this.state.gamePhase !== 'choosing') {
-                this.stopAuto();
-            }
-        }, 800);
-    },
-
+    toggleAuto() {},
+    startAuto() {},
     stopAuto() {
         this.state.autoAdvance = false;
-        UI.setAutoButton(false);
         if (this.state.autoTimer) {
             clearInterval(this.state.autoTimer);
             this.state.autoTimer = null;
@@ -1223,6 +1221,39 @@ const Engine = {
 
     deleteSave() {
         localStorage.removeItem('wuxia_save');
+    },
+
+    exportSave() {
+        const { char } = this.state;
+        if (!char) { alert('没有存档可以导出'); return; }
+        this.saveGame();
+        const payload = {
+            v: '0.9.7',
+            char: JSON.parse(localStorage.getItem('wuxia_save')),
+        };
+        const encoded = btoa(unescape(encodeURIComponent(JSON.stringify(payload))));
+        navigator.clipboard.writeText(encoded).then(() => {
+            UI.addLog('📤 存档已复制到剪贴板。可粘贴保存，或发送给他人。', 'system');
+        }).catch(() => {
+            // Fallback: show in a prompt for manual copy
+            prompt('复制以下存档码：', encoded);
+        });
+    },
+
+    importSave() {
+        const code = prompt('粘贴存档码：');
+        if (!code || !code.trim()) return;
+        try {
+            const json = decodeURIComponent(escape(atob(code.trim())));
+            const data = JSON.parse(json);
+            if (!data.char || !data.char.name) { alert('无效的存档码'); return; }
+            if (!confirm(`确定导入存档？当前进度将被覆盖。\n角色：${data.char.name}（第${(data.char.rebirthCount || 0) + 1}世）`)) return;
+            localStorage.setItem('wuxia_save', JSON.stringify(data.char));
+            if (data.log) localStorage.setItem('wuxia_log', JSON.stringify(data.log));
+            location.reload();
+        } catch (err) {
+            alert('存档码无效：' + err.message);
+        }
     }
 };
 

@@ -247,17 +247,34 @@ const Combat = {
                         let counterDmg;
                         let counterText;
                         if (skillCounterFires) {
-                            // Skill counter
+                            // Skill counter — supports multi-hit and single-hit types
                             cs.playerMomentum -= activeSkill.momentumCost;
                             cs.skillCooldown = 3;
                             const sk = activeSkill;
-                            counterDmg = Math.max(1, Math.floor(playerAtk * sk.power * (1 + skillAmp))
-                                - Math.floor(cs.enemyEffDef * (1 - (sk.armorBreak || 0)) * 0.5)
-                                - enemyQS + this._rand(-2, 6));
                             const ampNote = skillAmp >= 0.10 ? `内力增幅+${Math.round(skillAmp * 100)}%` : '';
-                            counterText = heavyAnticipated
-                                ? `你早已洞悉来招，顺势以【<b style="color:#f4c430">${sk.name}</b>】反击！${ampNote}对方损失 <b>${counterDmg}</b> 气血`
-                                : `借力打力，以【<b style="color:#f4c430">${sk.name}</b>】反击！${ampNote}对方损失 <b>${counterDmg}</b> 气血`;
+                            if (sk.type === 'multi') {
+                                const hits = sk.hits || 3;
+                                const defMit = Math.floor(cs.enemyEffDef * (1 - (sk.armorBreak || 0.5)) * 0.5);
+                                let total = 0;
+                                const parts = [];
+                                for (let i = 0; i < hits; i++) {
+                                    const h = Math.max(1, Math.floor(playerAtk * sk.power * (1 + skillAmp)) + this._rand(-1, 4));
+                                    total += h; parts.push(h);
+                                }
+                                counterDmg = Math.max(1, total - defMit - enemyQS);
+                                if (sk.type === 'stun') cs.enemyStunned = true;
+                                counterText = heavyAnticipated
+                                    ? `你早已洞悉来招，顺势以【<b style="color:#f4c430">${sk.name}</b>】反击！${ampNote}连击（${parts.join('+')}=<b>${counterDmg}</b>）`
+                                    : `借力打力，以【<b style="color:#f4c430">${sk.name}</b>】反击！${ampNote}连击（${parts.join('+')}=<b>${counterDmg}</b>）`;
+                            } else {
+                                counterDmg = Math.max(1, Math.floor(playerAtk * sk.power * (1 + skillAmp))
+                                    - Math.floor(cs.enemyEffDef * (1 - (sk.armorBreak || 0)) * 0.5)
+                                    - enemyQS + this._rand(-2, 6));
+                                if (sk.type === 'stun') cs.enemyStunned = true;
+                                counterText = heavyAnticipated
+                                    ? `你早已洞悉来招，顺势以【<b style="color:#f4c430">${sk.name}</b>】反击！${ampNote}对方损失 <b>${counterDmg}</b> 气血`
+                                    : `借力打力，以【<b style="color:#f4c430">${sk.name}</b>】反击！${ampNote}对方损失 <b>${counterDmg}</b> 气血`;
+                            }
                         } else {
                             // Basic counter
                             const counterMult = heavyAnticipated ? 0.85 : 0.6;

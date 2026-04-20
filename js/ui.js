@@ -10,7 +10,6 @@ const UI = {
         this.logEl   = document.getElementById('eventLog');
         this.choicesEl = document.getElementById('choicesPanel');
         this.nextBtn   = document.getElementById('nextMonthBtn');
-        this.autoBtn   = document.getElementById('autoAdvanceBtn');
         this.visitBtn  = document.getElementById('visitBtn');
         this.visitPanel = document.getElementById('visitPanel');
         this.chainBtn  = document.getElementById('chainBtn');
@@ -632,7 +631,6 @@ const UI = {
         const busy = state.gamePhase !== 'idle';
         this.nextBtn.disabled = busy;
         this.nextBtn.textContent = (state.char && state.char.injured) ? '静心修养 ▶' : '出门探险 ▶';
-        this.autoBtn.disabled = (state.gamePhase === 'game_over' || state.gamePhase === 'rebirth' || state.gamePhase === 'victory');
 
         // Show visit button only when idle and visits are available
         const visits = state.gamePhase === 'idle' ? Engine.getAvailableVisits() : [];
@@ -733,14 +731,12 @@ const UI = {
     },
 
     setAutoButton(isOn) {
-        this.autoBtn.textContent = isOn ? '⏸ 暂停' : '▶ 自动';
-        this.autoBtn.classList.toggle('btn-active', isOn);
+        // no-op: auto-advance removed
     },
 
     showRebirthScreen(summary, availableTalents, cause) {
         this.choicesEl.innerHTML = '';
         this.nextBtn.disabled = true;
-        this.autoBtn.disabled = true;
 
         const modal = document.createElement('div');
         modal.className = 'modal-overlay';
