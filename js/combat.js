@@ -157,6 +157,10 @@ const Combat = {
                 && cs.skillCooldown === 0;
 
             // ── Player attack phase ──────────────────────────────────────────
+            // Shared dynamic defense ignore (used by both strike and skills)
+            const atkRatio = Math.min(1, playerAtk / Math.max(1, cs.enemyEffDef));
+            const defIgnore = Math.min(0.75, atkRatio * 0.60 + 0.10);
+
             if (skillFires) {
                 // Auto-trigger job skill
                 cs.playerMomentum -= activeSkill.momentumCost;
@@ -165,7 +169,9 @@ const Combat = {
 
                 if (sk.type === 'multi') {
                     const hits = sk.hits || 3;
-                    const defMit = Math.floor(cs.enemyEffDef * (1 - (sk.armorBreak || 0.5)) * 0.5);
+                    // armorBreak stacks on top of defIgnore
+                    const skillDefIgnore = Math.min(0.90, defIgnore + (sk.armorBreak || 0.5));
+                    const defMit = Math.floor(cs.enemyEffDef * (1 - skillDefIgnore));
                     let total = 0;
                     const parts = [];
                     for (let i = 0; i < hits; i++) {
@@ -178,9 +184,10 @@ const Combat = {
                     const ampNote = skillAmp >= 0.10 ? `　<span style="color:#a0d8ef">内力增幅+${Math.round(skillAmp * 100)}%</span>` : '';
                     lines.push(`【<b style="color:#f4c430">${sk.name}</b>】连击（${parts.join('+')}=<b>${total}</b>），对方剩余气血 ${Math.max(0, cs.enemyHp)}。${ampNote}`);
                 } else {
-                    const defFactor = 1 - (sk.armorBreak || 0);
+                    // armorBreak stacks on top of defIgnore
+                    const skillDefIgnore = Math.min(0.90, defIgnore + (sk.armorBreak || 0));
                     const dmg = Math.max(1, Math.floor(playerAtk * sk.power * (1 + skillAmp))
-                        - Math.floor(cs.enemyEffDef * defFactor * 0.5)
+                        - Math.floor(cs.enemyEffDef * (1 - skillDefIgnore))
                         - enemyQS
                         + this._rand(-2, 8));
                     cs.enemyHp = Math.max(0, cs.enemyHp - dmg);
@@ -195,8 +202,6 @@ const Combat = {
                 const lv    = 1 + (Math.random() - 0.5) * (char.attributes.luck / 100);
                 const isCrit = Math.random() < Character.getLuckTriggerChance(char);
                 // Dynamic defense ignore: scales with atk/def ratio (symmetric with defend's defCap)
-                const atkRatio = Math.min(1, playerAtk / Math.max(1, cs.enemyEffDef));
-                const defIgnore = Math.min(0.75, atkRatio * 0.60 + 0.10);
                 let dmg = Math.max(1, Math.floor(playerAtk * lv)
                     - Math.floor(cs.enemyEffDef * (1 - defIgnore)) - enemyQS + this._rand(-2, 8));
                 if (isCrit) dmg = Math.floor(dmg * 1.5);
@@ -255,9 +260,13 @@ const Combat = {
                             cs.skillCooldown = 3;
                             const sk = activeSkill;
                             const ampNote = skillAmp >= 0.10 ? `内力增幅+${Math.round(skillAmp * 100)}%` : '';
+                            // Reuse dynamic defIgnore; armorBreak stacks on top
+                            const ctrAtkRatio = Math.min(1, playerAtk / Math.max(1, cs.enemyEffDef));
+                            const ctrDefIgnore = Math.min(0.75, ctrAtkRatio * 0.60 + 0.10);
                             if (sk.type === 'multi') {
                                 const hits = sk.hits || 3;
-                                const defMit = Math.floor(cs.enemyEffDef * (1 - (sk.armorBreak || 0.5)) * 0.5);
+                                const skillCtrIgnore = Math.min(0.90, ctrDefIgnore + (sk.armorBreak || 0.5));
+                                const defMit = Math.floor(cs.enemyEffDef * (1 - skillCtrIgnore));
                                 let total = 0;
                                 const parts = [];
                                 for (let i = 0; i < hits; i++) {
@@ -270,8 +279,9 @@ const Combat = {
                                     ? `你早已洞悉来招，顺势以【<b style="color:#f4c430">${sk.name}</b>】反击！${ampNote}连击（${parts.join('+')}=<b>${counterDmg}</b>）`
                                     : `借力打力，以【<b style="color:#f4c430">${sk.name}</b>】反击！${ampNote}连击（${parts.join('+')}=<b>${counterDmg}</b>）`;
                             } else {
+                                const skillCtrIgnore = Math.min(0.90, ctrDefIgnore + (sk.armorBreak || 0));
                                 counterDmg = Math.max(1, Math.floor(playerAtk * sk.power * (1 + skillAmp))
-                                    - Math.floor(cs.enemyEffDef * (1 - (sk.armorBreak || 0)) * 0.5)
+                                    - Math.floor(cs.enemyEffDef * (1 - skillCtrIgnore))
                                     - enemyQS + this._rand(-2, 6));
                                 if (sk.type === 'stun') cs.enemyStunned = true;
                                 counterText = heavyAnticipated
