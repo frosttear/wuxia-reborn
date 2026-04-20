@@ -876,7 +876,7 @@
       ]
     }
   ],
-  "han_shuang": [
+  "yan_chixing": [
     {
       "level": 1,
       "title": "刀下问剑",
@@ -890,7 +890,7 @@
               "text": "迎上他的目光，点头应战",
               "effects": {
                 "attributes": { "agility": 1, "strength": 1 },
-                "npcAffinity": { "han_shuang": 10 },
+                "npcAffinity": { "yan_chixing": 10 },
                 "narrative": ""
               }
             },
@@ -899,7 +899,7 @@
               "text": "沉静地摇头：「时机不对，我先看看你的剑法。」",
               "effects": {
                 "attributes": { "comprehension": 1 },
-                "npcAffinity": { "han_shuang": 10 },
+                "npcAffinity": { "yan_chixing": 10 },
                 "narrative": ""
               }
             },
@@ -909,20 +909,20 @@
               "requirements": { "minAttributes": { "innerForce": 10 } },
               "effects": {
                 "attributes": { "innerForce": 2, "comprehension": 1 },
-                "npcAffinity": { "han_shuang": 10 },
+                "npcAffinity": { "yan_chixing": 10 },
                 "narrative": ""
               }
             }
           ]
         },
         {
-          "text": "韩霜拔刀，动作简洁而有力，招手示意——这是认真的。\n\n他没有架势，没有废话，只是静静等你。那种沉默，比任何挑衅都更难对付。",
+          "text": "燕赤行拔刀，动作简洁而有力，招手示意——这是认真的。\n\n他没有架势，没有废话，只是静静等你。那种沉默，比任何挑衅都更难对付。",
           "choices": [
             {
               "id": "full_effort",
               "text": "全力以赴，不留后手",
               "effects": {
-                "combat": "han_shuang_sparring",
+                "combat": "yan_chixing_sparring",
                 "narrative": "他收刀，看了你片刻：「还可以。」从他嘴里说出来，这三个字分量不轻。那之后，他对你多了几分真正的重视。"
               }
             },
@@ -932,8 +932,8 @@
               "requirements": { "minAttributes": { "constitution": 10 } },
               "effects": {
                 "attributes": { "constitution": 1, "agility": 1, "comprehension": 1 },
-                "npcAffinity": { "han_shuang": 10 },
-                "narrative": "你守了十招，把他的刀法摸得七七八八。他收刀，沉默了一会儿：「你不愚蠢。」对韩霜而言，这就是很高的评价了。"
+                "npcAffinity": { "yan_chixing": 10 },
+                "narrative": "你守了十招，把他的刀法摸得七七八八。他收刀，沉默了一会儿：「你不愚蠢。」对燕赤行而言，这就是很高的评价了。"
               }
             }
           ]
@@ -946,14 +946,14 @@
       "minAffinity": 55,
       "steps": [
         {
-          "text": "夜市的灯火将熄未熄，一条僻静的巷子里，你听见兵刃相交的声响。\n\n转角而入——韩霜独自面对三个黑衣人，左臂已经挂彩。三人成犄角之势，显然是有备而来。\n\n「滚开，」他对你说，语气平静，「这是我的事。」\n\n但你已经站在这里了。",
+          "text": "夜市的灯火将熄未熄，一条僻静的巷子里，你听见兵刃相交的声响。\n\n转角而入——燕赤行独自面对三个黑衣人，左臂已经挂彩。三人成犄角之势，显然是有备而来。\n\n「滚开，」他对你说，语气平静，「这是我的事。」\n\n但你已经站在这里了。",
           "choices": [
             {
               "id": "step_in",
               "text": "直接冲入战圈，护住他的侧翼",
               "effects": {
                 "attributes": { "strength": 1 },
-                "npcAffinity": { "han_shuang": 10 },
+                "npcAffinity": { "yan_chixing": 10 },
                 "narrative": ""
               }
             },
@@ -963,21 +963,21 @@
               "requirements": { "minAttributes": { "comprehension": 8 } },
               "effects": {
                 "attributes": { "agility": 1, "comprehension": 1 },
-                "npcAffinity": { "han_shuang": 10 },
+                "npcAffinity": { "yan_chixing": 10 },
                 "narrative": ""
               }
             }
           ]
         },
         {
-          "text": "三人反应过来，迅速调整——三角包围，每一角都是训练有素的刀手，不给你们任何喘息的机会。\n\n韩霜低声道：「背靠背。」\n\n那两个字，是他对你最直接的信任。",
+          "text": "三人反应过来，迅速调整——三角包围，每一角都是训练有素的刀手，不给你们任何喘息的机会。\n\n燕赤行低声道：「背靠背。」\n\n那两个字，是他对你最直接的信任。",
           "choices": [
             {
               "id": "fight_together",
               "text": "背靠背，各自对付一个方向",
               "effects": {
                 "combat": "han_night_attackers",
-                "narrative": "尘埃落定，韩霜沉默了很久，终于低声道：「欠你一个。」对他而言，这几个字，重比千金。"
+                "narrative": "尘埃落定，燕赤行沉默了很久，终于低声道：「欠你一个。」对他而言，这几个字，重比千金。"
               }
             },
             {
@@ -987,8 +987,8 @@
               "effects": {
                 "attributes": { "reputation": 3 },
                 "flags": { "han_threat_resolved": true },
-                "npcAffinity": { "han_shuang": 10 },
-                "narrative": "你踏前一步，将眼前的局势点透三分。三人相顾，脚步踌躇，悻悻散去。韩霜望着你，神色复杂：「你这法子，比剑还有用。」"
+                "npcAffinity": { "yan_chixing": 10 },
+                "narrative": "你踏前一步，将眼前的局势点透三分。三人相顾，脚步踌躇，悻悻散去。燕赤行望着你，神色复杂：「你这法子，比剑还有用。」"
               }
             }
           ]
@@ -1001,7 +1001,7 @@
       "minAffinity": 80,
       "steps": [
         {
-          "text": "深夜，韩霜坐在河边，手里握着一枚旧铁牌，久久不动。你走近，他没有转身，只说：「坐吧。」\n\n那是他第一次主动叫你坐下。\n\n很久之后，他开了口——那道疤，是结拜兄长留下的。情同手足，却一夜出卖了整个门派，数十条性命，灰飞烟灭。他是唯一的幸存者。\n\n「我活下来，就是为了杀他。用了七年，终于等到机会。」\n\n他停了很久：「但那一剑，我没有刺下去。」",
+          "text": "深夜，燕赤行坐在河边，手里握着一枚旧铁牌，久久不动。你走近，他没有转身，只说：「坐吧。」\n\n那是他第一次主动叫你坐下。\n\n很久之后，他开了口——那道疤，是结拜兄长留下的。情同手足，却一夜出卖了整个门派，数十条性命，灰飞烟灭。他是唯一的幸存者。\n\n「我活下来，就是为了杀他。用了七年，终于等到机会。」\n\n他停了很久：「但那一剑，我没有刺下去。」",
           "choices": [
             {
               "id": "support_vengeance",
@@ -1009,7 +1009,7 @@
               "effects": {
                 "attributes": { "strength": 1, "reputation": 1 },
                 "flags": { "han_vengeance_path": true },
-                "npcAffinity": { "han_shuang": 10 },
+                "npcAffinity": { "yan_chixing": 10 },
                 "narrative": ""
               }
             },
@@ -1019,7 +1019,7 @@
               "effects": {
                 "attributes": { "comprehension": 2, "luck": 1 },
                 "flags": { "han_peace_path": true },
-                "npcAffinity": { "han_shuang": 10 },
+                "npcAffinity": { "yan_chixing": 10 },
                 "narrative": ""
               }
             },
@@ -1030,21 +1030,21 @@
               "effects": {
                 "attributes": { "comprehension": 3, "innerForce": 3 },
                 "flags": { "han_revelation": true },
-                "npcAffinity": { "han_shuang": 10 },
+                "npcAffinity": { "yan_chixing": 10 },
                 "narrative": ""
               }
             }
           ]
         },
         {
-          "text": "夜将深，你们谈着，忽然远处有脚步声响起。\n\n一名赏金猎人从暗处现身，手里握着一张画像，冷冷说：「韩霜，死是活是，都值十两金。」\n\n韩霜慢慢站起来，你挡在他前面：「今晚不行。」",
+          "text": "夜将深，你们谈着，忽然远处有脚步声响起。\n\n一名赏金猎人从暗处现身，手里握着一张画像，冷冷说：「燕赤行，死是活是，都值十两金。」\n\n燕赤行慢慢站起来，你挡在他前面：「今晚不行。」",
           "choices": [
             {
               "id": "fight_bounty_hunter",
               "text": "迎战！让对方知道这里不是他能来的地方",
               "effects": {
                 "combat": "jianghu_challenger",
-                "narrative": "赏金猎人落败，灰溜溜地离去。韩霜走到你身边，沉默了一会儿，低声说了两个字：「谢了。」那是他很少说的话。"
+                "narrative": "赏金猎人落败，灰溜溜地离去。燕赤行走到你身边，沉默了一会儿，低声说了两个字：「谢了。」那是他很少说的话。"
               }
             },
             {
@@ -1053,8 +1053,8 @@
               "requirements": { "minAttributes": { "reputation": 15 } },
               "effects": {
                 "attributes": { "reputation": 2, "comprehension": 1 },
-                "npcAffinity": { "han_shuang": 10 },
-                "narrative": "你沉声报出名号，将对方可能面对的后果一一点明。猎人犹豫片刻，最终收起画像离去。韩霜看了你许久：「你每次都不用动手。」说不清是羡慕还是别的什么。"
+                "npcAffinity": { "yan_chixing": 10 },
+                "narrative": "你沉声报出名号，将对方可能面对的后果一一点明。猎人犹豫片刻，最终收起画像离去。燕赤行看了你许久：「你每次都不用动手。」说不清是羡慕还是别的什么。"
               }
             }
           ]
@@ -1067,14 +1067,14 @@
       "minAffinity": 90,
       "steps": [
         {
-          "text": "韩霜来找你，脸色比平日更沉。他站在门口，没有进来：「他来了。」\n\n那个卖掉整个门派的人，那个让他独自活下来的人。\n\n「他在城南，我需要去见他一面。」他停了片刻，「我不知道见了面，自己会做什么。」\n\n那是他第一次承认，自己对这件事没有把握。",
+          "text": "燕赤行来找你，脸色比平日更沉。他站在门口，没有进来：「他来了。」\n\n那个卖掉整个门派的人，那个让他独自活下来的人。\n\n「他在城南，我需要去见他一面。」他停了片刻，「我不知道见了面，自己会做什么。」\n\n那是他第一次承认，自己对这件事没有把握。",
           "choices": [
             {
               "id": "stand_with_han",
               "text": "陪他去，站在他身旁",
               "effects": {
                 "attributes": { "reputation": 1 },
-                "npcAffinity": { "han_shuang": 10 },
+                "npcAffinity": { "yan_chixing": 10 },
                 "narrative": ""
               }
             },
@@ -1084,7 +1084,7 @@
               "requirements": { "minAttributes": { "strength": 20 } },
               "effects": {
                 "attributes": { "strength": 2, "reputation": 1 },
-                "npcAffinity": { "han_shuang": 10 },
+                "npcAffinity": { "yan_chixing": 10 },
                 "narrative": ""
               }
             },
@@ -1094,32 +1094,32 @@
               "requirements": { "minAttributes": { "comprehension": 18 } },
               "effects": {
                 "attributes": { "comprehension": 2, "innerForce": 1 },
-                "npcAffinity": { "han_shuang": 10 },
+                "npcAffinity": { "yan_chixing": 10 },
                 "narrative": ""
               }
             }
           ]
         },
         {
-          "text": "你们到了城南。那人站在那里，见了韩霜，脸上没有愧疚，甚至有几分傲然：「你终于来了？」\n\n话没说几句，他抽出刀：「与其等死，不如先下手。」",
+          "text": "你们到了城南。那人站在那里，见了燕赤行，脸上没有愧疚，甚至有几分傲然：「你终于来了？」\n\n话没说几句，他抽出刀：「与其等死，不如先下手。」",
           "choices": [
             {
               "id": "protect_han",
-              "text": "拔刀护住韩霜，挡在他前面",
+              "text": "拔刀护住燕赤行，挡在他前面",
               "effects": {
                 "combat": "han_nemesis",
-                "narrative": "背叛者倒地，韩霜看着他，手没有动。沉默良久，韩霜转过身：「走。」那一刻，那段旧事真的结束了。"
+                "narrative": "背叛者倒地，燕赤行看着他，手没有动。沉默良久，燕赤行转过身：「走。」那一刻，那段旧事真的结束了。"
               }
             },
             {
               "id": "resolve_words",
-              "text": "以话语化解，让韩霜自己做决断",
+              "text": "以话语化解，让燕赤行自己做决断",
               "requirements": { "flags": { "han_revelation": true } },
               "effects": {
                 "attributes": { "comprehension": 3, "innerForce": 2 },
                 "flags": { "han_confrontation_resolved": true },
-                "npcAffinity": { "han_shuang": 10 },
-                "narrative": "你说出了韩霜心底那个他自己都没开口的答案。那人愣住，韩霜放下了刀。「走，」韩霜对你说，声音平静得出奇，「没有必要了。」那一刻，你知道他真的放下了。"
+                "npcAffinity": { "yan_chixing": 10 },
+                "narrative": "你说出了燕赤行心底那个他自己都没开口的答案。那人愣住，燕赤行放下了刀。「走，」燕赤行对你说，声音平静得出奇，「没有必要了。」那一刻，你知道他真的放下了。"
               }
             }
           ]
@@ -1131,21 +1131,21 @@
       "title": "无名同行",
       "minAffinity": 100,
       "passive": {
-        "id": "han_shuang_legacy",
-        "name": "寒霜剑气",
+        "id": "yan_chixing_legacy",
+        "name": "烈焰刀气",
         "desc": "战斗攻击力+15",
         "combatAtkBonus": 15
       },
       "steps": [
         {
-          "text": "几日后，韩霜找到你，背上已经包袱整齐。\n\n「我想了想，」他说，「那条路走完了，我不知道下一步去哪里。」\n\n他顿了顿：「你往哪边走？」\n\n那是他用自己的方式说：他想跟你走一段。这句话，从韩霜嘴里说出来，你知道分量。",
+          "text": "几日后，燕赤行找到你，背上已经包袱整齐。\n\n「我想了想，」他说，「那条路走完了，我不知道下一步去哪里。」\n\n他顿了顿：「你往哪边走？」\n\n那是他用自己的方式说：他想跟你走一段。这句话，从燕赤行嘴里说出来，你知道分量。",
           "choices": [
             {
               "id": "walk_together",
               "text": "告诉他：一起走",
               "effects": {
                 "attributes": { "strength": 1, "agility": 1 },
-                "npcAffinity": { "han_shuang": 10 },
+                "npcAffinity": { "yan_chixing": 10 },
                 "narrative": ""
               }
             },
@@ -1155,14 +1155,14 @@
               "requirements": { "minAttributes": { "agility": 20 } },
               "effects": {
                 "attributes": { "agility": 2 },
-                "npcAffinity": { "han_shuang": 10 },
+                "npcAffinity": { "yan_chixing": 10 },
                 "narrative": ""
               }
             }
           ]
         },
         {
-          "text": "同行路上，一伙认识韩霜的旧仇拦住了去路，怒眼盯着他：「韩霜，你以为那件事就这么完了？」\n\n韩霜没有说话，只是把手放到刀柄上。你站在他侧面，肩并着肩。",
+          "text": "同行路上，一伙认识燕赤行的旧仇拦住了去路，怒眼盯着他：「燕赤行，你以为那件事就这么完了？」\n\n燕赤行没有说话，只是把手放到刀柄上。你站在他侧面，肩并着肩。",
           "choices": [
             {
               "id": "fight_together_final",
@@ -1178,8 +1178,8 @@
               "requirements": { "minAttributes": { "strength": 18 } },
               "effects": {
                 "attributes": { "strength": 2, "agility": 2, "reputation": 2 },
-                "npcAffinity": { "han_shuang": 10 },
-                "narrative": "两人的气势合在一处，那股无言的压力让对方迟疑了——最终散去，没有人敢动。韩霜看了你一眼，笑了——那是你第一次见他真正地笑。那之后，他再也没提过那条旧路。"
+                "npcAffinity": { "yan_chixing": 10 },
+                "narrative": "两人的气势合在一处，那股无言的压力让对方迟疑了——最终散去，没有人敢动。燕赤行看了你一眼，笑了——那是你第一次见他真正地笑。那之后，他再也没提过那条旧路。"
               }
             }
           ]
@@ -1430,9 +1430,9 @@
       "passive": {
         "id": "su_qing_legacy",
         "name": "青心丹药",
-        "desc": "战后自动清除伤势；每月额外回复50%的损失气血",
+        "desc": "战后自动清除伤势；每月额外回复100%的损失气血",
         "autoHealInjury": true,
-        "hpRegenPctMissing": 0.5
+        "hpRegenPctMissing": 1.0
       },
       "text": "再次见到苏青时，她神色平和了很多，手边多了一个陌生老人——那是她的师父，一个白发苍苍、眼神清亮的老郎中。\n\n「我师父想见见你，」苏青说，「说是想谢你。」\n\n那个老人拉着你的手看了看，点点头：「好手，有慧根。」他转向苏青：「把那套针法教给他，算作谢礼。」\n\n苏青愣了一下，然后望向你。",
       "choices": [
@@ -1625,8 +1625,9 @@
       "passive": {
         "id": "ling_xue_sword",
         "name": "凌霜剑骨",
-        "desc": "凌雪亲传的冰属剑意，出手如霜刃——战斗攻击力 +6",
-        "combatAtkBonus": 6
+        "desc": "凌雪亲传的冰属剑意——战斗攻击力+6，冰寒剑气每次受击减伤5",
+        "combatAtkBonus": 6,
+        "combatDmgReduce": 5
       },
       "text": "那天早晨，你在城外的空地上发现了她。\n\n凌雪站在晨雾里，白衣如雪，背对着你，手按剑柄。听见你的脚步声，她没有回头。\n\n「你来了。」\n\n「我知道你会来，」她说，「我们都知道，这一战迟早要打。」\n\n她转过身，眼神平静，没有犹豫，也没有悔意——只有一种尘埃落定的笃定。\n\n「我已经想清楚了。」她说，「我不后悔认识你。但我的路是我的路，你的路是你的路。如果你走的是对的，就证明给我看。」\n\n她拔出剑，剑锋寒光如霜——这是她最后一次，以天魔弟子的身份，站在你对面。",
       "choices": [
@@ -1722,27 +1723,27 @@
         ]
       }
     ],
-    "han_shuang": [
+    "yan_chixing": [
       {
         "maxAffinity": 30,
         "texts": [
-          "你找到韩霜时，他正在擦拭佩剑，抬眼看了你一眼，没有说话。你坐下，他也没有赶你走，两人就这样保持着一种奇异的沉默。",
-          "韩霜正靠着墙，眼睛半闭，见你来了，只是微微点了点头——那是他表示认可你靠近的方式。两人说了几句无关紧要的话。"
+          "你找到燕赤行时，他正在擦拭佩剑，抬眼看了你一眼，没有说话。你坐下，他也没有赶你走，两人就这样保持着一种奇异的沉默。",
+          "燕赤行正靠着墙，眼睛半闭，见你来了，只是微微点了点头——那是他表示认可你靠近的方式。两人说了几句无关紧要的话。"
         ]
       },
       {
         "minAffinity": 30,
         "maxAffinity": 60,
         "texts": [
-          "韩霜难得主动开口：「那招你昨天用的，有点问题，这样。」他随手示范了一个动作，简短而精准。你知道这是他少见的主动。",
-          "你们走在街上，韩霜忽然说了件旧事，语气平淡，但你听得出那不是在闲谈。你没有多问，只是静静听完。",
+          "燕赤行难得主动开口：「那招你昨天用的，有点问题，这样。」他随手示范了一个动作，简短而精准。你知道这是他少见的主动。",
+          "你们走在街上，燕赤行忽然说了件旧事，语气平淡，但你听得出那不是在闲谈。你没有多问，只是静静听完。",
           "他把一壶水扔给你，说：「渴了喝。」没有多余的话，但你懂了。"
         ]
       },
       {
         "minAffinity": 60,
         "texts": [
-          "韩霜坐在河边，你在他旁边坐下，什么也没有说。很久以后，他开口道：「有你在，怪的。」你知道这是他说过的最接近暖意的话。",
+          "燕赤行坐在河边，你在他旁边坐下，什么也没有说。很久以后，他开口道：「有你在，怪的。」你知道这是他说过的最接近暖意的话。",
           "他看了你很久，最后说：「你变强了。」语气很平，但你知道这句话从他嘴里说出来并不容易。"
         ]
       }

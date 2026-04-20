@@ -107,8 +107,14 @@ const UI = {
                 let bonusText = [];
                 if (attackBonus > 0) bonusText.push(`攻+${attackBonus}`);
                 if (defenseBonus > 0) bonusText.push(`防+${defenseBonus}`);
-                if (sk.special === 'reputation_scaling') bonusText.push('声望转攻击');
-                if (sk.special === 'innerforce_scaling') bonusText.push('内力转攻击');
+                if (sk.special === 'reputation_scaling') {
+                    const repBonus = Math.floor(char.attributes.reputation / 10) * 1.5;
+                    bonusText.push(`声望转攻击+${repBonus.toFixed(1)}`);
+                }
+                if (sk.special === 'innerforce_scaling') {
+                    const ifBonus = Math.floor(char.attributes.innerForce / 10) * 2.5;
+                    bonusText.push(`内力转攻击+${ifBonus.toFixed(1)}`);
+                }
                 const div = document.createElement('div');
                 div.className = 'skill-row';
                 div.title = sk.desc;
@@ -496,6 +502,8 @@ const UI = {
         document.querySelectorAll('#combatActions .combat-btn:not(#combatReturnBtn)').forEach(b => b.style.display = '');
         const returnBtn = document.getElementById('combatReturnBtn');
         if (returnBtn) { returnBtn.style.display = 'none'; returnBtn.onclick = null; }
+        const previewBar = document.getElementById('combatPreviewBar');
+        if (previewBar) previewBar.style.display = 'none';
         const bannerEl = document.getElementById('combatResult');
         if (bannerEl) { bannerEl.style.display = 'none'; bannerEl.textContent = ''; }
         this.setCombatActionsEnabled(true);
@@ -506,6 +514,7 @@ const UI = {
             fleeBtn.textContent = '🔒 无法逃跑';
         }
         this.updateCombatOverlay(state);
+        this.selectCombatAction('strike');  // default selection
         document.getElementById('combatOverlay').classList.add('visible');
         if (window.innerWidth <= 768) this.switchTab('event');
     },
@@ -561,7 +570,10 @@ const UI = {
             if (cs.enemyIntentType === 'perfect') {
                 intentEl.innerHTML = `<span class="intent-read">🔮 ${cs.enemyIntentHint}</span><span class="intent-perfect-label">【无相剑意】</span>`;
             } else if (cs.enemyIntentType === 'unreadable') {
-                intentEl.innerHTML = `<span class="intent-none">— ${cs.enemyIntentHint}</span>`;
+                const comp = char.attributes.comprehension || 0;
+                const eComp = cs.enemyComp || 0;
+                const accuratePct = Math.round(Math.min(80, 80 * Math.log(1 + comp / (eComp + 20))));
+                intentEl.innerHTML = `<span class="intent-none">— ${cs.enemyIntentHint}</span><span class="intent-comp-label">（悟性${comp}，识破${accuratePct}%）</span>`;
             } else {
                 const comp = char.attributes.comprehension || 0;
                 const eComp = cs.enemyComp || 0;
@@ -598,6 +610,103 @@ const UI = {
         if (strikeBtn) {
             strikeBtn.title = `强攻：正面攻击，忽略对方${defIgnorePct}%防御，气力+2，可触发会心`;
         }
+
+        // Re-select default action after turn update (refresh preview with new values)
+        this._selectedCombatAction = null;  // reset to avoid double-click-confirm
+        this.selectCombatAction('strike');
+    },
+
+    // ── Combat action selection & preview ──────────────────────────────────
+    _selectedCombatAction: null,
+    _ACTION_LABELS: { strike: '⚔ 强攻', defend: '🛡 防御', parry: '⚡ 招架', focus: '🔮 蓄势', flee: '🏃 逃跑' },
+    _ACTION_CONFIRM: { strike: '⚔ 再点强攻', defend: '🛡 再点防御', parry: '⚡ 再点招架', focus: '🔮 再点蓄势', flee: '🏃 再点逃跑' },
+
+    selectCombatAction(action) {
+        // If same action clicked again, execute immediately
+        if (this._selectedCombatAction === action) {
+            this._selectedCombatAction = null;
+            this._restoreButtonLabels();
+            Engine.handleCombatAction(action);
+            return;
+        }
+        this._selectedCombatAction = action;
+
+        // Highlight selected button, change its text to hint "再点执行"
+        const btnMap = { strike: '.combat-strike', defend: '.combat-defend', parry: '.combat-parry', focus: '.combat-focus', flee: '.combat-flee' };
+        document.querySelectorAll('#combatActions .combat-btn').forEach(b => b.classList.remove('selected'));
+        for (const [act, selector] of Object.entries(btnMap)) {
+            const btn = document.querySelector(`#combatActions ${selector}`);
+            if (btn) btn.textContent = act === action ? this._ACTION_CONFIRM[act] : this._ACTION_LABELS[act];
+        }
+        const sel = document.querySelector(`#combatActions ${btnMap[action]}`);
+        if (sel) sel.classList.add('selected');
+
+        // Show preview bar
+        const bar = document.getElementById('combatPreviewBar');
+        bar.style.display = '';
+        const state = Engine.state;
+        if (!state || !state.combatState) return;
+        const { char, combatState: cs } = state;
+        const job = state.jobs.find(j => j.id === char.job);
+        const preview = Combat.getActionPreview(cs, char, job);
+        if (!preview) return;
+
+        let html = '';
+        if (action === 'strike') {
+            const p = preview.strike;
+            const sk = p.skillPreview;
+            html = `<span class="preview-label">⚔ 强攻</span>`;
+            html += `预估伤害 <span class="preview-good">~${p.dmg}</span>`;
+            html += `　暴击 <span class="preview-good">~${p.critDmg}</span>（${p.critChance}%）`;
+            html += `　无视防御 ${p.defIgnorePct}%　气力+2`;
+            if (sk) html += `<br><span class="preview-label">⚡ ${sk.name}</span>自动发动，预估 <span class="preview-good">~${sk.dmg}</span>`;
+            html += `<br><span class="preview-muted">承受敌方攻击 ~${preview.incoming.fullDmg}${preview.incoming.dodgeChance > 0 ? `　闪避${preview.incoming.dodgeChance}%` : ''}</span>`;
+        } else if (action === 'defend') {
+            const p = preview.defend;
+            html = `<span class="preview-label">🛡 防御</span>`;
+            html += `对重攻减伤 ${p.vsHeavy}%（受 <span class="preview-good">~${p.dmgHeavy}</span>）`;
+            html += `　对快攻减伤 ${p.vsSwift}%（受 <span class="preview-good">~${p.dmgSwift}</span>）`;
+            html += `<br><span class="preview-muted">不造成伤害，不获得气力。识破快攻时减伤80%</span>`;
+        } else if (action === 'parry') {
+            const p = preview.parry;
+            html = `<span class="preview-label">⚡ 招架</span>`;
+            html += `成功反击 <span class="preview-good">~${p.counterDmg}</span>（自受冲击 ~${p.selfDmg}）　气力+1`;
+            html += `<br>被快攻破招：受 <span class="preview-bad">~${p.punishDmg}</span>　气力-1`;
+            html += `<br><span class="preview-muted">克制重攻，被快攻克制。技能就绪时作为反击招式发动</span>`;
+        } else if (action === 'focus') {
+            const p = preview.focus;
+            html = `<span class="preview-label">🔮 蓄势</span>`;
+            html += `气力 → ${p.momAfter}/5　减伤 ${p.reduction}%（受 <span class="preview-good">~${p.dmg}</span>）`;
+            html += `<br><span class="preview-muted">快速积攒气力以发动技能，减伤略低于防御</span>`;
+        } else if (action === 'flee') {
+            html = `<span class="preview-label">🏃 逃跑</span>`;
+            html += `成功率 ${Math.round(cs.fleeChance * 100)}%　失败受 ~${preview.incoming.fullDmg} 伤害`;
+            html += `<br><span class="preview-muted">每次失败+15%成功率</span>`;
+        }
+        bar.innerHTML = html;
+    },
+
+    confirmCombatAction() {
+        const action = this._selectedCombatAction;
+        if (!action) return;
+        this._clearCombatSelection();
+        Engine.handleCombatAction(action);
+    },
+
+    _restoreButtonLabels() {
+        const btnMap = { strike: '.combat-strike', defend: '.combat-defend', parry: '.combat-parry', focus: '.combat-focus', flee: '.combat-flee' };
+        for (const [act, selector] of Object.entries(btnMap)) {
+            const btn = document.querySelector(`#combatActions ${selector}`);
+            if (btn) btn.textContent = this._ACTION_LABELS[act];
+        }
+    },
+
+    _clearCombatSelection() {
+        this._selectedCombatAction = null;
+        document.querySelectorAll('#combatActions .combat-btn').forEach(b => b.classList.remove('selected'));
+        this._restoreButtonLabels();
+        const bar = document.getElementById('combatPreviewBar');
+        if (bar) bar.style.display = 'none';
     },
 
     hideCombatOverlay() {
@@ -605,6 +714,7 @@ const UI = {
     },
 
     showCombatReturnBtn(result, callback) {
+        this._clearCombatSelection();
         document.querySelectorAll('#combatActions .combat-btn:not(#combatReturnBtn)').forEach(b => b.style.display = 'none');
         const returnBtn = document.getElementById('combatReturnBtn');
         returnBtn.style.display = '';
@@ -627,6 +737,7 @@ const UI = {
         document.querySelectorAll('#combatActions .combat-btn:not(#combatReturnBtn)').forEach(btn => {
             btn.disabled = !enabled;
         });
+        if (!enabled) this._clearCombatSelection();
     },
 
     setCombatAutoButton(isOn) {
@@ -765,7 +876,7 @@ const UI = {
                 </div>
                 ${availableTalents.length > 0 ? `
                 <div class="modal-section">
-                    <div class="modal-label">解锁了新的传承天赋（选择1个）：</div>
+                    <div class="modal-label">解锁了新的传承天赋（最多选择2个）：</div>
                     <div id="talentChoices" class="talent-choices"></div>
                 </div>` : ''}
                 <button id="rebirthConfirmBtn" class="btn-confirm">踏入新的世界线</button>
@@ -783,7 +894,7 @@ const UI = {
                     if (selected.has(talent.id)) {
                         selected.delete(talent.id);
                         btn.classList.remove('selected');
-                    } else if (selected.size < 1) {
+                    } else if (selected.size < 2) {
                         selected.add(talent.id);
                         btn.classList.add('selected');
                     }

@@ -1,23 +1,92 @@
 // rebirth.js - Reincarnation system
 
 const TALENTS = [
+    // --- 低阶天赋 ---
+    {
+        id: 'sword_sense',
+        name: '剑心初悟',
+        desc: '力量与敏捷获取效率+10%',
+        condition: (char) => char.attributes.strength >= 12 || char.attributes.agility >= 12,
+        upgradedBy: 'sword_heart'
+    },
+    {
+        id: 'minor_root',
+        name: '灵犀',
+        desc: '内力与悟性获取效率+10%',
+        condition: (char) => char.attributes.innerForce >= 15 || char.attributes.comprehension >= 15,
+        upgradedBy: 'spiritual_root'
+    },
+    {
+        id: 'lucky_star',
+        name: '幸运儿',
+        desc: '开局运气+3，运气获取效率+10%',
+        condition: (char) => char.attributes.luck >= 10,
+        upgradedBy: 'fortune_child'
+    },
+    {
+        id: 'tough_body',
+        name: '强身术',
+        desc: '最大气血+10%',
+        condition: (char) => char.attributes.constitution >= 15,
+        upgradedBy: 'longevity_art'
+    },
+    {
+        id: 'qi_flow',
+        name: '吐纳术',
+        desc: '气盾减伤额外+1，技能增幅额外+5%',
+        condition: (char) => char.attributes.innerForce >= 20,
+        upgradedBy: 'qi_mastery'
+    },
+    {
+        id: 'hard_bone',
+        name: '硬骨头',
+        desc: '受伤休养时间-1个月',
+        condition: (char) => char.attributes.constitution >= 15 && (char.kills || 0) >= 1,
+        upgradedBy: 'iron_will'
+    },
+    {
+        id: 'quick_wit',
+        name: '一点灵光',
+        desc: '悟性获取效率+12%',
+        condition: (char) => char.attributes.comprehension >= 20,
+        upgradedBy: 'swift_learner'
+    },
+    // --- 高阶天赋 ---
     {
         id: 'sword_heart',
         name: '剑心',
         desc: '力量与敏捷获取效率+15%',
-        condition: (char) => char.unlockedJobs.includes('swordsman') || char.unlockedJobs.includes('hero') || char.unlockedJobs.includes('sword_saint')
+        condition: (char) => char.attributes.strength >= 20 || char.attributes.agility >= 20,
+        upgrades: 'sword_sense'
     },
     {
         id: 'spiritual_root',
         name: '慧根',
         desc: '内力与悟性获取效率+15%',
-        condition: (char) => char.attributes.innerForce >= 30 || char.attributes.comprehension >= 30
+        condition: (char) => char.attributes.innerForce >= 30 || char.attributes.comprehension >= 30,
+        upgrades: 'minor_root'
+    },
+    {
+        id: 'battle_novice',
+        name: '初经战阵',
+        desc: '每场战斗开始时即有1点气力',
+        condition: (char) => (char.kills || 0) >= 5,
+        upgradedBy: 'battle_veteran'
+    },
+    {
+        id: 'battle_veteran',
+        name: '沙场老手',
+        desc: '每场战斗开始时即有2点气力',
+        condition: (char) => (char.kills || 0) >= 10,
+        upgrades: 'battle_novice',
+        upgradedBy: 'battle_hardened'
     },
     {
         id: 'battle_hardened',
         name: '百战余生',
-        desc: '百战磨练，每场战斗开始时即有3点气力（不需蓄势）',
-        condition: (char) => (char.kills || 0) >= 5
+        desc: '百战磨练，每场战斗开始时即有3点气力',
+        condition: (char) => (char.kills || 0) >= 15,
+        upgrades: 'battle_veteran'
     },
     {
         id: 'deep_bonds',
@@ -29,7 +98,8 @@ const TALENTS = [
         id: 'inherited_name',
         name: '传世之名',
         desc: '前世声望尚存，初始声望+8',
-        condition: (char) => char.attributes.reputation >= 20
+        condition: (char) => char.attributes.reputation >= 20,
+        upgradedBy: 'kings_aura'
     },
     {
         id: 'destiny_mark',
@@ -41,43 +111,49 @@ const TALENTS = [
         id: 'fortune_child',
         name: '气运之子',
         desc: '开局运气+5，运气获取效率+15%',
-        condition: (char) => char.attributes.luck >= 20
+        condition: (char) => char.attributes.luck >= 20,
+        upgrades: 'lucky_star'
     },
     {
         id: 'longevity_art',
         name: '长生诀',
         desc: '最大气血+15%',
-        condition: (char) => char.attributes.constitution >= 30
+        condition: (char) => char.attributes.constitution >= 30,
+        upgrades: 'tough_body'
     },
     {
         id: 'qi_mastery',
         name: '真气贯体',
         desc: '气盾减伤额外+2，技能增幅额外+10%',
-        condition: (char) => char.attributes.innerForce >= 35
+        condition: (char) => char.attributes.innerForce >= 35,
+        upgrades: 'qi_flow'
     },
     {
         id: 'iron_will',
         name: '铁骨铮铮',
         desc: '受伤休养时间减半（2月→1月）',
-        condition: (char) => char.attributes.constitution >= 25 && (char.kills || 0) >= 3
+        condition: (char) => char.attributes.constitution >= 25 && (char.kills || 0) >= 3,
+        upgrades: 'hard_bone'
     },
     {
         id: 'worldline_echo',
         name: '既视感',
-        desc: '世界线回溯后，初始好感额外+10（所有已结识NPC）',
+        desc: '世界线回溯后，前世羁绊直接解锁至第3章（跳过前3级好感门槛）',
         condition: (char) => char.rebirthCount >= 3
     },
     {
         id: 'swift_learner',
         name: '触类旁通',
         desc: '悟性获取效率+20%',
-        condition: (char) => char.attributes.comprehension >= 35
+        condition: (char) => char.attributes.comprehension >= 35,
+        upgrades: 'quick_wit'
     },
     {
         id: 'kings_aura',
         name: '王者之气',
-        desc: '声望获取效率+25%，初始声望+5',
-        condition: (char) => char.attributes.reputation >= 30
+        desc: '声望获取+25%，初始声望+5',
+        condition: (char) => char.attributes.reputation >= 30,
+        upgrades: 'inherited_name'
     }
 ];
 
@@ -86,7 +162,16 @@ const INHERIT_BASE_RATE = 0.10; // 10% base attribute inheritance
 const Rebirth = {
     // Calculate which talents are available this rebirth
     getAvailableTalents(char) {
-        return TALENTS.filter(t => t.condition(char) && !char.legacyTalents.includes(t.id));
+        return TALENTS.filter(t => {
+            if (!t.condition(char)) return false;
+            if (char.legacyTalents.includes(t.id)) return false;
+            // Hide base talent if player already has its upgrade
+            if (t.upgradedBy) {
+                const upgrader = TALENTS.find(u => u.id === t.upgradedBy);
+                if (upgrader && char.legacyTalents.includes(upgrader.id)) return false;
+            }
+            return true;
+        });
     },
 
     // Calculate inherited attributes for next life
@@ -99,6 +184,8 @@ const Rebirth = {
         // Bonus from fortune_child talent
         if (char.legacyTalents.includes('fortune_child')) {
             inherited.luck = (inherited.luck || 0) + 5;
+        } else if (char.legacyTalents.includes('lucky_star')) {
+            inherited.luck = (inherited.luck || 0) + 3;
         }
         // Bonus from inherited_name talent
         if (char.legacyTalents.includes('inherited_name')) {
@@ -117,7 +204,15 @@ const Rebirth = {
     // Execute rebirth: returns new character with inherited bonuses
     execute(char, chosenTalentIds, allNpcs) {
         const inheritedAttrs = this.calculateInheritedAttributes(char);
-        const newTalents = [...char.legacyTalents, ...chosenTalentIds];
+        let newTalents = [...char.legacyTalents, ...chosenTalentIds];
+
+        // Handle talent upgrades: if a new talent upgrades an old one, replace it
+        for (const id of chosenTalentIds) {
+            const talent = this.TALENTS.find(t => t.id === id);
+            if (talent && talent.upgrades && newTalents.includes(talent.upgrades)) {
+                newTalents = newTalents.filter(t => t !== talent.upgrades);
+            }
+        }
 
         const newChar = Character.create(char.name, inheritedAttrs, newTalents);
         newChar.rebirthCount = char.rebirthCount + 1;
@@ -127,13 +222,35 @@ const Rebirth = {
 
         NPCSystem.initRelationships(newChar, allNpcs);
 
+        // Auto-meet all NPCs that had bonds in previous life
+        for (const npcId in newChar.inheritedBonds) {
+            if (newChar.inheritedBonds[npcId] > 0) {
+                newChar.flags['met_' + npcId] = true;
+            }
+        }
+
         // Apply starting affinity bonuses from inherited bonds
         for (const npcId in newChar.inheritedBonds) {
             const level = newChar.inheritedBonds[npcId];
             const bonus = this.BOND_AFFINITY_BONUS[level] || 0;
-            const echoBonus = newChar.legacyTalents.includes('worldline_echo') ? 10 : 0;
-            if (bonus + echoBonus > 0) {
-                NPCSystem.applyAffinityChanges(newChar, { [npcId]: bonus + echoBonus });
+            if (bonus > 0) {
+                NPCSystem.applyAffinityChanges(newChar, { [npcId]: bonus });
+            }
+        }
+
+        // 既视感: directly unlock bond levels up to 3 for all inherited NPCs
+        if (newChar.legacyTalents.includes('worldline_echo')) {
+            for (const npcId in newChar.inheritedBonds) {
+                const prevLevel = newChar.inheritedBonds[npcId];
+                const grantLevel = Math.min(3, prevLevel);
+                if (grantLevel > 0) {
+                    newChar.bondLevels[npcId] = grantLevel;
+                    // Also set affinity high enough for level 3
+                    const targetAffinity = 70; // enough for most L3 thresholds
+                    if ((newChar.relationships[npcId] || {}).affinity < targetAffinity) {
+                        NPCSystem.applyAffinityChanges(newChar, { [npcId]: targetAffinity - ((newChar.relationships[npcId] || {}).affinity || 0) });
+                    }
+                }
             }
         }
 

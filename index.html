@@ -6,7 +6,7 @@
     <title>轮回江湖</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link href="https://fonts.googleapis.com/css2?family=Noto+Serif+SC:wght@400;700&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="css/styles.css?v=0.9.4">
+    <link rel="stylesheet" href="css/styles.css?v=0.9.7">
 </head>
 <body>
 
@@ -160,13 +160,15 @@
         <div id="combatIntentHint" class="combat-intent-hint"></div>
         <!-- Result banner (shown after combat ends) -->
         <div id="combatResult" class="combat-result-banner" style="display:none"></div>
+        <!-- Action preview bar (shown on first click) -->
+        <div id="combatPreviewBar" class="combat-preview-bar" style="display:none"></div>
         <!-- Stance buttons -->
         <div class="combat-actions" id="combatActions">
-            <button class="combat-btn combat-strike" title="强攻：正面攻击，忽略对方部分防御，气力+2，可触发会心" onclick="Engine.handleCombatAction('strike')">⚔ 强攻</button>
-            <button class="combat-btn combat-defend" title="防御：大幅减少受伤（重攻-75%，快攻-50%），识破快攻时减伤80%" onclick="Engine.handleCombatAction('defend')">🛡 防御</button>
-            <button class="combat-btn combat-parry"  title="招架：克制对方重攻（反击）；被对方快攻破招" onclick="Engine.handleCombatAction('parry')">⚡ 招架</button>
-            <button class="combat-btn combat-focus"  title="蓄势：气力+3，减伤55%" onclick="Engine.handleCombatAction('focus')">🔮 蓄势</button>
-            <button class="combat-btn combat-flee" id="combatFleeBtn" onclick="Engine.handleCombatAction('flee')">� 逃跑 25%</button>
+            <button class="combat-btn combat-strike" onclick="UI.selectCombatAction('strike')">⚔ 强攻</button>
+            <button class="combat-btn combat-defend" onclick="UI.selectCombatAction('defend')">🛡 防御</button>
+            <button class="combat-btn combat-parry"  onclick="UI.selectCombatAction('parry')">⚡ 招架</button>
+            <button class="combat-btn combat-focus"  onclick="UI.selectCombatAction('focus')">🔮 蓄势</button>
+            <button class="combat-btn combat-flee" id="combatFleeBtn" onclick="UI.selectCombatAction('flee')">🏃 逃跑 25%</button>
             <button class="combat-btn combat-quickbattle" id="combatQuickBtn" onclick="Engine.handleQuickCombat()" title="快速战斗：蒙特卡洛模拟，立即得出结果">⚡ 快速战斗</button>
             <button class="combat-btn combat-return-btn" id="combatReturnBtn" style="display:none">📋 点击返回</button>
         </div>

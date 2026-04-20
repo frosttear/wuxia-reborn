@@ -55,7 +55,9 @@ const Combat = {
             fleeChance:  0.25,
             pendingSkill: null,
             usedSkills:   [],
-            playerMomentum: (char.legacyTalents || []).includes('battle_hardened') ? 3 : 0,
+            playerMomentum: (char.legacyTalents || []).includes('battle_hardened') ? 3
+                : (char.legacyTalents || []).includes('battle_veteran') ? 2
+                : (char.legacyTalents || []).includes('battle_novice') ? 1 : 0,
             skillCooldown:  0,      // turns until job active skill can fire again
             enemyComp:    enemy.comprehension || 0, // enemy comprehension (affects intent readability)
             enemyNextAction: null,  // 'heavy'|'swift', previewed for next turn
@@ -420,6 +422,88 @@ const Combat = {
     getStrikeDefIgnore(playerAtk, enemyDef) {
         const atkRatio = Math.min(1, playerAtk / Math.max(1, enemyDef));
         return Math.min(0.75, atkRatio * 0.60 + 0.10);
+    },
+
+    // ── Action preview for UI ────────────────────────────────────────────────
+    // Returns estimated values for each action button display
+    getActionPreview(cs, char, job) {
+        const playerAtk = Character.getAttackPower(char, job) + (cs.allBondsBonus ? 60 : 0);
+        const playerDef = Character.getDefensePower(char, job);
+        const qiShield  = Character.getQiShield(char);
+        const skillAmp  = Character.getSkillAmplify(char);
+        const enemyQS   = cs.enemyQiShield || 0;
+        const critChance = Math.round(Character.getLuckTriggerChance(char) * 100);
+        const dodgeChance = Math.round(Character.getLuckDodgeChance(char) * 100);
+
+        // Player → enemy defIgnore
+        const atkRatio = Math.min(1, playerAtk / Math.max(1, cs.enemyEffDef));
+        const defIgnore = Math.min(0.75, atkRatio * 0.60 + 0.10);
+        const defIgnorePct = Math.round(defIgnore * 100);
+
+        // Enemy → player defIgnore
+        const enemyAtkRatio = Math.min(1, cs.enemyEffAtk / Math.max(1, playerDef));
+        const enemyDefIgnore = Math.min(0.75, enemyAtkRatio * 0.60 + 0.10);
+
+        // Defend defCap (enemy power ratio)
+        const powerRatio = Math.min(1, playerDef / Math.max(1, cs.enemyEffAtk));
+        const defCap = Math.min(0.75, powerRatio * 0.75 + 0.10);
+
+        // Estimated raw enemy damage (no reduction)
+        const rawEnemyDmg = Math.max(1, cs.enemyEffAtk - Math.floor(playerDef * (1 - enemyDefIgnore)) + 2);
+
+        // ── Strike ──
+        const strikeDmg = Math.max(1, playerAtk - Math.floor(cs.enemyEffDef * (1 - defIgnore)) - enemyQS + 3);
+        const strikeCrit = Math.floor(strikeDmg * 1.5);
+
+        // ── Skill preview ──
+        const activeSkill = job && job.activeSkill;
+        let skillPreview = null;
+        if (activeSkill && cs.playerMomentum >= activeSkill.momentumCost && cs.skillCooldown === 0) {
+            const sk = activeSkill;
+            const skDefIgnore = Math.min(0.90, defIgnore + (sk.armorBreak || (sk.type === 'multi' ? 0.5 : 0)));
+            if (sk.type === 'multi') {
+                const hits = sk.hits || 3;
+                const perHit = Math.max(1, Math.floor(playerAtk * sk.power * (1 + skillAmp)) + 1);
+                const defMit = Math.floor(cs.enemyEffDef * (1 - skDefIgnore));
+                const total = Math.max(1, perHit * hits - defMit - enemyQS);
+                skillPreview = { name: sk.name, dmg: total, hits };
+            } else {
+                const dmg = Math.max(1, Math.floor(playerAtk * sk.power * (1 + skillAmp))
+                    - Math.floor(cs.enemyEffDef * (1 - skDefIgnore)) - enemyQS + 3);
+                skillPreview = { name: sk.name, dmg, hits: 1 };
+            }
+        }
+
+        // ── Defend ──
+        const defendVsHeavy = Math.round(Math.min(0.75, defCap) * 100);
+        const defendVsSwift = Math.round(Math.min(0.50, defCap) * 100);
+        const defendDmgHeavy = Math.max(1, Math.floor(rawEnemyDmg * (1 - Math.min(0.75, defCap))) - qiShield);
+        const defendDmgSwift = Math.max(1, Math.floor(rawEnemyDmg * (1 - Math.min(0.50, defCap))) - qiShield);
+
+        // ── Parry ──
+        // Counter (vs heavy): 0.6x atk - def*(1-defIgnore)
+        const counterDmg = Math.max(1, Math.floor(playerAtk * 0.6) - Math.floor(cs.enemyEffDef * (1 - defIgnore)) - enemyQS + 1);
+        const parrySelfDmg = Math.max(1, Math.floor(rawEnemyDmg * 0.20) - qiShield);
+        // Punished (vs swift): 1.3x enemy, swiftPunishIgnore
+        const swiftPunishIgnore = Math.min(0.85, enemyDefIgnore + 0.15);
+        const punishRaw = Math.max(1, Math.floor(cs.enemyEffAtk * 1.3) - Math.floor(playerDef * (1 - swiftPunishIgnore)) + 1);
+        const punishDmg = Math.max(1, punishRaw - qiShield);
+
+        // ── Focus ──
+        const focusReduction = Math.round(Math.min(0.55, defCap) * 100);
+        const focusDmg = Math.max(1, Math.floor(rawEnemyDmg * (1 - Math.min(0.55, defCap))) - qiShield);
+        const momAfter = Math.min(5, (cs.playerMomentum || 0) + 3);
+
+        // ── No-action baseline (strike/focus incoming) ──
+        const fullDmg = Math.max(1, rawEnemyDmg - qiShield);
+
+        return {
+            strike: { dmg: strikeDmg, critDmg: strikeCrit, defIgnorePct, critChance, skillPreview },
+            defend: { vsHeavy: defendVsHeavy, vsSwift: defendVsSwift, dmgHeavy: defendDmgHeavy, dmgSwift: defendDmgSwift, dodgeChance },
+            parry:  { counterDmg, selfDmg: parrySelfDmg, punishDmg, dodgeChance },
+            focus:  { reduction: focusReduction, dmg: focusDmg, momAfter, dodgeChance },
+            incoming: { fullDmg, dodgeChance },
+        };
     },
     _getIntentHint(enemy, action) {
         const pool = enemy.intentReadMsgs && enemy.intentReadMsgs[action];

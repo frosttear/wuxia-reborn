@@ -144,8 +144,24 @@ describe('Character.monthlyHPRegen', () => {
         char.passives = [{ hpRegenBonus: 20 }];
         const job = { hpBonus: 100 };
         char.hp = 50;
-        const { total } = Character.monthlyHPRegen(char, job);
-        expect(total).toBeGreaterThanOrEqual(30); // base 10 + passive 20
+        const withPassive = Character.monthlyHPRegen(char, job);
+        // Should include passive flat bonus on top of % base
+        const char2 = makeChar();
+        char2.hp = 50;
+        const without = Character.monthlyHPRegen(char2, job);
+        expect(withPassive.total).toBeGreaterThan(without.total);
+    });
+
+    test('regen scales with max HP (percentage-based)', () => {
+        const charLow = makeChar();
+        const charHigh = makeChar();
+        charHigh.attributes.constitution = 30; // much higher HP max
+        const job = { hpBonus: 100 };
+        charLow.hp = 50;
+        charHigh.hp = 50;
+        const regenLow = Character.monthlyHPRegen(charLow, job);
+        const regenHigh = Character.monthlyHPRegen(charHigh, job);
+        expect(regenHigh.total).toBeGreaterThan(regenLow.total);
     });
 });
 

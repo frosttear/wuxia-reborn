@@ -70,7 +70,9 @@ const Character = {
         const jobBonus = job ? job.hpBonus : 0;
         const subtotal = base + jobBonus;
         const longevityBonus = char.legacyTalents && char.legacyTalents.includes('longevity_art')
-            ? Math.floor(subtotal * 0.15) : 0;
+            ? Math.floor(subtotal * 0.15)
+            : char.legacyTalents && char.legacyTalents.includes('tough_body')
+            ? Math.floor(subtotal * 0.10) : 0;
         return subtotal + longevityBonus;
     },
 
@@ -82,12 +84,13 @@ const Character = {
         const skillBonus = skills.reduce((s, sk) => s + (sk.bonuses && sk.bonuses.attack || 0), 0);
         // 侠义之心: reputation scaling (learned skill special)
         const heroBonus = skills.some(sk => sk.special === 'reputation_scaling')
-            ? Math.floor(char.attributes.reputation / 10) * 2 : 0;
+            ? Math.floor(char.attributes.reputation / 10) * 1.5 : 0;
         // 以气御剑: innerForce scaling (learned skill special)
         const saintBonus = skills.some(sk => sk.special === 'innerforce_scaling')
-            ? Math.floor(char.attributes.innerForce / 10) * 4 : 0;
+            ? Math.floor(char.attributes.innerForce / 10) * 2.5 : 0;
         // Talent bonus
-        const talentBonus = char.legacyTalents.includes('sword_heart') ? Math.floor(base * 0.1) : 0;
+        const talentBonus = char.legacyTalents.includes('sword_heart') ? Math.floor(base * 0.1)
+            : char.legacyTalents.includes('sword_sense') ? Math.floor(base * 0.07) : 0;
         // Passive bonus (e.g. 寒霜剑气)
         const passiveBonus = (char.passives || []).reduce((s, p) => s + (p.combatAtkBonus || 0), 0);
         // lowHpAtkBonus: active when HP ≤ 25% of max (e.g. 三十年铁骨)
@@ -122,16 +125,20 @@ const Character = {
     },
 
     // 内力·气盾：每次受击扁平减伤 = floor(innerForce / 8)，独立于防御力
+    // + 被动减伤（如凌霜剑骨 combatDmgReduce）
     getQiShield(char) {
         const base = Math.floor((char.attributes.innerForce || 0) / 8);
-        const talentBonus = (char.legacyTalents || []).includes('qi_mastery') ? 2 : 0;
-        return base + talentBonus;
+        const talentBonus = (char.legacyTalents || []).includes('qi_mastery') ? 2
+            : (char.legacyTalents || []).includes('qi_flow') ? 1 : 0;
+        const passiveReduce = (char.passives || []).reduce((s, p) => s + (p.combatDmgReduce || 0), 0);
+        return base + talentBonus + passiveReduce;
     },
 
     // 内力·增幅：技能伤害加成 = innerForce%（如30内力 = +30%技能伤害）
     getSkillAmplify(char) {
         const base = (char.attributes.innerForce || 0) / 100;
-        const talentBonus = (char.legacyTalents || []).includes('qi_mastery') ? 0.10 : 0;
+        const talentBonus = (char.legacyTalents || []).includes('qi_mastery') ? 0.10
+            : (char.legacyTalents || []).includes('qi_flow') ? 0.05 : 0;
         return base + talentBonus;
     },
 
@@ -162,6 +169,15 @@ const Character = {
                     actualGains[attr] = (actualGains[attr] || 0) + extra;
                 }
             }
+        } else if (char.legacyTalents.includes('minor_root')) {
+            const bonus = ['innerForce', 'comprehension'];
+            for (const attr of bonus) {
+                if (changes[attr] && changes[attr] > 0) {
+                    const extra = Math.floor(changes[attr] * 0.10);
+                    char.attributes[attr] += extra;
+                    actualGains[attr] = (actualGains[attr] || 0) + extra;
+                }
+            }
         }
         // Talent: 剑心 boosts strength/agility gains by 15%
         if (char.legacyTalents.includes('sword_heart')) {
@@ -169,6 +185,15 @@ const Character = {
             for (const attr of bonus) {
                 if (changes[attr] && changes[attr] > 0) {
                     const extra = Math.floor(changes[attr] * 0.15);
+                    char.attributes[attr] += extra;
+                    actualGains[attr] = (actualGains[attr] || 0) + extra;
+                }
+            }
+        } else if (char.legacyTalents.includes('sword_sense')) {
+            const bonus = ['strength', 'agility'];
+            for (const attr of bonus) {
+                if (changes[attr] && changes[attr] > 0) {
+                    const extra = Math.floor(changes[attr] * 0.10);
                     char.attributes[attr] += extra;
                     actualGains[attr] = (actualGains[attr] || 0) + extra;
                 }
@@ -181,11 +206,23 @@ const Character = {
                 char.attributes.luck += extra;
                 actualGains.luck = (actualGains.luck || 0) + extra;
             }
+        } else if (char.legacyTalents.includes('lucky_star')) {
+            if (changes.luck && changes.luck > 0) {
+                const extra = Math.floor(changes.luck * 0.10);
+                char.attributes.luck += extra;
+                actualGains.luck = (actualGains.luck || 0) + extra;
+            }
         }
         // Talent: 触类旁通 boosts comprehension gains by 20%
         if (char.legacyTalents.includes('swift_learner')) {
             if (changes.comprehension && changes.comprehension > 0) {
                 const extra = Math.floor(changes.comprehension * 0.20);
+                char.attributes.comprehension += extra;
+                actualGains.comprehension = (actualGains.comprehension || 0) + extra;
+            }
+        } else if (char.legacyTalents.includes('quick_wit')) {
+            if (changes.comprehension && changes.comprehension > 0) {
+                const extra = Math.floor(changes.comprehension * 0.12);
                 char.attributes.comprehension += extra;
                 actualGains.comprehension = (actualGains.comprehension || 0) + extra;
             }
@@ -256,13 +293,19 @@ const Character = {
     },
 
     monthlyHPRegen(char, job) {
-        const conBonus = Math.floor((char.attributes.constitution || 0) / 5);
-        const innerBonus = Math.floor((char.attributes.innerForce || 0) / 5);
-        const passiveBonus = (char.passives || []).reduce((s, p) => s + (p.hpRegenBonus || 0), 0);
         const hpMax = this.getHPMax(char, job);
+        // Base: 15% of max HP
+        const basePct = 0.15;
+        // Constitution: +0.5% per point (e.g. 20 con = +10%)
+        const conPct = (char.attributes.constitution || 0) * 0.005;
+        // Inner force: +0.5% per point
+        const innerPct = (char.attributes.innerForce || 0) * 0.005;
+        const passiveBonus = (char.passives || []).reduce((s, p) => s + (p.hpRegenBonus || 0), 0);
         const missingPct = (char.passives || []).reduce((max, p) => Math.max(max, p.hpRegenPctMissing || 0), 0);
         const missingBonus = Math.floor((hpMax - char.hp) * missingPct);
-        const total = 10 + conBonus + innerBonus + passiveBonus + missingBonus;
+        const conBonus = Math.floor(hpMax * conPct);
+        const innerBonus = Math.floor(hpMax * innerPct);
+        const total = Math.floor(hpMax * basePct) + conBonus + innerBonus + passiveBonus + missingBonus;
         const hpBefore = char.hp;
         this.healHP(char, total, job);
         const actualHealed = char.hp - hpBefore;

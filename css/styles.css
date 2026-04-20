@@ -482,8 +482,8 @@ button:disabled { opacity: 0.4; cursor: not-allowed; }
 .combat-intent-hint { font-size: 0.8rem; min-height: 1.4em; text-align: center; }
 .intent-read  { color: rgba(180,160,220,0.9); font-style: italic; }
 .intent-vague { color: rgba(150,150,150,0.7); font-style: italic; }
-.intent-none  { color: rgba(100,100,100,0.6); font-style: italic; }
-.intent-comp-label { font-size: 0.68rem; color: rgba(120,120,120,0.6); margin-left: 4px; }
+.intent-none  { color: #c8b89a; font-style: italic; }
+.intent-comp-label { font-size: 0.72rem; color: #a89880; margin-left: 4px; }
 .intent-perfect-label { font-size: 0.72rem; color: #f4c430; font-weight: bold; margin-left: 5px; text-shadow: 0 0 6px rgba(244,196,48,0.5); }
 
 .combat-actions {
@@ -492,7 +492,19 @@ button:disabled { opacity: 0.4; cursor: not-allowed; }
     gap: 6px;
     margin-top: 4px;
 }
-.combat-btn { padding: 10px 6px; font-size: 0.82rem; border-radius: 6px; text-align: center; }
+.combat-btn { padding: 10px 6px; font-size: 0.82rem; border-radius: 6px; text-align: center; line-height: 1.4; transition: box-shadow 0.15s; }
+.combat-btn.selected { box-shadow: 0 0 0 2px var(--accent), 0 0 8px rgba(201,168,76,0.4); }
+.combat-btn small.action-sub { display: block; font-size: 0.62rem; opacity: 0.7; margin-top: 2px; font-weight: normal; letter-spacing: -0.01em; }
+.combat-btn .action-skill-hint { font-size: 0.62rem; color: #f4c430; opacity: 0.85; }
+.combat-preview-bar {
+    background: rgba(0,0,0,0.35); border: 1px solid var(--border); border-radius: 6px;
+    padding: 8px 12px; margin-bottom: 4px; font-size: 0.78rem; line-height: 1.6;
+    color: var(--text); min-height: 36px;
+}
+.combat-preview-bar .preview-label { color: var(--accent); font-weight: bold; margin-right: 6px; }
+.combat-preview-bar .preview-good { color: var(--green); }
+.combat-preview-bar .preview-bad { color: var(--red); }
+.combat-preview-bar .preview-muted { color: var(--muted); font-size: 0.72rem; }
 .combat-strike { border-color: rgba(201,100,76,0.6); color: #e07050; }
 .combat-strike:hover:not(:disabled) { background: rgba(201,100,76,0.15); }
 .combat-quick  { border-color: rgba(201,168,76,0.5); color: var(--accent2); }

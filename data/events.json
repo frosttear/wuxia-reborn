@@ -922,29 +922,29 @@
     ]
   },
   {
-    "id": "meet_han_shuang",
+    "id": "meet_yan_chixing",
     "type": "交友",
     "weight": 4,
     "title": "刀疤剑客",
     "text": "演武场边，人群里有个冷面男子格外显眼——左颊一道深疤，剑悬腰侧，目光锐利地打量着每一个出招的人。周围的人有意无意地与他保持着距离。\n\n他注意到了你，沉默片刻后，朝你方向抬了抬下颌：「你，来这里干什么？」",
-    "conditions": { "flags": { "met_han_shuang": false }, "minAgeYears": 16 },
+    "conditions": { "flags": { "met_yan_chixing": false }, "minAgeYears": 16 },
     "choices": [
       {
         "id": "introduce_self",
         "text": "坦然报出名号，直言是为习武而来",
         "effects": {
-          "flags": { "met_han_shuang": true },
-          "npcAffinity": { "han_shuang": 20 },
+          "flags": { "met_yan_chixing": true },
+          "npcAffinity": { "yan_chixing": 20 },
           "attributes": { "strength": 1 },
-          "narrative": "他盯着你看了片刻，轻哼一声：「还算老实。」转身离开前丢下一句：「我叫韩霜。以后别挡我的路。」那算是他给过你的最好评价。"
+          "narrative": "他盯着你看了片刻，轻哼一声：「还算老实。」转身离开前丢下一句：「我叫燕赤行。以后别挡我的路。」那算是他给过你的最好评价。"
         }
       },
       {
         "id": "observe_quietly",
         "text": "不答话，以沉默回应，打量他的剑法",
         "effects": {
-          "flags": { "met_han_shuang": true },
-          "npcAffinity": { "han_shuang": 12 },
+          "flags": { "met_yan_chixing": true },
+          "npcAffinity": { "yan_chixing": 12 },
           "attributes": { "comprehension": 1 },
           "narrative": "你们就这样对视了片刻。他忽然皱起眉，随即松开，低声道：「有点意思。」随手抛给你一块碎银，「算我欠你一顿饭。」你们就这样莫名其妙地认识了。"
         }

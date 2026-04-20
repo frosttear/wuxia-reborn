@@ -823,6 +823,7 @@ const Engine = {
 
         // Update HP bars to reflect final state
         UI.updateCombatOverlay(this.state);
+        UI.renderCharacter(char, this.state.jobs);
 
         this.state.combatBusy = false;
         this.endCombat(won ? 'won' : 'lost', cs);
@@ -942,11 +943,14 @@ const Engine = {
             char.injured = true;
             const hasIronBones = (char.passives || []).some(p => p.injuryHalfDuration);
             const hasIronWill  = (char.legacyTalents || []).includes('iron_will');
-            char.injuredMonths = hasIronBones ? 2 : hasIronWill ? 2 : 4;
+            const hasHardBone  = (char.legacyTalents || []).includes('hard_bone');
+            char.injuredMonths = hasIronBones ? 2 : hasIronWill ? 2 : hasHardBone ? 3 : 4;
             const injuryMsg = hasIronBones
                 ? '【重伤】你身负重创，但铁骨镖魂撑着你——估计两个月便可复原。'
                 : hasIronWill
                 ? '【重伤】你身负重创，但凭借跨世界线磨练的意志，恢复速度比常人快上一倍。'
+                : hasHardBone
+                ? '【重伤】你身负重创，但骨头够硬，三个月应可复原。'
                 : '【重伤】你身负重创，勉强撤退。需静养三至四个月，方可恢复。';
             UI.addLog(injuryMsg, 'lose');
             UI.renderCharacter(char, this.state.jobs);
