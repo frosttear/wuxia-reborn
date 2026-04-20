@@ -153,8 +153,7 @@ const UI = {
                 for (const p of passives) {
                     const span = document.createElement('span');
                     span.className = 'talent-tag passive-tag';
-                    span.title = p.desc;
-                    span.textContent = p.name;
+                    span.innerHTML = `<b>${p.name}</b>：${p.desc}`;
                     passivesEl.appendChild(span);
                 }
             } else {

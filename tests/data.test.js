@@ -172,4 +172,21 @@ describe('bonds.json - NPC bond structure', () => {
             expect(chapters[i].minAffinity).toBeGreaterThan(chapters[i - 1].minAffinity);
         }
     });
+
+    test('wang_tie L5 has death scene step with wang_dying_wish flag', () => {
+        const l5 = bonds.wang_tie[4];
+        expect(l5.level).toBe(5);
+        expect(l5.steps.length).toBe(3);
+        const deathStep = l5.steps[2];
+        expect(deathStep.text).toMatch(/旧伤/);
+        const allFlags = deathStep.choices.flatMap(c => Object.keys(c.effects.flags || {}));
+        expect(allFlags).toContain('wang_dying_wish');
+    });
+
+    test('wang_tie L2 mentions 赵霸天', () => {
+        const l2 = bonds.wang_tie[1];
+        expect(l2.level).toBe(2);
+        const allText = l2.steps.map(s => s.text).join('');
+        expect(allText).toMatch(/赵霸天/);
+    });
 });
