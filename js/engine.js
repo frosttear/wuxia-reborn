@@ -391,7 +391,9 @@ const Engine = {
                         stepIdx: bondStep.stepIdx + 1, steps: bondStep.steps
                     };
                 }
-                this.startCombat(enemy, effects.narrative || '');
+                // Show narrative BEFORE combat starts (not after)
+                if (effects.narrative) UI.addLog(effects.narrative, 'result');
+                this.startCombat(enemy, '');
                 return;
             }
         }
@@ -845,6 +847,16 @@ const Engine = {
     // kept for endCombat compatibility
     stopCombatAuto() {},
 
+    // Check and auto-promote to newly unlocked jobs (called after combat/chain completion)
+    _checkAndAutoPromote() {
+        const { char } = this.state;
+        const newJobs = Character.checkJobUnlocks(char, this.state.jobs);
+        if (newJobs.length > 0) {
+            const best = newJobs[newJobs.length - 1];
+            this.promoteJob(best.id);
+        }
+    },
+
     formatAttrGains(attrs) {
         if (!attrs) return '';
         const NAMES = {
@@ -894,17 +906,35 @@ const Engine = {
         if (postBondStep) this.state.pendingBondStep = null;
 
         if (result === 'won') {
-            UI.addLog(enemy.winNarrative, 'win');
             const rewards = enemy.winEffects || {};
-            if (Object.keys(rewards).length > 0) this.applyEffects({ attributes: rewards });
-            // Complete chain step on combat victory
-            if (this.state.pendingChainStep) {
-                const { chainId, stepIdx } = this.state.pendingChainStep;
-                this.state.pendingChainStep = null;
-                this.completeChainStep(chainId, stepIdx);
+
+            // Chain combat: if enemy has chainCombat, immediately fight next enemy
+            if (enemy.chainCombat) {
+                const nextEnemy = this.getEnemy(enemy.chainCombat);
+                if (nextEnemy) {
+                    const narrative = enemy.chainCombatNarrative || '';
+                    UI.addLog(enemy.winNarrative, 'win');
+                    if (Object.keys(rewards).length > 0) this.applyEffects({ attributes: rewards });
+                    UI.addCombatSummary({
+                        turns: cs.turn, dmgDealt: cs.totalDmgDealt,
+                        dmgReceived: cs.totalDmgReceived, result: 'won',
+                        rewards: this.formatAttrGains(rewards)
+                    });
+                    char.kills = (char.kills || 0) + 1;
+                    this.checkKillThreshold(char);
+                    UI.showCombatReturnBtn('won', () => {
+                        UI.hideCombatOverlay();
+                        // Carry over current HP (no heal between fights)
+                        this.startCombat(nextEnemy, cs.postNarrative || '');
+                        if (narrative) UI.addLog(narrative, 'system');
+                    });
+                    return;
+                }
             }
+
             if (enemy.isHiddenBoss) {
                 char.flags.hidden_boss_beaten = true;
+                UI.addLog(enemy.winNarrative, 'win');
                 UI.showCombatReturnBtn('won', () => {
                     UI.hideCombatOverlay();
                     this.triggerVictory(true);
@@ -912,6 +942,7 @@ const Engine = {
                 return;
             }
             if (enemy.isFinalBoss) {
+                UI.addLog(enemy.winNarrative, 'win');
                 UI.showCombatReturnBtn('won', () => {
                     UI.hideCombatOverlay();
                     this.triggerVictory(false);
@@ -923,8 +954,19 @@ const Engine = {
                 dmgReceived: cs.totalDmgReceived, result: 'won',
                 rewards: this.formatAttrGains(rewards)
             });
+            // Show win narrative and rewards AFTER combat summary
+            UI.addLog(enemy.winNarrative, 'win');
+            if (Object.keys(rewards).length > 0) this.applyEffects({ attributes: rewards });
+            // Complete chain step on combat victory
+            if (this.state.pendingChainStep) {
+                const { chainId, stepIdx } = this.state.pendingChainStep;
+                this.state.pendingChainStep = null;
+                this.completeChainStep(chainId, stepIdx);
+            }
             char.kills = (char.kills || 0) + 1;
             this.checkKillThreshold(char);
+            // Check for job unlocks after combat (flags may have changed)
+            this._checkAndAutoPromote();
 
         } else if (result === 'lost') {
             UI.addLog(enemy.loseNarrative, 'lose');

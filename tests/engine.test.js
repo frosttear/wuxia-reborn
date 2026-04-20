@@ -171,9 +171,8 @@ describe('Engine.completeChainStep', () => {
     test('completing last step applies chain completion reward attributes', () => {
         Engine.state.char.chainProgress.tianmo_harbinger = 2;
         Engine.state.char.attributes.luck = 0;        // prevent lucky-double trigger
-        Engine.state.char.attributes.innerForce = 0;  // prevent innerForce crit bonus
         Engine.completeChainStep('tianmo_harbinger', 2);
-        expect(Engine.state.char.attributes.innerForce).toBe(3);
+        expect(Engine.state.char.attributes.innerForce).toBe(6);
     });
 
     test('completing last step sets completion flags', () => {

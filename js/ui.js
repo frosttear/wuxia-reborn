@@ -94,7 +94,7 @@ const UI = {
             (qiShield > 0 ? `<span>🔮 气盾 -${qiShield} ${atag('at-inner-force', '内力')}</span>` : '') +
             (skillAmp >= 0.10 ? `<span>💠 内力增幅 +${Math.round(skillAmp * 100)}% ${atag('at-inner-force', '内力')}</span>` : '') +
             `<span> 闪避率 ${Math.round(luckDodge * 100)}% ${atag('at-luck', '运气')}${atag('at-agility', '敏捷')}</span>` +
-            `<span>✨ 会心率 ${Math.round(luckCrit * 100)}% ${atag('at-luck', '运气')}${atag('at-inner-force', '内力')}</span>`;
+            `<span>✨ 会心率 ${Math.round(luckCrit * 100)}% ${atag('at-luck', '运气')}</span>`;
 
         // Learned skills
         const skillsEl = document.getElementById('learnedSkills');

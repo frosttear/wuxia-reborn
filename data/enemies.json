@@ -358,9 +358,9 @@
     "id": "wuxiang_challenger",
     "name": "无名剑客",
     "description": "此人气息内敛，不怒自威，一双眼睛如渊似海——你感到，眼前这个人，正是你「意先招出」能否真正落地的试金石。",
-    "comprehension": 38,
-    "innerForce": 30,
-    "attack": 46, "defense": 34, "hp": 190,
+    "comprehension": 60,
+    "innerForce": 35,
+    "attack": 58, "defense": 42, "hp": 260,
     "attackScale": 0, "defenseScale": 0, "hpScale": 0,
     "intentReadMsgs": {
       "heavy": ["剑客腰胯微沉，真气运于右臂——<b>重击将至</b>", "剑尖悄然下压，内劲暗涌——<b>重击将至</b>"],
@@ -406,9 +406,9 @@
     "id": "local_bully_gang",
     "name": "地头蛇爪牙",
     "description": "本地势力的几个打手，仗势欺人惯了，见你单枪匹马前来，嚣张之气未减。",
-    "comprehension": 6,
-    "innerForce": 0,
-    "attack": 20, "defense": 14, "hp": 88,
+    "comprehension": 8,
+    "innerForce": 2,
+    "attack": 30, "defense": 20, "hp": 120,
     "attackScale": 3, "defenseScale": 2, "hpScale": 0.1,
     "intentReadMsgs": {
       "heavy": ["打手咬牙抡拳，憋了股狠劲——<b>重击将至</b>", "几人交换眼色，准备合力重攻——<b>重击将至</b>"],
@@ -416,9 +416,30 @@
     },
     "intentUnreadMsgs": ["几个打手七嘴八舌，行动散乱，难以判断", "地痞横冲直撞，毫无章法"],
     "attackDescs": ["挥拳横扫，蛮横无比", "几人围攻，乱棍打来", "冲上来就是一通乱打"],
-    "winNarrative": "打手们被你打得东倒西歪，有人已经开始往后退。领头的人指着你，声音却不稳了：「你……走着瞧！」转头便逃。",
+    "chainCombat": "local_bully_boss",
+    "chainCombatNarrative": "爪牙们被你打得东倒西歪，纷纷后退。正当你以为事情了结，一道沉重的脚步声从屋内传来——\n\n一个壮硕的中年男人踱步而出，身后带着一股压迫感。他扫了一眼满地狼藉的手下，冷笑道：「哟，还真有不怕死的。」\n\n他捏了捏拳头，骨节咔咔作响：「小子，打了我的人，总得给个说法吧？」",
+    "winNarrative": "打手们被你打得东倒西歪，有人已经开始往后退。",
     "loseNarrative": "人多势众，你寡不敌众，被迫撤退。此事暂时搁置，但李云舒家的困境还在。",
-    "winEffects": { "reputation": 2 },
+    "winEffects": {},
+    "loseEffects": {}
+  },
+  {
+    "id": "local_bully_boss",
+    "name": "地头蛇头目",
+    "description": "本地势力的头目，横行乡里多年，拳脚功夫了得。比起手下那些乌合之众，他才是真正的硬茬。",
+    "comprehension": 12,
+    "innerForce": 6,
+    "attack": 38, "defense": 28, "hp": 160,
+    "attackScale": 3, "defenseScale": 2, "hpScale": 0.1,
+    "intentReadMsgs": {
+      "heavy": ["头目沉肩坠肘，一股横劲蓄势待发——<b>重击将至</b>", "他眯起眼，铁拳已经握紧——<b>重击将至</b>"],
+      "swift": ["头目身形一矮，脚下突然加速——<b>快攻将至</b>", "他虚晃一招，真正的攻势从侧面来——<b>快攻将至</b>"]
+    },
+    "intentUnreadMsgs": ["头目步法沉稳，进退自如，一时看不出虚实", "他的拳路老辣，不像爪牙那样容易读"],
+    "attackDescs": ["一拳带风，势大力沉", "连环拳打来，拳拳到肉", "欺身近前，肘膝齐出"],
+    "winNarrative": "头目捂着胸口退了几步，脸色铁青。他没想到你能连过两关。「好……好小子。」他咬着牙，朝手下一挥手：「走！」转身便撤，再不敢回头。\n\n李云舒望着你的背影，沉默了很久，声音有些轻：「谢谢。我不知道……你会真的动手。」",
+    "loseNarrative": "头目的拳头比爪牙们重得多。你在消耗了大量体力对付爪牙之后，终究没能扛住头目的攻势，被迫撤退。此事暂时搁置，但李云舒家的困境还在。",
+    "winEffects": { "reputation": 3, "strength": 1 },
     "loseEffects": {}
   },
   {
