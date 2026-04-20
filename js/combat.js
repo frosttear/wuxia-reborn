@@ -276,9 +276,9 @@ const Combat = {
                                     : `借力打力，以【<b style="color:#f4c430">${sk.name}</b>】反击！${ampNote}对方损失 <b>${counterDmg}</b> 气血`;
                             }
                         } else {
-                            // Basic counter
+                            // Basic counter (subtracts partial enemy defense to not outperform strike)
                             const counterMult = heavyAnticipated ? 0.85 : 0.6;
-                            counterDmg = Math.max(1, Math.floor(playerAtk * counterMult) - enemyQS + this._rand(-2, 4));
+                            counterDmg = Math.max(1, Math.floor(playerAtk * counterMult) - Math.floor(cs.enemyEffDef * 0.4) - enemyQS + this._rand(-2, 4));
                             counterText = heavyAnticipated
                                 ? `你早已洞悉来招，截断蓄力，对方损失 <b>${counterDmg}</b> 气血`
                                 : `借力打力，对方损失 <b>${counterDmg}</b> 气血`;
