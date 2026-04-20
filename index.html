@@ -162,8 +162,8 @@
         <div id="combatResult" class="combat-result-banner" style="display:none"></div>
         <!-- Stance buttons -->
         <div class="combat-actions" id="combatActions">
-            <button class="combat-btn combat-strike" title="强攻：正面攻击，忽略对方75%防御，积攒气力+2，可触发会心" onclick="Engine.handleCombatAction('strike')">⚔ 强攻</button>
-            <button class="combat-btn combat-defend" title="防御：大幅减少受击（对方强攻-75%，巧攻-50%）" onclick="Engine.handleCombatAction('defend')">🛡 防御</button>
+            <button class="combat-btn combat-strike" title="强攻：正面攻击，忽略对方部分防御，气力+2，可触发会心" onclick="Engine.handleCombatAction('strike')">⚔ 强攻</button>
+            <button class="combat-btn combat-defend" title="防御：大幅减少受伤（重攻-75%，快攻-50%），识破快攻时减伤80%" onclick="Engine.handleCombatAction('defend')">🛡 防御</button>
             <button class="combat-btn combat-parry"  title="招架：克制对方重攻（反击）；被对方快攻破招" onclick="Engine.handleCombatAction('parry')">⚡ 招架</button>
             <button class="combat-btn combat-focus"  title="蓄势：气力+3，减伤55%" onclick="Engine.handleCombatAction('focus')">🔮 蓄势</button>
             <button class="combat-btn combat-flee" id="combatFleeBtn" onclick="Engine.handleCombatAction('flee')">� 逃跑 25%</button>

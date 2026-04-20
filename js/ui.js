@@ -588,7 +588,15 @@ const UI = {
             fleeBtn.disabled = true;
             fleeBtn.textContent = '🔒 无法逃跑';
         } else {
-            fleeBtn.textContent = `� 逃跑 ${Math.round(cs.fleeChance * 100)}%`;
+            fleeBtn.textContent = `🏃 逃跑 ${Math.round(cs.fleeChance * 100)}%`;
+        }
+
+        // Dynamic strike tooltip (defense ignore scales with atk/def ratio)
+        const atk = Character.getAttackPower(char, job);
+        const defIgnorePct = Math.round(Combat.getStrikeDefIgnore(atk, cs.enemyEffDef) * 100);
+        const strikeBtn = document.querySelector('#combatActions .combat-strike');
+        if (strikeBtn) {
+            strikeBtn.title = `强攻：正面攻击，忽略对方${defIgnorePct}%防御，气力+2，可触发会心`;
         }
     },
 

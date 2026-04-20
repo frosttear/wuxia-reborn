@@ -194,8 +194,11 @@ const Combat = {
             } else if (action === 'strike') {
                 const lv    = 1 + (Math.random() - 0.5) * (char.attributes.luck / 100);
                 const isCrit = Math.random() < Character.getLuckTriggerChance(char);
+                // Dynamic defense ignore: scales with atk/def ratio (symmetric with defend's defCap)
+                const atkRatio = Math.min(1, playerAtk / Math.max(1, cs.enemyEffDef));
+                const defIgnore = Math.min(0.75, atkRatio * 0.60 + 0.10);
                 let dmg = Math.max(1, Math.floor(playerAtk * lv)
-                    - Math.floor(cs.enemyEffDef * 0.75) - enemyQS + this._rand(-2, 8));
+                    - Math.floor(cs.enemyEffDef * (1 - defIgnore)) - enemyQS + this._rand(-2, 8));
                 if (isCrit) dmg = Math.floor(dmg * 1.5);
                 cs.enemyHp = Math.max(0, cs.enemyHp - dmg);
                 cs.totalDmgDealt += dmg;
@@ -276,9 +279,11 @@ const Combat = {
                                     : `借力打力，以【<b style="color:#f4c430">${sk.name}</b>】反击！${ampNote}对方损失 <b>${counterDmg}</b> 气血`;
                             }
                         } else {
-                            // Basic counter (subtracts partial enemy defense to not outperform strike)
+                            // Basic counter (defense ignore scales with atk/def ratio, lower than strike)
                             const counterMult = heavyAnticipated ? 0.85 : 0.6;
-                            counterDmg = Math.max(1, Math.floor(playerAtk * counterMult) - Math.floor(cs.enemyEffDef * 0.4) - enemyQS + this._rand(-2, 4));
+                            const cAtkRatio = Math.min(1, playerAtk / Math.max(1, cs.enemyEffDef));
+                            const cDefIgnore = Math.min(0.55, cAtkRatio * 0.40 + 0.10);
+                            counterDmg = Math.max(1, Math.floor(playerAtk * counterMult) - Math.floor(cs.enemyEffDef * (1 - cDefIgnore)) - enemyQS + this._rand(-2, 4));
                             counterText = heavyAnticipated
                                 ? `你早已洞悉来招，截断蓄力，对方损失 <b>${counterDmg}</b> 气血`
                                 : `借力打力，对方损失 <b>${counterDmg}</b> 气血`;
@@ -404,6 +409,12 @@ const Combat = {
 
     _rand(min, max) { return Math.floor(Math.random() * (max - min + 1)) + min; },
     _pick(arr) { return arr[Math.floor(Math.random() * arr.length)]; },
+
+    // Compute dynamic defense ignore % for strike (used by UI tooltip)
+    getStrikeDefIgnore(playerAtk, enemyDef) {
+        const atkRatio = Math.min(1, playerAtk / Math.max(1, enemyDef));
+        return Math.min(0.75, atkRatio * 0.60 + 0.10);
+    },
     _getIntentHint(enemy, action) {
         const pool = enemy.intentReadMsgs && enemy.intentReadMsgs[action];
         if (pool && pool.length) return this._pick(pool);
