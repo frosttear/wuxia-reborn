@@ -34,17 +34,10 @@ const Combat = {
         };
     },
 
-    // ── Monte-Carlo win-chance (200 trials) ─────────────────────────────────
+    // ── Win-chance estimate (full simulation, 50 trials) ──────────────────
     calcWinChance(char, enemy, job) {
-        const atk = Character.getAttackPower(char, job);
-        const eff = this.getEffectiveStats(enemy, char);
-        let wins = 0;
-        for (let i = 0; i < 200; i++) {
-            const lv = 1 + (Math.random() - 0.5) * (char.attributes.luck / 100);
-            if (Math.floor(atk * lv) + Math.floor(Math.random() * 10) >
-                eff.defense + Math.floor(Math.random() * 10)) wins++;
-        }
-        return Math.round(wins / 2);
+        const result = this.runQuickCombat(char, enemy, job, 50);
+        return Math.round(result.winRate * 100);
     },
 
     // ── Build fresh combat state ─────────────────────────────────────────────
