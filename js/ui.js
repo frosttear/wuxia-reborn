@@ -494,8 +494,8 @@ const UI = {
         this.nextBtn.disabled = true;
 
         const textEl = entry.querySelector('.log-text');
-        const lines = event.text.split('\n');
-        let lineIdx = 0;
+        const text = event.text;
+        let charIdx = 0;
         let done = false;
 
         const renderChoices = () => {
@@ -545,11 +545,11 @@ const UI = {
         };
 
         const revealStep = () => {
-            if (lineIdx >= lines.length) { finishReveal(); return; }
-            textEl.innerHTML += (lineIdx === 0 ? '' : '<br>') + lines[lineIdx];
-            lineIdx++;
+            if (charIdx >= text.length) { finishReveal(); return; }
+            charIdx = Math.min(charIdx + 2, text.length);
+            textEl.innerHTML = text.slice(0, charIdx).replace(/\n/g, '<br>');
             this.logEl.scrollTop = this.logEl.scrollHeight;
-            this._revealTimer = setTimeout(revealStep, 500);
+            this._revealTimer = setTimeout(revealStep, 30);
         };
 
         // Click the event card to skip the animation

@@ -340,6 +340,8 @@ const Engine = {
         this.state.pendingChoice = null;
         this.state.gamePhase = 'idle';
 
+        UI.addLog(`▷ ${choice.text}`, 'choice');
+
         // Mark bond event complete — but defer if this choice leads to combat
         // (bond completion runs after victory; on loss the bond stays unlocked for retry)
         if (bondInfo && !(choice.effects && choice.effects.combat)) {

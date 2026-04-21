@@ -169,6 +169,7 @@ body {
 .log-lose     { color: var(--red); font-size: 0.83rem; padding: 2px 6px; }
 .log-unlock   { color: var(--accent); font-size: 0.83rem; padding: 2px 6px; }
 .log-info     { color: var(--muted); font-size: 0.78rem; padding: 2px 6px; }
+.log-choice   { color: var(--accent2); font-size: 0.83rem; padding: 2px 6px; border-left: 2px solid var(--accent2); margin-left: 4px; }
 .log-combat-info { color: #aaa; font-size: 0.75rem; font-style: italic; padding: 2px 6px; }
 .log-error    { color: var(--red); font-size: 0.78rem; padding: 2px 6px; }
 
