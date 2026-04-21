@@ -36,12 +36,7 @@ body {
     justify-content: space-between;
     flex-shrink: 0;
 }
-.game-title {
-    font-size: 1.4rem;
-    color: var(--accent);
-    letter-spacing: 4px;
-    text-shadow: 0 0 12px rgba(201,168,76,0.4);
-}
+.game-title-logo { height: 36px; width: auto; display: block; }
 .header-controls { display: flex; gap: 8px; }
 
 /* Layout */
@@ -593,6 +588,7 @@ button:disabled { opacity: 0.4; cursor: not-allowed; }
     gap: 20px;
 }
 .start-title  { font-size: 2.4rem; color: var(--accent); letter-spacing: 8px; text-shadow: 0 0 20px rgba(201,168,76,0.5); }
+.start-logo   { width: min(560px, 90vw); height: auto; display: block; }
 .start-sub    { color: var(--muted); font-size: 0.9rem; letter-spacing: 2px; }
 .start-form   { display: flex; flex-direction: column; gap: 10px; align-items: center; }
 .start-input  { background: var(--surface); border: 1px solid var(--border); color: var(--text); padding: 9px 16px; border-radius: 5px; font-family: inherit; font-size: 1rem; text-align: center; width: 200px; outline: none; }
@@ -626,7 +622,7 @@ button:disabled { opacity: 0.4; cursor: not-allowed; }
 
     /* Header compact */
     .game-header  { padding: 8px 12px; }
-    .game-title   { font-size: 1.1rem; letter-spacing: 2px; }
+    .game-title-logo { height: 28px; }
     .btn-small    { padding: 5px 10px; font-size: 0.75rem; }
 
     /* Tab bar fixed at bottom */
@@ -735,6 +731,6 @@ button:disabled { opacity: 0.4; cursor: not-allowed; }
     }
 
     /* Start screen */
-    .start-title  { font-size: 1.8rem; letter-spacing: 4px; }
+    .start-logo   { width: min(320px, 88vw); }
     .start-input  { width: 240px; }
 }
