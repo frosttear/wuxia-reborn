@@ -88,6 +88,7 @@ const Engine = {
     },
 
     advanceMonth() {
+        if (typeof GameAudio !== 'undefined') GameAudio.playBGM('explore');
         const { char } = this.state;
         if (!char || this.state.gamePhase !== 'idle') return;
 
@@ -809,6 +810,7 @@ const Engine = {
         this.state.gamePhase = 'combat';
         UI.updateControls(this.state);
         UI.showCombatOverlay(this.state);
+        if (typeof GameAudio !== 'undefined') GameAudio.playBGM('combat');
         this.saveGame();
     },
 
@@ -920,6 +922,7 @@ const Engine = {
         this.stopCombatAuto();
         this.state.combatState = null;
         this.state.gamePhase = 'idle';
+        if (typeof GameAudio !== 'undefined') GameAudio.playBGM('explore');
         try { localStorage.removeItem('wuxia_combat'); } catch(e) {}
 
         // ── Test combat: restore snapshot, skip all consequences ─────────
@@ -1153,6 +1156,7 @@ const Engine = {
     },
 
     triggerDeath(cause) {
+        if (typeof GameAudio !== 'undefined') GameAudio.stopBGM();
         const { char } = this.state;
         this.state.gamePhase = 'rebirth';
         this.stopAuto();
@@ -1324,6 +1328,7 @@ const Engine = {
             this.state.char = newChar;
             this.state.gamePhase = 'idle';
             this.state.seenEvents = new Set();
+            if (typeof GameAudio !== 'undefined') GameAudio.playBGM('explore');
             UI.clearLog();
             UI.addIllustration('rebirth');
             UI.renderAll(this.state);
