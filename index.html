@@ -271,6 +271,11 @@
     document.getElementById('nameInput').addEventListener('keydown', function(e) {
         if (e.key === 'Enter') document.getElementById('startBtn').click();
     });
+
+    // Register service worker for persistent image caching
+    if ('serviceWorker' in navigator) {
+        navigator.serviceWorker.register('sw.js').catch(() => {});
+    }
 })();
 </script>
 <div class="avatar-lightbox" id="avatarLightbox" onclick="this.classList.remove('active')">
