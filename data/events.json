@@ -16,6 +16,14 @@
         "id": "train_agility",
         "text": "练习轻盈身法，翻腾跳跃",
         "effects": { "attributes": { "agility": 1 }, "narrative": "你专注于步伐和腾挪，身法愈发灵动，如风中柳絮。" }
+      },
+      {
+        "id": "meditate_at_dawn",
+        "text": "趁晨曦之宁，盘膝调息，以意导气",
+        "effects": {
+          "attributes": { "innerForce": 1, "comprehension": 1 },
+          "narrative": "晨风拂面，你静心调息，感受天地间那一丝清明之气缓缓流入丹田。内力与悟性均有小幅提升。"
+        }
       }
     ]
   },
@@ -36,6 +44,14 @@
         "id": "moderate",
         "text": "量力而行，稳步提升",
         "effects": { "attributes": { "strength": 1, "constitution": 1 }, "narrative": "稳健的训练让你体质和力量同步提升，不失为明智之举。" }
+      },
+      {
+        "id": "seek_guidance",
+        "text": "找附近的老武者请教，学习科学训练方法",
+        "effects": {
+          "attributes": { "constitution": 1, "reputation": 1 },
+          "narrative": "老武者指点你训练的节奏与呼吸，几句话让你茅塞顿开。此后的训练事半功倍，体质稳步增长，附近的人也对你刮目相看。"
+        }
       }
     ]
   },
