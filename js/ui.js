@@ -546,10 +546,10 @@ const UI = {
 
         const revealStep = () => {
             if (charIdx >= text.length) { finishReveal(); return; }
-            charIdx = Math.min(charIdx + 2, text.length);
+            charIdx = Math.min(charIdx + 1, text.length);
             textEl.innerHTML = text.slice(0, charIdx).replace(/\n/g, '<br>');
             this.logEl.scrollTop = this.logEl.scrollHeight;
-            this._revealTimer = setTimeout(revealStep, 30);
+            this._revealTimer = setTimeout(revealStep, 45);
         };
 
         // Click the event card to skip the animation
