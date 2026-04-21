@@ -362,6 +362,7 @@ const Engine = {
                         UI.addLog(`✨ 解锁被动【${passive.name}】：${passive.desc}`, 'unlock');
                     }
                 }
+                UI.addIllustration(npcId.replace(/_/g, '-') + '-ending');
             }
         }
 
@@ -964,6 +965,7 @@ const Engine = {
             if (enemy.isHiddenBoss) {
                 char.flags.hidden_boss_beaten = true;
                 UI.addLog(enemy.winNarrative, 'win');
+                UI.addIllustration('sword-soul-win');
                 UI.showCombatReturnBtn('won', () => {
                     UI.hideCombatOverlay();
                     this.triggerVictory(true);
@@ -972,6 +974,7 @@ const Engine = {
             }
             if (enemy.isFinalBoss) {
                 UI.addLog(enemy.winNarrative, 'win');
+                UI.addIllustration('tianmo-win');
                 UI.showCombatReturnBtn('won', () => {
                     UI.hideCombatOverlay();
                     this.triggerVictory(false);
@@ -1004,6 +1007,7 @@ const Engine = {
             if (Object.keys(loseRewards).length > 0) this.applyEffects({ attributes: loseRewards });
             UI.renderCharacter(char, this.state.jobs);
             if (enemy.isHiddenBoss) {
+                UI.addIllustration('sword-soul-lose');
                 UI.addLog('你击败了天魔，却败于那更深处的剑意。此生功亏一筑。', 'system');
                 if (!this.allBondsComplete(char)) {
                     UI.addLog('【提示】剑魂的弱点是"不懂人心"——走遍江湖，与王铁、李云舒、神秘老者、燕赤行、苏青、凌雪六人结下真正的羁绊，或可找到突破之法。', 'info');
@@ -1015,6 +1019,7 @@ const Engine = {
                 return;
             }
             if (enemy.isFinalBoss) {
+                UI.addIllustration('tianmo-lose');
                 UI.showCombatReturnBtn('lost', () => {
                     UI.hideCombatOverlay();
                     this.triggerDeath('boss');

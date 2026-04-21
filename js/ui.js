@@ -528,6 +528,21 @@ const UI = {
         if (this.logBuffer.length > 30) this.logBuffer.shift();
     },
 
+    addIllustration(id) {
+        const wrap = document.createElement('div');
+        wrap.className = 'log-illustration';
+        const img = document.createElement('img');
+        img.src = `assets/illustrations/${id}.png`;
+        img.className = 'event-illustration';
+        img.decoding = 'async';
+        img.onerror = () => wrap.remove();
+        wrap.appendChild(img);
+        this.logEl.appendChild(wrap);
+        this.logEl.scrollTop = this.logEl.scrollHeight;
+        this.logBuffer.push({ type: 'illustration', id });
+        if (this.logBuffer.length > 30) this.logBuffer.shift();
+    },
+
     getLogBuffer() { return this.logBuffer; },
 
     restoreLog(entries) {
@@ -536,11 +551,15 @@ const UI = {
         sep.className = 'log-entry log-system';
         sep.textContent = '── 上次存档 ──';
         this.logEl.appendChild(sep);
-        for (const { text, type } of entries) {
-            const div = document.createElement('div');
-            div.className = `log-entry log-${type}`;
-            div.innerHTML = text.replace(/\n/g, '<br>');
-            this.logEl.appendChild(div);
+        for (const entry of entries) {
+            if (entry.type === 'illustration') {
+                this.addIllustration(entry.id);
+            } else {
+                const div = document.createElement('div');
+                div.className = `log-entry log-${entry.type}`;
+                div.innerHTML = entry.text.replace(/\n/g, '<br>');
+                this.logEl.appendChild(div);
+            }
         }
         this.logEl.scrollTop = this.logEl.scrollHeight;
         this.logBuffer = [...entries];

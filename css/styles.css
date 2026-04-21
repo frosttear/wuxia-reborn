@@ -141,6 +141,10 @@ body {
 .event-log::-webkit-scrollbar { width: 4px; }
 .event-log::-webkit-scrollbar-thumb { background: var(--surface2); border-radius: 2px; }
 
+/* Scene illustrations in event log */
+.log-illustration { text-align: center; padding: 6px 0; }
+.event-illustration { width: 100%; max-width: 480px; border-radius: 6px; border: 1px solid var(--border); display: inline-block; }
+
 /* Log entries */
 .log-entry    { font-size: 0.85rem; line-height: 1.65; }
 .event-entry  { background: var(--surface); border: 1px solid var(--border); border-radius: 6px; padding: 10px 12px; }
