@@ -17,9 +17,9 @@ self.addEventListener('activate', event => {
     );
 });
 
-// Fetch: serve images from cache; fall back to network and cache the result
+// Fetch: serve images and audio from cache; fall back to network and cache the result
 self.addEventListener('fetch', event => {
-    if (!/\.(png|jpg|jpeg|svg|webp)(\?.*)?$/.test(event.request.url)) return;
+    if (!/\.(png|jpg|jpeg|svg|webp|ogg|mp3)(\?.*)?$/.test(event.request.url)) return;
     event.respondWith(
         caches.match(event.request).then(cached => {
             if (cached) return cached;
