@@ -8,8 +8,12 @@
       <stop offset="45%"  stop-color="#c9a84c"/>
       <stop offset="100%" stop-color="#8a6820"/>
     </linearGradient>
-    <filter id="glow" x="-20%" y="-40%" width="140%" height="180%">
-      <feGaussianBlur stdDeviation="4" result="blur"/>
+    <radialGradient id="ring-glow" cx="50%" cy="50%" r="50%">
+      <stop offset="60%"  stop-color="#1a1a2e" stop-opacity="0"/>
+      <stop offset="100%" stop-color="#c9a84c" stop-opacity="0.07"/>
+    </radialGradient>
+    <filter id="glow" x="-25%" y="-60%" width="150%" height="220%">
+      <feGaussianBlur stdDeviation="7" result="blur"/>
       <feMerge>
         <feMergeNode in="blur"/>
         <feMergeNode in="SourceGraphic"/>
@@ -17,13 +21,35 @@
     </filter>
   </defs>
 
+  <!-- Cycle ring atmosphere -->
+  <circle cx="360" cy="82" r="48" fill="url(#ring-glow)"/>
+
+  <!-- Rotating cycle ring (轮回) -->
+  <g>
+    <circle cx="360" cy="82" r="48" fill="none" stroke="#c9a84c" stroke-width="1" stroke-opacity="0.22"/>
+    <circle cx="360" cy="82" r="43" fill="none" stroke="#c9a84c" stroke-width="0.5" stroke-dasharray="2 9" stroke-opacity="0.28"/>
+    <!-- Cardinal ticks -->
+    <line x1="360" y1="31" x2="360" y2="37" stroke="#c9a84c" stroke-width="1.5" stroke-opacity="0.5"/>
+    <line x1="360" y1="127" x2="360" y2="133" stroke="#c9a84c" stroke-width="1.5" stroke-opacity="0.5"/>
+    <line x1="309" y1="82" x2="315" y2="82" stroke="#c9a84c" stroke-width="1.5" stroke-opacity="0.5"/>
+    <line x1="405" y1="82" x2="411" y2="82" stroke="#c9a84c" stroke-width="1.5" stroke-opacity="0.5"/>
+    <!-- Diagonal ticks -->
+    <line x1="326" y1="48" x2="329" y2="53" stroke="#c9a84c" stroke-width="0.8" stroke-opacity="0.3"/>
+    <line x1="394" y1="48" x2="391" y2="53" stroke="#c9a84c" stroke-width="0.8" stroke-opacity="0.3"/>
+    <line x1="326" y1="116" x2="329" y2="111" stroke="#c9a84c" stroke-width="0.8" stroke-opacity="0.3"/>
+    <line x1="394" y1="116" x2="391" y2="111" stroke="#c9a84c" stroke-width="0.8" stroke-opacity="0.3"/>
+    <animateTransform attributeName="transform" type="rotate"
+      from="0 360 82" to="360 360 82" dur="60s" repeatCount="indefinite"/>
+  </g>
+
   <text
     x="360" y="125"
     text-anchor="middle"
     font-family="'Noto Serif SC', 'Songti SC', 'SimSun', serif"
     font-size="88"
-    font-weight="700"
+    font-weight="400"
     fill="url(#gold-grad)"
     filter="url(#glow)"
-    letter-spacing="6">轮回江湖</text>
+    letter-spacing="14"
+    transform="skewX(-4)">轮回江湖</text>
 </svg>

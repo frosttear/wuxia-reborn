@@ -11,6 +11,11 @@ const NEGATIVE = "nsfw, nudity, modern clothing, western features, heavy makeup,
 
 const CHARACTERS = [
   {
+    id: "player",
+    name: "Player (独孤宸)",
+    prompt: "A young Chinese male swordsman in ancient wuxia setting, 16-17 years old, handsome and composed face with deep dark eyes carrying a quiet solitary intensity, short-medium black hair with a few loose strands, lean and upright build suggesting latent strength, wearing a deep midnight blue martial arts robe with subtle silver star-pattern embroidery on the collar and sleeves, a plain sheathed jian (straight sword) at his waist, standing alone beneath a vast starry night sky on a high cliff overlooking misty mountains, cool moonlight casting silver highlights, a lone and sovereign bearing like the north celestial star, Chinese ink painting aesthetic with deep indigo and silver tones, portrait composition from waist up, anime-inspired semi-realistic style, detailed face, high quality"
+  },
+  {
     id: "li-yunshu",
     name: "Li Yunshu (李云舒)",
     prompt: "A young Chinese swordswoman in ancient wuxia setting, 17-18 years old, bright clear eyes full of determination, warm confident smile, long black hair partially tied up in a martial arts style with a ribbon, wearing a light blue and white hanfu-style martial arts outfit with a sash, a sheathed jian (straight sword) at her waist, standing in a plum blossom garden with petals drifting in the wind, athletic and graceful build, Chinese ink painting aesthetic with soft watercolor tones, portrait composition from waist up, anime-inspired semi-realistic style, detailed face, high quality"

@@ -81,7 +81,7 @@ const Combat = {
         } else {
             const playerComp = (char.attributes && char.attributes.comprehension) || 0;
             const enemyComp  = cs.enemyComp;
-            const accurateChance = Math.min(0.80, 0.80 * Math.log(1 + playerComp / (enemyComp + 20)));
+            const accurateChance = Math.min(0.50, 0.80 * Math.log(1 + playerComp / (enemyComp + 20)));
             if (Math.random() < accurateChance) {
                 cs.enemyIntentHint = this._getIntentHint(enemy, firstAction);
                 cs.enemyIntentType = 'accurate';
@@ -397,10 +397,9 @@ const Combat = {
         }
 
         // ── Preview enemy's NEXT action (accuracy = f(playerComp / enemyComp)) ────
-        // ratio = playerComp / (enemyComp + 5), accurateChance = min(0.90, ratio^1.5 * 0.90)
-        // Weak enemies (comp 3-5): readable at playerComp ~8-10.
-        // Final boss (comp 50): needs playerComp ~55 (3-4 rebirths) for reliable reads.
-        // Passive 「无相剑意」 (perfectIntentRead): bypasses formula → always accurate.
+        // accurateChance = min(0.50, 0.80 * ln(1 + playerComp / (enemyComp + 20)))
+        // Hard cap at 50% without 无相剑意; with perfectIntentRead → always accurate.
+        // Final boss (comp 50): even maxed comprehension stays below 50% without passive.
         if (combatOver) {
             cs.enemyIntentHint = '';
             cs.enemyIntentType = '';
@@ -414,7 +413,7 @@ const Combat = {
             } else {
                 const playerComp    = (char.attributes && char.attributes.comprehension) || 0;
                 const enemyComp     = cs.enemyComp;
-                const accurateChance = Math.min(0.80, 0.80 * Math.log(1 + playerComp / (enemyComp + 20)));
+                const accurateChance = Math.min(0.50, 0.80 * Math.log(1 + playerComp / (enemyComp + 20)));
                 if (Math.random() < accurateChance) {
                     cs.enemyIntentHint = this._getIntentHint(cs.enemy, next);
                     cs.enemyIntentType = 'accurate';

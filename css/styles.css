@@ -70,10 +70,13 @@ body {
 }
 
 /* Character card */
+.char-header  { display: flex; gap: 10px; align-items: flex-start; margin-bottom: 10px; }
+.player-avatar { width: 64px; height: 64px; border-radius: 50%; object-fit: cover; border: 1.5px solid var(--accent2); flex-shrink: 0; }
+.char-info    { flex: 1; min-width: 0; }
 .char-name    { font-size: 1.2rem; color: var(--accent2); font-weight: bold; margin-bottom: 2px; }
 .char-age     { font-size: 0.78rem; color: var(--muted); margin-bottom: 2px; }
 .char-job     { font-size: 0.9rem; color: var(--blue); margin-bottom: 2px; }
-.char-rebirth { font-size: 0.75rem; color: var(--muted); margin-bottom: 10px; }
+.char-rebirth { font-size: 0.75rem; color: var(--muted); margin-bottom: 0; }
 
 /* HP bar */
 .hp-bar-wrap { margin-bottom: 12px; }
@@ -291,6 +294,19 @@ body {
     background: rgba(255,255,255,0.05); border: 1px solid var(--border); color: #666;
 }
 .lb-passive.inactive b { color: #888; }
+.lb-hp-row   { display: flex; align-items: center; gap: 6px; margin: 6px 0 8px; }
+.lb-hp-label { font-size: 0.75rem; color: var(--muted); flex-shrink: 0; }
+.lb-hp-bar-bg { flex: 1; height: 6px; background: #333; border-radius: 3px; overflow: hidden; }
+.lb-hp-bar-fill { height: 100%; background: var(--green); border-radius: 3px; }
+.lb-hp-val   { font-size: 0.72rem; color: var(--text); flex-shrink: 0; }
+.lb-attrs    { display: flex; flex-wrap: wrap; gap: 4px; margin-bottom: 8px; }
+.lb-attr-chip { font-size: 0.75rem; background: rgba(201,168,76,0.1); border: 1px solid var(--border); border-radius: 4px; padding: 2px 7px; color: var(--text); }
+.lb-attr-chip b { color: var(--accent2); margin-right: 2px; }
+.lb-section-label { font-size: 0.7rem; color: var(--muted); margin: 6px 0 3px; text-transform: uppercase; letter-spacing: 1px; }
+.lb-talents  { display: flex; flex-wrap: wrap; gap: 4px; margin-bottom: 4px; }
+.lb-talent-chip { font-size: 0.73rem; background: rgba(92,191,122,0.1); border: 1px solid rgba(92,191,122,0.3); border-radius: 4px; padding: 2px 7px; color: var(--green); }
+.player-avatar { cursor: pointer; transition: border-color 0.2s; }
+.player-avatar:hover { border-color: var(--accent); }
 
 /* Learned skills */
 .skill-row   { display: flex; justify-content: space-between; align-items: center; padding: 3px 0; border-bottom: 1px solid rgba(255,255,255,0.04); font-size: 0.8rem; }

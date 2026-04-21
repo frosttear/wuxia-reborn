@@ -6,13 +6,7 @@
     <title>轮回江湖</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link href="https://fonts.googleapis.com/css2?family=Noto+Serif+SC:wght@400;700&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="css/styles.css?v=0.11.2">
-    <link rel="preload" as="image" href="assets/characters/li-yunshu.png">
-    <link rel="preload" as="image" href="assets/characters/wang-tie.png">
-    <link rel="preload" as="image" href="assets/characters/mysterious-elder.png">
-    <link rel="preload" as="image" href="assets/characters/yan-chixing.png">
-    <link rel="preload" as="image" href="assets/characters/ling-xue.png">
-    <link rel="preload" as="image" href="assets/characters/su-qing.png">
+    <link rel="stylesheet" href="css/styles.css?v=0.11.4">
 </head>
 <body>
 
@@ -72,10 +66,15 @@
         <!-- Left: Character + Job Tree -->
         <div class="panel panel-left" id="panelChar">
             <div class="panel-title">角色</div>
-            <div id="charName" class="char-name">—</div>
-            <div id="charAge" class="char-age">—</div>
-            <div id="charJob" class="char-job">—</div>
-            <div id="charRebirth" class="char-rebirth">—</div>
+            <div class="char-header">
+                <img src="assets/characters/player.png" class="player-avatar" alt="主角" onclick="UI.showPlayerLightbox()" onerror="this.style.display='none'">
+                <div class="char-info">
+                    <div id="charName" class="char-name">—</div>
+                    <div id="charAge" class="char-age">—</div>
+                    <div id="charJob" class="char-job">—</div>
+                    <div id="charRebirth" class="char-rebirth">—</div>
+                </div>
+            </div>
 
             <div class="hp-bar-wrap">
                 <div class="hp-label">

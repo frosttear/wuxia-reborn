@@ -6,6 +6,46 @@ const ATTR_NAMES = {
 };
 
 const UI = {
+    showPlayerLightbox() {
+        const lb = document.getElementById('avatarLightbox');
+        document.getElementById('avatarLightboxImg').src = 'assets/characters/player.png';
+
+        const { char, jobs } = Engine.state;
+        const job = (jobs || []).find(j => j.id === char.job);
+        const hpMax = Character.getHPMax(char, job);
+        const hpPct = Math.max(0, Math.min(100, Math.round(char.hp / hpMax * 100)));
+        const age = Character.getAgeYears(char);
+        const ageMonths = Character.getAgeMonthsRemainder(char);
+        const rebirthText = char.rebirthCount > 0 ? `第 ${char.rebirthCount + 1} 周目` : '初入江湖';
+
+        const ATTR_ICONS = { strength:'力', agility:'敏', constitution:'体', innerForce:'内', comprehension:'悟', luck:'运', reputation:'声' };
+        const attrsHtml = Object.entries(ATTR_ICONS).map(([k, label]) =>
+            `<span class="lb-attr-chip"><b>${label}</b>${char.attributes[k] || 0}</span>`
+        ).join('');
+
+        const passives = (char.passives || []).map(p =>
+            `<div class="lb-passive active"><b>${p.name}</b>：${p.desc}</div>`
+        ).join('');
+
+        const talents = (char.talents || []).map(t =>
+            `<span class="lb-talent-chip">${t.name}</span>`
+        ).join('');
+
+        document.getElementById('avatarLightboxInfo').innerHTML = `
+            <div class="lb-name">${char.name}</div>
+            <div class="lb-title">${job ? job.name : '无名小卒'} · ${age} 岁 ${ageMonths} 月 · ${rebirthText}</div>
+            <div class="lb-hp-row">
+                <span class="lb-hp-label">气血</span>
+                <div class="lb-hp-bar-bg"><div class="lb-hp-bar-fill" style="width:${hpPct}%"></div></div>
+                <span class="lb-hp-val">${char.hp}/${hpMax}</span>
+            </div>
+            <div class="lb-attrs">${attrsHtml}</div>
+            ${talents ? `<div class="lb-section-label">天赋</div><div class="lb-talents">${talents}</div>` : ''}
+            ${passives ? `<div class="lb-section-label">羁绊被动</div>${passives}` : ''}`;
+
+        lb.classList.add('active');
+    },
+
     showAvatarLightbox(src, npcId) {
         const lb = document.getElementById('avatarLightbox');
         document.getElementById('avatarLightboxImg').src = src;
@@ -55,7 +95,13 @@ const UI = {
         this.visitPanel = document.getElementById('visitPanel');
         this.chainBtn  = document.getElementById('chainBtn');
         this.chainPanel = document.getElementById('chainPanel');
-        this.logBuffer = []; // persisted log entries
+        this.logBuffer = [];
+        this._preloadAvatars();
+    },
+
+    _preloadAvatars() {
+        const ids = ['player', 'li-yunshu', 'wang-tie', 'mysterious-elder', 'yan-chixing', 'ling-xue', 'su-qing'];
+        ids.forEach(id => { new Image().src = `assets/characters/${id}.png`; });
     },
 
     // Mobile tab switching
