@@ -1,37 +1,11 @@
 // Service worker: cache-first for all image assets
 // Bump CACHE_NAME when images are updated to force re-download
-const CACHE_NAME = 'wuxia-assets-v0.13.0';
+const CACHE_NAME = 'wuxia-assets-v0.13.1';
 
-const PRECACHE = [
-    'assets/characters/player.png',
-    'assets/characters/li-yunshu.png',
-    'assets/characters/wang-tie.png',
-    'assets/characters/mysterious-elder.png',
-    'assets/characters/yan-chixing.png',
-    'assets/characters/ling-xue.png',
-    'assets/characters/su-qing.png',
-    'assets/illustrations/li-yunshu-ending.png',
-    'assets/illustrations/wang-tie-ending.png',
-    'assets/illustrations/mysterious-elder-ending.png',
-    'assets/illustrations/yan-chixing-ending.png',
-    'assets/illustrations/su-qing-ending.png',
-    'assets/illustrations/ling-xue-ending.png',
-    'assets/illustrations/sword-soul-win.png',
-    'assets/illustrations/sword-soul-lose.png',
-    'assets/illustrations/tianmo-win.png',
-    'assets/illustrations/tianmo-lose.png',
-    'assets/illustrations/rebirth.png',
-    'assets/illustrations/wuxiang-unlock.png',
-];
-
-// Install: pre-fetch all images into cache
+// Install: activate immediately without blocking on image downloads
+// Images are cached lazily on first access via the fetch handler below
 self.addEventListener('install', event => {
-    event.waitUntil(
-        caches.open(CACHE_NAME).then(cache =>
-            // allSettled so a missing image doesn't abort the whole install
-            Promise.allSettled(PRECACHE.map(url => cache.add(url)))
-        ).then(() => self.skipWaiting())
-    );
+    event.waitUntil(self.skipWaiting());
 });
 
 // Activate: delete caches from older versions

@@ -100,22 +100,22 @@ const UI = {
     },
 
     _preloadAvatars() {
-        // Keep strong refs so the browser doesn't abort in-flight requests
         this._imgCache = [];
         const preload = src => { const img = new Image(); img.src = src; this._imgCache.push(img); };
 
-        // Avatars needed immediately for the NPC panel
-        ['player', 'li-yunshu', 'wang-tie', 'mysterious-elder', 'yan-chixing', 'ling-xue', 'su-qing']
-            .forEach(id => preload(`assets/characters/${id}.png`));
+        // Defer all image preloading so it doesn't compete with critical page resources
+        setTimeout(() => {
+            ['player', 'li-yunshu', 'wang-tie', 'mysterious-elder', 'yan-chixing', 'ling-xue', 'su-qing']
+                .forEach(id => preload(`assets/characters/${id}.png`));
+        }, 3000);
 
-        // Illustrations preloaded in background after initial render settles
         setTimeout(() => {
             ['li-yunshu-ending', 'wang-tie-ending', 'mysterious-elder-ending',
              'yan-chixing-ending', 'su-qing-ending', 'ling-xue-ending',
              'sword-soul-win', 'sword-soul-lose', 'tianmo-win', 'tianmo-lose',
              'rebirth', 'wuxiang-unlock']
                 .forEach(id => preload(`assets/illustrations/${id}.png`));
-        }, 1500);
+        }, 8000);
     },
 
     // Mobile tab switching
