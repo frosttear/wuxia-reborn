@@ -248,6 +248,13 @@ const Engine = {
 
         if (cond.minRebirth !== undefined && char.rebirthCount < cond.minRebirth) return false;
 
+        // Bond level conditions: { npcId: minLevel }
+        if (cond.bondLevels) {
+            for (const npcId in cond.bondLevels) {
+                if ((char.bondLevels[npcId] || 0) < cond.bondLevels[npcId]) return false;
+            }
+        }
+
         return true;
     },
 
@@ -578,6 +585,11 @@ const Engine = {
             sword_trial_passed: '完成「剑道试炼」',
             hero_relief: '完成「义救灾民」', hero_tyrant_defeated: '完成「除暴安良」',
             wang_dying_wish: '王铁遗愿（羁绊Lv5）', zhao_traced: '完成「追踪赵霸天」',
+            li_old_case_found: '完成「旧案浮现」', li_mother_avenged: '完成「赤崖之战」',
+            su_secret_known: '完成「师父的秘密」', su_formula_decided: '完成「药方的归宿」',
+            lx_assassin1_done: '完成「追杀令」', lx_assassin2_done: '完成「破阵」',
+            elder_trace_found: '完成「微尘之踪」', elder_daughter_found: '完成「清风镇」',
+            yan_mountain_visited: '完成「山上的名字」', yan_mountain_cleared: '完成「矿贼清剿」',
         };
         const result = [];
         for (const chain of chains) {
@@ -620,6 +632,15 @@ const Engine = {
                     return j ? j.name : jid;
                 });
                 lockedReasons.push(`需职业：${jobNames.join('或')}`);
+            }
+            if (cond.bondLevels) {
+                for (const [npcId, lvReq] of Object.entries(cond.bondLevels)) {
+                    const cur = (char.bondLevels || {})[npcId] || 0;
+                    if (cur < lvReq) {
+                        const npc = this.state.npcs.find(n => n.id === npcId);
+                        lockedReasons.push(`需与${npc ? npc.name : npcId}羁绊达到第${lvReq}章（当前第${cur}章）`);
+                    }
+                }
             }
             let enemyInfo = null;
             for (const choice of step.choices || []) {
@@ -1181,13 +1202,15 @@ const Engine = {
                 char.flags.jade_tablet_awakened = true;
                 msg = `【生辰·异变】${mName}，十九岁。
 
-那枚老者留下的玉牌，忽然变得灼热。
+那枚沈玄清交给你的玉牌，忽然变得灼热。裂纹中泛起微弱的白光，像是有什么东西在里面苏醒。
 
-你握住它，感受到其中封印着某种东西——一道锋锐的意志，在漫长的沉眠后，终于感知到了你的存在。
+你握住它，感受到其中封印着的那道剑意——千年前的上古剑修留下的最后执念。它在漫长的沉眠后，终于感知到了你的存在。
 
-「……还不够。」那意志似乎在说，「但你已经能让我有所感应了。等你走完这一世。」
+「……还不够。」那意志似乎在说。它的声音不像人的声音，更像是剑刃划过虚空时发出的鸣响。「但你已经能让我有所感应了。等你走完这一世。」
 
-玉牌重归平静，但你知道：有什么事情，已经开始了。`;
+你想起沈玄清的话——剑魂唯一的弱点，是它不懂人心。
+
+玉牌重归平静，但你知道：真正的最终之战，不是天魔——是这枚玉牌里沉睡了千年的东西。`;
                 attrs = { comprehension: 2, strength: 2, reputation: 2, agility: 2 };
             } else {
                 msg = `【生辰】${mName}，${age}岁。最后一年——天魔之约，如期将至。`;
