@@ -1,4 +1,4 @@
-# 轮回江湖（开发中）v0.11.0
+# 轮回江湖（开发中）v0.11.1
 
 > 武侠风世界线回溯类文字冒险游戏 · 纯 HTML/CSS/JS · GitHub Pages 可直接部署
 
@@ -367,6 +367,10 @@ tests/
   data.test.js      数据完整性测试
   html.test.js      HTML结构完整性测试（防腐化）
   setup.js          测试环境配置
+assets/
+  characters/       NPC 立绘（AI Horde 生成，AlbedoBase XL SDXL）
+scripts/
+  generate-avatars.mjs  NPC 立绘生成脚本（支持单角色重生成，需 AIHORDE_API_KEY）
 ```
 
 ---
