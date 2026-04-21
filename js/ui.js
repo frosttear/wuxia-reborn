@@ -419,6 +419,11 @@ const UI = {
                 const winPct = Combat.calcWinChance(char, enemy, job);
                 const pctColor = winPct >= 70 ? '🟢' : winPct >= 40 ? '🟡' : '🔴';
                 parts.push(`⚔ 与【${eName}】战斗（攻${eff.attack}/防${eff.defense}/血${eff.hp}） ${pctColor}胜率${winPct}%`);
+                const winEffects = enemy.winEffects || {};
+                const rewardParts = Object.entries(winEffects)
+                    .filter(([, v]) => v !== 0)
+                    .map(([k, v]) => `${ATTR_NAMES[k] || k}${v > 0 ? '+' : ''}${v}`);
+                if (rewardParts.length > 0) parts.push(`🏆 胜利奖励：${rewardParts.join(' ')}`);
             } else {
                 parts.push(`⚔ 与【${eName}】战斗`);
             }
