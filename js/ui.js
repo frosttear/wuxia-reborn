@@ -473,48 +473,83 @@ const UI = {
             ? `<span class="log-age-countdown${remaining <= 6 ? ' urgent' : ''}">⏳ 距天魔之日还剩 ${remaining} 月</span>`
             : '';
 
-        // Add event to log
+        // Add event entry with empty text — narrative revealed line by line
         const entry = document.createElement('div');
         entry.className = 'log-entry event-entry';
         entry.innerHTML = `<div class="log-age">${ageStr}${countdownHtml}</div>
             <div class="log-title-row"><span class="log-type type-${event.type}">${event.type}</span>${event.title}</div>
-            <div class="log-text">${event.text.replace(/\n/g, '<br>')}</div>`;
+            <div class="log-text"></div>`;
         this.logEl.appendChild(entry);
-        this.logEl.scrollTop = this.logEl.scrollHeight;
         this.notifyEventTab();
 
-        // Show choices; locked ones grayed-out, unlocked ones get sequential applyChoice index
+        // Cancel any previous reveal animation still running
+        if (this._revealTimer) { clearTimeout(this._revealTimer); this._revealTimer = null; }
+
         this.choicesEl.innerHTML = '';
-        if (choices && choices.length > 0) {
-            let unlockIdx = 0;
-            for (let i = 0; i < choices.length; i++) {
-                const choice = choices[i];
-                const btn = document.createElement('button');
-                if (choice.locked) {
-                    btn.className = 'choice-btn choice-locked';
-                    btn.disabled = true;
-                    const lockTag = this.formatRequirementLabel(choice.requirements, false);
-                    btn.innerHTML = `<span class="choice-lock-tag">${lockTag}</span><span class="choice-text">${choice.text}</span>`;
-                } else {
-                    const idx = unlockIdx++;
-                    const preview = this.formatEffectPreview(choice.effects, state.enemies, state.npcs, state.char, state.jobs);
-                    const unlockTag = choice.requirements
-                        ? `<span class="choice-unlock-tag">${this.formatRequirementLabel(choice.requirements, true)}</span>`
-                        : '';
-                    btn.className = 'choice-btn';
-                    btn.innerHTML = unlockTag
-                        + `<span class="choice-text">${choice.text}</span>`
-                        + (preview ? `<span class="choice-effects">${preview}</span>` : '');
-                    btn.onclick = () => {
-                        this.choicesEl.innerHTML = '';
-                        this.nextBtn.disabled = false;
-                        Engine.applyChoice(idx);
-                    };
+        this.nextBtn.disabled = true;
+
+        const textEl = entry.querySelector('.log-text');
+        const lines = event.text.split('\n');
+        let lineIdx = 0;
+        let done = false;
+
+        const renderChoices = () => {
+            if (choices && choices.length > 0) {
+                let unlockIdx = 0;
+                for (let i = 0; i < choices.length; i++) {
+                    const choice = choices[i];
+                    const btn = document.createElement('button');
+                    if (choice.locked) {
+                        btn.className = 'choice-btn choice-locked';
+                        btn.disabled = true;
+                        const lockTag = this.formatRequirementLabel(choice.requirements, false);
+                        btn.innerHTML = `<span class="choice-lock-tag">${lockTag}</span><span class="choice-text">${choice.text}</span>`;
+                    } else {
+                        const idx = unlockIdx++;
+                        const preview = this.formatEffectPreview(choice.effects, state.enemies, state.npcs, state.char, state.jobs);
+                        const unlockTag = choice.requirements
+                            ? `<span class="choice-unlock-tag">${this.formatRequirementLabel(choice.requirements, true)}</span>`
+                            : '';
+                        btn.className = 'choice-btn';
+                        btn.innerHTML = unlockTag
+                            + `<span class="choice-text">${choice.text}</span>`
+                            + (preview ? `<span class="choice-effects">${preview}</span>` : '');
+                        btn.onclick = () => {
+                            this.choicesEl.innerHTML = '';
+                            this.nextBtn.disabled = false;
+                            Engine.applyChoice(idx);
+                        };
+                    }
+                    this.choicesEl.appendChild(btn);
                 }
-                this.choicesEl.appendChild(btn);
+                this.nextBtn.disabled = true;
+            } else {
+                this.nextBtn.disabled = false;
             }
-            this.nextBtn.disabled = true;
-        }
+        };
+
+        const finishReveal = () => {
+            if (done) return;
+            done = true;
+            if (this._revealTimer) { clearTimeout(this._revealTimer); this._revealTimer = null; }
+            entry.style.cursor = '';
+            textEl.innerHTML = event.text.replace(/\n/g, '<br>');
+            this.logEl.scrollTop = this.logEl.scrollHeight;
+            renderChoices();
+        };
+
+        const revealStep = () => {
+            if (lineIdx >= lines.length) { finishReveal(); return; }
+            textEl.innerHTML += (lineIdx === 0 ? '' : '<br>') + lines[lineIdx];
+            lineIdx++;
+            this.logEl.scrollTop = this.logEl.scrollHeight;
+            this._revealTimer = setTimeout(revealStep, 500);
+        };
+
+        // Click the event card to skip the animation
+        entry.style.cursor = 'pointer';
+        entry.addEventListener('click', finishReveal);
+        revealStep();
     },
 
     addLog(text, type) {
@@ -678,16 +713,21 @@ const UI = {
         if (cs.enemyIntentHint) {
             if (cs.enemyIntentType === 'perfect') {
                 intentEl.innerHTML = `<span class="intent-read">🔮 ${cs.enemyIntentHint}</span><span class="intent-perfect-label">【无相剑意】</span>`;
-            } else if (cs.enemyIntentType === 'unreadable') {
-                const comp = char.attributes.comprehension || 0;
-                const eComp = cs.enemyComp || 0;
-                const accuratePct = Math.round(Math.min(80, 80 * Math.log(1 + comp / (eComp + 20))));
-                intentEl.innerHTML = `<span class="intent-none">— ${cs.enemyIntentHint}</span><span class="intent-comp-label">（悟性${comp}，识破${accuratePct}%）</span>`;
             } else {
-                const comp = char.attributes.comprehension || 0;
+                const comp  = char.attributes.comprehension || 0;
                 const eComp = cs.enemyComp || 0;
-                const accuratePct = Math.round(Math.min(80, 80 * Math.log(1 + comp / (eComp + 20))));
-                intentEl.innerHTML = `<span class="intent-read">🔮 ${cs.enemyIntentHint}</span><span class="intent-comp-label">（悟性${comp}，识破${accuratePct}%）</span>`;
+                const intentCap = cs.enemy && cs.enemy.id === 'sword_soul' ? 50
+                                : cs.enemy && cs.enemy.id === 'tianmo'      ? 60 : 80;
+                const capNote   = intentCap < 80
+                    ? `·${cs.enemy.id === 'sword_soul' ? '神意难测' : '威压遮蔽'}上限${intentCap}%`
+                    : '';
+                const accuratePct = Math.round(Math.min(intentCap, 80 * Math.log(1 + comp / (eComp + 20))));
+                const label = `（悟性${comp}，识破${accuratePct}%${capNote}）`;
+                if (cs.enemyIntentType === 'unreadable') {
+                    intentEl.innerHTML = `<span class="intent-none">— ${cs.enemyIntentHint}</span><span class="intent-comp-label">${label}</span>`;
+                } else {
+                    intentEl.innerHTML = `<span class="intent-read">🔮 ${cs.enemyIntentHint}</span><span class="intent-comp-label">${label}</span>`;
+                }
             }
         } else {
             intentEl.innerHTML = '';

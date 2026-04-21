@@ -1345,6 +1345,7 @@ const Engine = {
         localStorage.removeItem('wuxia_save');
         localStorage.removeItem('wuxia_phase');
         localStorage.removeItem('wuxia_combat');
+        localStorage.removeItem('wuxia_log');
     },
 
     exportSave() {

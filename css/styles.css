@@ -734,12 +734,15 @@ button:disabled { opacity: 0.4; cursor: not-allowed; }
     .combat-box {
         max-height: 85dvh;
         padding: 14px 12px;
-        gap: 8px;
+        gap: 6px;
+        overflow: hidden; /* only the log scrolls, not the whole box */
     }
     .combat-log {
-        min-height: 60px;
-        max-height: 140px;
+        flex: 1 1 0;  /* expand to fill remaining height */
+        min-height: 40px;
+        max-height: none;
     }
+    .combat-intent-hint { min-height: 0; font-size: 0.75rem; }
     .combat-btn {
         padding: 8px 4px;
         font-size: 0.78rem;
