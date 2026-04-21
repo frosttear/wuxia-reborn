@@ -6,7 +6,7 @@
     <title>轮回江湖</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link href="https://fonts.googleapis.com/css2?family=Noto+Serif+SC:wght@400;700&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="css/styles.css?v=0.12.7">
+    <link rel="stylesheet" href="css/styles.css?v=0.12.8">
 </head>
 <body>
 
@@ -131,8 +131,10 @@
         <div class="combat-title">⚔ 战斗</div>
 
         <div class="combat-enemy-section">
-            <div class="combat-side-name" id="combatEnemyName"></div>
-            <div class="combat-stats-row" id="combatEnemyStats"></div>
+            <div class="combat-nameline">
+                <span class="combat-side-name" id="combatEnemyName"></span>
+                <span class="combat-stats-row" id="combatEnemyStats"></span>
+            </div>
             <div class="combat-hp-wrap">
                 <div class="combat-hp-label">
                     <span>气血</span><span id="combatEnemyHpText"></span>
@@ -150,14 +152,18 @@
                 </div>
                 <div class="hp-bar-bg"><div id="combatPlayerHpBar" class="hp-fill hp-high" style="width:100%"></div></div>
             </div>
-            <div class="combat-stats-row" id="combatPlayerStats"></div>
-            <div class="combat-side-name" id="combatPlayerName"></div>
+            <div class="combat-nameline">
+                <span class="combat-stats-row" id="combatPlayerStats"></span>
+                <span class="combat-side-name" id="combatPlayerName"></span>
+            </div>
         </div>
 
         <!-- Momentum bar + skill ready hint -->
         <div class="combat-momentum-wrap">
-            <div class="combat-momentum-label">气力 <span id="combatMomentumVal">0</span>/5</div>
-            <div class="combat-momentum-bar-bg"><div id="combatMomentumFill" class="combat-momentum-fill" style="width:0%"></div></div>
+            <div class="combat-momentum-row">
+                <span class="combat-momentum-label">气力 <span id="combatMomentumVal">0</span>/5</span>
+                <div class="combat-momentum-bar-bg"><div id="combatMomentumFill" class="combat-momentum-fill" style="width:0%"></div></div>
+            </div>
             <div id="combatSkillReady" class="combat-skill-ready" style="display:none"></div>
         </div>
         <!-- Enemy intent hint -->
@@ -179,12 +185,12 @@
     </div>
 </div>
 
-<script src="js/character.js?v=0.12.7"></script>
-<script src="js/npc.js?v=0.12.7"></script>
-<script src="js/combat.js?v=0.12.7"></script>
-<script src="js/rebirth.js?v=0.12.7"></script>
-<script src="js/engine.js?v=0.12.7"></script>
-<script src="js/ui.js?v=0.12.7"></script>
+<script src="js/character.js?v=0.12.8"></script>
+<script src="js/npc.js?v=0.12.8"></script>
+<script src="js/combat.js?v=0.12.8"></script>
+<script src="js/rebirth.js?v=0.12.8"></script>
+<script src="js/engine.js?v=0.12.8"></script>
+<script src="js/ui.js?v=0.12.8"></script>
 <script>
 (async function() {
     await Engine.init();

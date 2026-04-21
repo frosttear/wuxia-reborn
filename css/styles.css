@@ -505,10 +505,12 @@ button:disabled { opacity: 0.4; cursor: not-allowed; }
     border-radius: 6px;
     padding: 10px 12px;
 }
-.combat-side-name   { font-size: 1rem; color: var(--accent2); font-weight: bold; margin-bottom: 4px; }
-.combat-stats-row   { font-size: 0.75rem; color: var(--muted); margin-bottom: 6px; }
-.combat-hp-wrap     { display: flex; flex-direction: column; gap: 3px; }
-.combat-hp-label    { display: flex; justify-content: space-between; font-size: 0.78rem; color: var(--muted); }
+.combat-nameline    { display: flex; align-items: baseline; gap: 8px; flex-wrap: wrap; margin-bottom: 4px; }
+.combat-side-name   { font-size: 1rem; color: var(--accent2); font-weight: bold; }
+.combat-stats-row   { font-size: 0.75rem; color: var(--muted); }
+.combat-hp-wrap     { display: flex; align-items: center; gap: 6px; }
+.combat-hp-label    { display: flex; gap: 4px; font-size: 0.78rem; color: var(--muted); white-space: nowrap; flex-shrink: 0; }
+.combat-hp-wrap .hp-bar-bg { flex: 1; margin: 0; }
 
 .combat-log {
     min-height: 80px;
@@ -528,9 +530,10 @@ button:disabled { opacity: 0.4; cursor: not-allowed; }
 .combat-turn-open   { color: #7ecf8e; }
 
 /* Momentum bar */
-.combat-momentum-wrap { display: flex; flex-direction: column; gap: 4px; padding: 4px 0; }
-.combat-momentum-label { font-size: 0.75rem; color: var(--muted); }
-.combat-momentum-bar-bg { height: 6px; background: rgba(255,255,255,0.08); border-radius: 3px; overflow: hidden; }
+.combat-momentum-wrap { display: flex; flex-direction: column; gap: 2px; padding: 2px 0; }
+.combat-momentum-row  { display: flex; align-items: center; gap: 8px; }
+.combat-momentum-label { font-size: 0.75rem; color: var(--muted); white-space: nowrap; flex-shrink: 0; }
+.combat-momentum-bar-bg { flex: 1; height: 6px; background: rgba(255,255,255,0.08); border-radius: 3px; overflow: hidden; }
 .combat-momentum-fill { height: 100%; background: linear-gradient(90deg, #c9a84c, #f4c430); border-radius: 3px; transition: width 0.2s ease; }
 .combat-skill-ready    { font-size: 0.78rem; color: #f4c430; font-weight: bold; padding: 3px 0; animation: pulse-glow 1.2s ease-in-out infinite; }
 .combat-skill-charging { font-size: 0.78rem; color: var(--muted); padding: 3px 0; }
