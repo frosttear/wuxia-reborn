@@ -1061,8 +1061,8 @@ const Engine = {
                 : '【重伤】你身负重创，勉强撤退。需静养三至四个月，方可恢复。';
             UI.addLog(injuryMsg, 'lose');
             // Bond combat lost: bond stays incomplete — player can retry next visit
-            if (postBondStep && postBondStep.bondInfo) {
-                const npc = this.state.npcs.find(n => n.id === postBondStep.bondInfo.npcId);
+            if (postBondStep) {
+                const npc = this.state.npcs.find(n => n.id === postBondStep.npcId);
                 const npcName = npc ? npc.name : '对方';
                 UI.addLog(`【羁绊】时机未到，这一战败了。养好伤，磨砺技艺，再来与${npcName}一决高下。`, 'info');
             }

@@ -539,8 +539,9 @@ const UI = {
             if (this._revealTimer) { clearTimeout(this._revealTimer); this._revealTimer = null; }
             entry.style.cursor = '';
             textEl.innerHTML = event.text.replace(/\n/g, '<br>');
-            this.logEl.scrollTop = this.logEl.scrollHeight;
             renderChoices();
+            // Re-scroll after choices panel expands and shrinks the log's visible area
+            requestAnimationFrame(() => { this.logEl.scrollTop = this.logEl.scrollHeight; });
         };
 
         const revealStep = () => {

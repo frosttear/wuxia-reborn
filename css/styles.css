@@ -732,14 +732,15 @@ button:disabled { opacity: 0.4; cursor: not-allowed; }
 
     /* Combat overlay: fit small screens */
     .combat-box {
+        height: 85dvh;       /* explicit height so flex children can fill it */
         max-height: 85dvh;
         padding: 14px 12px;
         gap: 6px;
-        overflow: hidden; /* only the log scrolls, not the whole box */
+        overflow: hidden;
     }
     .combat-log {
-        flex: 1 1 0;  /* expand to fill remaining height */
-        min-height: 40px;
+        flex: 1 1 0;         /* fill remaining space between fixed sections */
+        min-height: 0;
         max-height: none;
     }
     .combat-intent-hint { min-height: 0; font-size: 0.75rem; }
