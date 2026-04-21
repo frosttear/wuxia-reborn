@@ -543,10 +543,12 @@
 
 ### v0.12.3（2026-04-21）
 - **轮回Bug修复**：`Rebirth.execute` 中 `this.TALENTS.find` → `TALENTS.find`（选择天赋后点击踏入轮回无响应的根本原因）；`migrateChar` 补充 `legacyTalents`/`passives` 缺失防护；`executeRebirth` 增加 try-catch 防止无声失败
+- **导入存档Bug修复**：`importSave` 在 `location.reload()` 前同步设置 `state.gamePhase='idle'` 和 `state.combatState=null`，防止 `beforeunload→saveGame` 以旧阶段覆盖正确状态导致所有按钮失效
 - **新增插画**：`rebirth`（玉佩引渡·时空旋涡）、`wuxiang-unlock`（无相剑意·化境）；`li-yunshu-ending` 更新为桃红色版本
 - **插画触发点**：轮回执行时自动展示 rebirth 插画；`wuxiang_sword` 任务链完成时展示 wuxiang-unlock 插画
-- **立绘更新**：李云舒改为朱红锦袍·持直剑英姿飒爽版；燕赤行/凌雪修正剑柄握持（原图握刃）；凌雪修正弯刀为直剑
+- **立绘更新**：李云舒更新为成熟明媚版（粉色汉服·持剑守护英姿）；燕赤行/凌雪修正剑柄握持（原图握刃）；凌雪修正弯刀为直剑
 - **提示词优化**：NEGATIVE 增加 curved sword/katana/dao/hand on blade 等防错项
+- **资源缓存**：全站版本号升至 v=0.12.3 强制浏览器刷新
 
 ### v0.12.2（2026-04-21）
 - **场景插画系统**：10张 1216×832 横幅插画，在关键剧情时刻自动展示

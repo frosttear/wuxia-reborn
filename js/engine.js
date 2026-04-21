@@ -1372,11 +1372,12 @@ const Engine = {
             const data = JSON.parse(json);
             if (!data.char || !data.char.name) { alert('无效的存档码'); return; }
             if (!confirm(`确定导入存档？当前进度将被覆盖。\n角色：${data.char.name}（${(data.char.rebirthCount || 0) + 1}周目）`)) return;
-            // Update in-memory state so beforeunload saveGame won't overwrite
+            // Set in-memory state BEFORE reload so beforeunload→saveGame writes correct phase
             this.state.char = data.char;
+            this.state.gamePhase = 'idle';
+            this.state.combatState = null;
             localStorage.setItem('wuxia_save', JSON.stringify(data.char));
             if (data.log) localStorage.setItem('wuxia_log', JSON.stringify(data.log));
-            // Clear stale combat/phase data from previous save
             localStorage.removeItem('wuxia_combat');
             localStorage.setItem('wuxia_phase', 'idle');
             location.reload();
