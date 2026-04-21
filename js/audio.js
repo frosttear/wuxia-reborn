@@ -49,4 +49,4 @@ const GameAudio = {
     isMuted() { return this._muted; },
 };
 
-module.exports = { GameAudio };
+if (typeof module !== 'undefined') module.exports = { GameAudio };
