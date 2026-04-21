@@ -416,6 +416,7 @@ const Engine = {
     },
 
     _completeBond({ npcId, level }) {
+        if (typeof GameAudio !== 'undefined') GameAudio.playSFX('bond');
         const char = this.state.char;
         char.bondEventsDone[`${npcId}_${level}`] = true;
         if (char.bondRetryStep) delete char.bondRetryStep[`${npcId}_${level}`];
@@ -824,8 +825,11 @@ const Engine = {
 
         UI.setCombatActionsEnabled(false);
 
+        const _sfxMap = { strike: 'strike', defend: 'block', parry: 'block', focus: 'block', flee: 'strike' };
+        if (typeof GameAudio !== 'undefined') GameAudio.playSFX(_sfxMap[action] || 'strike');
         const { combatOver, result } = Combat.processTurn(action, cs, char, job);
         UI.updateCombatOverlay(this.state);
+        if (typeof GameAudio !== 'undefined') GameAudio.playSFX('hit');
 
         if (combatOver) {
             setTimeout(() => {
@@ -1147,6 +1151,7 @@ const Engine = {
         const newMax = Character.getHPMax(char, newJob);
         if (char.hp > newMax) char.hp = newMax;
 
+        if (typeof GameAudio !== 'undefined') GameAudio.playSFX('levelup');
         UI.addLog(`🌟 ${newJob.unlockText}`, 'unlock');
         if (newlyLearned.length > 0) {
             UI.addLog(`📖 学会新技能：${newlyLearned.join('、')}`, 'unlock');
@@ -1157,6 +1162,7 @@ const Engine = {
 
     triggerDeath(cause) {
         if (typeof GameAudio !== 'undefined') GameAudio.stopBGM();
+        if (typeof GameAudio !== 'undefined') GameAudio.playSFX('death');
         const { char } = this.state;
         this.state.gamePhase = 'rebirth';
         this.stopAuto();
@@ -1331,6 +1337,7 @@ const Engine = {
             if (typeof GameAudio !== 'undefined') GameAudio.playBGM('explore');
             UI.clearLog();
             UI.addIllustration('rebirth');
+            if (typeof GameAudio !== 'undefined') GameAudio.playSFX('rebirth');
             UI.renderAll(this.state);
             const mName = this.BIRTH_MONTH_NAMES[newChar.birthMonth - 1];
             UI.addLog(`✨ ${newChar.rebirthCount + 1}周目。【${newChar.name}】再度降生。和上一世一样，生于${mName}。天魔之约，依然在候。`, 'system');
