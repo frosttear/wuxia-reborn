@@ -288,6 +288,16 @@ const Engine = {
         // Show the event with ALL choices (locked ones rendered grayed-out)
         UI.showEvent(event, allChoices, this.state);
 
+        const _illustrationMap = {
+            ancient_grotto: 'ancient-grotto',
+            winter_seclusion: 'winter-seclusion',
+            temple_offering: 'temple-visit',
+            past_life_dream: 'past-life-dream',
+            rainy_road: 'journey-dawn',
+            old_swordsman: 'journey-dawn',
+        };
+        if (_illustrationMap[event.id]) UI.addIllustration(_illustrationMap[event.id]);
+
         if (availableChoices.length > 0) {
             this.state.pendingChoice = { event, choices: availableChoices };
             this.state.gamePhase = 'choosing';
