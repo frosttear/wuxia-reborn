@@ -664,8 +664,12 @@ const UI = {
             const p = preview.defend;
             html = `<span class="preview-label">🛡 防御</span>`;
             html += `对重攻减伤 ${p.vsHeavy}%（受 <span class="preview-good">${p.dmgHeavy}</span>）`;
-            html += ` · 对快攻减伤 ${p.vsSwift}%（受 <span class="preview-good">${p.dmgSwift}</span>）`;
-            html += `<br><span class="preview-muted">不造成伤害，不获得气力。识破快攻时减伤80%</span>`;
+            if (p.insightSwift) {
+                html += ` · <span class="preview-good">🔮 洞察快攻</span>减伤 ${p.vsSwift}%（受 <span class="preview-good">${p.dmgSwift}</span>）`;
+            } else {
+                html += ` · 对快攻减伤 ${p.vsSwift}%（受 <span class="preview-good">${p.dmgSwift}</span>）`;
+            }
+            html += `<br><span class="preview-muted">不造成伤害，不获得气力。识破快攻时减伤突破上限</span>`;
         } else if (action === 'parry') {
             const p = preview.parry;
             html = `<span class="preview-label">⚡ 破招</span>`;
@@ -980,7 +984,7 @@ const UI = {
         }
 
         modal.innerHTML = `
-            <div class="modal-box" style="max-width:520px;max-height:90vh;overflow-y:auto">
+            <div class="modal-box">
                 <h2 style="color:#f4c430;font-size:1.4em">✦ 大结局 · 天下归一 ✦</h2>
                 <p style="color:#c9a84c;margin:6px 0 14px">天魔已倒，剑魂亦散。那枚玉牌最终化为流光，没入你的眉心。</p>
                 <p>老者在另一个地方，或许微微一笑。</p>

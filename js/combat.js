@@ -351,7 +351,10 @@ const Combat = {
                     let incomingMult = 1.0;
                     if (action === 'defend') {
                         const baseReduce = swiftAnticipated ? 0.80 : (enemyAction === 'heavy' ? 0.75 : 0.50);
-                        const cappedReduce = Math.min(baseReduce, defCap);
+                        // 洞察时允许突破defCap: 至少获得defCap+0.15的减伤(上限0.80)
+                        const cappedReduce = swiftAnticipated
+                            ? Math.min(0.80, Math.max(defCap + 0.15, baseReduce))
+                            : Math.min(baseReduce, defCap);
                         incomingMult = 1.0 - cappedReduce;
                     } else if (action === 'focus') {
                         incomingMult = 1.0 - Math.min(0.55, defCap);
@@ -486,10 +489,17 @@ const Combat = {
         }
 
         // ── Defend ──
+        const intentAccurate = cs.enemyIntentType === 'accurate' || cs.enemyIntentType === 'perfect';
+        const insightSwift = intentAccurate && cs.enemyNextAction === 'swift';
+        const insightReduce = Math.min(0.80, Math.max(defCap + 0.15, 0.80));
         const defendVsHeavy = Math.round(Math.min(0.75, defCap) * 100);
-        const defendVsSwift = Math.round(Math.min(0.50, defCap) * 100);
+        const defendVsSwift = insightSwift
+            ? Math.round(insightReduce * 100)
+            : Math.round(Math.min(0.50, defCap) * 100);
         const defendDmgHeavy = Math.max(1, Math.floor(rawEnemyDmg * (1 - Math.min(0.75, defCap))) - qiShield);
-        const defendDmgSwift = Math.max(1, Math.floor(rawEnemyDmg * (1 - Math.min(0.50, defCap))) - qiShield);
+        const defendDmgSwift = insightSwift
+            ? Math.max(1, Math.floor(rawEnemyDmg * (1 - insightReduce)) - qiShield)
+            : Math.max(1, Math.floor(rawEnemyDmg * (1 - Math.min(0.50, defCap))) - qiShield);
 
         // ── Parry ──
         // Counter (vs heavy): 0.75x atk - effectiveDef
@@ -512,7 +522,7 @@ const Combat = {
 
         return {
             strike: { dmg: strikeDmg, critDmg: strikeCrit, defIgnorePct, critChance, skillPreview },
-            defend: { vsHeavy: defendVsHeavy, vsSwift: defendVsSwift, dmgHeavy: defendDmgHeavy, dmgSwift: defendDmgSwift, dodgeChance },
+            defend: { vsHeavy: defendVsHeavy, vsSwift: defendVsSwift, dmgHeavy: defendDmgHeavy, dmgSwift: defendDmgSwift, dodgeChance, insightSwift },
             parry:  { counterDmg, counterCrit, selfDmg: parrySelfDmg, punishDmg, critChance, dodgeChance },
             focus:  { reduction: focusReduction, dmg: focusDmg, momAfter, dodgeChance },
             incoming: { fullDmg, dodgeChance },

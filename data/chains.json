@@ -18,9 +18,11 @@
               "text": "记住老人的话，将令牌收好，决定追查龙脊山的线索",
               "effects": {
                 "attributes": {
-                  "comprehension": 1
+                  "comprehension": 1,
+                  "strength": 2,
+                  "constitution": 1
                 },
-                "narrative": "那枚令牌在你手中隐隐发热，仿佛在呼应着什么。你将它收好，心中埋下一粒种子——有些事，必须弄清楚。"
+                "narrative": "那枚令牌在你手中隐隐发热，仿佛在呼应着什么。你将它收好，心中埋下一粒种子——有些事，必须弄清楚。\n\n一路奔波追查，你的体魄也因此得到了锻炼。"
               }
             }
           ],
@@ -46,9 +48,10 @@
               "text": "仔细研究阵纹，尝试推断其用途",
               "effects": {
                 "attributes": {
-                  "comprehension": 2
+                  "comprehension": 2,
+                  "strength": 2
                 },
-                "narrative": "阵纹的结构让你越看越不安——这不是普通的法阵，而是一种汲取生命之气的仪式痕迹。不知多少人的气血，被这个阵法吸走了。"
+                "narrative": "阵纹的结构让你越看越不安——这不是普通的法阵，而是一种汲取生命之气的仪式痕迹。不知多少人的气血，被这个阵法吸走了。\n\n反复攀爬山路，你的力量也随之增长。"
               }
             },
             {
@@ -62,7 +65,8 @@
               "effects": {
                 "attributes": {
                   "innerForce": 2,
-                  "comprehension": 1
+                  "comprehension": 1,
+                  "strength": 1
                 },
                 "narrative": "那股气息黑暗、厚重，带着一种异样的熟悉感。你无法形容，但你知道——这个气息，你将来会再次遇到。那一刻，你对即将到来的一切有了真实的预感。"
               }
