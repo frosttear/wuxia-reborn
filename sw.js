@@ -1,6 +1,6 @@
 // Service worker: cache-first for all image assets
 // Bump CACHE_NAME when images are updated to force re-download
-const CACHE_NAME = 'wuxia-assets-v0.12.9';
+const CACHE_NAME = 'wuxia-assets-v0.13.0';
 
 const PRECACHE = [
     'assets/characters/player.png',

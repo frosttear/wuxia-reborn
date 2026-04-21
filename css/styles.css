@@ -627,6 +627,35 @@ button:disabled { opacity: 0.4; cursor: not-allowed; }
 .start-select { background: var(--surface); border: 1px solid var(--border); color: var(--text); padding: 8px 10px; border-radius: 5px; font-family: inherit; font-size: 0.88rem; outline: none; cursor: pointer; }
 .start-select:focus { border-color: var(--accent); }
 
+/* Loading screen (shown when a save exists, before JS init completes) */
+.loading-illus {
+    width: min(220px, 60vw);
+    height: auto;
+    border-radius: 10px;
+    opacity: 0.82;
+    box-shadow: 0 0 32px rgba(201,168,76,0.18);
+    animation: loading-illus-pulse 2.8s ease-in-out infinite;
+}
+@keyframes loading-illus-pulse {
+    0%, 100% { opacity: 0.82; }
+    50%       { opacity: 0.55; }
+}
+.loading-text {
+    color: var(--muted);
+    font-size: 0.82rem;
+    letter-spacing: 0.2em;
+}
+.loading-text::after {
+    content: '';
+    animation: loading-dots 1.6s steps(1) infinite;
+}
+@keyframes loading-dots {
+    0%  { content: ''; }
+    25% { content: '·'; }
+    50% { content: '··'; }
+    75% { content: '···'; }
+}
+
 .muted { color: var(--muted); }
 
 /* Scrollbar global */

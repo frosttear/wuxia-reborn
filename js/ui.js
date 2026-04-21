@@ -678,8 +678,7 @@ const UI = {
             fleeBtn.textContent = '🔒 无法逃跑';
         }
         this.updateCombatOverlay(state);
-        this._selectedCombatAction = null;  // prevent auto-execute from double selectCombatAction
-        this.selectCombatAction('strike');  // default selection
+        this._selectedCombatAction = null;
         document.getElementById('combatOverlay').classList.add('visible');
         if (window.innerWidth <= 768) this.switchTab('event');
     },
@@ -762,7 +761,15 @@ const UI = {
                 : `<span class="combat-turn-badge">第${e.turn}回合</span>`;
             return `<div class="combat-log-entry">${badge}${e.text}</div>`;
         }).join('');
-        logEl.scrollTop = logEl.scrollHeight;
+        // Scroll so the first entry of the current turn is at the top
+        if (cs.log.length > 0) {
+            const lastTurn = cs.log[cs.log.length - 1].turn;
+            const firstOfLastTurn = cs.log.findIndex(e => e.turn === lastTurn);
+            const entries = logEl.querySelectorAll('.combat-log-entry');
+            const target = entries[firstOfLastTurn];
+            if (target) logEl.scrollTop = target.offsetTop;
+            else logEl.scrollTop = logEl.scrollHeight;
+        }
 
         // Flee button text
         const fleeBtn = document.getElementById('combatFleeBtn');
@@ -781,9 +788,11 @@ const UI = {
             strikeBtn.title = `强攻：正面攻击，忽略对方${defIgnorePct}%防御，气力+2，可触发会心`;
         }
 
-        // Re-select default action after turn update (refresh preview with new values)
-        this._selectedCombatAction = null;  // reset to avoid double-click-confirm
-        this.selectCombatAction('strike');
+        this._selectedCombatAction = null;
+        document.querySelectorAll('#combatActions .combat-btn').forEach(b => b.classList.remove('selected'));
+        this._restoreButtonLabels();
+        const previewBar = document.getElementById('combatPreviewBar');
+        if (previewBar) previewBar.style.display = 'none';
     },
 
     // ── Combat action selection & preview ──────────────────────────────────

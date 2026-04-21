@@ -112,12 +112,7 @@ const Engine = {
         }
 
         // Check new job unlocks — auto-promote to highest unlocked job
-        const newJobs = Character.checkJobUnlocks(char, this.state.jobs);
-        if (newJobs.length > 0) {
-            // Pick the last (highest-tier) newly unlocked job
-            const best = newJobs[newJobs.length - 1];
-            this.promoteJob(best.id);
-        }
+        this._checkAndAutoPromote();
 
         // Birthday system: fires when ageMonths % 12 === 0
         if (this._checkBirthdayAndBoss()) return;
@@ -302,6 +297,7 @@ const Engine = {
                 this.applyEffects(event.autoEffects);
             }
             this.state.gamePhase = 'idle';
+            this._checkAndAutoPromote();
             UI.renderAll(this.state);
             this.saveGame();
         }
@@ -368,6 +364,7 @@ const Engine = {
                 this._showBondStep(bondStep.npcId, bondStep.steps, bondStep.stepIdx + 1, bondStep.level, '');
                 return;
             }
+            this._checkAndAutoPromote();
             UI.renderAll(this.state);
             this.saveGame();
             return;
@@ -412,6 +409,7 @@ const Engine = {
             this._showBondStep(bondStep.npcId, bondStep.steps, bondStep.stepIdx + 1, bondStep.level, '');
             return;
         }
+        this._checkAndAutoPromote();
         UI.renderAll(this.state);
         this.saveGame();
     },
@@ -419,6 +417,7 @@ const Engine = {
     _completeBond({ npcId, level }) {
         const char = this.state.char;
         char.bondEventsDone[`${npcId}_${level}`] = true;
+        if (char.bondRetryStep) delete char.bondRetryStep[`${npcId}_${level}`];
         char.bondLevels[npcId] = Math.max(char.bondLevels[npcId] || 0, level);
         const npc = this.state.npcs.find(n => n.id === npcId);
         UI.addLog(`💞 与【${npc ? npc.name : npcId}】的羁绊加深！（第${level}章）`, 'unlock');
@@ -522,7 +521,10 @@ const Engine = {
                 ? `「世界线记忆」你隐约记得，在另一条时间线上与${npc.name}曾有过这一段故事……\n\n`
                 : '';
             if (bondEvent.steps && bondEvent.steps.length > 0) {
-                this._showBondStep(npcId, bondEvent.steps, 0, bondEvent.level, prefix);
+                const retryKey = `${npcId}_${bondEvent.level}`;
+                const startStep = (char.bondRetryStep && char.bondRetryStep[retryKey] != null)
+                    ? char.bondRetryStep[retryKey] : 0;
+                this._showBondStep(npcId, bondEvent.steps, startStep, bondEvent.level, startStep > 0 ? '' : prefix);
             } else {
                 const displayEvent = Object.assign({}, bondEvent, {
                     text: prefix + bondEvent.text,
@@ -1067,7 +1069,15 @@ const Engine = {
                 const npc = this.state.npcs.find(n => n.id === postBondStep.npcId);
                 const npcName = npc ? npc.name : '对方';
                 UI.addLog(`【羁绊】时机未到，这一战败了。养好伤，磨砺技艺，再来与${npcName}一决高下。`, 'info');
+                // Remember which step the combat was on so retry resumes here
+                const combatStepIdx = postBondStep.stepIdx !== null
+                    ? postBondStep.stepIdx - 1
+                    : postBondStep.steps.length - 1;
+                if (!this.state.char.bondRetryStep) this.state.char.bondRetryStep = {};
+                this.state.char.bondRetryStep[`${postBondStep.npcId}_${postBondStep.level}`] = combatStepIdx;
             }
+
+            this._checkAndAutoPromote();
             UI.renderCharacter(char, this.state.jobs);
 
         } else if (result === 'fled') {
@@ -1077,6 +1087,7 @@ const Engine = {
                 dmgReceived: cs.totalDmgReceived, result: 'fled', rewards: ''
             });
             UI.addLog('你成功脱身，暂避其锋芒。', 'result');
+            this._checkAndAutoPromote();
         }
 
         if (cs.postNarrative) UI.addLog(cs.postNarrative, 'result');
@@ -1283,6 +1294,7 @@ const Engine = {
         if (char.injured === undefined) char.injured = false;
         if (char.injuredMonths === undefined) char.injuredMonths = 0;
         if (!char.chainProgress) char.chainProgress = {};
+        if (!char.bondRetryStep) char.bondRetryStep = {};
         // Re-derive jade_tablet_awakened for saves past the 19th birthday
         if (!char.flags.jade_tablet_awakened && char.flags.elder_revelation &&
             Character.getAgeYears(char) > 19) {

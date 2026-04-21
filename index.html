@@ -6,7 +6,7 @@
     <title>轮回江湖</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link href="https://fonts.googleapis.com/css2?family=Noto+Serif+SC:wght@400;700&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="css/styles.css?v=0.12.9">
+    <link rel="stylesheet" href="css/styles.css?v=0.13.0">
 </head>
 <body>
 
@@ -153,8 +153,8 @@
                 <div class="hp-bar-bg"><div id="combatPlayerHpBar" class="hp-fill hp-high" style="width:100%"></div></div>
             </div>
             <div class="combat-nameline">
-                <span class="combat-stats-row" id="combatPlayerStats"></span>
                 <span class="combat-side-name" id="combatPlayerName"></span>
+                <span class="combat-stats-row" id="combatPlayerStats"></span>
             </div>
         </div>
 
@@ -185,12 +185,22 @@
     </div>
 </div>
 
-<script src="js/character.js?v=0.12.9"></script>
-<script src="js/npc.js?v=0.12.9"></script>
-<script src="js/combat.js?v=0.12.9"></script>
-<script src="js/rebirth.js?v=0.12.9"></script>
-<script src="js/engine.js?v=0.12.9"></script>
-<script src="js/ui.js?v=0.12.9"></script>
+<script>
+// Synchronous: swap start screen to loading indicator if a save already exists
+if (localStorage.getItem('wuxia_save')) {
+    document.getElementById('startScreen').innerHTML = `
+        <img src="assets/logo/title.svg" class="start-logo" alt="轮回江湖">
+        <div class="start-sub">武侠 · 轮回 · 文字冒险</div>
+        <img src="assets/illustrations/rebirth.png" class="loading-illus" alt="">
+        <div class="loading-text">读取存档中</div>`;
+}
+</script>
+<script src="js/character.js?v=0.13.0"></script>
+<script src="js/npc.js?v=0.13.0"></script>
+<script src="js/combat.js?v=0.13.0"></script>
+<script src="js/rebirth.js?v=0.13.0"></script>
+<script src="js/engine.js?v=0.13.0"></script>
+<script src="js/ui.js?v=0.13.0"></script>
 <script>
 (async function() {
     await Engine.init();
@@ -243,7 +253,8 @@
         }
     }
 
-    document.getElementById('startBtn').onclick = function() {
+    const startBtn = document.getElementById('startBtn');
+    if (startBtn) startBtn.onclick = function() {
         const name = document.getElementById('nameInput').value.trim() || '无名';
         const birthMonth = parseInt(document.getElementById('birthMonthInput').value) || 1;
         Engine.deleteSave();
@@ -252,23 +263,8 @@
         Engine.startNewGame(name, birthMonth, {}, []);
     };
 
-    document.getElementById('continueBtn').onclick = function() {
-        const char = Engine.loadGame();
-        if (!char) return;
-        Engine.state.char = char;
-        const job = Engine.getJob(char.job);
-        if (!char.hp) char.hp = Character.getHPMax(char, job);
-        document.getElementById('startScreen').style.display = 'none';
-        document.getElementById('gameScreen').style.display = 'flex';
-        UI.renderAll(Engine.state);
-        try {
-            const savedLog = localStorage.getItem('wuxia_log');
-            if (savedLog) UI.restoreLog(JSON.parse(savedLog));
-        } catch(e) {}
-        UI.addLog('欢迎回来，继续你的江湖之旅。', 'system');
-    };
-
-    document.getElementById('nameInput').addEventListener('keydown', function(e) {
+    const nameInput = document.getElementById('nameInput');
+    if (nameInput) nameInput.addEventListener('keydown', function(e) {
         if (e.key === 'Enter') document.getElementById('startBtn').click();
     });
 

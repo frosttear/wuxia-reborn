@@ -354,3 +354,77 @@ describe('wuxiang_sword chain unlock', () => {
         expect(steps.find(s => s.chain.id === 'wuxiang_sword')).toBeDefined();
     });
 });
+
+// ── bondRetryStep memory ───────────────────────────────────────────────────
+
+describe('bondRetryStep memory', () => {
+    beforeEach(() => resetEngine());
+
+    test('migrateChar adds bondRetryStep to old saves', () => {
+        const char = makeChar();
+        delete char.bondRetryStep;
+        Engine.migrateChar(char);
+        expect(char.bondRetryStep).toEqual({});
+    });
+
+    test('migrateChar does not overwrite existing bondRetryStep', () => {
+        const char = makeChar();
+        char.bondRetryStep = { wang_tie_1: 2 };
+        Engine.migrateChar(char);
+        expect(char.bondRetryStep.wang_tie_1).toBe(2);
+    });
+
+    test('_completeBond clears retry key for that bond', () => {
+        const char = Engine.state.char;
+        char.bondRetryStep = { wang_tie_1: 1 };
+        char.bondLevels = {};
+        char.bondEventsDone = {};
+        char.passives = [];
+        // Two levels so level 1 < maxLevel — avoids the illustration path
+        Engine.state.bonds = { wang_tie: [{ level: 1, passive: null }, { level: 2, passive: null }] };
+        Engine.state.npcs = [{ id: 'wang_tie', name: '王铁' }];
+        Engine._completeBond({ npcId: 'wang_tie', level: 1 });
+        expect(char.bondRetryStep['wang_tie_1']).toBeUndefined();
+    });
+
+    test('_completeBond leaves other retry keys untouched', () => {
+        const char = Engine.state.char;
+        char.bondRetryStep = { wang_tie_1: 1, li_yunshu_2: 0 };
+        char.bondLevels = {};
+        char.bondEventsDone = {};
+        char.passives = [];
+        Engine.state.bonds = { wang_tie: [{ level: 1, passive: null }, { level: 2, passive: null }] };
+        Engine.state.npcs = [{ id: 'wang_tie', name: '王铁' }];
+        Engine._completeBond({ npcId: 'wang_tie', level: 1 });
+        expect(char.bondRetryStep['li_yunshu_2']).toBe(0);
+    });
+});
+
+// ── _checkAndAutoPromote ───────────────────────────────────────────────────
+
+describe('_checkAndAutoPromote', () => {
+    beforeEach(() => resetEngine());
+
+    test('promotes char when job unlock conditions are met', () => {
+        const char = Engine.state.char;
+        // Give the char enough attributes to unlock the first available job
+        const jobs = Engine.state.jobs;
+        const unlockable = jobs.find(j => j.id !== char.job && j.requires);
+        if (!unlockable) return; // no job to unlock, skip
+        // Meet requirements
+        if (unlockable.requires.minAttributes) {
+            for (const [attr, val] of Object.entries(unlockable.requires.minAttributes)) {
+                char.attributes[attr] = val;
+            }
+        }
+        Engine._checkAndAutoPromote();
+        expect(char.job).toBe(unlockable.id);
+    });
+
+    test('does nothing when no new jobs are unlocked', () => {
+        const char = Engine.state.char;
+        const originalJob = char.job;
+        Engine._checkAndAutoPromote();
+        expect(char.job).toBe(originalJob);
+    });
+});
