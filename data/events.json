@@ -360,7 +360,7 @@
       {
         "id": "take_all",
         "text": "全部收下，改善生活",
-        "effects": { "attributes": { "luck": 1, "constitution": 1 }, "narrative": "这笔意外之财让你生活改善了不少，身体也因此好了起来。" }
+        "effects": { "attributes": { "constitution": 2 }, "narrative": "这笔意外之财让你生活改善了不少，身体也因此好了起来。" }
       },
       {
         "id": "find_owner",
@@ -380,7 +380,7 @@
       {
         "id": "fight",
         "text": "拔剑迎战",
-        "effects": { "combat": "bandit", "narrative": "" }
+        "effects": { "combat": "bandit", "narrative": "你拔剑相迎，与山贼厮杀。" }
       }
     ]
   },
@@ -395,7 +395,7 @@
       {
         "id": "fight",
         "text": "拔剑迎战，不容退缩",
-        "effects": { "combat": "skilled_bandit", "narrative": "" }
+        "effects": { "combat": "skilled_bandit", "narrative": "来者不善，你横刀立马，正面迎战。" }
       }
     ]
   },
@@ -410,7 +410,7 @@
       {
         "id": "fight_tiger",
         "text": "凝神应战，以武会虎",
-        "effects": { "combat": "wild_tiger", "narrative": "" }
+        "effects": { "combat": "wild_tiger", "narrative": "猛虎扑来，你屏息凝神，以剑相迎。" }
       }
     ]
   },
@@ -425,7 +425,7 @@
       {
         "id": "protect_cargo",
         "text": "挺身护镖，绝不退让",
-        "effects": { "combat": "escort_leader", "narrative": "" }
+        "effects": { "combat": "escort_leader", "narrative": "你护在货物前，与劫匪正面交锋。" }
       }
     ]
   },
@@ -440,7 +440,7 @@
       {
         "id": "accept_duel",
         "text": "接受挑战，切磋武艺",
-        "effects": { "combat": "jianghu_challenger", "narrative": "" }
+        "effects": { "combat": "jianghu_challenger", "narrative": "你点头应战，与对方拉开架势。" }
       },
       {
         "id": "decline",
@@ -530,7 +530,7 @@
       {
         "id": "offer_help",
         "text": "表示愿意帮忙，并肩作战",
-        "effects": { "attributes": { "reputation": 2 }, "npcAffinity": { "li_yunshu": 20 }, "flags": { "li_knows_burden": true }, "narrative": "你的一番话让她眼眶微红，她握拳道：「有你这句话，我就放心多了。」" }
+        "effects": { "npcAffinity": { "li_yunshu": 18 }, "attributes": { "comprehension": 1 }, "flags": { "li_knows_burden": true }, "narrative": "你的一番话让她眼眶微红，她握拳道：「有你这句话，我就放心多了。」" }
       },
       {
         "id": "listen",
@@ -1008,7 +1008,7 @@
       {
         "id": "accept_duel",
         "text": "握紧佩剑，迎上去",
-        "effects": { "combat": "sword_soul", "narrative": "" }
+        "effects": { "combat": "sword_soul", "narrative": "你握紧剑柄，凝视眼前强敌，缓缓抬起剑尖。" }
       }
     ]
   },
@@ -1205,7 +1205,7 @@
       {
         "id": "strength_training",
         "text": "手握巨石，对着崖壁反复出拳，以崖风为阻力练力",
-        "effects": { "attributes": { "strength": 2 }, "hp": -5, "narrative": "崖风凛冽，阻力极大，你每一拳都要耗费数倍力气。一番苦练下来，力量明显增强，却也肌肉酸痛难当。" }
+        "effects": { "attributes": { "strength": 3 }, "hp": -10, "narrative": "崖风凛冽，阻力极大，你每一拳都要耗费数倍力气。一番苦练下来，力量明显增强，却也肌肉酸痛难当。" }
       },
       {
         "id": "agility_training",
@@ -1275,7 +1275,7 @@
       {
         "id": "gamble_big",
         "text": "押下重注，赌他一把",
-        "effects": { "attributes": { "luck": 2 }, "hp": -5, "narrative": "你财运亨通，一把赢下不少，但输家不服，暗中捅了你一刀后溜走。带伤离场，荷包鼓了，身上却多了道伤。" }
+        "effects": { "attributes": { "agility": 1, "constitution": 1 }, "hp": -5, "narrative": "你财运亨通，一把赢下不少，但输家不服，暗中捅了你一刀后溜走。带伤离场，荷包鼓了，身上却多了道伤。" }
       },
       {
         "id": "observe",
@@ -1320,7 +1320,7 @@
       {
         "id": "fight_bandits",
         "text": "拔剑而出，救下被围商人",
-        "effects": { "attributes": { "reputation": 3, "strength": 1 }, "hp": -12, "narrative": "你与三名劫匪大战一场，虽身受数处轻伤，终究将其击退。被救商人千恩万谢，此事很快在附近传开，声望大涨，力量也在实战中得到锤炼。" }
+        "effects": { "attributes": { "reputation": 3, "strength": 2 }, "hp": -10, "narrative": "你与三名劫匪大战一场，虽身受数处轻伤，终究将其击退。被救商人千恩万谢，此事很快在附近传开，声望大涨，力量也在实战中得到锤炼。" }
       },
       {
         "id": "intimidate",
@@ -1347,7 +1347,7 @@
       {
         "id": "accept_battle",
         "text": "慨然接受，决一死战",
-        "effects": { "combat": "tianmo", "narrative": "" }
+        "effects": { "combat": "tianmo", "narrative": "你深吸一口气，聚全身真气于剑刃之上，迎向天魔。" }
       }
     ]
   }

@@ -72,7 +72,7 @@
               },
               "effects": {
                 "attributes": {
-                  "innerForce": 2,
+                  "innerForce": 3,
                   "comprehension": 1,
                   "strength": 1
                 },
@@ -115,7 +115,7 @@
                 "minAttributes": { "agility": 15 }
               },
               "effects": {
-                "attributes": { "agility": 2 },
+                "attributes": { "agility": 3, "luck": 1 },
                 "narrative": "你压下心跳，借着夜色和对地形的熟悉，三绕两绕甩脱了追杀。黑衣人的声音在夜风中飘来：「跑得了一时……」你深吸一口气——你知道，这不是终点，只是开始。"
               }
             }
@@ -390,7 +390,7 @@
               "text": "抱拳回礼，欣然接受",
               "effects": {
                 "attributes": {
-                  "reputation": 3,
+                  "reputation": 4,
                   "innerForce": 1
                 },
                 "narrative": "众前辈抚掌大笑。消息传出，江湖上下无不敬服。你不再只是一个剑客——你是被武林公认的侠士。"
@@ -401,9 +401,9 @@
               "text": "谦虚推辞一番后接受",
               "effects": {
                 "attributes": {
-                  "reputation": 2,
-                  "comprehension": 1,
-                  "innerForce": 1
+                  "comprehension": 2,
+                  "innerForce": 1,
+                  "luck": 1
                 },
                 "narrative": "你的谦逊反而让前辈们更加赞赏。「有实力而不骄傲，难得。」这份认可，来得恰如其分。"
               }
@@ -527,6 +527,7 @@
                   "innerForce": 2,
                   "reputation": 3
                 },
+                "npcAffinity": { "wang_tie": 20 },
                 "narrative": "你起身离去，心中无比平静。王铁的刀法、他的为人、他最后的话，都化为了你骨血中不可磨灭的一部分。"
               }
             }
@@ -641,7 +642,7 @@
               },
               "effects": {
                 "attributes": {
-                  "comprehension": 2
+                  "comprehension": 3
                 },
                 "narrative": "老人听完，眼神微微一变：「你能在那里感受到剑意？有意思。」他顿了顿：「不过光有感悟不够，剑道终归要在战斗中证明。去吧，用你的剑击败一个真正的对手，再回来。」"
               }
@@ -899,6 +900,7 @@
               "text": "折一枝梅花，替李云舒保管",
               "effects": {
                 "attributes": { "reputation": 3, "luck": 2, "comprehension": 1 },
+                "npcAffinity": { "li_yunshu": 20 },
                 "narrative": "你把梅枝小心地用布包好，收进怀里。等她回来的时候，你会把这枝花和这个故事一起交给她。那不只是一枝花——是一个母亲留给女儿的、穿越了多少年岁月的温柔。"
               }
             }
@@ -994,6 +996,7 @@
               "text": "恭喜她，替她在门口守了一整天",
               "effects": {
                 "attributes": { "reputation": 2, "constitution": 2, "luck": 1 },
+                "npcAffinity": { "su_qing": 20 },
                 "narrative": "日落时分，最后一个病人离开了。苏青端来两碗粥，一碗给你一碗给自己，两人就坐在门槛上吃。粥不太热，但你觉得那是你吃过的最好的一顿饭。苏老先生在里屋笑着打了个盹。院子里，「济世堂」的匾额在夕阳下泛着温暖的金光。"
               }
             }
@@ -1088,6 +1091,7 @@
               "text": "「我们一起去。不管结果如何。」",
               "effects": {
                 "attributes": { "strength": 2, "innerForce": 2, "reputation": 2 },
+                "npcAffinity": { "ling_xue": 20 },
                 "flags": { "lx_afterstory_done": true },
                 "narrative": "你们在城外的旷野上遇到了白渊——一个沉默的中年男人，手里提着一柄旧剑。他看见凌雪，什么都没说，只是缓缓拔剑。凌雪也拔了剑。两人对视了很久——最后白渊先收了剑。「走吧，」他说，声音很疲惫，「师父要是知道你过得好，大概也不会真的怪你。」他转身，走进了暮色里。凌雪站在原地，眼泪终于落了下来——无声的，像融化的雪。"
               }
@@ -1183,6 +1187,7 @@
               "text": "不打扰他们，悄悄离开",
               "effects": {
                 "attributes": { "innerForce": 3, "comprehension": 2, "reputation": 2 },
+                "npcAffinity": { "mysterious_elder": 20 },
                 "narrative": "你走出院子的时候，回头看了一眼——月光下，沈玄清和沈微尘并肩坐在石凳上，谁也没有说话。二十年前的离别，在这一刻，终于有了一个温柔的句号。"
               }
             }
@@ -1268,6 +1273,7 @@
               "text": "作为见证人，在碑前鞠躬",
               "effects": {
                 "attributes": { "strength": 2, "agility": 2, "reputation": 3, "comprehension": 1 },
+                "npcAffinity": { "yan_chixing": 20 },
                 "narrative": "你向那块碑深深鞠了一躬。燕赤行站在你旁边，第一次没有回避你的目光。他的嘴角动了一下——不是笑，但比笑更真。\n\n下山的时候，他走在前面，步伐比来时轻了很多。「以后，」他忽然开口，「如果你路过这里，替我看一眼那块碑。」你答应了。他点了点头，不再说话。但你知道，从这一刻起，他真正地——自由了。"
               }
             }
