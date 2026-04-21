@@ -345,7 +345,7 @@ defCap = min(0.75, powerRatio × 0.75 + 0.10)
 - **技术栈**：纯 HTML + CSS + JS，无框架，GitHub Pages 直接部署
 - **数据层**：JSON 文件（jobs / npcs / events / enemies / bonds / chains）
 - **存档**：localStorage 自动存档 + Base64 导出/导入
-- **测试**：Jest 302 测试（角色/战斗/引擎/数据/HTML完整性/API表面），Husky pre-commit 钩子
+- **测试**：Jest 311 测试（角色/战斗/引擎/数据/HTML完整性/API表面），Husky pre-commit 钩子
 
 ```
 index.html          主页面（出生月份选择 + 游戏界面）

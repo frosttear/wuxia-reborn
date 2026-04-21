@@ -229,5 +229,128 @@ describe('Engine.migrateChar', () => {
         Engine.migrateChar(char);
         expect(char.chainProgress.tianmo_harbinger).toBe(1);
     });
+});
 
+// ── allBondsComplete ───────────────────────────────────────────────────────
+
+describe('Engine.allBondsComplete', () => {
+    const NPC_IDS = ['wang_tie', 'li_yunshu', 'mysterious_elder', 'yan_chixing', 'ling_xue', 'su_qing'];
+
+    function setupBonds(bondLevels) {
+        const char = makeChar({ bondLevels });
+        Engine.state.char = char;
+        // bonds: each NPC has 5 chapters
+        Engine.state.bonds = Object.fromEntries(NPC_IDS.map(id => [id, [1, 2, 3, 4, 5]]));
+    }
+
+    test('returns true when all NPCs are at max bond level', () => {
+        const levels = Object.fromEntries(NPC_IDS.map(id => [id, 5]));
+        setupBonds(levels);
+        expect(Engine.allBondsComplete(Engine.state.char)).toBe(true);
+    });
+
+    test('returns false when one NPC is below max', () => {
+        const levels = Object.fromEntries(NPC_IDS.map(id => [id, 5]));
+        levels['su_qing'] = 4;
+        setupBonds(levels);
+        expect(Engine.allBondsComplete(Engine.state.char)).toBe(false);
+    });
+
+    test('returns false when no bonds have been formed', () => {
+        setupBonds({});
+        expect(Engine.allBondsComplete(Engine.state.char)).toBe(false);
+    });
+});
+
+// ── selectEvents rebirth boost ─────────────────────────────────────────────
+
+describe('selectEvents rebirth weight boost', () => {
+    const meetEvent = {
+        id: 'meet_wang_tie', type: '交友', weight: 8,
+        conditions: { flags: { met_wang_tie: false } }
+    };
+    const regularEvent = {
+        id: 'train_basic', type: '磨练', weight: 8,
+        conditions: {}
+    };
+
+    function countPicks(rebirthCount, runs = 2000) {
+        const char = makeChar({ rebirthCount });
+        char.flags.met_wang_tie = false;
+        Engine.state.char = char;
+        Engine.state.events = [meetEvent, regularEvent];
+        Engine.state.seenEvents = new Set();
+        let meetPicks = 0;
+        for (let i = 0; i < runs; i++) {
+            Engine.state.seenEvents = new Set();
+            const picked = Engine.selectEvents();
+            if (picked.length && picked[0].id === 'meet_wang_tie') meetPicks++;
+        }
+        return meetPicks / runs;
+    }
+
+    test('cycle 1 picks unmet-NPC event more often than cycle 0', () => {
+        const rate0 = countPicks(0);
+        const rate1 = countPicks(1);
+        // cycle 1: weight 12 vs 8 → ~60%. cycle 0: weight 8 vs 8 → ~50%.
+        expect(rate1).toBeGreaterThan(rate0);
+    });
+
+    test('cycle 3 picks unmet-NPC event more often than cycle 1', () => {
+        const rate1 = countPicks(1);
+        const rate3 = countPicks(3);
+        expect(rate3).toBeGreaterThan(rate1);
+    });
+
+    test('already-met NPC event gets no rebirth boost', () => {
+        const char = makeChar({ rebirthCount: 3 });
+        char.flags.met_wang_tie = true; // already met
+        Engine.state.char = char;
+        Engine.state.events = [meetEvent, regularEvent];
+        Engine.state.seenEvents = new Set();
+        // Event should be filtered out by checkConditions (flags: {met_wang_tie: false} fails)
+        let found = false;
+        for (let i = 0; i < 200; i++) {
+            Engine.state.seenEvents = new Set();
+            const picked = Engine.selectEvents();
+            if (picked.length && picked[0].id === 'meet_wang_tie') { found = true; break; }
+        }
+        expect(found).toBe(false);
+    });
+});
+
+// ── wuxiang_sword chain unlock (no hidden_boss_beaten required) ────────────
+
+describe('wuxiang_sword chain unlock', () => {
+    const NPC_IDS = ['wang_tie', 'li_yunshu', 'mysterious_elder', 'yan_chixing', 'ling_xue', 'su_qing'];
+
+    beforeEach(() => {
+        resetEngine();
+        Engine.state.bonds = Object.fromEntries(NPC_IDS.map(id => [id, [1, 2, 3, 4, 5]]));
+    });
+
+    test('step 0 unlocks with all 6 bonds at level 5 (no hidden_boss_beaten needed)', () => {
+        const levels = Object.fromEntries(NPC_IDS.map(id => [id, 5]));
+        Engine.state.char.bondLevels = levels;
+        const steps = Engine.getAvailableChainSteps();
+        const found = steps.find(s => s.chain.id === 'wuxiang_sword');
+        expect(found).toBeDefined();
+        expect(found.stepIdx).toBe(0);
+    });
+
+    test('step 0 does not unlock without all bonds at level 5', () => {
+        const levels = Object.fromEntries(NPC_IDS.map(id => [id, 5]));
+        levels['su_qing'] = 4; // one short
+        Engine.state.char.bondLevels = levels;
+        const steps = Engine.getAvailableChainSteps();
+        expect(steps.find(s => s.chain.id === 'wuxiang_sword')).toBeUndefined();
+    });
+
+    test('step 0 unlocks even without hidden_boss_beaten flag', () => {
+        const levels = Object.fromEntries(NPC_IDS.map(id => [id, 5]));
+        Engine.state.char.bondLevels = levels;
+        Engine.state.char.flags.hidden_boss_beaten = false;
+        const steps = Engine.getAvailableChainSteps();
+        expect(steps.find(s => s.chain.id === 'wuxiang_sword')).toBeDefined();
+    });
 });

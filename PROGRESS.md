@@ -544,7 +544,9 @@
 ### v0.12.1（2026-04-21）
 - **剑魂无条件触发**：打败天魔后直接面对剑魂，不再需要 jade_tablet_awakened / allBondsComplete 门槛
 - 输给剑魂时若羁绊未满，显示提示引导玩家去结交六位NPC
+- **多周目NPC结识优先级**：含 `met_X: false` 条件的初遇事件权重按 rebirthCount×4 提升（二周目+4，三周目+8……）
 - README 结局系统、属性表、战斗公式全面更新
+- 新增 engine.test.js 覆盖：allBondsComplete / 多周目权重提升 / wuxiang_sword 解锁（311项测试）
 
 ### v0.12.0（2026-04-21）
 - **无相剑意任务链重设计**：解锁条件改为全6位NPC羁绊满级 + hidden_boss_beaten；三步剧情（剑意余温/六人如镜/无相），融入沈玄清与古剑修背景
