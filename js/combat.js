@@ -69,6 +69,7 @@ const Combat = {
             log:          [],
             postNarrative: ''
         };
+        if ((char.legacyTalents || []).includes('wind_step')) cs.fleeChance += 0.20;
         // Opening scene description
         if (enemy.description) cs.log.push({ turn: 0, text: enemy.description });
         // Pre-compute turn-1 intent so it shows before the player's first action

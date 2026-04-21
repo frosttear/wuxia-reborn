@@ -400,6 +400,31 @@ describe('bondRetryStep memory', () => {
     });
 });
 
+// ── iron_constitution talent ───────────────────────────────────────────────
+
+describe('iron_constitution talent', () => {
+    test('adds 15% to max HP', () => {
+        const charWith    = Character.create('Test', {}, ['iron_constitution']);
+        const charWithout = Character.create('Test', {}, []);
+        const hpWith    = Character.getHPMax(charWith, null);
+        const hpWithout = Character.getHPMax(charWithout, null);
+        expect(hpWith).toBeGreaterThan(hpWithout);
+        expect(Math.abs(hpWith / hpWithout - 1.15)).toBeLessThan(0.02);
+    });
+});
+
+// ── wind_step talent ───────────────────────────────────────────────────────
+
+describe('wind_step talent', () => {
+    test('adds 0.20 to flee chance', () => {
+        const char  = Character.create('Test', {}, ['wind_step']);
+        char.ageMonths = 180;
+        const enemy = { id: 'bandit', name: '山贼', hp: 30, attack: 5, defense: 2, comprehension: 5 };
+        const cs = Combat.initState(char, enemy, null);
+        expect(cs.fleeChance).toBeCloseTo(0.45, 2);
+    });
+});
+
 // ── _checkAndAutoPromote ───────────────────────────────────────────────────
 
 describe('_checkAndAutoPromote', () => {

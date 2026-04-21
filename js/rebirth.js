@@ -154,7 +154,25 @@ const TALENTS = [
         desc: '声望获取+25%，初始声望+5',
         condition: (char) => char.attributes.reputation >= 30,
         upgrades: 'inherited_name'
-    }
+    },
+    {
+        id: 'iron_constitution',
+        name: '金刚体魄',
+        desc: '前世体质达巅峰，最大气血额外+15%',
+        condition: (char) => char.attributes.constitution >= 20,
+    },
+    {
+        id: 'wind_step',
+        name: '疾风步法',
+        desc: '前世身法精熟，战斗逃跑成功率+20%',
+        condition: (char) => char.attributes.agility >= 22,
+    },
+    {
+        id: 'serendipity',
+        name: '天赐奇缘',
+        desc: '前世运气超群，江湖奇遇类事件出现概率+25%',
+        condition: (char) => char.attributes.luck >= 18,
+    },
 ];
 
 const INHERIT_BASE_RATE = 0.10; // 10% base attribute inheritance

@@ -73,7 +73,11 @@ const Character = {
             ? Math.floor(subtotal * 0.15)
             : char.legacyTalents && char.legacyTalents.includes('tough_body')
             ? Math.floor(subtotal * 0.10) : 0;
-        return subtotal + longevityBonus;
+        let total = subtotal + longevityBonus;
+        if ((char.legacyTalents || []).includes('iron_constitution')) {
+            total = Math.round(total * 1.15);
+        }
+        return total;
     },
 
     getAttackPower(char, job) {

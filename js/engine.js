@@ -186,6 +186,9 @@ const Engine = {
             if (!this.checkConditions(event.conditions || {})) continue;
 
             let weight = event.weight;
+            if (event.type === '奇遇' && (char.legacyTalents || []).includes('serendipity')) {
+                weight = Math.round(weight * 1.25);
+            }
             if (['奇遇', '机缘'].includes(event.type))  weight += compBonus;
             if (['奇遇', '机缘', '交友'].includes(event.type)) weight += Math.floor(luckBonus / 2);
             if (event.type === '遭遇战') weight = Math.max(1, weight - Math.floor(luckBonus / 2));
