@@ -7,7 +7,7 @@ const OUTPUT_DIR = path.join(__dirname, "..", "assets", "characters");
 const API_URL = "https://aihorde.net/api/v2";
 const API_KEY = process.env.AIHORDE_API_KEY || "0000000000";
 const POLL_INTERVAL = 5000;
-const NEGATIVE = "nsfw, nudity, modern clothing, western features, heavy makeup, gore, deformed hands, extra fingers, blurry face, low quality, watermark, text";
+const NEGATIVE = "nsfw, nudity, modern clothing, western features, heavy makeup, gore, deformed hands, extra fingers, blurry face, low quality, watermark, text, holding blade, gripping blade, touching sharp edge, hand on blade, curved sword, bent blade, katana, dao, sabre";
 
 const CHARACTERS = [
   {
@@ -18,7 +18,7 @@ const CHARACTERS = [
   {
     id: "li-yunshu",
     name: "Li Yunshu (李云舒)",
-    prompt: "A young Chinese swordswoman in ancient wuxia setting, 17-18 years old, bright clear eyes full of determination, warm confident smile, long black hair partially tied up in a martial arts style with a ribbon, wearing a light blue and white hanfu-style martial arts outfit with a sash, a sheathed jian (straight sword) at her waist, standing in a plum blossom garden with petals drifting in the wind, athletic and graceful build, Chinese ink painting aesthetic with soft watercolor tones, portrait composition from waist up, anime-inspired semi-realistic style, detailed face, high quality"
+    prompt: "A dazzling heroic young Chinese female swordmaster in ancient wuxia setting, 17-18 years old, strikingly beautiful with bright sharp eyes full of spirit and fire, elegant refined features with a fearless confident expression, glossy black hair elaborately styled in a high crown knot secured with a jade hairpin and flowing ribbons, wearing a richly embroidered crimson-peach martial arts robe with layered cloud-pattern trim, tailored waist and elegant sleeves suggesting both refinement and combat readiness, both hands firmly gripping the hilt of a jian — long straight double-edged blade with zero curve gleaming brilliantly in sunlight extending across the composition, held in a poised battle-ready guard stance, the sword is a central prominent element clearly visible from crossguard to sharp tip, an aura of effortless nobility and fierce swordsmanship combined, Chinese ink painting aesthetic with rich crimson peach and gold tones, waist-up portrait, anime-inspired semi-realistic style, detailed refined face, high quality"
   },
   {
     id: "wang-tie",
@@ -33,12 +33,12 @@ const CHARACTERS = [
   {
     id: "yan-chixing",
     name: "Yan Chixing (燕赤行)",
-    prompt: "A cold brooding Chinese swordsman in ancient wuxia setting, mid-20s, sharp angular face with a prominent deep scar on his left cheek, narrow intense eyes with a guarded piercing gaze, short messy black hair, lean muscular build, wearing a dark red and black martial arts outfit with a high collar and worn leather bracers, a straight sword (jian) hanging at his waist with hand resting on the hilt, standing alone in an autumn forest with red fallen leaves, overcast moody lighting, Chinese ink painting aesthetic with dark crimson and charcoal tones, portrait composition from waist up, anime-inspired semi-realistic style, detailed face, high quality"
+    prompt: "A cold brooding Chinese swordsman in ancient wuxia setting, mid-20s, sharp angular face with a prominent deep scar on his left cheek, narrow intense eyes with a guarded piercing gaze, short messy black hair, lean muscular build, wearing a dark red and black martial arts outfit with a high collar and worn leather bracers, a sheathed straight sword (jian) in its scabbard at his left waist, right hand wrapped around the hilt grip firmly with thumb resting on the sword guard (tsuba), never touching the blade, standing alone in an autumn forest with red fallen leaves, overcast moody lighting, Chinese ink painting aesthetic with dark crimson and charcoal tones, portrait composition from waist up, anime-inspired semi-realistic style, detailed face, high quality"
   },
   {
     id: "ling-xue",
     name: "Ling Xue (凌雪)",
-    prompt: "A solitary Chinese swordswoman in ancient wuxia setting, early 20s, beautiful but cold and aloof expression, sharp calculating eyes that hide deep emotions, long straight black hair flowing freely with a simple silver hairpin, pale complexion, slender and agile build, wearing an elegant pure white hanfu-style martial arts outfit with subtle silver embroidery, a sheathed jian (straight sword) held in one hand, standing in a snowy bamboo forest with snowflakes gently falling, cool winter light, Chinese ink painting aesthetic with white silver and pale blue tones, portrait composition from waist up, anime-inspired semi-realistic style, detailed face, high quality"
+    prompt: "A solitary Chinese swordswoman in ancient wuxia setting, early 20s, beautiful but cold and aloof expression, sharp calculating eyes that hide deep emotions, long straight black hair flowing freely with a simple silver hairpin, pale complexion, slender and agile build, wearing an elegant pure white hanfu-style martial arts outfit with subtle silver embroidery, holding a jian Chinese straight double-edged sword — the blade is perfectly straight with no curve whatsoever, completely flat and linear from guard to tip, right hand gripping the hilt firmly with thumb on the crossguard, standing in a snowy bamboo forest with snowflakes gently falling, cool winter light, Chinese ink painting aesthetic with white silver and pale blue tones, portrait composition from waist up, anime-inspired semi-realistic style, detailed face, high quality"
   },
   {
     id: "su-qing",

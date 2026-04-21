@@ -726,6 +726,7 @@ const Engine = {
         const { char } = this.state;
         const reward = chain.completionReward || {};
         UI.addLog(`✦ 事件系列【${chain.name}】全部完成！`, 'unlock');
+        if (chain.id === 'wuxiang_sword') UI.addIllustration('wuxiang-unlock');
         if (reward.narrative) UI.addLog(reward.narrative, 'result');
         if (reward.attributes) {
             Character.applyAttributeChanges(char, reward.attributes);
@@ -1253,6 +1254,8 @@ const Engine = {
         if (!char.bondEventsDone)  char.bondEventsDone = {};
         if (!char.inheritedBonds)  char.inheritedBonds = {};
         if (!char.learnedSkills)   char.learnedSkills = [];
+        if (!char.legacyTalents)   char.legacyTalents = [];
+        if (!char.passives)        char.passives = [];
         if (!char.birthMonth)      char.birthMonth = 1;
         if (char.kills === undefined) char.kills = 0;
         if (char.injured === undefined) char.injured = false;
@@ -1276,21 +1279,27 @@ const Engine = {
     },
 
     executeRebirth(chosenTalentIds) {
-        const { char, npcs } = this.state;
-        const newChar = Rebirth.execute(char, chosenTalentIds, npcs);
-        newChar.birthMonth = char.birthMonth; // same fate, same birthday
-        Character.applyBirthMonthBonus(newChar);
-        const job = this.getJob(newChar.job);
-        newChar.hp = Character.getHPMax(newChar, job);
-        this.migrateChar(newChar);
-        this.state.char = newChar;
-        this.state.gamePhase = 'idle';
-        this.state.seenEvents = new Set();
-        UI.clearLog();
-        UI.renderAll(this.state);
-        const mName = this.BIRTH_MONTH_NAMES[newChar.birthMonth - 1];
-        UI.addLog(`✨ ${newChar.rebirthCount + 1}周目。【${newChar.name}】再度降生。和上一世一样，生于${mName}。天魔之约，依然在候。`, 'system');
-        this.saveGame();
+        try {
+            const { char, npcs } = this.state;
+            const newChar = Rebirth.execute(char, chosenTalentIds, npcs);
+            newChar.birthMonth = char.birthMonth;
+            Character.applyBirthMonthBonus(newChar);
+            const job = this.getJob(newChar.job);
+            newChar.hp = Character.getHPMax(newChar, job);
+            this.migrateChar(newChar);
+            this.state.char = newChar;
+            this.state.gamePhase = 'idle';
+            this.state.seenEvents = new Set();
+            UI.clearLog();
+            UI.addIllustration('rebirth');
+            UI.renderAll(this.state);
+            const mName = this.BIRTH_MONTH_NAMES[newChar.birthMonth - 1];
+            UI.addLog(`✨ ${newChar.rebirthCount + 1}周目。【${newChar.name}】再度降生。和上一世一样，生于${mName}。天魔之约，依然在候。`, 'system');
+            this.saveGame();
+        } catch(err) {
+            console.error('executeRebirth failed:', err);
+            UI.addLog('【系统错误】轮回失败，请刷新页面重试。', 'system');
+        }
     },
 
     toggleAuto() {},

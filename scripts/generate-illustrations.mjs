@@ -38,7 +38,7 @@ const ILLUSTRATIONS = [
   {
     id: "li-yunshu-ending",
     name: "李云舒 — 一剑长歌",
-    prompt: "Poetic wuxia scene, a young Chinese male swordsman practicing a graceful sword form alone in a plum blossom garden at dusk, pink petals drifting through the air, and behind him a faint translucent impression of a young swordswoman (李云舒) in blue and white watching with a warm smile, she is almost ghostlike yet full of presence as if the memory of her is woven into the sword movement itself, the two figures connected by invisible threads of shared memory, warm amber evening light, wide cinematic composition, Chinese ink painting aesthetic with soft pink and amber tones, lyrical dreamlike atmosphere, anime-inspired semi-realistic art, high quality detailed scene"
+    prompt: "Poetic wuxia scene, a young Chinese male swordsman practicing a graceful sword form alone in a plum blossom garden at dusk, pink petals drifting through the air, and behind him a faint translucent impression of a radiant young swordswoman (李云舒) in a bright goose-yellow and peach-toned hanfu watching with a beaming dazzling smile full of warmth and life, her high-looped hair with golden ribbons gently floating in the memory-breeze, she is almost ghostlike yet luminous and vivid as if the joy of her is woven into the sword movement itself, the two figures connected by golden threads of light and shared memory, warm amber evening light, wide cinematic composition, Chinese ink painting aesthetic with warm yellow and amber and pink tones, lyrical radiant dreamlike atmosphere, anime-inspired semi-realistic art, high quality detailed scene"
   },
   {
     id: "mysterious-elder-ending",
@@ -54,6 +54,16 @@ const ILLUSTRATIONS = [
     id: "su-qing-ending",
     name: "苏青 — 针灸传心",
     prompt: "Tender wuxia scene, in a simple countryside medicine hall, a gentle young woman healer (苏青) in muted green is standing with her back turned and shoulders slightly trembling in suppressed emotion, her father an elderly doctor bowing in gratitude to a young swordsman in the doorway, the swordsman witnessing this quiet family reunion, dried herbs hanging from the rafters, warm candlelight inside, late afternoon sun coming through the window, a sense of things finally found after long searching, wide cinematic composition, Chinese ink painting aesthetic with warm green and amber earth tones, gentle emotional atmosphere, anime-inspired semi-realistic art, high quality detailed scene"
+  },
+  {
+    id: "rebirth",
+    name: "轮回 — 玉佩引渡",
+    prompt: "Spectacular wuxia worldline-reset scene, a massive violent spiral vortex dominates the entire frame — concentric rings of distorted space and fractured time spinning inward like a cosmic whirlpool, the fabric of reality visibly tearing and bending in spacetime shock waves, inside the vortex multiple translucent ghost-images of the same young Chinese swordsman at different ages and moments overlap and dissolve, at the absolute center of the vortex a twin-fish jade pendant (双鱼玉佩, two carved fish in pale green nephrite) blazing with searing golden-white light, its cracks erupting blinding rays outward, the pendant is the eye of the storm and clearly the brightest element in the composition, shockwave rings and temporal distortion rippling outward from it like a stone dropped in a mirror surface, deep indigo and electric blue void with streaks of gold and white lightning crackling along the spiral arms, overwhelming sense of being pulled irresistibly into a new timeline, wide cinematic landscape composition, Chinese ink painting aesthetic with electric indigo and blazing gold tones, dynamic kinetic atmosphere, anime-inspired semi-realistic art, high quality detailed scene"
+  },
+  {
+    id: "wuxiang-unlock",
+    name: "无相剑意 — 化境",
+    prompt: "Mystical wuxia scene depicting the moment a swordsman comprehends the formless sword intent (无相剑意), a young Chinese male swordsman in meditation pose with eyes closed, six ghostly luminous silhouettes of his companions (two men, four women) standing in a circle around him each emitting soft light, the light from each figure flows inward and merges into translucent sword shapes that dissolve around the swordsman, the air shimmering with wordless understanding, an ancient stone stele in the background with faded carvings barely visible, profound stillness and realization, no physical sword yet every particle of air a blade, wide cinematic composition, Chinese ink painting aesthetic with silver white and pale gold tones, ethereal transcendent atmosphere, anime-inspired semi-realistic art, high quality detailed scene"
   },
   {
     id: "ling-xue-ending",

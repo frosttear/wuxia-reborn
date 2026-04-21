@@ -214,7 +214,7 @@ const Rebirth = {
 
         // Handle talent upgrades: if a new talent upgrades an old one, replace it
         for (const id of chosenTalentIds) {
-            const talent = this.TALENTS.find(t => t.id === id);
+            const talent = TALENTS.find(t => t.id === id);
             if (talent && talent.upgrades && newTalents.includes(talent.upgrades)) {
                 newTalents = newTalents.filter(t => t !== talent.upgrades);
             }
