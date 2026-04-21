@@ -1084,6 +1084,241 @@
     ]
   },
   {
+    "id": "ancient_grotto",
+    "type": "奇遇",
+    "weight": 6,
+    "title": "古洞秘境",
+    "text": "一次偶然迷路，你发现了隐藏在山壁之后的古老洞穴。洞壁上刻满了密密麻麻的剑法图解，散发着幽幽蓝光。不知是哪位前辈留下的心血，静静等待着有缘人。",
+    "conditions": {},
+    "choices": [
+      {
+        "id": "study_diagrams",
+        "text": "静心钻研剑法图解，领悟其中真意",
+        "effects": { "attributes": { "comprehension": 2, "innerForce": 1 }, "narrative": "你在洞中枯坐三日，终于从那模糊的图解中悟出了一丝剑意的真谛，内力与悟性均有所提升。" }
+      },
+      {
+        "id": "copy_diagrams",
+        "text": "将图解誊抄下来，留待日后慢慢研究",
+        "effects": { "attributes": { "comprehension": 1 }, "narrative": "你将能看清的图解一一誊抄，虽一时难以完全参透，日后必有所获。悟性小有提升。" }
+      },
+      {
+        "id": "ignore",
+        "text": "此地阴气太重，不宜久留，速速离开",
+        "effects": { "attributes": { "luck": 1 }, "narrative": "你心生警惕，果断撤出洞穴。出口处，一块石头绊了你一跤，却让你发现了地下埋藏的一枚铜钱，倒是沾了点运气。" }
+      }
+    ]
+  },
+  {
+    "id": "rainy_road",
+    "type": "奇遇",
+    "weight": 10,
+    "title": "雨中赶路",
+    "text": "江湖路险，风雨无常。你在一场突如其来的暴雨中赶路，山路泥泞，衣衫尽湿。远处雷声滚滚，脚下溪流已漫上了路面。",
+    "conditions": {},
+    "choices": [
+      {
+        "id": "push_through",
+        "text": "顶风冒雨，强行赶路",
+        "effects": { "attributes": { "constitution": 2 }, "hp": -8, "narrative": "你咬牙冲进风雨，体力损耗极大，却也在这般磨砺中筋骨更加强健。" }
+      },
+      {
+        "id": "find_shelter",
+        "text": "寻找避雨之处，等雨停再走",
+        "effects": { "attributes": { "luck": 1 }, "narrative": "你找到一处破庙暂避风雨，与几位同行旅人相谈甚欢，还从他们口中听说了一些江湖消息，运气不坏。" }
+      },
+      {
+        "id": "train_in_rain",
+        "text": "借着雨势练功，感悟水的刚柔之道",
+        "effects": { "attributes": { "innerForce": 1, "constitution": 1 }, "hp": -5, "narrative": "雨中练功，天地浑然一体。你在淋漓大雨中感悟到了以柔克刚的一丝真意，内力与体质均有小幅提升。" }
+      }
+    ]
+  },
+  {
+    "id": "old_swordsman",
+    "type": "奇遇",
+    "weight": 7,
+    "title": "路遇剑客",
+    "text": "山道之上，你遇见一位须发皆白的老剑客。他盘坐在路边石上，手持一柄锈迹斑斑的旧剑，目光却深邃如渊，仿佛看穿了你的心底。他抬眼看你，缓缓开口：「年轻人，可愿与老夫论剑一番？」",
+    "conditions": {},
+    "choices": [
+      {
+        "id": "spar",
+        "text": "恭敬行礼，请求赐教",
+        "effects": { "attributes": { "comprehension": 2, "reputation": 2 }, "narrative": "老剑客点头微笑，与你切磋半日。他的剑法看似平淡无奇，却蕴含无尽变化。你虽远不及他，却从中领悟到了许多，悟性与声望均大有提升。" }
+      },
+      {
+        "id": "ask_advice",
+        "text": "虚心请教江湖经验与处世之道",
+        "effects": { "attributes": { "comprehension": 1, "luck": 1 }, "narrative": "老剑客抚须而笑，娓娓道来数十年走江湖的见闻。其中有一句话令你若有所悟——「剑走偏锋，不如以正合，以奇胜。」" }
+      },
+      {
+        "id": "decline_politely",
+        "text": "婉言谢绝，继续赶路",
+        "effects": { "attributes": { "agility": 1 }, "narrative": "你礼貌推辞后快步离去，倒是这一路越走越快，步伐比往日更加轻盈。" }
+      }
+    ]
+  },
+  {
+    "id": "night_meditation",
+    "type": "磨练",
+    "weight": 9,
+    "title": "夜间打坐",
+    "text": "夜深人静，万籁俱寂。月光如练，洒落庭院。你盘膝而坐，调息凝神，试图在这片刻宁静中沟通天地灵气，淬炼内功。",
+    "conditions": {},
+    "choices": [
+      {
+        "id": "deep_meditation",
+        "text": "沉入深度冥想，感受丹田气息流转",
+        "effects": { "attributes": { "innerForce": 2 }, "narrative": "子时一过，你忽觉体内真气如江河奔涌，周天运转顺畅无比。一夜打坐，内力大进。" }
+      },
+      {
+        "id": "mental_cultivation",
+        "text": "以心证道，回想近日见闻，参悟武理",
+        "effects": { "attributes": { "comprehension": 1, "innerForce": 1 }, "narrative": "你将近日所见所闻在心中细细回味，从平凡小事中悟出了武道的一丝真谛，悟性与内力均有所长进。" }
+      }
+    ]
+  },
+  {
+    "id": "cliff_training",
+    "type": "磨练",
+    "weight": 8,
+    "title": "悬崖磨剑",
+    "text": "你来到一处千丈悬崖之巅，俯瞰深谷，劲风呼啸。此处地势险要，一步不慎便是万丈深渊。正因如此，才是磨砺意志与剑法的绝佳之地。",
+    "conditions": {},
+    "choices": [
+      {
+        "id": "strength_training",
+        "text": "手握巨石，对着崖壁反复出拳，以崖风为阻力练力",
+        "effects": { "attributes": { "strength": 2 }, "hp": -5, "narrative": "崖风凛冽，阻力极大，你每一拳都要耗费数倍力气。一番苦练下来，力量明显增强，却也肌肉酸痛难当。" }
+      },
+      {
+        "id": "agility_training",
+        "text": "在崖边窄道来回飞奔，以险境磨练轻功步法",
+        "effects": { "attributes": { "agility": 2 }, "hp": -5, "narrative": "数次险些踏空，每一步都是在鬼门关前打滚。终于，你的步伐渐渐与崖风的节奏融为一体，身法大有进益。" }
+      },
+      {
+        "id": "meditation_at_cliff",
+        "text": "面对深渊枯坐，体悟生死之道，凝练精神",
+        "effects": { "attributes": { "comprehension": 1, "innerForce": 1 }, "narrative": "望着脚下万丈深渊，你的杂念反而慢慢消散，心如止水。这份对生死的彻悟，让你的内力与悟性同步增长。" }
+      }
+    ]
+  },
+  {
+    "id": "temple_offering",
+    "type": "奇遇",
+    "weight": 6,
+    "title": "古庙祈福",
+    "text": "行至一处荒僻古庙，香火虽稀，却自有一股清净气息。庙中老僧见你到来，合十行礼：「施主面相有异，可是久历劫数之人？」你心中一动，不知该如何回答。",
+    "conditions": {},
+    "choices": [
+      {
+        "id": "offer_incense",
+        "text": "虔诚上香祈福，求得一分庇佑",
+        "effects": { "attributes": { "luck": 2 }, "narrative": "你恭恭敬敬上了三炷香，老僧为你诵经片刻后微微一笑：「施主今日善缘，他日必有回响。」运气冥冥中似有提升。" }
+      },
+      {
+        "id": "talk_to_monk",
+        "text": "与老僧攀谈，请其为你解惑",
+        "effects": { "attributes": { "comprehension": 1, "luck": 1 }, "narrative": "老僧谈吐不凡，数语之间便点破了你修炼中的一处迷障。临别时他送你一粒素色药丸，说是可调和气脉，悟性与运气均有小幅提升。" }
+      },
+      {
+        "id": "donate",
+        "text": "慷慨解囊，为庙宇捐出身上的盘缠",
+        "effects": { "attributes": { "reputation": 3 }, "narrative": "老僧感激不尽，将你的善举告知了数位路过的香客。不出月余，你乐善好施的名声便在附近传扬开来，声望大涨。" }
+      }
+    ]
+  },
+  {
+    "id": "winter_seclusion",
+    "type": "磨练",
+    "weight": 7,
+    "title": "寒冬闭关",
+    "text": "寒冬腊月，大雪封山。你索性闭关于一处僻静小屋，断绝外缘，专心修炼内功。窗外雪花飘落，屋内真气流转，时光在无声中流逝。",
+    "conditions": {},
+    "choices": [
+      {
+        "id": "inner_force_focus",
+        "text": "专注运转内功心法，打通奇经八脉",
+        "effects": { "attributes": { "innerForce": 3 }, "hp": -5, "narrative": "整整七七四十九天，你以寒气淬炼真气，以冰雪磨砺心境。闭关结束时，内力已非昔日可比。" }
+      },
+      {
+        "id": "balanced_cultivation",
+        "text": "内外兼修，轮流练习内功与体术",
+        "effects": { "attributes": { "innerForce": 2, "constitution": 1 }, "narrative": "以内功温养体魄，以体术催动内力，两者相辅相成。这个寒冬的苦修，让你内外兼备，大有收获。" }
+      }
+    ]
+  },
+  {
+    "id": "market_gamble",
+    "type": "奇遇",
+    "weight": 5,
+    "title": "市井赌局",
+    "text": "途经一处热闹集市，见一群人围着一张骰子桌喧嚣不已。庄家是个油滑中年汉子，正高声招呼：「诸位有胆的，来押一押！本庄家敢输，就怕您不敢赢！」",
+    "conditions": {},
+    "choices": [
+      {
+        "id": "gamble_big",
+        "text": "押下重注，赌他一把",
+        "effects": { "attributes": { "luck": 2 }, "hp": -5, "narrative": "你财运亨通，一把赢下不少，但输家不服，暗中捅了你一刀后溜走。带伤离场，荷包鼓了，身上却多了道伤。" }
+      },
+      {
+        "id": "observe",
+        "text": "在旁观察，寻找其中规律",
+        "effects": { "attributes": { "comprehension": 1, "luck": 1 }, "narrative": "你冷眼旁观，逐渐看出骰子的偏重。临走前押了小注，不声不响赢了几文钱。观察所得，远比金银更值钱。" }
+      },
+      {
+        "id": "walk_away",
+        "text": "此等赌局，不沾为妙，拂袖而去",
+        "effects": { "attributes": { "reputation": 1 }, "narrative": "你昂首离去，恰好被路过的几位侠客看见，纷纷称赞你定力过人，声誉略有提升。" }
+      }
+    ]
+  },
+  {
+    "id": "past_life_dream",
+    "type": "奇遇",
+    "weight": 4,
+    "title": "前世梦回",
+    "text": "入夜，你做了一个奇异的梦。梦中的你站在一片虚空之中，四周皆是自己前世的残影——有人笑，有人哭，有人死战不退，有人含笑而终。那些过去的自己，都在无言地凝视着你。",
+    "conditions": { "rebirthCount": 1 },
+    "choices": [
+      {
+        "id": "embrace_memories",
+        "text": "向前走去，直面每一段前世的记忆",
+        "effects": { "attributes": { "comprehension": 2, "innerForce": 1 }, "narrative": "你伸出手，触碰每一道残影。那些悲欢离合，那些生死际遇，不再是沉重的枷锁，而是化作了更深厚的底蕴。悟性与内力同时增长。" }
+      },
+      {
+        "id": "find_strongest_self",
+        "text": "在诸多残影中，寻找最强大的那个自己",
+        "effects": { "attributes": { "strength": 1, "agility": 1, "innerForce": 1 }, "narrative": "你找到了那个死战到最后一刻的自己，感受到那份不屈的意志通过梦境传递而来，力量、敏捷、内力均有微幅提升。" }
+      }
+    ]
+  },
+  {
+    "id": "rescue_stranger",
+    "type": "奇遇",
+    "weight": 8,
+    "title": "救人于难",
+    "text": "林间小路，你听见一声呼救。循声望去，一名年轻商人被三名劫匪团团围住，形势危急。劫匪们目露凶光，腰间佩刀，见你出现，其中一人冷笑道：「多管闲事的，一起留下！」",
+    "conditions": {},
+    "choices": [
+      {
+        "id": "fight_bandits",
+        "text": "拔剑而出，救下被围商人",
+        "effects": { "attributes": { "reputation": 3, "strength": 1 }, "hp": -12, "narrative": "你与三名劫匪大战一场，虽身受数处轻伤，终究将其击退。被救商人千恩万谢，此事很快在附近传开，声望大涨，力量也在实战中得到锤炼。" }
+      },
+      {
+        "id": "intimidate",
+        "text": "以气势震慑，逼退劫匪",
+        "effects": { "attributes": { "reputation": 2 }, "narrative": "你缓缓抽出半截剑，眼神冰冷地扫向劫匪。为首的头目仿佛感受到了你不同寻常的气场，慌忙带人撤走。商人对你感激涕零，声名因此传扬。" }
+      },
+      {
+        "id": "sneak_help",
+        "text": "暗中吸引劫匪注意，让商人趁机逃脱",
+        "effects": { "attributes": { "agility": 1, "luck": 1 }, "narrative": "你绕到另一侧投石引开劫匪，商人趁乱逃脱。你也悄然撤离，全程如履无人之境，身法更加灵动。" }
+      }
+    ]
+  },
+  {
     "id": "tianmo_appears",
     "type": "boss",
     "weight": 0,

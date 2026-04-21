@@ -251,6 +251,7 @@ const Engine = {
         }
 
         if (cond.minRebirth !== undefined && char.rebirthCount < cond.minRebirth) return false;
+        if (cond.rebirthCount !== undefined && char.rebirthCount < cond.rebirthCount) return false;
 
         // Bond level conditions: { npcId: minLevel }
         if (cond.bondLevels) {
