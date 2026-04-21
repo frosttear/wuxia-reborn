@@ -198,6 +198,14 @@ const Engine = {
             if (['奇遇', '机缘'].includes(event.type))  weight += innerBonus;
             if (event.type === '交友') weight += repBonus;
 
+            // Multi-rebirth: boost unmet-NPC events so players encounter them sooner
+            const rebirthCount = char.rebirthCount || 0;
+            if (rebirthCount > 0) {
+                const condFlags = (event.conditions || {}).flags || {};
+                const isUnmetNPC = Object.keys(condFlags).some(k => k.startsWith('met_') && condFlags[k] === false);
+                if (isUnmetNPC) weight += rebirthCount * 4;
+            }
+
             // Slightly reduce weight for recently seen events
             if (this.state.seenEvents.has(event.id)) weight = Math.max(1, Math.floor(weight * 0.3));
 
