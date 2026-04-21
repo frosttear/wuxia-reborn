@@ -227,7 +227,7 @@ const UI = {
             ).join('');
             const avatarFile = npc.id.replace(/_/g, '-');
             div.innerHTML = `
-                <img class="npc-avatar" src="assets/characters/${avatarFile}.png" alt="${npc.name}" onclick="UI.showAvatarLightbox(this.src,'${npc.id}')" onerror="this.style.display='none'">
+                <img class="npc-avatar" src="assets/characters/${avatarFile}.png" alt="${npc.name}" decoding="async" onclick="UI.showAvatarLightbox(this.src,'${npc.id}')" onerror="this.style.display='none'">
                 <div class="npc-info">
                     <div class="npc-header">
                         <span class="npc-name">${npc.name}</span>
@@ -902,7 +902,7 @@ const UI = {
             }
             const avatarFile = v.npcId.replace(/_/g, '-');
             return `<button class="${cls}" onclick="Engine.visitNPC('${v.npcId}'); UI.visitPanel.style.display='none'">
-                <img class="visit-npc-avatar" src="assets/characters/${avatarFile}.png" alt="${v.npc.name}" onclick="event.stopPropagation();UI.showAvatarLightbox(this.src,'${v.npcId}')" onerror="this.style.display='none'">
+                <img class="visit-npc-avatar" src="assets/characters/${avatarFile}.png" alt="${v.npc.name}" decoding="async" onclick="event.stopPropagation();UI.showAvatarLightbox(this.src,'${v.npcId}')" onerror="this.style.display='none'">
                 <div class="visit-npc-detail">
                     <span class="visit-npc-name">${v.npc.name}</span>
                     <span class="visit-npc-info">${infoText}</span>
