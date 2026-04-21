@@ -46,6 +46,7 @@
     <header class="game-header">
         <img src="assets/logo/title-compact.svg" class="game-title-logo" alt="轮回江湖">
         <div class="header-controls">
+            <button id="muteBtn" class="btn-small" onclick="(function(){ const m = GameAudio.toggleMute(); document.getElementById('muteBtn').textContent = m ? '🔇 静音' : '🔊 音效'; })()">🔊 音效</button>
             <button id="exportBtn" class="btn-small" onclick="Engine.exportSave()">📤 导出</button>
             <button id="importBtn" class="btn-small" onclick="Engine.importSave()">📥 导入</button>
             <button id="resetBtn" class="btn-small btn-danger" onclick="if(confirm('确定重置？存档将清除。')){Engine.state.char=null;Engine.deleteSave();location.reload();}">重置</button>
@@ -193,6 +194,7 @@ if (localStorage.getItem('wuxia_save')) {
         <div class="loading-text">读取存档中</div>`;
 }
 </script>
+<script src="js/audio.js?v=0.13.2"></script>
 <script src="js/character.js?v=0.13.2"></script>
 <script src="js/npc.js?v=0.13.2"></script>
 <script src="js/combat.js?v=0.13.2"></script>
@@ -203,6 +205,9 @@ if (localStorage.getItem('wuxia_save')) {
 (async function() {
     await Engine.init();
     UI.init();
+    GameAudio.init();
+    const muteBtn = document.getElementById('muteBtn');
+    if (muteBtn && GameAudio.isMuted()) muteBtn.textContent = '🔇 静音';
 
     // Save combat state on page close/refresh
     window.addEventListener('beforeunload', () => { Engine.saveGame(); });
