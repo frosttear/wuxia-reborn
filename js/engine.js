@@ -340,30 +340,10 @@ const Engine = {
         this.state.pendingChoice = null;
         this.state.gamePhase = 'idle';
 
-        // Mark bond event complete before applying effects
-        if (bondInfo) {
-            const { npcId, level } = bondInfo;
-            const char = this.state.char;
-            char.bondEventsDone[`${npcId}_${level}`] = true;
-            char.bondLevels[npcId] = Math.max(char.bondLevels[npcId] || 0, level);
-            const npc = this.state.npcs.find(n => n.id === npcId);
-            UI.addLog(`💞 与【${npc ? npc.name : npcId}】的羁绊加深！（第${level}章）`, 'unlock');
-
-            // Check for max-bond passive unlock
-            const npcBonds = this.state.bonds[npcId];
-            const maxLevel = npcBonds ? npcBonds.length : 0;
-            if (level >= maxLevel) {
-                const bondChapter = npcBonds.find(b => b.level === level);
-                if (bondChapter && bondChapter.passive) {
-                    const passive = bondChapter.passive;
-                    if (!char.passives) char.passives = [];
-                    if (!char.passives.find(p => p.id === passive.id)) {
-                        char.passives.push(passive);
-                        UI.addLog(`✨ 解锁被动【${passive.name}】：${passive.desc}`, 'unlock');
-                    }
-                }
-                UI.addIllustration(npcId.replace(/_/g, '-') + '-ending');
-            }
+        // Mark bond event complete — but defer if this choice leads to combat
+        // (bond completion runs after victory; on loss the bond stays unlocked for retry)
+        if (bondInfo && !(choice.effects && choice.effects.combat)) {
+            this._completeBond(bondInfo);
         }
 
         const effects = choice.effects || {};
@@ -404,7 +384,15 @@ const Engine = {
                 if (isNonFinalStep) {
                     this.state.pendingBondStep = {
                         npcId: bondStep.npcId, level: bondStep.level,
-                        stepIdx: bondStep.stepIdx + 1, steps: bondStep.steps
+                        stepIdx: bondStep.stepIdx + 1, steps: bondStep.steps,
+                        bondInfo: null
+                    };
+                } else if (bondInfo) {
+                    // Last bond step: defer completion to after combat victory
+                    this.state.pendingBondStep = {
+                        npcId: bondStep.npcId, level: bondStep.level,
+                        stepIdx: null, steps: bondStep.steps,
+                        bondInfo: bondInfo
                     };
                 }
                 // Show narrative BEFORE combat starts (not after)
@@ -424,6 +412,28 @@ const Engine = {
         }
         UI.renderAll(this.state);
         this.saveGame();
+    },
+
+    _completeBond({ npcId, level }) {
+        const char = this.state.char;
+        char.bondEventsDone[`${npcId}_${level}`] = true;
+        char.bondLevels[npcId] = Math.max(char.bondLevels[npcId] || 0, level);
+        const npc = this.state.npcs.find(n => n.id === npcId);
+        UI.addLog(`💞 与【${npc ? npc.name : npcId}】的羁绊加深！（第${level}章）`, 'unlock');
+        const npcBonds = this.state.bonds[npcId];
+        const maxLevel = npcBonds ? npcBonds.length : 0;
+        if (level >= maxLevel) {
+            const bondChapter = npcBonds.find(b => b.level === level);
+            if (bondChapter && bondChapter.passive) {
+                const passive = bondChapter.passive;
+                if (!char.passives) char.passives = [];
+                if (!char.passives.find(p => p.id === passive.id)) {
+                    char.passives.push(passive);
+                    UI.addLog(`✨ 解锁被动【${passive.name}】：${passive.desc}`, 'unlock');
+                }
+            }
+            UI.addIllustration(npcId.replace(/_/g, '-') + '-ending');
+        }
     },
 
     applyEffects(effects) {
@@ -996,6 +1006,10 @@ const Engine = {
                 this.state.pendingChainStep = null;
                 this.completeChainStep(chainId, stepIdx);
             }
+            // Deferred bond completion: last-step bond combats complete only on victory
+            if (postBondStep && postBondStep.bondInfo) {
+                this._completeBond(postBondStep.bondInfo);
+            }
             char.kills = (char.kills || 0) + 1;
             this.checkKillThreshold(char);
             // Check for job unlocks after combat (flags may have changed)
@@ -1046,6 +1060,12 @@ const Engine = {
                 ? '【重伤】你身负重创，但骨头够硬，三个月应可复原。'
                 : '【重伤】你身负重创，勉强撤退。需静养三至四个月，方可恢复。';
             UI.addLog(injuryMsg, 'lose');
+            // Bond combat lost: bond stays incomplete — player can retry next visit
+            if (postBondStep && postBondStep.bondInfo) {
+                const npc = this.state.npcs.find(n => n.id === postBondStep.bondInfo.npcId);
+                const npcName = npc ? npc.name : '对方';
+                UI.addLog(`【羁绊】时机未到，这一战败了。养好伤，磨砺技艺，再来与${npcName}一决高下。`, 'info');
+            }
             UI.renderCharacter(char, this.state.jobs);
 
         } else if (result === 'fled') {
@@ -1060,7 +1080,7 @@ const Engine = {
         if (cs.postNarrative) UI.addLog(cs.postNarrative, 'result');
         UI.showCombatReturnBtn(result, () => {
             UI.hideCombatOverlay();
-            if (result === 'won' && postBondStep) {
+            if (result === 'won' && postBondStep && postBondStep.stepIdx !== null) {
                 this._showBondStep(postBondStep.npcId, postBondStep.steps, postBondStep.stepIdx, postBondStep.level, '');
             } else {
                 UI.renderAll(this.state);

@@ -719,7 +719,7 @@ const UI = {
                 const intentCap = cs.enemy && cs.enemy.id === 'sword_soul' ? 50
                                 : cs.enemy && cs.enemy.id === 'tianmo'      ? 60 : 80;
                 const capNote   = intentCap < 80
-                    ? `·${cs.enemy.id === 'sword_soul' ? '神意难测' : '威压遮蔽'}上限${intentCap}%`
+                    ? `·上限${intentCap}%（${cs.enemy.id === 'sword_soul' ? '剑魂神意难测' : '天魔威压遮蔽'}）`
                     : '';
                 const accuratePct = Math.round(Math.min(intentCap, 80 * Math.log(1 + comp / (eComp + 20))));
                 const label = `（悟性${comp}，识破${accuratePct}%${capNote}）`;
