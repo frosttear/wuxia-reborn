@@ -22,11 +22,41 @@ fix: combat return button disabled after battle ends
 - Game logic split across `js/` modules: character, combat, engine, npc, rebirth, ui
 - Tests in `tests/` using Jest (node environment)
 
+## Versioning
+
+Bump the version on every commit that changes code or content. Update version strings in `index.html` (all `?v=X.X.X` cache busters), `sw.js` (`CACHE_NAME`), `README.md` (title line), and `PROGRESS.md` (current version line).
+
+Version bump rules — use judgment:
+- **Minor patch** (x.x.**N+1**): bug fixes, UI tweaks, copy changes, small balance adjustments
+- **Feature bump** (x.**N+1**.0): new gameplay systems, new content, significant UX changes, refactors that touch multiple files
+
+Never skip version numbers. Each commit = one version increment.
+
+## PROGRESS.md Format
+
+Every version entry must follow this exact format — newest version at the top:
+
+```markdown
+### vX.X.X（YYYY-MM-DD）
+
+**Section heading** (only if needed to group multiple related bullets)
+- Plain bullet, no [x] checkbox
+- Another bullet
+
+---
+```
+
+Rules:
+- Heading level `###` for versions, `**bold**` for sub-sections within a version
+- Plain `-` bullets only — no `- [x]` checkboxes
+- Separate each version block with `---`
+- Newest version at the top, oldest at the bottom
+- `## 🐛 已知问题` section stays at the very bottom
+
 ## Workflow
 
-- Always run `npm test` after code changes to verify 145+ tests pass
+- Always run `npm test` after code changes to verify tests pass
 - Update `PROGRESS.md` and `README.md` when features change
-- Update version log section at bottom of `PROGRESS.md`
 
 1. Think Before Coding
 Don't assume. Don't hide confusion. Surface tradeoffs.
