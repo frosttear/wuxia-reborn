@@ -178,17 +178,17 @@ const Combat = {
                 if (sk.type === 'multi') {
                     const hits = sk.hits || 3;
                     const defMit = effectiveDef;
-                    let total = 0;
+                    let rawSum = 0;
                     const parts = [];
                     for (let i = 0; i < hits; i++) {
                         const h = Math.max(1, Math.floor(playerAtk * sk.power * (1 + skillAmp)));
-                        total += h; parts.push(h);
+                        rawSum += h; parts.push(h);
                     }
-                    total = Math.max(1, total - defMit - enemyQS);
+                    const total = Math.max(1, rawSum - defMit - enemyQS);
                     cs.enemyHp = Math.max(0, cs.enemyHp - total);
                     cs.totalDmgDealt += total;
                     const ampNote = skillAmp >= 0.10 ? `　<span style="color:#a0d8ef">内力增幅+${Math.round(skillAmp * 100)}%</span>` : '';
-                    lines.push(`【<b style="color:#f4c430">${sk.name}</b>】连击（${parts.join('+')}=<b>${total}</b>），对方剩余气血 ${Math.max(0, cs.enemyHp)}。${ampNote}`);
+                    lines.push(`【<b style="color:#f4c430">${sk.name}</b>】连击（${parts.join('+')}=${rawSum}，减防后 <b>${total}</b>），对方剩余气血 ${Math.max(0, cs.enemyHp)}。${ampNote}`);
                 } else {
                     const dmg = Math.max(1, Math.floor(playerAtk * sk.power * (1 + skillAmp))
                         - effectiveDef
@@ -275,18 +275,18 @@ const Combat = {
                             if (sk.type === 'multi') {
                                 const hits = sk.hits || 3;
                                 const defMit = ctrEffectiveDef;
-                                let total = 0;
+                                let rawSum = 0;
                                 const parts = [];
                                 for (let i = 0; i < hits; i++) {
                                     const h = Math.max(1, Math.floor(playerAtk * sk.power * (1 + skillAmp)));
-                                    total += h; parts.push(h);
+                                    rawSum += h; parts.push(h);
                                 }
-                                counterDmg = Math.max(1, total - defMit - enemyQS);
+                                counterDmg = Math.max(1, rawSum - defMit - enemyQS);
                                 if (isCrit) counterDmg = Math.floor(counterDmg * 1.5);
                                 if (sk.type === 'stun') cs.enemyStunned = true;
                                 counterText = heavyAnticipated
-                                    ? `你早已洞悉来招，顺势以【<b style="color:#f4c430">${sk.name}</b>】反击！${critTag}${ampNote}连击（${parts.join('+')}=<b>${counterDmg}</b>）`
-                                    : `凭直觉化解来招，以【<b style="color:#f4c430">${sk.name}</b>】反击！${critTag}${ampNote}连击（${parts.join('+')}=<b>${counterDmg}</b>）`;
+                                    ? `你早已洞悉来招，顺势以【<b style="color:#f4c430">${sk.name}</b>】反击！${critTag}${ampNote}连击（${parts.join('+')}=${rawSum}，减防后 <b>${counterDmg}</b>）`
+                                    : `凭直觉化解来招，以【<b style="color:#f4c430">${sk.name}</b>】反击！${critTag}${ampNote}连击（${parts.join('+')}=${rawSum}，减防后 <b>${counterDmg}</b>）`;
                             } else {
                                 counterDmg = Math.max(1, Math.floor(playerAtk * sk.power * (1 + skillAmp))
                                     - ctrEffectiveDef
