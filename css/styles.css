@@ -251,7 +251,10 @@ body {
 }
 
 /* NPC relationships */
-.npc-row      { margin-bottom: 10px; }
+.npc-row      { margin-bottom: 10px; display: flex; gap: 8px; align-items: flex-start; }
+.npc-avatar   { width: 64px; height: 64px; border-radius: 50%; object-fit: cover; border: 1.5px solid var(--accent2); flex-shrink: 0; margin-top: 2px; cursor: pointer; transition: border-color 0.2s; }
+.npc-avatar:hover { border-color: var(--accent); }
+.npc-info     { flex: 1; min-width: 0; }
 .npc-header   { display: flex; align-items: baseline; gap: 5px; margin-bottom: 3px; flex-wrap: wrap; }
 .npc-name     { font-size: 0.88rem; color: var(--accent2); }
 .npc-title    { font-size: 0.7rem; color: var(--muted); }
@@ -261,6 +264,38 @@ body {
 .affinity-bar-fill { position: absolute; height: 100%; transition: width 0.4s; z-index: 0; }
 .affinity-bar-fill.pos { background: var(--green); border-radius: 3px; }
 .label-pos { color: var(--green); }
+
+/* NPC avatar lightbox */
+.avatar-lightbox {
+    display: none; position: fixed; inset: 0; z-index: 9999;
+    background: rgba(0,0,0,0.75); justify-content: center; align-items: center; cursor: pointer;
+}
+.avatar-lightbox.active { display: flex; }
+.lb-card {
+    background: var(--surface); border: 1px solid var(--border); border-radius: 10px;
+    max-width: min(340px, 88vw); overflow: hidden; cursor: default;
+    box-shadow: 0 8px 32px rgba(0,0,0,0.5);
+}
+.lb-card img {
+    width: 100%; aspect-ratio: 1; object-fit: cover; display: block;
+}
+.lb-info { padding: 12px 14px 14px; }
+.lb-name { font-size: 1.1rem; color: var(--accent2); font-weight: bold; }
+.lb-title { font-size: 0.78rem; color: var(--muted); margin-bottom: 6px; }
+.lb-desc { font-size: 0.8rem; color: var(--text); line-height: 1.5; margin-bottom: 8px; }
+.lb-bond-row { font-size: 0.82rem; color: var(--text); margin-bottom: 6px; }
+.lb-affinity { font-size: 0.75rem; color: var(--green); margin-left: 6px; }
+.lb-passive {
+    font-size: 0.78rem; line-height: 1.5; padding: 6px 8px; border-radius: 4px; margin-top: 4px;
+}
+.lb-passive.active {
+    background: rgba(180,100,200,0.15); border: 1px solid rgba(180,100,200,0.5); color: #c87fdf;
+}
+.lb-passive.active b { color: #d490ef; }
+.lb-passive.inactive {
+    background: rgba(255,255,255,0.05); border: 1px solid var(--border); color: #666;
+}
+.lb-passive.inactive b { color: #888; }
 
 /* Learned skills */
 .skill-row   { display: flex; justify-content: space-between; align-items: center; padding: 3px 0; border-bottom: 1px solid rgba(255,255,255,0.04); font-size: 0.8rem; }
@@ -366,8 +401,9 @@ button:disabled { opacity: 0.4; cursor: not-allowed; }
 }
 .visit-npc-btn {
     display: flex;
-    flex-direction: column;
-    gap: 2px;
+    flex-direction: row;
+    align-items: center;
+    gap: 8px;
     text-align: left;
     padding: 8px 12px;
     border-color: rgba(201,168,76,0.3);
@@ -375,6 +411,9 @@ button:disabled { opacity: 0.4; cursor: not-allowed; }
 .visit-npc-btn:hover:not(:disabled) { border-color: var(--accent); background: rgba(201,168,76,0.1); }
 .visit-npc-btn.visit-bond-ready { border-color: rgba(92,191,122,0.5); background: rgba(92,191,122,0.07); }
 .visit-npc-btn.visit-bond-ready:hover:not(:disabled) { border-color: var(--green); background: rgba(92,191,122,0.15); }
+.visit-npc-avatar { width: 48px; height: 48px; border-radius: 50%; object-fit: cover; border: 1.5px solid var(--accent2); flex-shrink: 0; cursor: pointer; }
+.visit-npc-avatar:hover { border-color: var(--accent); }
+.visit-npc-detail { display: flex; flex-direction: column; gap: 2px; }
 .visit-npc-name { font-size: 0.88rem; color: var(--accent2); font-weight: bold; }
 .visit-npc-info { font-size: 0.73rem; color: var(--muted); }
 .visit-bond-ready .visit-npc-info { color: var(--green); }
@@ -572,6 +611,14 @@ button:disabled { opacity: 0.4; cursor: not-allowed; }
 
 /* ─── Mobile tab bar (desktop: hidden) ─── */
 .mobile-tabs { display: none; }
+
+/* ─── Wide screens: expand right panel ─── */
+@media (min-width: 1200px) {
+    .game-layout { grid-template-columns: 280px 1fr 280px; }
+}
+@media (min-width: 1600px) {
+    .game-layout { grid-template-columns: 300px 1fr 360px; }
+}
 
 /* ─── Mobile responsive ≤768px ─── */
 @media (max-width: 768px) {

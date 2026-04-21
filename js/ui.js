@@ -6,6 +6,47 @@ const ATTR_NAMES = {
 };
 
 const UI = {
+    showAvatarLightbox(src, npcId) {
+        const lb = document.getElementById('avatarLightbox');
+        document.getElementById('avatarLightboxImg').src = src;
+
+        const npcs = Engine.state.npcs || [];
+        const bonds = Engine.state.bonds || {};
+        const char = Engine.state.char || {};
+        const npc = npcs.find(n => n.id === npcId);
+        const name = npc ? npc.name : npcId;
+        const title = npc ? npc.title : '';
+        const desc = npc ? npc.description : '';
+        const bondLevel = (char.bondLevels || {})[npcId] || 0;
+        const affinity = NPCSystem.getAffinity(char, npcId);
+        const label = npc ? NPCSystem.getAffinityLabel(char, npcId, npcs) : '';
+
+        const npcBonds = bonds[npcId] || [];
+        const passive = npcBonds.find(b => b.passive)?.passive;
+        const passiveActivated = (char.passives || []).some(p => p.id === (passive && passive.id));
+
+        let passiveHtml = '';
+        if (passive) {
+            const cls = passiveActivated ? 'lb-passive active' : 'lb-passive inactive';
+            const statusText = passiveActivated ? '' : '（未激活）';
+            passiveHtml = `<div class="${cls}"><b>${passive.name}</b>：${passive.desc} ${statusText}</div>`;
+        }
+
+        const totalBondLevels = 5;
+        const bondDots = Array.from({length: totalBondLevels}, (_, i) =>
+            `<span class="bond-dot ${i < bondLevel ? 'bond-dot-filled' : ''}">◆</span>`
+        ).join('');
+
+        document.getElementById('avatarLightboxInfo').innerHTML = `
+            <div class="lb-name">${name}</div>
+            <div class="lb-title">${title}</div>
+            <div class="lb-desc">${desc}</div>
+            <div class="lb-bond-row">羁绊 ${bondDots} <span class="lb-affinity">${label} (${affinity})</span></div>
+            ${passiveHtml}`;
+
+        lb.classList.add('active');
+    },
+
     init() {
         this.logEl   = document.getElementById('eventLog');
         this.choicesEl = document.getElementById('choicesPanel');
@@ -184,17 +225,21 @@ const UI = {
             const bondDots = Array.from({length: totalBondLevels}, (_, i) =>
                 `<span class="bond-dot ${i < bondLevel ? 'bond-dot-filled' : ''}">◆</span>`
             ).join('');
+            const avatarFile = npc.id.replace(/_/g, '-');
             div.innerHTML = `
-                <div class="npc-header">
-                    <span class="npc-name">${npc.name}</span>
-                    <span class="npc-title">${npc.title}</span>
-                    <span class="npc-affinity-val label-pos">${affinity}</span>
-                    <span class="npc-label label-pos">${label}</span>
-                </div>
-                <div class="affinity-bar-bg">
-                    <div class="${fillClass}" style="${fillStyle}"></div>
-                </div>
-                <div class="bond-level-row">羁绊 ${bondDots}</div>`;
+                <img class="npc-avatar" src="assets/characters/${avatarFile}.png" alt="${npc.name}" onclick="UI.showAvatarLightbox(this.src,'${npc.id}')" onerror="this.style.display='none'">
+                <div class="npc-info">
+                    <div class="npc-header">
+                        <span class="npc-name">${npc.name}</span>
+                        <span class="npc-title">${npc.title}</span>
+                        <span class="npc-affinity-val label-pos">${affinity}</span>
+                        <span class="npc-label label-pos">${label}</span>
+                    </div>
+                    <div class="affinity-bar-bg">
+                        <div class="${fillClass}" style="${fillStyle}"></div>
+                    </div>
+                    <div class="bond-level-row">羁绊 ${bondDots}</div>
+                </div>`;
             div.title = npc.description;
             el.appendChild(div);
         }
@@ -855,10 +900,14 @@ const UI = {
                     ? `<span class="visit-remain">今年还可拜访 ${remaining} 次</span>`
                     : `<span class="visit-remain visit-remain-out">今年已达上限</span>`;
             }
+            const avatarFile = v.npcId.replace(/_/g, '-');
             return `<button class="${cls}" onclick="Engine.visitNPC('${v.npcId}'); UI.visitPanel.style.display='none'">
-                <span class="visit-npc-name">${v.npc.name}</span>
-                <span class="visit-npc-info">${infoText}</span>
-                ${visitNote}
+                <img class="visit-npc-avatar" src="assets/characters/${avatarFile}.png" alt="${v.npc.name}" onclick="event.stopPropagation();UI.showAvatarLightbox(this.src,'${v.npcId}')" onerror="this.style.display='none'">
+                <div class="visit-npc-detail">
+                    <span class="visit-npc-name">${v.npc.name}</span>
+                    <span class="visit-npc-info">${infoText}</span>
+                    ${visitNote}
+                </div>
             </button>`;
         }).join('');
         panel.style.display = 'block';

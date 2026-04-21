@@ -169,7 +169,7 @@
             <button class="combat-btn combat-parry"  onclick="UI.selectCombatAction('parry')">⚡ 破招</button>
             <button class="combat-btn combat-focus"  onclick="UI.selectCombatAction('focus')">🔮 蓄势</button>
             <button class="combat-btn combat-flee" id="combatFleeBtn" onclick="UI.selectCombatAction('flee')">🏃 逃跑 25%</button>
-            <button class="combat-btn combat-quickbattle" id="combatQuickBtn" onclick="Engine.handleQuickCombat()" title="快速战斗：蒙特卡洛模拟，立即得出结果">⚡ 快速战斗</button>
+            <button class="combat-btn combat-quickbattle" id="combatQuickBtn" onclick="Engine.handleQuickCombat()" title="快速战斗：蒙特卡洛模拟，立即得出结果">⏩ 快速战斗</button>
             <button class="combat-btn combat-return-btn" id="combatReturnBtn" style="display:none">📋 点击返回</button>
         </div>
     </div>
@@ -263,5 +263,11 @@
     });
 })();
 </script>
+<div class="avatar-lightbox" id="avatarLightbox" onclick="this.classList.remove('active')">
+    <div class="lb-card" onclick="event.stopPropagation()">
+        <img id="avatarLightboxImg" src="" alt="">
+        <div class="lb-info" id="avatarLightboxInfo"></div>
+    </div>
+</div>
 </body>
 </html>
