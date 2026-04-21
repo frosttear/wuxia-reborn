@@ -184,6 +184,10 @@ body {
     min-height: 52px;
     flex-shrink: 0;
 }
+@keyframes choice-appear {
+    from { opacity: 0; transform: translateY(5px); }
+    to   { opacity: 1; transform: translateY(0); }
+}
 .choice-btn {
     background: rgba(201,168,76,0.1);
     border: 1px solid var(--border);
@@ -193,6 +197,7 @@ body {
     cursor: pointer;
     font-family: inherit;
     font-size: 0.83rem;
+    animation: choice-appear 0.25s ease both;
     transition: background 0.2s, border-color 0.2s;
     display: flex;
     flex-direction: column;

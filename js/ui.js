@@ -525,6 +525,7 @@ const UI = {
                             Engine.applyChoice(idx);
                         };
                     }
+                    btn.style.animationDelay = `${i * 120}ms`;
                     this.choicesEl.appendChild(btn);
                 }
                 this.nextBtn.disabled = true;
