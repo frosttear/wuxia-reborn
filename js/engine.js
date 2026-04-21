@@ -996,7 +996,10 @@ const Engine = {
             if (Object.keys(loseRewards).length > 0) this.applyEffects({ attributes: loseRewards });
             UI.renderCharacter(char, this.state.jobs);
             if (enemy.isHiddenBoss) {
-                UI.addLog('你击败了天魔，却败于那更深处的剑意。此生功亏一筑。下一世，再来。', 'system');
+                UI.addLog('你击败了天魔，却败于那更深处的剑意。此生功亏一筑。', 'system');
+                if (!this.allBondsComplete(char)) {
+                    UI.addLog('【提示】剑魂的弱点是"不懂人心"——走遍江湖，与王铁、李云舒、神秘老者、燕赤行、苏青、凌雪六人结下真正的羁绊，或可找到突破之法。', 'info');
+                }
                 UI.showCombatReturnBtn('lost', () => {
                     UI.hideCombatOverlay();
                     this.triggerDeath('hidden_boss');
@@ -1124,8 +1127,8 @@ const Engine = {
             return;
         }
 
-        // Defeated 天魔 — check if hidden boss chain is available
-        if (char.flags.jade_tablet_awakened && !char.flags.hidden_boss_triggered) {
+        // Defeated 天魔 — always trigger hidden boss (剑魂)
+        if (!char.flags.hidden_boss_triggered) {
             char.flags.hidden_boss_triggered = true;
             this.state.gamePhase = 'victory';   // block player actions during transition
             UI.updateControls(this.state);
