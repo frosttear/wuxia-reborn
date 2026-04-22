@@ -99,7 +99,7 @@
       "desc": "气贯长虹，无视铠甲",
       "momentumCost": 4,
       "type": "burst",
-      "power": 2.5
+      "power": 2.2
     },
     "skills": [
       {
@@ -133,10 +133,10 @@
     "activeSkill": {
       "id": "heaven_sword",
       "name": "剑意通天",
-      "desc": "剑道极境，一剑震魂，对手下回合无法行动",
+      "desc": "剑道极境，一剑震魂，对手下回合力道大减",
       "momentumCost": 4,
       "type": "stun",
-      "power": 3.2
+      "power": 2.4
     },
     "skills": [
       {

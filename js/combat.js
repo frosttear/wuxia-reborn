@@ -23,7 +23,8 @@ const Combat = {
     // ── Scaled enemy stats ──────────────────────────────────────────────────
     getEffectiveStats(enemy, char) {
         const tier = Math.max(0, Character.getAgeYears(char) - 15);
-        const hp = Math.round((enemy.hp || 80) * (1 + tier * (enemy.hpScale || 0.15)));
+        const hpScale = enemy.hpScale != null ? enemy.hpScale : 0.15;
+        const hp = Math.round((enemy.hp || 80) * (1 + tier * hpScale));
         const innerForce = enemy.innerForce || 0;
         return {
             attack:  enemy.attack  + tier * (enemy.attackScale  || 0),
@@ -103,11 +104,13 @@ const Combat = {
         return Math.random() < (hpPct < 0.35 ? 0.65 : 0.45) ? 'heavy' : 'swift';
     },
 
-    // ── Effective skill amplification (dampened by opponent's innerForce) ────
-    // Formula: effectiveAmp = rawAmp * 100 / (100 + opponentIF * 3)
-    // High-IF enemies resist more of your skill amp; your IF also dampens enemy skills.
-    _effectiveSkillAmp(rawAmp, opponentInnerForce) {
-        return rawAmp * 100 / (100 + (opponentInnerForce || 0) * 3);
+    // ── Inner-force combat bonus (relative advantage) ──────────────────────
+    // Returns 0 when playerIF ≤ enemyIF; up to ~40% when massively dominant.
+    // Formula: max(0, (pIF - eIF) / (pIF + eIF + 10) * 0.40)
+    // Used for BOTH normal attacks and skill damage; enemy uses same formula vs player.
+    _effectiveSkillAmp(playerIF, enemyIF) {
+        const diff = (playerIF || 0) - (enemyIF || 0);
+        return Math.max(0, diff / ((playerIF || 0) + (enemyIF || 0) + 10) * 0.40);
     },
 
     // ── Main turn processor ──────────────────────────────────────────────────
@@ -121,11 +124,13 @@ const Combat = {
         if (cs.allBondsBonus) playerAtk += 60;
         const playerDef = Character.getDefensePower(char, job);
         const qiShield  = Character.getQiShield(char);       // flat reduction per hit
-        const rawSkillAmp = Character.getSkillAmplify(char);  // raw % bonus on skill dmg
-        const skillAmp  = this._effectiveSkillAmp(rawSkillAmp, cs.enemyInnerForce); // dampened by enemy IF
+        // Inner-force advantage amp: relative formula; 0 when equal or player weaker
+        const innerAmp  = this._effectiveSkillAmp(char.attributes.innerForce || 0, cs.enemyInnerForce)
+            + ((char.legacyTalents || []).includes('qi_mastery') ? 0.08
+               : (char.legacyTalents || []).includes('qi_flow')  ? 0.04 : 0);
         const enemyQS   = cs.enemyQiShield || 0;             // enemy qi shield
-        const rawEnemySkillAmp = (cs.enemyInnerForce || 0) / 100;
-        const enemySkillAmp = this._effectiveSkillAmp(rawEnemySkillAmp, char.attributes.innerForce || 0); // dampened by player IF
+        // Enemy inner-force advantage over player (symmetric)
+        const enemyInnerAmp = this._effectiveSkillAmp(cs.enemyInnerForce || 0, char.attributes.innerForce || 0);
 
         if (cs.allBondsBonus && cs.turn === 1) {
             lines.push('<b style="color:#c9a84c">【羁绊之力】江湖情谊化为无形刃芒——攻击力+60！</b>');
@@ -176,37 +181,37 @@ const Combat = {
                 cs.skillCooldown = 3;
                 const sk = activeSkill;
 
+                // Skill damage: soft-defense ratio — defense scales proportionally with power
+                // defRatio = atk / (atk + effectiveDef), so high-def enemies resist more
+                const defRatio = playerAtk / (playerAtk + effectiveDef + 1);
+                const ampNote = innerAmp >= 0.05 ? `　<span style="color:#a0d8ef">内力+${Math.round(innerAmp * 100)}%</span>` : '';
                 if (sk.type === 'multi') {
                     const hits = sk.hits || 3;
-                    const defMit = effectiveDef;
                     let rawSum = 0;
                     const parts = [];
                     for (let i = 0; i < hits; i++) {
-                        const h = Math.max(1, Math.floor(playerAtk * sk.power * (1 + skillAmp)));
+                        const h = Math.max(1, Math.floor(playerAtk * sk.power * defRatio * (1 + innerAmp)));
                         rawSum += h; parts.push(h);
                     }
-                    const total = Math.max(1, rawSum - defMit - enemyQS);
+                    const total = Math.max(1, rawSum - enemyQS);
                     cs.enemyHp = Math.max(0, cs.enemyHp - total);
                     cs.totalDmgDealt += total;
-                    const ampNote = skillAmp >= 0.10 ? `　<span style="color:#a0d8ef">内力增幅+${Math.round(skillAmp * 100)}%</span>` : '';
-                    lines.push(`【<b style="color:#f4c430">${sk.name}</b>】连击（${parts.join('+')}=${rawSum}，减防后 <b>${total}</b>），对方剩余气血 ${Math.max(0, cs.enemyHp)}。${ampNote}`);
+                    lines.push(`【<b style="color:#f4c430">${sk.name}</b>】连击（${parts.join('+')}=${rawSum}，气盾减 <b>${total}</b>），对方剩余气血 ${Math.max(0, cs.enemyHp)}。${ampNote}`);
                 } else {
-                    const dmg = Math.max(1, Math.floor(playerAtk * sk.power * (1 + skillAmp))
-                        - effectiveDef
-                        - enemyQS);
+                    const dmg = Math.max(1, Math.floor(playerAtk * sk.power * defRatio * (1 + innerAmp)) - enemyQS);
                     cs.enemyHp = Math.max(0, cs.enemyHp - dmg);
                     cs.totalDmgDealt += dmg;
                     const stunNote = sk.type === 'stun' ? '  【<b style="color:#a0d8ef">震慑</b>】' : '';
                     if (sk.type === 'stun') cs.enemyStunned = true;
-                    lines.push(`【<b style="color:#f4c430">${sk.name}</b>】对方损失 <b>${dmg}</b> 气血（剩余 ${Math.max(0, cs.enemyHp)}）。${stunNote}`);
+                    lines.push(`【<b style="color:#f4c430">${sk.name}</b>】对方损失 <b>${dmg}</b> 气血（剩余 ${Math.max(0, cs.enemyHp)}）。${stunNote}${ampNote}`);
                 }
                 if (cs.enemyHp <= 0) { result = 'won'; combatOver = true; }
 
             } else if (action === 'strike') {
                 const lv    = 1 + (Math.random() - 0.5) * (char.attributes.luck / 100);
                 const isCrit = Math.random() < Character.getLuckTriggerChance(char);
-                // Dynamic defense ignore: scales with atk/def ratio (symmetric with defend's defCap)
-                let dmg = Math.max(1, Math.floor(playerAtk * lv)
+                // Inner force amp also applies to normal attacks (relative advantage formula)
+                let dmg = Math.max(1, Math.floor(playerAtk * lv * (1 + innerAmp))
                     - effectiveDef - enemyQS);
                 if (isCrit) dmg = Math.floor(dmg * 1.5);
                 cs.enemyHp = Math.max(0, cs.enemyHp - dmg);
@@ -246,7 +251,7 @@ const Combat = {
                         // Successful parry → player takes 20% incoming + counter-hit
                         // If skill is ready, use skill as counter instead of basic counter
                         const pend = cs.pendingSkill;
-                        const skillMult = pend ? (pend.damageMult || 1.5) * (1 + enemySkillAmp) : 1.0;
+                        const skillMult = pend ? (pend.damageMult || 1.5) * (1 + enemyInnerAmp) : 1.0;
                         const skillName = pend ? pend.name : null;
                         if (pend) cs.pendingSkill = null;
                         const rawIncoming = Math.max(1, Math.floor(cs.enemyEffAtk * skillMult) - effectivePlayerDef);
@@ -268,30 +273,25 @@ const Combat = {
                             cs.skillCooldown = 3;
                             const sk = activeSkill;
                             const isCrit = Math.random() < Character.getLuckTriggerChance(char);
-                            const ampNote = skillAmp >= 0.10 ? `内力增幅+${Math.round(skillAmp * 100)}%` : '';
+                            const ampNote = innerAmp >= 0.05 ? `内力+${Math.round(innerAmp * 100)}%` : '';
                             const critTag = isCrit ? '【<b>会心一击</b>】' : '';
-                            // Reuse flat defPen for counter
-                            const ctrDefPen = Math.floor(playerAtk * 0.3);
-                            const ctrEffectiveDef = Math.max(0, cs.enemyEffDef - ctrDefPen);
+                            const ctrDefRatio = playerAtk / (playerAtk + effectiveDef + 1);
                             if (sk.type === 'multi') {
                                 const hits = sk.hits || 3;
-                                const defMit = ctrEffectiveDef;
                                 let rawSum = 0;
                                 const parts = [];
                                 for (let i = 0; i < hits; i++) {
-                                    const h = Math.max(1, Math.floor(playerAtk * sk.power * (1 + skillAmp)));
+                                    const h = Math.max(1, Math.floor(playerAtk * sk.power * ctrDefRatio * (1 + innerAmp)));
                                     rawSum += h; parts.push(h);
                                 }
-                                counterDmg = Math.max(1, rawSum - defMit - enemyQS);
+                                counterDmg = Math.max(1, rawSum - enemyQS);
                                 if (isCrit) counterDmg = Math.floor(counterDmg * 1.5);
                                 if (sk.type === 'stun') cs.enemyStunned = true;
                                 counterText = heavyAnticipated
-                                    ? `你早已洞悉来招，顺势以【<b style="color:#f4c430">${sk.name}</b>】反击！${critTag}${ampNote}连击（${parts.join('+')}=${rawSum}，减防后 <b>${counterDmg}</b>）`
-                                    : `凭直觉化解来招，以【<b style="color:#f4c430">${sk.name}</b>】反击！${critTag}${ampNote}连击（${parts.join('+')}=${rawSum}，减防后 <b>${counterDmg}</b>）`;
+                                    ? `你早已洞悉来招，顺势以【<b style="color:#f4c430">${sk.name}</b>】反击！${critTag}${ampNote}连击（${parts.join('+')}=${rawSum}，气盾减 <b>${counterDmg}</b>）`
+                                    : `凭直觉化解来招，以【<b style="color:#f4c430">${sk.name}</b>】反击！${critTag}${ampNote}连击（${parts.join('+')}=${rawSum}，气盾减 <b>${counterDmg}</b>）`;
                             } else {
-                                counterDmg = Math.max(1, Math.floor(playerAtk * sk.power * (1 + skillAmp))
-                                    - ctrEffectiveDef
-                                    - enemyQS);
+                                counterDmg = Math.max(1, Math.floor(playerAtk * sk.power * ctrDefRatio * (1 + innerAmp)) - enemyQS);
                                 if (isCrit) counterDmg = Math.floor(counterDmg * 1.5);
                                 if (sk.type === 'stun') cs.enemyStunned = true;
                                 counterText = heavyAnticipated
@@ -322,7 +322,7 @@ const Combat = {
                     } else {
                         // Parry punished by swift — extra penetration
                         const pend = cs.pendingSkill;
-                        const skillMult = pend ? (pend.damageMult || 1.5) * (1 + enemySkillAmp) : 1.0;
+                        const skillMult = pend ? (pend.damageMult || 1.5) * (1 + enemyInnerAmp) : 1.0;
                         if (pend) cs.pendingSkill = null;
                         const swiftPunishPen = Math.floor(cs.enemyEffAtk * 0.4);
                         const swiftPunishDef = Math.max(0, playerDef - swiftPunishPen);
@@ -337,11 +337,17 @@ const Combat = {
                     }
                 } else if (cs.enemyStunned) {
                     cs.enemyStunned = false;
-                    lines.push(`${cs.enemy.name}被震慑，无法出手！`);
+                    // Stunned: attacks at 40% power — reduced but not nullified
+                    const stunRaw = Math.max(1, Math.floor(cs.enemyEffAtk * 0.40) - effectivePlayerDef);
+                    const stunDmg = Math.max(1, stunRaw - qiShield);
+                    Character.takeDamage(char, stunDmg);
+                    cs.totalDmgReceived += stunDmg;
+                    lines.push(`${cs.enemy.name}被震慑，强撑出手，你承受 <b>${stunDmg}</b> 点冲击（力道大减）。`);
+                    if (char.hp <= 0) { result = 'lost'; combatOver = true; }
                 } else {
                     // Normal enemy attack
                     const pend = cs.pendingSkill;
-                    const skillMult = pend ? (pend.damageMult || 1.5) * (1 + enemySkillAmp) : 1.0;
+                    const skillMult = pend ? (pend.damageMult || 1.5) * (1 + enemyInnerAmp) : 1.0;
                     const skillName = pend ? pend.name : null;
                     if (pend) cs.pendingSkill = null;
 
@@ -447,8 +453,9 @@ const Combat = {
         const playerAtk = Character.getAttackPower(char, job) + (cs.allBondsBonus ? 60 : 0);
         const playerDef = Character.getDefensePower(char, job);
         const qiShield  = Character.getQiShield(char);
-        const rawSkillAmp = Character.getSkillAmplify(char);
-        const skillAmp  = this._effectiveSkillAmp(rawSkillAmp, cs.enemyInnerForce);
+        const innerAmp  = this._effectiveSkillAmp(char.attributes.innerForce || 0, cs.enemyInnerForce)
+            + ((char.legacyTalents || []).includes('qi_mastery') ? 0.08
+               : (char.legacyTalents || []).includes('qi_flow')  ? 0.04 : 0);
         const enemyQS   = cs.enemyQiShield || 0;
         const critChance = Math.round(Character.getLuckTriggerChance(char) * 100);
         const dodgeChance = Math.round(Character.getLuckDodgeChance(char) * 100);
@@ -470,7 +477,7 @@ const Combat = {
         const rawEnemyDmg = Math.max(1, cs.enemyEffAtk - effectivePlayerDef);
 
         // ── Strike ──
-        const strikeDmg = Math.max(1, playerAtk - effectiveDef - enemyQS);
+        const strikeDmg = Math.max(1, Math.floor(playerAtk * (1 + innerAmp)) - effectiveDef - enemyQS);
         const strikeCrit = Math.floor(strikeDmg * 1.5);
 
         // ── Skill preview ──
@@ -478,15 +485,14 @@ const Combat = {
         let skillPreview = null;
         if (activeSkill && cs.playerMomentum >= activeSkill.momentumCost && cs.skillCooldown === 0) {
             const sk = activeSkill;
+            const previewDefRatio = playerAtk / (playerAtk + effectiveDef + 1);
             if (sk.type === 'multi') {
                 const hits = sk.hits || 3;
-                const perHit = Math.max(1, Math.floor(playerAtk * sk.power * (1 + skillAmp)) + 1);
-                const defMit = effectiveDef;
-                const total = Math.max(1, perHit * hits - defMit - enemyQS);
+                const perHit = Math.max(1, Math.floor(playerAtk * sk.power * previewDefRatio * (1 + innerAmp)));
+                const total = Math.max(1, perHit * hits - enemyQS);
                 skillPreview = { name: sk.name, dmg: total, hits };
             } else {
-                const dmg = Math.max(1, Math.floor(playerAtk * sk.power * (1 + skillAmp))
-                    - effectiveDef - enemyQS);
+                const dmg = Math.max(1, Math.floor(playerAtk * sk.power * previewDefRatio * (1 + innerAmp)) - enemyQS);
                 skillPreview = { name: sk.name, dmg, hits: 1 };
             }
         }

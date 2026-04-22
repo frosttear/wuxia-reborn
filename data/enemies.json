@@ -191,8 +191,8 @@
     "name": "剑魂",
     "description": "噬魂真经的创始者——上古剑修临死前将毕生剑意灌注而成的自主意识。它存世千年，吞噬过无数修者的气血与剑意，是噬魂真经和天魔堕落的根源。沈玄清用七成修为将其封入玉牌，等待有人来终结这道千年剑意。",
     "comprehension": 60,
-    "innerForce": 80,
-    "attack": 145, "defense": 180, "hp": 880,
+    "innerForce": 48,
+    "attack": 115, "defense": 58, "hp": 680,
     "attackScale": 0, "defenseScale": 0, "hpScale": 0,
     "intentReadMsgs": {
       "heavy": ["剑魂剑意骤然收敛内聚，磅礴剑气即将爆发——<b>重击将至</b>", "那道剑光骤然加重，如渊如岳——<b>重击将至</b>"],

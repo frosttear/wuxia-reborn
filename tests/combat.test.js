@@ -323,24 +323,25 @@ describe('Combat.getEffectiveStats', () => {
 });
 
 describe('Combat._effectiveSkillAmp', () => {
-    test('no dampening when enemy IF is 0', () => {
-        const result = Combat._effectiveSkillAmp(0.43, 0);
-        expect(result).toBeCloseTo(0.43, 2);
+    test('zero when inner forces are equal', () => {
+        expect(Combat._effectiveSkillAmp(30, 30)).toBe(0);
     });
 
-    test('dampened by enemy innerForce', () => {
-        // 43% raw vs enemy IF 50 → 43% * 100/(100+150) = 17.2%
-        const result = Combat._effectiveSkillAmp(0.43, 50);
-        expect(result).toBeCloseTo(0.172, 2);
+    test('zero when player IF is lower than enemy', () => {
+        expect(Combat._effectiveSkillAmp(20, 40)).toBe(0);
     });
 
-    test('symmetric: enemy skill amp dampened by player IF', () => {
-        // enemy IF 60 → rawAmp 0.60, dampened by player IF 40 → 0.60 * 100/220 = 0.2727
-        const result = Combat._effectiveSkillAmp(0.60, 40);
-        expect(result).toBeCloseTo(0.2727, 2);
+    test('positive bonus when player has advantage', () => {
+        // diff=20, sum=40+20+10=70: 20/70*0.40 ≈ 0.1143
+        expect(Combat._effectiveSkillAmp(40, 20)).toBeCloseTo(0.1143, 3);
     });
 
-    test('zero raw amp returns zero', () => {
+    test('approaches 40% cap when player overwhelms', () => {
+        // diff=90, sum=90+0+10=100: 90/100*0.40 = 0.36
+        expect(Combat._effectiveSkillAmp(90, 0)).toBeCloseTo(0.36, 3);
+    });
+
+    test('zero player IF returns zero', () => {
         expect(Combat._effectiveSkillAmp(0, 50)).toBe(0);
     });
 });

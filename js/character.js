@@ -137,11 +137,15 @@ const Character = {
         return base + talentBonus + passiveReduce;
     },
 
-    // 内力·增幅：技能伤害加成 = innerForce%（如30内力 = +30%技能伤害）
-    getSkillAmplify(char) {
-        const base = (char.attributes.innerForce || 0) / 100;
-        const talentBonus = (char.legacyTalents || []).includes('qi_mastery') ? 0.10
-            : (char.legacyTalents || []).includes('qi_flow') ? 0.05 : 0;
+    // 内力·战斗加成：相对敌方内力的优势幅度，上限~40%
+    // enemyInnerForce 省略时取0（用于UI显示潜力上限）
+    getSkillAmplify(char, enemyInnerForce) {
+        const pIF = char.attributes.innerForce || 0;
+        const eIF = enemyInnerForce || 0;
+        const diff = pIF - eIF;
+        const base = Math.max(0, diff / (pIF + eIF + 10) * 0.40);
+        const talentBonus = (char.legacyTalents || []).includes('qi_mastery') ? 0.08
+            : (char.legacyTalents || []).includes('qi_flow') ? 0.04 : 0;
         return base + talentBonus;
     },
 
