@@ -887,6 +887,8 @@ const Engine = {
             const variance = 0.3;
             const hpLost = Math.round(sim.avgHpLost * (1 - variance + Math.random() * variance * 2));
             Character.takeDamage(char, Math.min(hpLost, char.hp - 1));
+        } else {
+            char.hp = 0;
         }
 
         // Patch cs summary stats for endCombat display
@@ -1006,7 +1008,7 @@ const Engine = {
             if (enemy.isTrueFinalBoss) {
                 char.flags.true_final_boss_beaten = true;
                 UI.addLog(enemy.winNarrative, 'win');
-                UI.addIllustration('elder-revelation');
+                UI.addIllustration('journey-dawn');
                 UI.showCombatReturnBtn('won', () => {
                     UI.hideCombatOverlay();
                     this.triggerTrueVictory();
