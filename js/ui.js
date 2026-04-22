@@ -783,12 +783,12 @@ const UI = {
             fleeBtn.textContent = `🏃 逃跑 ${Math.round(cs.fleeChance * 100)}%`;
         }
 
-        // Dynamic strike tooltip (defense ignore scales with atk/def ratio)
+        // Dynamic strike tooltip (BD-style: effective hit rate = atk / (atk + def))
         const atk = Character.getAttackPower(char, job);
-        const defIgnorePct = Math.round(Combat.getStrikeDefIgnore(atk, cs.enemyEffDef) * 100);
+        const effRatioPct = Combat.getStrikeEffRatio(atk, cs.enemyEffDef);
         const strikeBtn = document.querySelector('#combatActions .combat-strike');
         if (strikeBtn) {
-            strikeBtn.title = `强攻：正面攻击，忽略对方${defIgnorePct}%防御，气力+2，可触发会心`;
+            strikeBtn.title = `强攻：正面攻击，有效命中率${effRatioPct}%，气力+2，可触发会心`;
         }
 
         this._selectedCombatAction = null;
@@ -840,7 +840,7 @@ const UI = {
             html = `<span class="preview-label">⚔ 强攻</span>`;
             html += `伤害 <span class="preview-good">${p.dmg}</span>`;
             if (p.critChance > 0) html += ` · 会心 <span class="preview-good">${p.critDmg}</span>（${p.critChance}%）`;
-            html += ` · 无视防御 ${p.defIgnorePct}% · 气力+2`;
+            html += ` · 气力+2`;
             if (sk) html += `<br><span class="preview-label">⚡ ${sk.name}</span>自动发动，伤害 <span class="preview-good">${sk.dmg}</span>`;
             html += `<br><span class="preview-muted">承受敌方攻击 ${preview.incoming.fullDmg}${preview.incoming.dodgeChance > 0 ? ` · 闪避 ${preview.incoming.dodgeChance}%` : ''}</span>`;
         } else if (action === 'defend') {
