@@ -299,6 +299,8 @@ const Engine = {
             past_life_dream: 'past-life-dream',
             rainy_road: 'journey-dawn',
             old_swordsman: 'journey-dawn',
+            deja_vu_road: 'past-life-dream',
+            elder_true_form_appears: 'mysterious-elder-ending',
         };
         if (_illustrationMap[event.id]) UI.addIllustration(_illustrationMap[event.id]);
 
