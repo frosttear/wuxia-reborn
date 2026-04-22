@@ -65,6 +65,8 @@ const Combat = {
             enemyIntentHint: '',    // text shown in combat UI
             enemyIntentType: null,  // 'accurate'|'vague'|'unreadable'
             enemyStunned: false,    // skip enemy attack once (stun skill effect)
+            enemyMomentum: 0,      // enemy BP; accumulates each normal-attack turn
+            enemySkillCooldown: 0, // cooldown turns after enemy uses a skill
             totalDmgDealt: 0,
             totalDmgReceived: 0,
             log:          [],
@@ -183,7 +185,7 @@ const Combat = {
 
                 // Skill damage: soft-defense ratio — defense scales proportionally with power
                 // defRatio = atk / (atk + effectiveDef), so high-def enemies resist more
-                const defRatio = playerAtk / (playerAtk + effectiveDef + 1);
+                const defRatio = Math.max(0.35, playerAtk / (playerAtk + effectiveDef + 1));
                 const ampNote = innerAmp >= 0.05 ? `　<span style="color:#a0d8ef">内力+${Math.round(innerAmp * 100)}%</span>` : '';
                 if (sk.type === 'multi') {
                     const hits = sk.hits || 3;
@@ -253,7 +255,7 @@ const Combat = {
                         const pend = cs.pendingSkill;
                         const skillMult = pend ? (pend.damageMult || 1.5) * (1 + enemyInnerAmp) : 1.0;
                         const skillName = pend ? pend.name : null;
-                        if (pend) cs.pendingSkill = null;
+                        if (pend) { cs.pendingSkill = null; cs.enemySkillCooldown = 2; }
                         const rawIncoming = Math.max(1, Math.floor(cs.enemyEffAtk * skillMult) - effectivePlayerDef);
                         const parryDmg = Math.max(1, Math.floor(rawIncoming * 0.20) - qiShield);
                         Character.takeDamage(char, parryDmg);
@@ -275,7 +277,7 @@ const Combat = {
                             const isCrit = Math.random() < Character.getLuckTriggerChance(char);
                             const ampNote = innerAmp >= 0.05 ? `内力+${Math.round(innerAmp * 100)}%` : '';
                             const critTag = isCrit ? '【<b>会心一击</b>】' : '';
-                            const ctrDefRatio = playerAtk / (playerAtk + effectiveDef + 1);
+                            const ctrDefRatio = Math.max(0.35, playerAtk / (playerAtk + effectiveDef + 1));
                             if (sk.type === 'multi') {
                                 const hits = sk.hits || 3;
                                 let rawSum = 0;
@@ -319,11 +321,17 @@ const Combat = {
                         lines.push(`${cs.enemy.name}${skillNote}${this._pick(this.ENEMY_HEAVY_DESCS)}——你【${counterLabel}】！${counterText}，你承受 <b>${parryDmg}</b> 点冲击。`);
                         if (char.hp <= 0) { result = 'lost'; combatOver = true; }
                         if (!combatOver && cs.enemyHp <= 0) { result = 'won'; combatOver = true; }
+                        // Break: successful parry disrupts enemy skill charge
+                        if (!combatOver) {
+                            const breakAmt = Math.min(2, cs.enemyMomentum);
+                            cs.enemyMomentum = Math.max(0, cs.enemyMomentum - 2);
+                            if (breakAmt > 0) lines.push(`<span style="color:#6fcf97">【破势】对方蓄力中断（-${breakAmt}）。</span>`);
+                        }
                     } else {
                         // Parry punished by swift — extra penetration
                         const pend = cs.pendingSkill;
                         const skillMult = pend ? (pend.damageMult || 1.5) * (1 + enemyInnerAmp) : 1.0;
-                        if (pend) cs.pendingSkill = null;
+                        if (pend) { cs.pendingSkill = null; cs.enemySkillCooldown = 2; }
                         const swiftPunishPen = Math.floor(cs.enemyEffAtk * 0.4);
                         const swiftPunishDef = Math.max(0, playerDef - swiftPunishPen);
                         const rawDmg = Math.max(1, Math.floor(cs.enemyEffAtk * 1.15 * skillMult)
@@ -345,11 +353,12 @@ const Combat = {
                     lines.push(`${cs.enemy.name}被震慑，强撑出手，你承受 <b>${stunDmg}</b> 点冲击（力道大减）。`);
                     if (char.hp <= 0) { result = 'lost'; combatOver = true; }
                 } else {
-                    // Normal enemy attack
+                    // Normal enemy attack — enemy momentum: decrement cooldown or accumulate
+                    if (cs.enemySkillCooldown > 0) cs.enemySkillCooldown--;
                     const pend = cs.pendingSkill;
                     const skillMult = pend ? (pend.damageMult || 1.5) * (1 + enemyInnerAmp) : 1.0;
                     const skillName = pend ? pend.name : null;
-                    if (pend) cs.pendingSkill = null;
+                    if (pend) { cs.pendingSkill = null; cs.enemySkillCooldown = 2; }
 
                     // Reduction based on player stance and enemy attack type
                     // Scale reduction with defense/attack ratio: strong enemies punch through defense
@@ -390,18 +399,23 @@ const Combat = {
                         if (char.hp <= 0) { result = 'lost'; combatOver = true; }
                     }
 
-                    // Telegraph enemy HP-threshold skill
-                    if (!combatOver && cs.enemy.skills && cs.enemy.skills.length > 0) {
+                    // Enemy skill telegraph: momentum-based, repeatable
+                    // Strongest available skill fires when enemy momentum ≥ its cost
+                    if (!combatOver && cs.enemy.skills && cs.enemy.skills.length > 0
+                            && !cs.pendingSkill && cs.enemySkillCooldown === 0) {
                         const hpPct = cs.enemyHp / cs.enemyMaxHp;
-                        for (const s of cs.enemy.skills) {
-                            if (!cs.usedSkills.includes(s.id) && hpPct <= (s.hpThreshold || 0.5)) {
-                                cs.pendingSkill = s;
-                                cs.usedSkills.push(s.id);
-                                lines.push(`<br><span style="color:#f4a261;font-weight:bold">⚠ ${s.telegraph}</span>`);
-                                break;
-                            }
+                        const available = cs.enemy.skills
+                            .filter(s => hpPct <= (s.hpThreshold || 0.5))
+                            .sort((a, b) => (a.hpThreshold || 0) - (b.hpThreshold || 0));
+                        const nextSk = available[0];
+                        if (nextSk && cs.enemyMomentum >= (nextSk.momentumCost || 3)) {
+                            cs.pendingSkill = nextSk;
+                            cs.enemyMomentum -= (nextSk.momentumCost || 3);
+                            lines.push(`<br><span style="color:#f4a261;font-weight:bold">⚠ ${nextSk.telegraph}</span>`);
                         }
                     }
+                    // Accumulate enemy momentum if cooldown done and no skill just telegraphed
+                    if (cs.enemySkillCooldown === 0 && !cs.pendingSkill) cs.enemyMomentum++;
                 }
             }
         }
@@ -485,7 +499,7 @@ const Combat = {
         let skillPreview = null;
         if (activeSkill && cs.playerMomentum >= activeSkill.momentumCost && cs.skillCooldown === 0) {
             const sk = activeSkill;
-            const previewDefRatio = playerAtk / (playerAtk + effectiveDef + 1);
+            const previewDefRatio = Math.max(0.35, playerAtk / (playerAtk + effectiveDef + 1));
             if (sk.type === 'multi') {
                 const hits = sk.hits || 3;
                 const perHit = Math.max(1, Math.floor(playerAtk * sk.power * previewDefRatio * (1 + innerAmp)));
@@ -532,7 +546,8 @@ const Combat = {
         return {
             strike: { dmg: strikeDmg, critDmg: strikeCrit, defIgnorePct, critChance, skillPreview },
             defend: { vsHeavy: defendVsHeavy, vsSwift: defendVsSwift, dmgHeavy: defendDmgHeavy, dmgSwift: defendDmgSwift, dodgeChance, insightSwift },
-            parry:  { counterDmg, counterCrit, selfDmg: parrySelfDmg, punishDmg, critChance, dodgeChance },
+            parry:  { counterDmg, counterCrit, selfDmg: parrySelfDmg, punishDmg, critChance, dodgeChance,
+                  enemyMomentum: cs.enemyMomentum, momentumBreak: Math.min(2, cs.enemyMomentum) },
             focus:  { reduction: focusReduction, dmg: focusDmg, momAfter, dodgeChance },
             incoming: { fullDmg, dodgeChance },
         };
