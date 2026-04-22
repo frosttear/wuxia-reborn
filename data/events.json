@@ -10,18 +10,31 @@
       {
         "id": "train_strength",
         "text": "专注锤炼体魄，反复出拳踢腿",
-        "effects": { "attributes": { "strength": 1 }, "narrative": "你不断重复着最基础的马步和出拳，大汗淋漓，体魄渐渐强壮。" }
+        "effects": {
+          "attributes": {
+            "strength": 1
+          },
+          "narrative": "你不断重复着最基础的马步和出拳，大汗淋漓，体魄渐渐强壮。"
+        }
       },
       {
         "id": "train_agility",
         "text": "练习轻盈身法，翻腾跳跃",
-        "effects": { "attributes": { "agility": 1 }, "narrative": "你专注于步伐和腾挪，身法愈发灵动，如风中柳絮。" }
+        "effects": {
+          "attributes": {
+            "agility": 1
+          },
+          "narrative": "你专注于步伐和腾挪，身法愈发灵动，如风中柳絮。"
+        }
       },
       {
         "id": "meditate_at_dawn",
         "text": "趁晨曦之宁，盘膝调息，以意导气",
         "effects": {
-          "attributes": { "innerForce": 1, "comprehension": 1 },
+          "attributes": {
+            "innerForce": 1,
+            "comprehension": 1
+          },
           "narrative": "晨风拂面，你静心调息，感受天地间那一丝清明之气缓缓流入丹田。内力与悟性均有小幅提升。"
         }
       }
@@ -38,18 +51,33 @@
       {
         "id": "persist",
         "text": "咬牙坚持，挑战极限",
-        "effects": { "attributes": { "strength": 2 }, "hp": -10, "narrative": "你拼尽全力，浑身酸痛，但能明显感到力量的增长。" }
+        "effects": {
+          "attributes": {
+            "strength": 2
+          },
+          "hp": -10,
+          "narrative": "你拼尽全力，浑身酸痛，但能明显感到力量的增长。"
+        }
       },
       {
         "id": "moderate",
         "text": "量力而行，稳步提升",
-        "effects": { "attributes": { "strength": 1, "constitution": 1 }, "narrative": "稳健的训练让你体质和力量同步提升，不失为明智之举。" }
+        "effects": {
+          "attributes": {
+            "strength": 1,
+            "constitution": 1
+          },
+          "narrative": "稳健的训练让你体质和力量同步提升，不失为明智之举。"
+        }
       },
       {
         "id": "seek_guidance",
         "text": "找附近的老武者请教，学习科学训练方法",
         "effects": {
-          "attributes": { "constitution": 1, "reputation": 1 },
+          "attributes": {
+            "constitution": 1,
+            "reputation": 1
+          },
           "narrative": "老武者指点你训练的节奏与呼吸，几句话让你茅塞顿开。此后的训练事半功倍，体质稳步增长，附近的人也对你刮目相看。"
         }
       }
@@ -66,12 +94,23 @@
       {
         "id": "footwork",
         "text": "苦练步法，提升灵活性",
-        "effects": { "attributes": { "agility": 2 }, "narrative": "数个时辰的苦练后，你的步法明显更加轻盈飘逸。" }
+        "effects": {
+          "attributes": {
+            "agility": 2
+          },
+          "narrative": "数个时辰的苦练后，你的步法明显更加轻盈飘逸。"
+        }
       },
       {
         "id": "balance",
         "text": "练习身体平衡与协调",
-        "effects": { "attributes": { "agility": 1, "constitution": 1 }, "narrative": "平衡训练让你的身体协调性大幅提升。" }
+        "effects": {
+          "attributes": {
+            "agility": 1,
+            "constitution": 1
+          },
+          "narrative": "平衡训练让你的身体协调性大幅提升。"
+        }
       }
     ]
   },
@@ -86,18 +125,39 @@
       {
         "id": "inner_cultivation",
         "text": "专注感受体内气息，修炼内力",
-        "effects": { "attributes": { "innerForce": 2 }, "narrative": "长时间的打坐后，你感觉到体内气息更加充沛。" }
+        "effects": {
+          "attributes": {
+            "innerForce": 2
+          },
+          "narrative": "长时间的打坐后，你感觉到体内气息更加充沛。"
+        }
       },
       {
         "id": "contemplation",
         "text": "思考武道之理，参悟天地",
-        "effects": { "attributes": { "comprehension": 1, "innerForce": 1 }, "narrative": "冥想中你对武道的理解更深一层，内力也有所精进。" }
+        "effects": {
+          "attributes": {
+            "comprehension": 1,
+            "innerForce": 1
+          },
+          "narrative": "冥想中你对武道的理解更深一层，内力也有所精进。"
+        }
       },
       {
         "id": "deep_enlightenment",
         "text": "以悟性引导，试图触及武道更深处的规律",
-        "requirements": { "minAttributes": { "comprehension": 15 } },
-        "effects": { "attributes": { "comprehension": 2, "innerForce": 2 }, "narrative": "寂灭中你的心神忽然跨越了一道无形的门槛——武道的本质在那一刻清晰如镜，悟性与内力都随之飞速增长。" }
+        "requirements": {
+          "minAttributes": {
+            "comprehension": 15
+          }
+        },
+        "effects": {
+          "attributes": {
+            "comprehension": 2,
+            "innerForce": 2
+          },
+          "narrative": "寂灭中你的心神忽然跨越了一道无形的门槛——武道的本质在那一刻清晰如镜，悟性与内力都随之飞速增长。"
+        }
       }
     ]
   },
@@ -112,7 +172,12 @@
       {
         "id": "study",
         "text": "认真研读，亲身实践",
-        "effects": { "attributes": { "constitution": 2 }, "narrative": "数月的研习让你掌握了基本的调养之法，体质有所增强。" }
+        "effects": {
+          "attributes": {
+            "constitution": 2
+          },
+          "narrative": "数月的研习让你掌握了基本的调养之法，体质有所增强。"
+        }
       }
     ]
   },
@@ -127,12 +192,24 @@
       {
         "id": "help_others",
         "text": "路见不平，拔刀相助",
-        "effects": { "attributes": { "reputation": 2, "strength": 1 }, "narrative": "你几次出手相助，事迹在附近江湖中广为流传，声望大增。" }
+        "effects": {
+          "attributes": {
+            "reputation": 2,
+            "strength": 1
+          },
+          "narrative": "你几次出手相助，事迹在附近江湖中广为流传，声望大增。"
+        }
       },
       {
         "id": "observe",
         "text": "暗中观察，积累经验",
-        "effects": { "attributes": { "luck": 1, "comprehension": 1 }, "narrative": "通过观察，你对江湖中的人心世故有了更深的理解。" }
+        "effects": {
+          "attributes": {
+            "luck": 1,
+            "comprehension": 1
+          },
+          "narrative": "通过观察，你对江湖中的人心世故有了更深的理解。"
+        }
       }
     ]
   },
@@ -147,12 +224,23 @@
       {
         "id": "study_tactics",
         "text": "专研战斗策略与武学理论",
-        "effects": { "attributes": { "comprehension": 2 }, "narrative": "通宵苦读后，你对武道的理解突飞猛进。" }
+        "effects": {
+          "attributes": {
+            "comprehension": 2
+          },
+          "narrative": "通宵苦读后，你对武道的理解突飞猛进。"
+        }
       },
       {
         "id": "study_broadly",
         "text": "广泛涉猎，增长见识",
-        "effects": { "attributes": { "comprehension": 1, "luck": 1 }, "narrative": "博览群书使你眼界大开，冥冥中似乎好运也多了些。" }
+        "effects": {
+          "attributes": {
+            "comprehension": 1,
+            "luck": 1
+          },
+          "narrative": "博览群书使你眼界大开，冥冥中似乎好运也多了些。"
+        }
       }
     ]
   },
@@ -162,12 +250,24 @@
     "weight": 7,
     "title": "瀑布悟道",
     "text": "你在深山中找到一处瀑布，水声轰鸣，气势磅礴。你盘坐于飞溅的水雾中，感受天地之力，心神逐渐与自然融为一体。",
-    "conditions": { "jobs": ["wanderer", "swordsman", "hero", "sword_saint"] },
+    "conditions": {
+      "jobs": [
+        "wanderer",
+        "swordsman",
+        "hero",
+        "sword_saint"
+      ]
+    },
     "choices": [
       {
         "id": "meditate",
         "text": "在瀑布中冥想，感悟自然之力",
-        "effects": { "attributes": { "innerForce": 2 }, "narrative": "数日的冥想后，你的内力得到了显著的提升，仿佛与天地相通。" }
+        "effects": {
+          "attributes": {
+            "innerForce": 2
+          },
+          "narrative": "数日的冥想后，你的内力得到了显著的提升，仿佛与天地相通。"
+        }
       }
     ]
   },
@@ -182,13 +282,29 @@
       {
         "id": "speed",
         "text": "追求剑法的速度与灵动",
-        "effects": { "attributes": { "agility": 1, "strength": 1 }, "narrative": "你的剑法速度和力量都有所提升，出剑愈发犀利。" }
+        "effects": {
+          "attributes": {
+            "agility": 1,
+            "strength": 1
+          },
+          "narrative": "你的剑法速度和力量都有所提升，出剑愈发犀利。"
+        }
       },
       {
         "id": "qi_sword",
         "text": "以内力注入剑身，感受真气随剑意流转",
-        "requirements": { "minAttributes": { "innerForce": 10 } },
-        "effects": { "attributes": { "innerForce": 2, "comprehension": 1 }, "narrative": "真气流经剑身时竟与剑法产生了奇妙的共鸣，你对内功与剑道的融合有了全新的理解。" }
+        "requirements": {
+          "minAttributes": {
+            "innerForce": 10
+          }
+        },
+        "effects": {
+          "attributes": {
+            "innerForce": 2,
+            "comprehension": 1
+          },
+          "narrative": "真气流经剑身时竟与剑法产生了奇妙的共鸣，你对内功与剑道的融合有了全新的理解。"
+        }
       }
     ]
   },
@@ -198,17 +314,29 @@
     "weight": 6,
     "title": "寒泉浸体",
     "text": "你听说以寒泉淬体可以强化肉身，便找到山中一处冰冷的泉眼。冰冷刺骨的泉水让你全身发麻，但你坚持了下来。",
-    "conditions": { "minAgeYears": 18 },
+    "conditions": {
+      "minAgeYears": 18
+    },
     "choices": [
       {
         "id": "endure",
         "text": "咬牙忍耐，接受寒泉的磨砺",
-        "effects": { "attributes": { "constitution": 2 }, "narrative": "极寒中坚持下来，你的肉身变得愈发强韧。" }
+        "effects": {
+          "attributes": {
+            "constitution": 2
+          },
+          "narrative": "极寒中坚持下来，你的肉身变得愈发强韧。"
+        }
       },
       {
         "id": "retreat",
         "text": "稍作尝试，不强求",
-        "effects": { "attributes": { "constitution": 1 }, "narrative": "虽然只是浅尝，体质也略有提升。" }
+        "effects": {
+          "attributes": {
+            "constitution": 1
+          },
+          "narrative": "虽然只是浅尝，体质也略有提升。"
+        }
       }
     ]
   },
@@ -223,7 +351,13 @@
       {
         "id": "learn_people",
         "text": "仔细观察各类人等，揣摩人心",
-        "effects": { "attributes": { "comprehension": 1, "luck": 1 }, "narrative": "市井中的见闻让你对人心世故有了更深的感悟。" }
+        "effects": {
+          "attributes": {
+            "comprehension": 1,
+            "luck": 1
+          },
+          "narrative": "市井中的见闻让你对人心世故有了更深的感悟。"
+        }
       }
     ]
   },
@@ -233,12 +367,20 @@
     "weight": 6,
     "title": "苦难历练",
     "text": "这段时日里，你遭遇了不少艰辛——食不果腹，风餐露宿，甚至被人欺辱。然而正是这些苦难，让你愈发坚韧。",
-    "conditions": { "maxAgeYears": 20 },
+    "conditions": {
+      "maxAgeYears": 20
+    },
     "choices": [
       {
         "id": "endure_hardship",
         "text": "默默忍受，在苦难中成长",
-        "effects": { "attributes": { "strength": 1, "constitution": 1 }, "narrative": "苦难没有击倒你，反而让你变得更加坚强。" }
+        "effects": {
+          "attributes": {
+            "strength": 1,
+            "constitution": 1
+          },
+          "narrative": "苦难没有击倒你，反而让你变得更加坚强。"
+        }
       }
     ]
   },
@@ -248,17 +390,37 @@
     "weight": 4,
     "title": "意外得书",
     "text": "你在一处废弃的古宅中避雨，无意间发现夹墙中藏有一本泛黄的武学秘籍，封皮已烂，内页却保存完好。",
-    "conditions": { "minAgeYears": 17 },
+    "conditions": {
+      "minAgeYears": 17
+    },
     "choices": [
       {
         "id": "study_manual",
         "text": "如获至宝，认真研读",
-        "effects": { "attributes": { "strength": 2, "comprehension": 1 }, "flags": { "has_secret_manual": true }, "narrative": "秘籍中记载的武学心法让你受益匪浅，武艺大进。" }
+        "effects": {
+          "attributes": {
+            "strength": 2,
+            "comprehension": 1
+          },
+          "flags": {
+            "has_secret_manual": true
+          },
+          "narrative": "秘籍中记载的武学心法让你受益匪浅，武艺大进。"
+        }
       },
       {
         "id": "keep_secret",
         "text": "小心收藏，慢慢参悟",
-        "effects": { "attributes": { "innerForce": 2, "comprehension": 2 }, "flags": { "has_secret_manual": true }, "narrative": "你将秘籍藏于怀中，日后细细参悟，内力与悟性都有所精进。" }
+        "effects": {
+          "attributes": {
+            "innerForce": 2,
+            "comprehension": 2
+          },
+          "flags": {
+            "has_secret_manual": true
+          },
+          "narrative": "你将秘籍藏于怀中，日后细细参悟，内力与悟性都有所精进。"
+        }
       }
     ]
   },
@@ -268,12 +430,23 @@
     "weight": 3,
     "title": "高人指点",
     "text": "你在山中迷路，正当茫然之际，遇到一位白发苍苍的老者。他看了你一眼，突然开口：「后生，你有几分根骨，来，我教你两招。」",
-    "conditions": { "minAgeYears": 18, "minAttributes": { "comprehension": 8 } },
+    "conditions": {
+      "minAgeYears": 18,
+      "minAttributes": {
+        "comprehension": 8
+      }
+    },
     "choices": [
       {
         "id": "accept_teaching",
         "text": "欣然接受，虚心求教",
-        "effects": { "attributes": { "innerForce": 2, "comprehension": 1 }, "narrative": "老者传授的心法玄妙无比，你感到内力大幅增长。" }
+        "effects": {
+          "attributes": {
+            "innerForce": 2,
+            "comprehension": 1
+          },
+          "narrative": "老者传授的心法玄妙无比，你感到内力大幅增长。"
+        }
       }
     ]
   },
@@ -283,23 +456,50 @@
     "weight": 4,
     "title": "古庙奇遇",
     "text": "你在深山中发现一座荒废已久的古庙，庙内供奉着一位不知名的武神。奇异的是，庙内的空气中弥漫着一股浓郁的真气。",
-    "conditions": { "minAgeYears": 17 },
+    "conditions": {
+      "minAgeYears": 17
+    },
     "choices": [
       {
         "id": "pray_cultivate",
         "text": "在武神像前打坐，感受真气",
-        "effects": { "attributes": { "innerForce": 2, "strength": 1 }, "narrative": "庙中的真气似乎受你感召，缓缓流入你的体内。" }
+        "effects": {
+          "attributes": {
+            "innerForce": 2,
+            "strength": 1
+          },
+          "narrative": "庙中的真气似乎受你感召，缓缓流入你的体内。"
+        }
       },
       {
         "id": "explore_temple",
         "text": "仔细搜寻庙内，看是否有秘密",
-        "effects": { "attributes": { "luck": 2, "comprehension": 1 }, "narrative": "你在庙中找到了几幅残缺的武学壁画，收获颇丰。" }
+        "effects": {
+          "attributes": {
+            "luck": 2,
+            "comprehension": 1
+          },
+          "narrative": "你在庙中找到了几幅残缺的武学壁画，收获颇丰。"
+        }
       },
       {
         "id": "resonate_qi",
         "text": "以真气与庙内气场共鸣，尝试引动武神残留的意志",
-        "requirements": { "minAttributes": { "innerForce": 15 } },
-        "effects": { "attributes": { "innerForce": 3, "strength": 1 }, "flags": { "temple_awakened": true }, "narrative": "你的真气与庙中的古老气场产生了剧烈的共鸣，一道无形的意志涌入眉心——那是远古高手留下的残影。你大受裨益，内力精进了一大截。" }
+        "requirements": {
+          "minAttributes": {
+            "innerForce": 15
+          }
+        },
+        "effects": {
+          "attributes": {
+            "innerForce": 3,
+            "strength": 1
+          },
+          "flags": {
+            "temple_awakened": true
+          },
+          "narrative": "你的真气与庙中的古老气场产生了剧烈的共鸣，一道无形的意志涌入眉心——那是远古高手留下的残影。你大受裨益，内力精进了一大截。"
+        }
       }
     ]
   },
@@ -314,12 +514,26 @@
       {
         "id": "eat_medicine",
         "text": "直接服下，感受药力",
-        "effects": { "hp": 50, "attributes": { "constitution": 2 }, "narrative": "药草入口，一股暖流遍布全身，你感到精力充沛，体质大增。" }
+        "effects": {
+          "hp": 50,
+          "attributes": {
+            "constitution": 2
+          },
+          "narrative": "药草入口，一股暖流遍布全身，你感到精力充沛，体质大增。"
+        }
       },
       {
         "id": "save_medicine",
         "text": "小心保存，留待急需",
-        "effects": { "attributes": { "constitution": 1 }, "flags": { "has_rare_medicine": true }, "narrative": "你将药草收好，体质也略有提升。" }
+        "effects": {
+          "attributes": {
+            "constitution": 1
+          },
+          "flags": {
+            "has_rare_medicine": true
+          },
+          "narrative": "你将药草收好，体质也略有提升。"
+        }
       }
     ]
   },
@@ -329,23 +543,47 @@
     "weight": 5,
     "title": "旁观高手对决",
     "text": "你无意间目睹了两位高手之间的一场激烈对决，招式变幻莫测，令你大开眼界。你在旁边屏息凝神，默默揣摩。",
-    "conditions": { "minAgeYears": 18 },
+    "conditions": {
+      "minAgeYears": 18
+    },
     "choices": [
       {
         "id": "focus_offense",
         "text": "重点学习攻击技巧",
-        "effects": { "attributes": { "strength": 2, "comprehension": 1 }, "narrative": "通过观摩，你的攻击技巧和武学理解都有了明显提升。" }
+        "effects": {
+          "attributes": {
+            "strength": 2,
+            "comprehension": 1
+          },
+          "narrative": "通过观摩，你的攻击技巧和武学理解都有了明显提升。"
+        }
       },
       {
         "id": "focus_defense",
         "text": "重点学习防守身法",
-        "effects": { "attributes": { "agility": 2, "comprehension": 1 }, "narrative": "对方的防守身法让你大受启发，身法和悟性都有所进步。" }
+        "effects": {
+          "attributes": {
+            "agility": 2,
+            "comprehension": 1
+          },
+          "narrative": "对方的防守身法让你大受启发，身法和悟性都有所进步。"
+        }
       },
       {
         "id": "deduce_flaws",
         "text": "以悟性推演两人招式中的破绽，默记在心",
-        "requirements": { "minAttributes": { "comprehension": 12 } },
-        "effects": { "attributes": { "comprehension": 2, "reputation": 1 }, "narrative": "你的悟性已臻化境，对决中两人的破绽在你眼中宛如白纸黑字。旁边观战的人发现你的目光格外锐利，忍不住向你请教——竟顺带为你赢得了一些声誉。" }
+        "requirements": {
+          "minAttributes": {
+            "comprehension": 12
+          }
+        },
+        "effects": {
+          "attributes": {
+            "comprehension": 2,
+            "reputation": 1
+          },
+          "narrative": "你的悟性已臻化境，对决中两人的破绽在你眼中宛如白纸黑字。旁边观战的人发现你的目光格外锐利，忍不住向你请教——竟顺带为你赢得了一些声誉。"
+        }
       }
     ]
   },
@@ -360,12 +598,22 @@
       {
         "id": "take_all",
         "text": "全部收下，改善生活",
-        "effects": { "attributes": { "constitution": 2 }, "narrative": "这笔意外之财让你生活改善了不少，身体也因此好了起来。" }
+        "effects": {
+          "attributes": {
+            "constitution": 2
+          },
+          "narrative": "这笔意外之财让你生活改善了不少，身体也因此好了起来。"
+        }
       },
       {
         "id": "find_owner",
         "text": "四处打听，归还失主",
-        "effects": { "attributes": { "reputation": 2 }, "narrative": "你花了数日找到失主，对方感激涕零，此事在附近传为美谈。" }
+        "effects": {
+          "attributes": {
+            "reputation": 2
+          },
+          "narrative": "你花了数日找到失主，对方感激涕零，此事在附近传为美谈。"
+        }
       }
     ]
   },
@@ -380,7 +628,10 @@
       {
         "id": "fight",
         "text": "拔剑迎战",
-        "effects": { "combat": "bandit", "narrative": "你拔剑相迎，与山贼厮杀。" }
+        "effects": {
+          "combat": "bandit",
+          "narrative": "你拔剑相迎，与山贼厮杀。"
+        }
       }
     ]
   },
@@ -390,12 +641,17 @@
     "weight": 6,
     "title": "遭遇悍匪",
     "text": "你在通往城镇的官道上遭遇了一名臭名昭著的悍匪。他拦路叫嚣，目光凶狠，手中单刀锃亮。",
-    "conditions": { "minAgeYears": 17 },
+    "conditions": {
+      "minAgeYears": 17
+    },
     "choices": [
       {
         "id": "fight",
         "text": "拔剑迎战，不容退缩",
-        "effects": { "combat": "skilled_bandit", "narrative": "来者不善，你横刀立马，正面迎战。" }
+        "effects": {
+          "combat": "skilled_bandit",
+          "narrative": "来者不善，你横刀立马，正面迎战。"
+        }
       }
     ]
   },
@@ -405,12 +661,17 @@
     "weight": 7,
     "title": "猛虎下山",
     "text": "你独自在山中练功时，草丛中突然窜出一只体型庞大的猛虎。虎目圆睁，低沉的咆哮令四周一片死寂。",
-    "conditions": { "minAgeYears": 18 },
+    "conditions": {
+      "minAgeYears": 18
+    },
     "choices": [
       {
         "id": "fight_tiger",
         "text": "凝神应战，以武会虎",
-        "effects": { "combat": "wild_tiger", "narrative": "猛虎扑来，你屏息凝神，以剑相迎。" }
+        "effects": {
+          "combat": "wild_tiger",
+          "narrative": "猛虎扑来，你屏息凝神，以剑相迎。"
+        }
       }
     ]
   },
@@ -420,12 +681,22 @@
     "weight": 6,
     "title": "护镖遇袭",
     "text": "你受雇护送一批货物进城，途中遭到一伙劫匪的截击。为首之人手持双刀，气势汹汹。",
-    "conditions": { "jobs": ["wanderer", "swordsman", "hero", "sword_saint"] },
+    "conditions": {
+      "jobs": [
+        "wanderer",
+        "swordsman",
+        "hero",
+        "sword_saint"
+      ]
+    },
     "choices": [
       {
         "id": "protect_cargo",
         "text": "挺身护镖，绝不退让",
-        "effects": { "combat": "escort_leader", "narrative": "你护在货物前，与劫匪正面交锋。" }
+        "effects": {
+          "combat": "escort_leader",
+          "narrative": "你护在货物前，与劫匪正面交锋。"
+        }
       }
     ]
   },
@@ -435,17 +706,30 @@
     "weight": 7,
     "title": "被人挑战",
     "text": "一名陌生的江湖人走到你面前，抱拳道：「在下久闻阁下大名，特来切磋，还望赐教。」言罢摆开架势，显然来者不善。",
-    "conditions": { "minAgeYears": 17, "minAttributes": { "reputation": 5 } },
+    "conditions": {
+      "minAgeYears": 17,
+      "minAttributes": {
+        "reputation": 5
+      }
+    },
     "choices": [
       {
         "id": "accept_duel",
         "text": "接受挑战，切磋武艺",
-        "effects": { "combat": "jianghu_challenger", "narrative": "你点头应战，与对方拉开架势。" }
+        "effects": {
+          "combat": "jianghu_challenger",
+          "narrative": "你点头应战，与对方拉开架势。"
+        }
       },
       {
         "id": "decline",
         "text": "婉言谢绝，不与计较",
-        "effects": { "attributes": { "comprehension": 1 }, "narrative": "你淡然拒绝，对方悻悻而去。有时不战而屈人之兵，也是一种智慧。" }
+        "effects": {
+          "attributes": {
+            "comprehension": 1
+          },
+          "narrative": "你淡然拒绝，对方悻悻而去。有时不战而屈人之兵，也是一种智慧。"
+        }
       }
     ]
   },
@@ -455,17 +739,37 @@
     "weight": 8,
     "title": "初遇老镖师",
     "text": "你在镇上的小酒馆里遇到了一位须发花白的老者。他独自饮酒，举手投足间透着江湖老手的气息。邻桌的人低声说，此人便是走镖三十年的老镖师王铁。",
-    "conditions": { "flags": { "met_wang_tie": false } },
+    "conditions": {
+      "flags": {
+        "met_wang_tie": false
+      }
+    },
     "choices": [
       {
         "id": "approach",
         "text": "主动上前敬酒，结识此人",
-        "effects": { "flags": { "met_wang_tie": true }, "npcAffinity": { "wang_tie": 15 }, "narrative": "王铁见你诚恳，眼神柔和了几分，说：「后生可畏。」你们就此相识。" }
+        "effects": {
+          "flags": {
+            "met_wang_tie": true
+          },
+          "npcAffinity": {
+            "wang_tie": 15
+          },
+          "narrative": "王铁见你诚恳，眼神柔和了几分，说：「后生可畏。」你们就此相识。"
+        }
       },
       {
         "id": "observe",
         "text": "暗中观察，不急着上前",
-        "effects": { "flags": { "met_wang_tie": true }, "npcAffinity": { "wang_tie": 5 }, "narrative": "你未曾上前，但与老镖师有过短暂的目光交汇，他微微点头，算是相识。" }
+        "effects": {
+          "flags": {
+            "met_wang_tie": true
+          },
+          "npcAffinity": {
+            "wang_tie": 5
+          },
+          "narrative": "你未曾上前，但与老镖师有过短暂的目光交汇，他微微点头，算是相识。"
+        }
       }
     ]
   },
@@ -475,12 +779,32 @@
     "weight": 6,
     "title": "王铁传基础刀法",
     "text": "王铁约你到城外空地，递来一根木棍：「你的架势有几分火候，但根基不稳。来，我教你几招。」他的眼神里藏着数十年的江湖阅历。",
-    "conditions": { "flags": { "met_wang_tie": true, "wang_taught_basics": false }, "npcAffinity": { "wang_tie": 30 } },
+    "conditions": {
+      "flags": {
+        "met_wang_tie": true,
+        "wang_taught_basics": false
+      },
+      "npcAffinity": {
+        "wang_tie": 30
+      }
+    },
     "choices": [
       {
         "id": "learn_humbly",
         "text": "虚心受教，认真学习",
-        "effects": { "attributes": { "strength": 2, "agility": 1 }, "flags": { "wang_taught_basics": true }, "npcAffinity": { "wang_tie": 15 }, "narrative": "王铁传授了你基础的刀法身形，你的武艺和与他的情谊都大幅增进。" }
+        "effects": {
+          "attributes": {
+            "strength": 2,
+            "agility": 1
+          },
+          "flags": {
+            "wang_taught_basics": true
+          },
+          "npcAffinity": {
+            "wang_tie": 15
+          },
+          "narrative": "王铁传授了你基础的刀法身形，你的武艺和与他的情谊都大幅增进。"
+        }
       }
     ]
   },
@@ -490,12 +814,31 @@
     "weight": 4,
     "title": "王铁传高级武学",
     "text": "王铁找到你，神情凝重：「我在江湖上见识过不少年轻人，像你这般有天资又肯下苦功的不多。我有一套压箱底的功夫，今日传给你吧。」",
-    "conditions": { "flags": { "wang_taught_basics": true }, "npcAffinity": { "wang_tie": 60 } },
+    "conditions": {
+      "flags": {
+        "wang_taught_basics": true
+      },
+      "npcAffinity": {
+        "wang_tie": 60
+      }
+    },
     "choices": [
       {
         "id": "accept",
         "text": "郑重接受，不辜负老人家的心意",
-        "effects": { "attributes": { "strength": 2, "innerForce": 2 }, "flags": { "wang_taught_advanced": true }, "npcAffinity": { "wang_tie": 15 }, "narrative": "王铁倾囊相授，你的武艺突飞猛进，对他的敬意也愈发深厚。" }
+        "effects": {
+          "attributes": {
+            "strength": 2,
+            "innerForce": 2
+          },
+          "flags": {
+            "wang_taught_advanced": true
+          },
+          "npcAffinity": {
+            "wang_tie": 15
+          },
+          "narrative": "王铁倾囊相授，你的武艺突飞猛进，对他的敬意也愈发深厚。"
+        }
       }
     ]
   },
@@ -505,17 +848,37 @@
     "weight": 8,
     "title": "初遇李云舒",
     "text": "你在城外遇到一名正在被几个流氓骚扰的女子。她非但不慌，反而冷眼相对，手按剑柄，颇有几分气势。那几人见你靠近，骂骂咧咧地散去了。",
-    "conditions": { "flags": { "met_li_yunshu": false } },
+    "conditions": {
+      "flags": {
+        "met_li_yunshu": false
+      }
+    },
     "choices": [
       {
         "id": "help",
         "text": "上前搭话，确认她没事",
-        "effects": { "flags": { "met_li_yunshu": true }, "npcAffinity": { "li_yunshu": 15 }, "narrative": "她笑着抱拳道：「多谢，在下李云舒。」声音爽朗，令人如沐春风。" }
+        "effects": {
+          "flags": {
+            "met_li_yunshu": true
+          },
+          "npcAffinity": {
+            "li_yunshu": 15
+          },
+          "narrative": "她笑着抱拳道：「多谢，在下李云舒。」声音爽朗，令人如沐春风。"
+        }
       },
       {
         "id": "pass_by",
         "text": "默默路过，不多打扰",
-        "effects": { "flags": { "met_li_yunshu": true }, "npcAffinity": { "li_yunshu": 5 }, "narrative": "你擦肩而过，她回头看了你一眼，点了点头。" }
+        "effects": {
+          "flags": {
+            "met_li_yunshu": true
+          },
+          "npcAffinity": {
+            "li_yunshu": 5
+          },
+          "narrative": "你擦肩而过，她回头看了你一眼，点了点头。"
+        }
       }
     ]
   },
@@ -525,17 +888,43 @@
     "weight": 5,
     "title": "云舒倾诉心事",
     "text": "你和李云舒在城边的茶馆再次相遇。她难得流露出几分愁容：「我家门派遭人陷害，现在正四处寻访证据……你说，这江湖，究竟还有没有公道？」",
-    "conditions": { "flags": { "met_li_yunshu": true }, "npcAffinity": { "li_yunshu": 40 } },
+    "conditions": {
+      "flags": {
+        "met_li_yunshu": true
+      },
+      "npcAffinity": {
+        "li_yunshu": 40
+      }
+    },
     "choices": [
       {
         "id": "offer_help",
         "text": "表示愿意帮忙，并肩作战",
-        "effects": { "npcAffinity": { "li_yunshu": 18 }, "attributes": { "comprehension": 1 }, "flags": { "li_knows_burden": true }, "narrative": "你的一番话让她眼眶微红，她握拳道：「有你这句话，我就放心多了。」" }
+        "effects": {
+          "npcAffinity": {
+            "li_yunshu": 18
+          },
+          "attributes": {
+            "comprehension": 1
+          },
+          "flags": {
+            "li_knows_burden": true
+          },
+          "narrative": "你的一番话让她眼眶微红，她握拳道：「有你这句话，我就放心多了。」"
+        }
       },
       {
         "id": "listen",
         "text": "静静倾听，给予安慰",
-        "effects": { "npcAffinity": { "li_yunshu": 12 }, "flags": { "li_knows_burden": true }, "narrative": "你耐心倾听，偶尔说几句宽慰的话，她渐渐平静下来。" }
+        "effects": {
+          "npcAffinity": {
+            "li_yunshu": 12
+          },
+          "flags": {
+            "li_knows_burden": true
+          },
+          "narrative": "你耐心倾听，偶尔说几句宽慰的话，她渐渐平静下来。"
+        }
       }
     ]
   },
@@ -545,28 +934,60 @@
     "weight": 3,
     "title": "重逢云舒",
     "text": "数年未见，你与李云舒在江湖上偶然重逢。她已不是昔日的少女，眼神中多了几分沉稳。她笑道：「你变强了许多，当年那个愣头青，如今也成大人物了。」",
-    "conditions": { "flags": { "li_knows_burden": true }, "npcAffinity": { "li_yunshu": 55 }, "minAgeYears": 18 },
+    "conditions": {
+      "flags": {
+        "li_knows_burden": true
+      },
+      "npcAffinity": {
+        "li_yunshu": 55
+      },
+      "minAgeYears": 18
+    },
     "choices": [
       {
         "id": "reunite_warmly",
         "text": "把酒言欢，叙旧畅谈",
-        "effects": { "attributes": { "reputation": 2, "luck": 1 }, "npcAffinity": { "li_yunshu": 20 }, "narrative": "两人彻夜长谈，往昔种种历历在目。这段情谊让你心中充满力量。" }
+        "effects": {
+          "attributes": {
+            "reputation": 2,
+            "luck": 1
+          },
+          "npcAffinity": {
+            "li_yunshu": 20
+          },
+          "narrative": "两人彻夜长谈，往昔种种历历在目。这段情谊让你心中充满力量。"
+        }
       }
     ]
   },
-
   {
     "id": "meet_mysterious_elder",
     "type": "机缘",
     "weight": 3,
     "title": "神秘老者现身",
     "text": "月黑风高，你独自练功时，不知从何处走来一位白发老人。他看了你许久，忽然开口：「孩子，你可知自己肩负着什么？」",
-    "conditions": { "minAgeYears": 17, "flags": { "met_mysterious_elder": false } },
+    "conditions": {
+      "minAgeYears": 17,
+      "flags": {
+        "met_mysterious_elder": false
+      }
+    },
     "choices": [
       {
         "id": "ask_meaning",
         "text": "疑惑发问，请老人赐教",
-        "effects": { "flags": { "met_mysterious_elder": true }, "npcAffinity": { "mysterious_elder": 25 }, "attributes": { "comprehension": 2 }, "narrative": "老人意味深长地点头，说了几句令你深思的话后，消失在夜色中。" }
+        "effects": {
+          "flags": {
+            "met_mysterious_elder": true
+          },
+          "npcAffinity": {
+            "mysterious_elder": 25
+          },
+          "attributes": {
+            "comprehension": 2
+          },
+          "narrative": "老人意味深长地点头，说了几句令你深思的话后，消失在夜色中。"
+        }
       }
     ]
   },
@@ -576,12 +997,32 @@
     "weight": 2,
     "title": "老者传道",
     "text": "神秘老者再次出现在你面前，这次他不再神秘，而是直接说：「天魔将出，江湖危矣。我今日传你一门心法，你日后自知其用。」",
-    "conditions": { "flags": { "met_mysterious_elder": true }, "npcAffinity": { "mysterious_elder": 60 }, "minAgeYears": 18 },
+    "conditions": {
+      "flags": {
+        "met_mysterious_elder": true
+      },
+      "npcAffinity": {
+        "mysterious_elder": 60
+      },
+      "minAgeYears": 18
+    },
     "choices": [
       {
         "id": "accept_teaching",
         "text": "恭敬接受，铭记于心",
-        "effects": { "attributes": { "innerForce": 2, "comprehension": 2 }, "flags": { "elder_taught": true }, "npcAffinity": { "mysterious_elder": 20 }, "narrative": "老者传授的心法玄妙异常，你感到体内真气翻腾，境界大幅提升。" }
+        "effects": {
+          "attributes": {
+            "innerForce": 2,
+            "comprehension": 2
+          },
+          "flags": {
+            "elder_taught": true
+          },
+          "npcAffinity": {
+            "mysterious_elder": 20
+          },
+          "narrative": "老者传授的心法玄妙异常，你感到体内真气翻腾，境界大幅提升。"
+        }
       }
     ]
   },
@@ -591,12 +1032,28 @@
     "weight": 4,
     "title": "游侠之路",
     "text": "一名老游侠在临终前将他的佩剑赠予你，说：「这剑跟了我一生，该找个新主人了。你有游侠的命，去走你自己的路吧。」",
-    "conditions": { "jobs": ["nobody"], "minAttributes": { "strength": 10 } },
+    "conditions": {
+      "jobs": [
+        "nobody"
+      ],
+      "minAttributes": {
+        "strength": 10
+      }
+    },
     "choices": [
       {
         "id": "accept_sword",
         "text": "双手接过佩剑，踏上游侠之路",
-        "effects": { "attributes": { "strength": 1, "reputation": 1 }, "flags": { "wanderer_sword": true }, "narrative": "你握住长剑，感受到一股使命感油然而生。游侠之路，从此开始。" }
+        "effects": {
+          "attributes": {
+            "strength": 1,
+            "reputation": 1
+          },
+          "flags": {
+            "wanderer_sword": true
+          },
+          "narrative": "你握住长剑，感受到一股使命感油然而生。游侠之路，从此开始。"
+        }
       }
     ]
   },
@@ -608,8 +1065,28 @@
     "text": "你选择在崎岖山路间穿行修炼，以险峻地势磨砺意志。脚踩乱石，手攀峭壁，身体在极限中悄然蜕变。",
     "conditions": {},
     "choices": [
-      { "id": "push_limit", "text": "咬牙冲顶，挑战极限", "effects": { "attributes": { "constitution": 2 }, "hp": -8, "narrative": "你精疲力竭地站上峰顶，感到身体愈发强韧。" } },
-      { "id": "steady_pace", "text": "稳步前行，量力而为", "effects": { "attributes": { "constitution": 1, "agility": 1 }, "narrative": "稳健的步伐让你体质与身法均有提升。" } }
+      {
+        "id": "push_limit",
+        "text": "咬牙冲顶，挑战极限",
+        "effects": {
+          "attributes": {
+            "constitution": 2
+          },
+          "hp": -8,
+          "narrative": "你精疲力竭地站上峰顶，感到身体愈发强韧。"
+        }
+      },
+      {
+        "id": "steady_pace",
+        "text": "稳步前行，量力而为",
+        "effects": {
+          "attributes": {
+            "constitution": 1,
+            "agility": 1
+          },
+          "narrative": "稳健的步伐让你体质与身法均有提升。"
+        }
+      }
     ]
   },
   {
@@ -620,8 +1097,27 @@
     "text": "在一位行脚道士的指点下，你习得了一套基础的吐纳之法。清晨面对旭日，调匀呼吸，感受天地之气缓缓涌入体内。",
     "conditions": {},
     "choices": [
-      { "id": "deep_breathing", "text": "专注吐纳，蓄养内息", "effects": { "attributes": { "innerForce": 2 }, "narrative": "数月坚持，体内真气明显充盈了许多。" } },
-      { "id": "moving_breathing", "text": "边运功边活动身体", "effects": { "attributes": { "innerForce": 1, "agility": 1 }, "narrative": "动静结合的修炼方式让你内力与身法均有所提升。" } }
+      {
+        "id": "deep_breathing",
+        "text": "专注吐纳，蓄养内息",
+        "effects": {
+          "attributes": {
+            "innerForce": 2
+          },
+          "narrative": "数月坚持，体内真气明显充盈了许多。"
+        }
+      },
+      {
+        "id": "moving_breathing",
+        "text": "边运功边活动身体",
+        "effects": {
+          "attributes": {
+            "innerForce": 1,
+            "agility": 1
+          },
+          "narrative": "动静结合的修炼方式让你内力与身法均有所提升。"
+        }
+      }
     ]
   },
   {
@@ -630,9 +1126,26 @@
     "weight": 7,
     "title": "剑意入境",
     "text": "月夜，你独自在空地上挥剑，渐渐忘却了招式本身，只余心中一道意志随剑而行。不知过了多久，你猛然回神，浑身汗透，却感到前所未有的通透。",
-    "conditions": { "jobs": ["wanderer", "swordsman", "hero", "sword_saint"] },
+    "conditions": {
+      "jobs": [
+        "wanderer",
+        "swordsman",
+        "hero",
+        "sword_saint"
+      ]
+    },
     "choices": [
-      { "id": "pursue_intent", "text": "继续感悟剑意", "effects": { "attributes": { "agility": 1, "comprehension": 2 }, "narrative": "那一刻的感悟让你对剑道的理解更深，步法与悟性均有精进。" } }
+      {
+        "id": "pursue_intent",
+        "text": "继续感悟剑意",
+        "effects": {
+          "attributes": {
+            "agility": 1,
+            "comprehension": 2
+          },
+          "narrative": "那一刻的感悟让你对剑道的理解更深，步法与悟性均有精进。"
+        }
+      }
     ]
   },
   {
@@ -643,8 +1156,27 @@
     "text": "镇上的武馆开放比试，不少本地习武者前来切磋。你混入其中，几番交手下来，各有胜负，受益匪浅。",
     "conditions": {},
     "choices": [
-      { "id": "focus_attack", "text": "以攻代守，磨砺攻势", "effects": { "attributes": { "strength": 2 }, "narrative": "连番进攻让你的劲力愈发刚猛。" } },
-      { "id": "focus_defense", "text": "以守为攻，体会身法", "effects": { "attributes": { "agility": 1, "constitution": 1 }, "narrative": "在防守中磨练，你的身法和体质都有所提升。" } }
+      {
+        "id": "focus_attack",
+        "text": "以攻代守，磨砺攻势",
+        "effects": {
+          "attributes": {
+            "strength": 2
+          },
+          "narrative": "连番进攻让你的劲力愈发刚猛。"
+        }
+      },
+      {
+        "id": "focus_defense",
+        "text": "以守为攻，体会身法",
+        "effects": {
+          "attributes": {
+            "agility": 1,
+            "constitution": 1
+          },
+          "narrative": "在防守中磨练，你的身法和体质都有所提升。"
+        }
+      }
     ]
   },
   {
@@ -653,9 +1185,21 @@
     "weight": 5,
     "title": "古碑参悟",
     "text": "你在深山中发现一块古老的武学石碑，碑上文字残缺不全，但依稀可辨是某位先人留下的心法总纲。",
-    "conditions": { "minAgeYears": 17 },
+    "conditions": {
+      "minAgeYears": 17
+    },
     "choices": [
-      { "id": "study_deeply", "text": "反复推敲，逐字参悟", "effects": { "attributes": { "comprehension": 2, "innerForce": 1 }, "narrative": "数日苦思，你从残碑中悟出了一些门道，悟性与内力均有精进。" } }
+      {
+        "id": "study_deeply",
+        "text": "反复推敲，逐字参悟",
+        "effects": {
+          "attributes": {
+            "comprehension": 2,
+            "innerForce": 1
+          },
+          "narrative": "数日苦思，你从残碑中悟出了一些门道，悟性与内力均有精进。"
+        }
+      }
     ]
   },
   {
@@ -666,8 +1210,26 @@
     "text": "大江之畔，你迎着扑面而来的江风展开晨练。水声激荡，浪花溅湿衣角，天地之间只有你和手中的兵刃。",
     "conditions": {},
     "choices": [
-      { "id": "strength_training", "text": "力量冲击，拳砸江岸", "effects": { "attributes": { "strength": 2 }, "narrative": "大力出击，力量显著提升。" } },
-      { "id": "agility_training", "text": "在礁石上腾挪跳跃", "effects": { "attributes": { "agility": 2 }, "narrative": "踏石如履平地，身法愈发灵动。" } }
+      {
+        "id": "strength_training",
+        "text": "力量冲击，拳砸江岸",
+        "effects": {
+          "attributes": {
+            "strength": 2
+          },
+          "narrative": "大力出击，力量显著提升。"
+        }
+      },
+      {
+        "id": "agility_training",
+        "text": "在礁石上腾挪跳跃",
+        "effects": {
+          "attributes": {
+            "agility": 2
+          },
+          "narrative": "踏石如履平地，身法愈发灵动。"
+        }
+      }
     ]
   },
   {
@@ -678,8 +1240,27 @@
     "text": "你在路边的小摊旁遇到一位喝得烂醉的老人，他手持酒葫芦，口中念念有词，却在随手挥出的一招中显露出惊人的剑意。你屏息凝神，不敢出声。",
     "conditions": {},
     "choices": [
-      { "id": "buy_wine", "text": "悄悄为他添酒，继续观察", "effects": { "attributes": { "comprehension": 2, "strength": 1 }, "narrative": "借着酒意，老人无意中演示了数招绝学，让你深有感悟。" } },
-      { "id": "imitate", "text": "暗中模仿他的招式", "effects": { "attributes": { "agility": 2 }, "narrative": "虽不得真传，却从中领悟了几分身法精髓。" } }
+      {
+        "id": "buy_wine",
+        "text": "悄悄为他添酒，继续观察",
+        "effects": {
+          "attributes": {
+            "comprehension": 2,
+            "strength": 1
+          },
+          "narrative": "借着酒意，老人无意中演示了数招绝学，让你深有感悟。"
+        }
+      },
+      {
+        "id": "imitate",
+        "text": "暗中模仿他的招式",
+        "effects": {
+          "attributes": {
+            "agility": 2
+          },
+          "narrative": "虽不得真传，却从中领悟了几分身法精髓。"
+        }
+      }
     ]
   },
   {
@@ -688,10 +1269,35 @@
     "weight": 3,
     "title": "隐者洞府",
     "text": "山中探路时，你偶然发现一处隐秘洞穴，洞内枯骨旁散落着半部武学手稿和几幅图谱。看来这里曾住过一位隐世高人，已经仙逝多年。",
-    "conditions": { "minAgeYears": 17 },
+    "conditions": {
+      "minAgeYears": 17
+    },
     "choices": [
-      { "id": "study_writings", "text": "仔细研读手稿与图谱", "effects": { "attributes": { "comprehension": 2, "innerForce": 1 }, "narrative": "手稿虽残，但其中的武学理念让你眼界大开。" } },
-      { "id": "take_manual", "text": "将手稿带走，日后细研", "effects": { "attributes": { "strength": 2, "comprehension": 1 }, "flags": { "cave_manual": true }, "narrative": "你将手稿收好，边行路边参悟，力量与悟性都有所增进。" } }
+      {
+        "id": "study_writings",
+        "text": "仔细研读手稿与图谱",
+        "effects": {
+          "attributes": {
+            "comprehension": 2,
+            "innerForce": 1
+          },
+          "narrative": "手稿虽残，但其中的武学理念让你眼界大开。"
+        }
+      },
+      {
+        "id": "take_manual",
+        "text": "将手稿带走，日后细研",
+        "effects": {
+          "attributes": {
+            "strength": 2,
+            "comprehension": 1
+          },
+          "flags": {
+            "cave_manual": true
+          },
+          "narrative": "你将手稿收好，边行路边参悟，力量与悟性都有所增进。"
+        }
+      }
     ]
   },
   {
@@ -702,7 +1308,17 @@
     "text": "一个晴夜，你仰头望向漫天繁星，忽然心头涌起一股莫名的感悟——武道的至理，或许与这天地运行一般无二。",
     "conditions": {},
     "choices": [
-      { "id": "contemplate", "text": "静心领悟，与天地共鸣", "effects": { "attributes": { "comprehension": 2, "innerForce": 1 }, "narrative": "天人感应，你对武道的领悟更上一层楼。" } }
+      {
+        "id": "contemplate",
+        "text": "静心领悟，与天地共鸣",
+        "effects": {
+          "attributes": {
+            "comprehension": 2,
+            "innerForce": 1
+          },
+          "narrative": "天人感应，你对武道的领悟更上一层楼。"
+        }
+      }
     ]
   },
   {
@@ -713,8 +1329,29 @@
     "text": "镇上的粮仓被一伙流寇抢劫，镇民们束手无策，望着你的眼神中带着一丝期待。",
     "conditions": {},
     "choices": [
-      { "id": "fight_bandits", "text": "挺身而出，驱逐流寇", "effects": { "attributes": { "reputation": 3, "strength": 1 }, "hp": -8, "narrative": "你一人挡住流寇，镇民欢呼，名声在周边传扬开来。" } },
-      { "id": "plan_trap", "text": "设下陷阱，智退贼人", "effects": { "attributes": { "reputation": 2, "comprehension": 1 }, "narrative": "以智取胜，镇民安全，你的机智也为人称道。" } }
+      {
+        "id": "fight_bandits",
+        "text": "挺身而出，驱逐流寇",
+        "effects": {
+          "attributes": {
+            "reputation": 3,
+            "strength": 1
+          },
+          "hp": -8,
+          "narrative": "你一人挡住流寇，镇民欢呼，名声在周边传扬开来。"
+        }
+      },
+      {
+        "id": "plan_trap",
+        "text": "设下陷阱，智退贼人",
+        "effects": {
+          "attributes": {
+            "reputation": 2,
+            "comprehension": 1
+          },
+          "narrative": "以智取胜，镇民安全，你的机智也为人称道。"
+        }
+      }
     ]
   },
   {
@@ -725,8 +1362,28 @@
     "text": "你做了一个奇异的梦——梦中有一位白衣剑客，无声地向你演示一套从未见过的剑法。你醒来时，那招式仍清晰可辨。",
     "conditions": {},
     "choices": [
-      { "id": "reflect_dream", "text": "趁记忆清晰，反复揣摩", "effects": { "attributes": { "comprehension": 2, "agility": 1 }, "narrative": "梦中的剑法你反复推演，悟性与身法均有长进。" } },
-      { "id": "train_dream", "text": "立刻起身，照梦中招式练习", "effects": { "attributes": { "strength": 1, "innerForce": 2 }, "narrative": "晨光中练习梦境中的招式，内力与力量皆有增益。" } }
+      {
+        "id": "reflect_dream",
+        "text": "趁记忆清晰，反复揣摩",
+        "effects": {
+          "attributes": {
+            "comprehension": 2,
+            "agility": 1
+          },
+          "narrative": "梦中的剑法你反复推演，悟性与身法均有长进。"
+        }
+      },
+      {
+        "id": "train_dream",
+        "text": "立刻起身，照梦中招式练习",
+        "effects": {
+          "attributes": {
+            "strength": 1,
+            "innerForce": 2
+          },
+          "narrative": "晨光中练习梦境中的招式，内力与力量皆有增益。"
+        }
+      }
     ]
   },
   {
@@ -737,8 +1394,24 @@
     "text": "几个地痞流氓拦住你的去路，嬉皮笑脸地说：「这条路可不白走，买路钱交来！」他们人多势众，但武艺稀松平常。",
     "conditions": {},
     "choices": [
-      { "id": "fight_thugs", "text": "懒得废话，出手了事", "effects": { "combat": "bandit", "narrative": "" } },
-      { "id": "walk_away", "text": "绕道而行，不与庸人计较", "effects": { "attributes": { "comprehension": 1 }, "narrative": "懂得选择战场，也是一种智慧。" } }
+      {
+        "id": "fight_thugs",
+        "text": "懒得废话，出手了事",
+        "effects": {
+          "combat": "bandit",
+          "narrative": ""
+        }
+      },
+      {
+        "id": "walk_away",
+        "text": "绕道而行，不与庸人计较",
+        "effects": {
+          "attributes": {
+            "comprehension": 1
+          },
+          "narrative": "懂得选择战场，也是一种智慧。"
+        }
+      }
     ]
   },
   {
@@ -747,10 +1420,28 @@
     "weight": 5,
     "title": "同道相争",
     "text": "一名自称「铁刀」的游走剑客拦住你，出言不逊：「你就是最近风头正盛的那个？我偏不信，今日来会一会。」",
-    "conditions": { "minAgeYears": 17 },
+    "conditions": {
+      "minAgeYears": 17
+    },
     "choices": [
-      { "id": "accept_fight", "text": "抽剑应战，会一会他", "effects": { "combat": "skilled_bandit", "narrative": "" } },
-      { "id": "ignore", "text": "拂袖而去，不与之争", "effects": { "attributes": { "comprehension": 1 }, "narrative": "你转身离去，他哑然失措，喊了几句，却也没敢追上来。" } }
+      {
+        "id": "accept_fight",
+        "text": "抽剑应战，会一会他",
+        "effects": {
+          "combat": "skilled_bandit",
+          "narrative": ""
+        }
+      },
+      {
+        "id": "ignore",
+        "text": "拂袖而去，不与之争",
+        "effects": {
+          "attributes": {
+            "comprehension": 1
+          },
+          "narrative": "你转身离去，他哑然失措，喊了几句，却也没敢追上来。"
+        }
+      }
     ]
   },
   {
@@ -759,9 +1450,18 @@
     "weight": 6,
     "title": "山路伏击",
     "text": "山道蜿蜒，你正行走其间，两侧灌木丛中忽然人影窜出——是几名山贼，已提刀拦路，退路也被断死。",
-    "conditions": { "minAgeYears": 17 },
+    "conditions": {
+      "minAgeYears": 17
+    },
     "choices": [
-      { "id": "fight_way_out", "text": "当机立断，杀出重围", "effects": { "combat": "bandit", "narrative": "" } }
+      {
+        "id": "fight_way_out",
+        "text": "当机立断，杀出重围",
+        "effects": {
+          "combat": "bandit",
+          "narrative": ""
+        }
+      }
     ]
   },
   {
@@ -770,10 +1470,31 @@
     "weight": 5,
     "title": "浪迹武者",
     "text": "一名浪迹江湖的武者寻到你，自报家门后抱拳道：「听闻阁下身手不凡，在下行走天下，专程来领教。」他神情坦然，无恶意。",
-    "conditions": { "minAgeYears": 18, "minAttributes": { "reputation": 3 } },
+    "conditions": {
+      "minAgeYears": 18,
+      "minAttributes": {
+        "reputation": 3
+      }
+    },
     "choices": [
-      { "id": "accept_duel", "text": "接受较量，以武会友", "effects": { "combat": "jianghu_challenger", "narrative": "" } },
-      { "id": "chat_instead", "text": "以茶代战，交流心得", "effects": { "attributes": { "comprehension": 2 }, "narrative": "一番交流让你对武道的理解更加开阔。" } }
+      {
+        "id": "accept_duel",
+        "text": "接受较量，以武会友",
+        "effects": {
+          "combat": "jianghu_challenger",
+          "narrative": ""
+        }
+      },
+      {
+        "id": "chat_instead",
+        "text": "以茶代战，交流心得",
+        "effects": {
+          "attributes": {
+            "comprehension": 2
+          },
+          "narrative": "一番交流让你对武道的理解更加开阔。"
+        }
+      }
     ]
   },
   {
@@ -782,9 +1503,21 @@
     "weight": 4,
     "title": "古寺僧侣",
     "text": "途经一座古寺，一位枯瘦的老僧正在洒扫。他见你武艺不凡，停下手中扫帚：「施主，可愿学一套调息之法？」",
-    "conditions": { "minAgeYears": 17 },
+    "conditions": {
+      "minAgeYears": 17
+    },
     "choices": [
-      { "id": "accept_teaching", "text": "欣然受教，虔心习练", "effects": { "attributes": { "innerForce": 2, "constitution": 1 }, "narrative": "调息之法朴实无华，却让你的内力与体质均有精进。" } }
+      {
+        "id": "accept_teaching",
+        "text": "欣然受教，虔心习练",
+        "effects": {
+          "attributes": {
+            "innerForce": 2,
+            "constitution": 1
+          },
+          "narrative": "调息之法朴实无华，却让你的内力与体质均有精进。"
+        }
+      }
     ]
   },
   {
@@ -795,8 +1528,28 @@
     "text": "街边摆摊磨刀的老人看了看你的佩剑，说：「一把剑锻造出来是杀人的，还是护人的，端看剑主的心。」他的话让你一愣。",
     "conditions": {},
     "choices": [
-      { "id": "listen_wisdom", "text": "静下心来，细细品味这番话", "effects": { "attributes": { "comprehension": 1, "luck": 1 }, "narrative": "老人的几句话如醍醐灌顶，让你对武道的方向有了新的思考。" } },
-      { "id": "share_thoughts", "text": "与他坦诚交流，说出自己的想法", "effects": { "attributes": { "reputation": 1, "comprehension": 1 }, "narrative": "一番对话，你不仅理清了思路，在附近也留下了好名声。" } }
+      {
+        "id": "listen_wisdom",
+        "text": "静下心来，细细品味这番话",
+        "effects": {
+          "attributes": {
+            "comprehension": 1,
+            "luck": 1
+          },
+          "narrative": "老人的几句话如醍醐灌顶，让你对武道的方向有了新的思考。"
+        }
+      },
+      {
+        "id": "share_thoughts",
+        "text": "与他坦诚交流，说出自己的想法",
+        "effects": {
+          "attributes": {
+            "reputation": 1,
+            "comprehension": 1
+          },
+          "narrative": "一番对话，你不仅理清了思路，在附近也留下了好名声。"
+        }
+      }
     ]
   },
   {
@@ -807,8 +1560,28 @@
     "text": "路边坐着一个蓬头垢面的孩子，衣衫褴褛，正在哭泣。路人视若无睹地走过，只有你停下脚步。",
     "conditions": {},
     "choices": [
-      { "id": "give_money", "text": "掏出身上的零钱相助", "effects": { "attributes": { "reputation": 2, "luck": 1 }, "narrative": "你的善举被路人看在眼里，此后在这一带颇受好评。" } },
-      { "id": "teach_self_reliance", "text": "教他如何保护自己", "effects": { "attributes": { "reputation": 1, "comprehension": 1 }, "narrative": "你传授他一些自保之道，孩子感激地望着你，你也从中得到了某种感悟。" } }
+      {
+        "id": "give_money",
+        "text": "掏出身上的零钱相助",
+        "effects": {
+          "attributes": {
+            "reputation": 2,
+            "luck": 1
+          },
+          "narrative": "你的善举被路人看在眼里，此后在这一带颇受好评。"
+        }
+      },
+      {
+        "id": "teach_self_reliance",
+        "text": "教他如何保护自己",
+        "effects": {
+          "attributes": {
+            "reputation": 1,
+            "comprehension": 1
+          },
+          "narrative": "你传授他一些自保之道，孩子感激地望着你，你也从中得到了某种感悟。"
+        }
+      }
     ]
   },
   {
@@ -817,10 +1590,31 @@
     "weight": 4,
     "title": "与文士论道",
     "text": "一位游历四方的文士与你在茶馆邂逅，他博学多识，却对武道颇有见地：「以文观武，以武悟文，方能通达。」",
-    "conditions": { "minAgeYears": 17 },
+    "conditions": {
+      "minAgeYears": 17
+    },
     "choices": [
-      { "id": "argue_martial", "text": "坚持武道为本，与他辩论", "effects": { "attributes": { "comprehension": 2 }, "narrative": "一番辩论，你对自己的武道之路有了更清晰的认识。" } },
-      { "id": "blend_paths", "text": "虚心受教，融合文武之道", "effects": { "attributes": { "comprehension": 1, "luck": 1 }, "narrative": "文武相融，你的眼界与运势均有所提升。" } }
+      {
+        "id": "argue_martial",
+        "text": "坚持武道为本，与他辩论",
+        "effects": {
+          "attributes": {
+            "comprehension": 2
+          },
+          "narrative": "一番辩论，你对自己的武道之路有了更清晰的认识。"
+        }
+      },
+      {
+        "id": "blend_paths",
+        "text": "虚心受教，融合文武之道",
+        "effects": {
+          "attributes": {
+            "comprehension": 1,
+            "luck": 1
+          },
+          "narrative": "文武相融，你的眼界与运势均有所提升。"
+        }
+      }
     ]
   },
   {
@@ -831,7 +1625,17 @@
     "text": "酒馆中，一名走南闯北的商人眉飞色舞地讲述他的奇遇：妖魔、宝藏、绝世高手……你不知真假，却听得入神。",
     "conditions": {},
     "choices": [
-      { "id": "be_inspired", "text": "从中获取灵感，思考江湖之大", "effects": { "attributes": { "luck": 1, "comprehension": 1 }, "narrative": "见闻虽不可全信，但开阔了眼界，运势与悟性均有提升。" } }
+      {
+        "id": "be_inspired",
+        "text": "从中获取灵感，思考江湖之大",
+        "effects": {
+          "attributes": {
+            "luck": 1,
+            "comprehension": 1
+          },
+          "narrative": "见闻虽不可全信，但开阔了眼界，运势与悟性均有提升。"
+        }
+      }
     ]
   },
   {
@@ -845,12 +1649,22 @@
       {
         "id": "focus_read",
         "text": "认真研读，推敲武学道理",
-        "effects": { "attributes": { "comprehension": 1 }, "narrative": "卧床之时，倒让你静下心来钻研武学，悟性有所精进。" }
+        "effects": {
+          "attributes": {
+            "comprehension": 1
+          },
+          "narrative": "卧床之时，倒让你静下心来钻研武学，悟性有所精进。"
+        }
       },
       {
         "id": "casual_read",
         "text": "随手翻阅，消磨时光",
-        "effects": { "attributes": { "luck": 1 }, "narrative": "随手翻到几段奇闻轶事，颇为有趣，心情也好了不少。" }
+        "effects": {
+          "attributes": {
+            "luck": 1
+          },
+          "narrative": "随手翻到几段奇闻轶事，颇为有趣，心情也好了不少。"
+        }
       }
     ]
   },
@@ -865,7 +1679,12 @@
       {
         "id": "deep_meditation",
         "text": "凝神入定，以内功疗伤",
-        "effects": { "attributes": { "innerForce": 1 }, "narrative": "内力在体内游走，缓缓修复受损经脉，内功有所精进。" }
+        "effects": {
+          "attributes": {
+            "innerForce": 1
+          },
+          "narrative": "内力在体内游走，缓缓修复受损经脉，内功有所精进。"
+        }
       }
     ]
   },
@@ -880,7 +1699,13 @@
       {
         "id": "chat_warmly",
         "text": "把酒言欢，叙旧畅谈",
-        "effects": { "attributes": { "reputation": 1, "constitution": 1 }, "narrative": "朋友的探望令你精神大振，伤势好了几分，声望也随之传扬。" }
+        "effects": {
+          "attributes": {
+            "reputation": 1,
+            "constitution": 1
+          },
+          "narrative": "朋友的探望令你精神大振，伤势好了几分，声望也随之传扬。"
+        }
       }
     ]
   },
@@ -895,7 +1720,13 @@
       {
         "id": "ponder_battle",
         "text": "沉心推演，化败为悟",
-        "effects": { "attributes": { "comprehension": 2, "agility": 1 }, "narrative": "败而后悟，或许才是真正的成长。你对自身武艺的不足有了深刻认识，步法也随之精进。" }
+        "effects": {
+          "attributes": {
+            "comprehension": 2,
+            "agility": 1
+          },
+          "narrative": "败而后悟，或许才是真正的成长。你对自身武艺的不足有了深刻认识，步法也随之精进。"
+        }
       }
     ]
   },
@@ -905,14 +1736,25 @@
     "weight": 8,
     "title": "双鱼玉佩",
     "text": "某个清晨，你从梦中猛然惊醒，心跳如鼓。\n\n梦里有刀光、有山河、有一些你从未经历过的面孔，却偏偏如此熟悉，像是久远的记忆，又像是另一个人的一生。\n\n你低头，摸到胸口那枚从小就戴着的家传双鱼玉佩。佩身温热，远超寻常体温，指尖划过纹路时，竟有一丝隐约的颤动传来。\n\n这枚玉佩，究竟是什么？",
-    "conditions": { "minRebirth": 1, "flags": { "jade_pendant_memory_done": false }, "maxAgeYears": 17 },
+    "conditions": {
+      "minRebirth": 1,
+      "flags": {
+        "jade_pendant_memory_done": false
+      },
+      "maxAgeYears": 17
+    },
     "choices": [
       {
         "id": "recall_visions",
         "text": "静心回忆梦中的一切，试图捕捉那些残影",
         "effects": {
-          "flags": { "jade_pendant_memory_done": true },
-          "attributes": { "comprehension": 2, "innerForce": 1 },
+          "flags": {
+            "jade_pendant_memory_done": true
+          },
+          "attributes": {
+            "comprehension": 2,
+            "innerForce": 1
+          },
           "narrative": "你盘膝而坐，闭眼凝神。那些残碎的画面渐渐清晰——刀风、山路、某个人的背影。你不知道那是谁，但那份沉甸甸的感觉告诉你：那些经历是真实的，只是属于另一个你。悟性莫名提升了一分。"
         }
       },
@@ -920,18 +1762,33 @@
         "id": "feel_the_warmth",
         "text": "什么都不想，只是握紧玉佩，感受那份温热",
         "effects": {
-          "flags": { "jade_pendant_memory_done": true },
-          "attributes": { "constitution": 1, "luck": 2 },
+          "flags": {
+            "jade_pendant_memory_done": true
+          },
+          "attributes": {
+            "constitution": 1,
+            "luck": 2
+          },
           "narrative": "那道温热从掌心蔓延，遍布全身，像是有什么东西在守护着你。你说不清那是什么，但此后很长一段时间，你都感觉自己特别顺遂——该躲的危险莫名躲开了，该碰上的机遇接二连三地来。"
         }
       },
       {
         "id": "channel_qi",
         "text": "尝试以内力感应玉佩，看看能否引出其中的秘密",
-        "requirements": { "minAttributes": { "innerForce": 8 } },
+        "requirements": {
+          "minAttributes": {
+            "innerForce": 8
+          }
+        },
         "effects": {
-          "flags": { "jade_pendant_memory_done": true, "jade_pendant_awakened": true },
-          "attributes": { "innerForce": 3, "comprehension": 1 },
+          "flags": {
+            "jade_pendant_memory_done": true,
+            "jade_pendant_awakened": true
+          },
+          "attributes": {
+            "innerForce": 3,
+            "comprehension": 1
+          },
           "narrative": "内力缓缓注入，玉佩骤然大放白光，一道模糊的声音在脑海中响起：「……记住……不可……天魔……」随即一切归于寂静，但你感到经脉畅通，内力有了一次质的飞跃。玉佩上的双鱼纹路，似乎比昨天更清晰了一分。"
         }
       }
@@ -943,15 +1800,26 @@
     "weight": 4,
     "title": "刀疤剑客",
     "text": "演武场边，人群里有个冷面男子格外显眼——左颊一道深疤，剑悬腰侧，目光锐利地打量着每一个出招的人。周围的人有意无意地与他保持着距离。\n\n他注意到了你，沉默片刻后，朝你方向抬了抬下颌：「你，来这里干什么？」",
-    "conditions": { "flags": { "met_yan_chixing": false }, "minAgeYears": 16 },
+    "conditions": {
+      "flags": {
+        "met_yan_chixing": false
+      },
+      "minAgeYears": 16
+    },
     "choices": [
       {
         "id": "introduce_self",
         "text": "坦然报出名号，直言是为习武而来",
         "effects": {
-          "flags": { "met_yan_chixing": true },
-          "npcAffinity": { "yan_chixing": 20 },
-          "attributes": { "strength": 1 },
+          "flags": {
+            "met_yan_chixing": true
+          },
+          "npcAffinity": {
+            "yan_chixing": 20
+          },
+          "attributes": {
+            "strength": 1
+          },
           "narrative": "他盯着你看了片刻，轻哼一声：「还算老实。」转身离开前丢下一句：「我叫燕赤行。以后别挡我的路。」那算是他给过你的最好评价。"
         }
       },
@@ -959,9 +1827,15 @@
         "id": "observe_quietly",
         "text": "不答话，以沉默回应，打量他的剑法",
         "effects": {
-          "flags": { "met_yan_chixing": true },
-          "npcAffinity": { "yan_chixing": 12 },
-          "attributes": { "comprehension": 1 },
+          "flags": {
+            "met_yan_chixing": true
+          },
+          "npcAffinity": {
+            "yan_chixing": 12
+          },
+          "attributes": {
+            "comprehension": 1
+          },
           "narrative": "你们就这样对视了片刻。他忽然皱起眉，随即松开，低声道：「有点意思。」随手抛给你一块碎银，「算我欠你一顿饭。」你们就这样莫名其妙地认识了。"
         }
       }
@@ -973,15 +1847,26 @@
     "weight": 4,
     "title": "游方医者",
     "text": "你在镇口见到一个背着大药箱的年轻女子，正蹲在路边为一个跌破了膝盖的孩子包扎伤口，手法娴熟，旁边一圈围观的人议论纷纷。\n\n孩子的母亲掏出钱来，她摆了摆手：「不用，顺手的事。」\n\n她站起来，与你目光相交，平静地点了点头，像是打了个招呼，又像什么都没有。",
-    "conditions": { "flags": { "met_su_qing": false }, "minAgeYears": 16 },
+    "conditions": {
+      "flags": {
+        "met_su_qing": false
+      },
+      "minAgeYears": 16
+    },
     "choices": [
       {
         "id": "talk_to_her",
         "text": "上前搭话，问她是否常在此地",
         "effects": {
-          "flags": { "met_su_qing": true },
-          "npcAffinity": { "su_qing": 18 },
-          "attributes": { "constitution": 1 },
+          "flags": {
+            "met_su_qing": true
+          },
+          "npcAffinity": {
+            "su_qing": 18
+          },
+          "attributes": {
+            "constitution": 1
+          },
           "narrative": "「不常，走到哪里算哪里。」她简短地回答，补了一句：「你身上有旧伤，左肋，没有好利索。」你愣了一下——她已经背起药箱准备离开，「去找人看看，别拖。」那是她第一次主动对你说话。"
         }
       },
@@ -989,8 +1874,12 @@
         "id": "help_carry",
         "text": "见她药箱沉重，主动帮忙提一段路",
         "effects": {
-          "flags": { "met_su_qing": true },
-          "npcAffinity": { "su_qing": 22 },
+          "flags": {
+            "met_su_qing": true
+          },
+          "npcAffinity": {
+            "su_qing": 22
+          },
           "narrative": "她看了看你，没有拒绝。一路上话不多，但走到分叉口时，她驻足：「谢谢。」停顿了一下，「我叫苏青。以后若是受了伤，可以来找我。」不是客套，是认真的。"
         }
       }
@@ -1008,7 +1897,10 @@
       {
         "id": "accept_duel",
         "text": "握紧佩剑，迎上去",
-        "effects": { "combat": "sword_soul", "narrative": "你握紧剑柄，凝视眼前强敌，缓缓抬起剑尖。" }
+        "effects": {
+          "combat": "sword_soul",
+          "narrative": "你握紧剑柄，凝视眼前强敌，缓缓抬起剑尖。"
+        }
       }
     ]
   },
@@ -1018,10 +1910,33 @@
     "weight": 30,
     "title": "生辰感悟",
     "text": "今日生辰，你独坐屋顶，望着夜空发呆。离那个约定还有多少时日？你盘腿而坐，将心中的念头一一厘清，不知不觉进入了一种前所未有的清明之境。",
-    "conditions": { "flags": { "_is_birthday": true } },
+    "conditions": {
+      "flags": {
+        "_is_birthday": true
+      }
+    },
     "choices": [
-      { "id": "meditate", "text": "趁此良机，运功打坐一夜", "effects": { "attributes": { "innerForce": 1, "comprehension": 1 }, "narrative": "一夜吐纳，真气暗涨，思路也愈发清晰。" } },
-      { "id": "plan", "text": "将这一年的经历细细梳理", "effects": { "attributes": { "comprehension": 2 }, "narrative": "回顾这一年的起伏，你对自己的道路有了更清醒的认识。" } }
+      {
+        "id": "meditate",
+        "text": "趁此良机，运功打坐一夜",
+        "effects": {
+          "attributes": {
+            "innerForce": 1,
+            "comprehension": 1
+          },
+          "narrative": "一夜吐纳，真气暗涨，思路也愈发清晰。"
+        }
+      },
+      {
+        "id": "plan",
+        "text": "将这一年的经历细细梳理",
+        "effects": {
+          "attributes": {
+            "comprehension": 2
+          },
+          "narrative": "回顾这一年的起伏，你对自己的道路有了更清醒的认识。"
+        }
+      }
     ]
   },
   {
@@ -1030,10 +1945,40 @@
     "weight": 40,
     "title": "老镖师庆生",
     "text": "生辰当日，王铁提着一壶老酒找上门来，粗声粗气说：「今儿你生辰，别整天练功了，陪老夫喝两杯。」两人相对而坐，他讲起年轻时的江湖往事，言语间透出几分对你的期许。",
-    "conditions": { "flags": { "_is_birthday": true, "met_wang_tie": true } },
+    "conditions": {
+      "flags": {
+        "_is_birthday": true,
+        "met_wang_tie": true
+      }
+    },
     "choices": [
-      { "id": "share_wine", "text": "推杯换盏，听他讲古", "effects": { "attributes": { "constitution": 1 }, "npcAffinity": { "wang_tie": 8 }, "narrative": "一壶酒喝到月上中天，两人说得尽兴。王铁临走前拍了拍你的肩，什么也没说，却胜过千言万语。" } },
-      { "id": "ask_guidance", "text": "请他指点未来的路", "effects": { "attributes": { "strength": 1, "comprehension": 1 }, "npcAffinity": { "wang_tie": 10 }, "narrative": "王铁沉默良久，缓缓道出几句话。寥寥数语，让你对武道与前路都有了新的认识。" } }
+      {
+        "id": "share_wine",
+        "text": "推杯换盏，听他讲古",
+        "effects": {
+          "attributes": {
+            "constitution": 1
+          },
+          "npcAffinity": {
+            "wang_tie": 8
+          },
+          "narrative": "一壶酒喝到月上中天，两人说得尽兴。王铁临走前拍了拍你的肩，什么也没说，却胜过千言万语。"
+        }
+      },
+      {
+        "id": "ask_guidance",
+        "text": "请他指点未来的路",
+        "effects": {
+          "attributes": {
+            "strength": 1,
+            "comprehension": 1
+          },
+          "npcAffinity": {
+            "wang_tie": 10
+          },
+          "narrative": "王铁沉默良久，缓缓道出几句话。寥寥数语，让你对武道与前路都有了新的认识。"
+        }
+      }
     ]
   },
   {
@@ -1042,10 +1987,40 @@
     "weight": 40,
     "title": "云舒相贺",
     "text": "生辰清晨，李云舒不知从哪里打听到了日子，早早送来一包亲手做的点心，笑道：「生辰快乐，你要长命百岁的。」她眼睛弯弯的，看起来比你还高兴。",
-    "conditions": { "flags": { "_is_birthday": true, "met_li_yunshu": true } },
+    "conditions": {
+      "flags": {
+        "_is_birthday": true,
+        "met_li_yunshu": true
+      }
+    },
     "choices": [
-      { "id": "accept_gift", "text": "收下心意，道谢言欢", "effects": { "attributes": { "luck": 1 }, "npcAffinity": { "li_yunshu": 8 }, "narrative": "一块点心，两人笑语，这个生辰意外地温暖。她走后，你发现袋底还压着一张字条：「好好活着。」" } },
-      { "id": "train_together", "text": "邀她切磋，以武会友", "effects": { "attributes": { "agility": 1, "reputation": 1 }, "npcAffinity": { "li_yunshu": 10 }, "narrative": "两人从日出练到日落，汗流浃背，却都笑个不停。这是你迄今最充实的一个生辰。" } }
+      {
+        "id": "accept_gift",
+        "text": "收下心意，道谢言欢",
+        "effects": {
+          "attributes": {
+            "luck": 1
+          },
+          "npcAffinity": {
+            "li_yunshu": 8
+          },
+          "narrative": "一块点心，两人笑语，这个生辰意外地温暖。她走后，你发现袋底还压着一张字条：「好好活着。」"
+        }
+      },
+      {
+        "id": "train_together",
+        "text": "邀她切磋，以武会友",
+        "effects": {
+          "attributes": {
+            "agility": 1,
+            "reputation": 1
+          },
+          "npcAffinity": {
+            "li_yunshu": 10
+          },
+          "narrative": "两人从日出练到日落，汗流浃背，却都笑个不停。这是你迄今最充实的一个生辰。"
+        }
+      }
     ]
   },
   {
@@ -1054,10 +2029,39 @@
     "weight": 40,
     "title": "老者生辰赠言",
     "text": "生辰傍晚，那神秘老者不知何时坐在了你院中的石凳上，望着天色喃喃道：「又大一岁了。时间对每个人都公平，但不是每个人都懂得如何用它。」",
-    "conditions": { "flags": { "_is_birthday": true, "met_mysterious_elder": true } },
+    "conditions": {
+      "flags": {
+        "_is_birthday": true,
+        "met_mysterious_elder": true
+      }
+    },
     "choices": [
-      { "id": "ask_meaning", "text": "请教他时间的意义", "effects": { "attributes": { "comprehension": 2 }, "npcAffinity": { "mysterious_elder": 8 }, "narrative": "老者的话如一把钥匙，打开了你心中某扇紧闭的门。当你回过神，他已悄然离去，只留下石凳上一枚不知名的药丸。" } },
-      { "id": "sit_in_silence", "text": "与他并肩静坐，无言相伴", "effects": { "attributes": { "innerForce": 2 }, "npcAffinity": { "mysterious_elder": 10 }, "narrative": "两人一坐便是一个时辰，无言胜有言。你的真气在那片寂静中悄然增长，仿佛天地都在为你庆生。" } }
+      {
+        "id": "ask_meaning",
+        "text": "请教他时间的意义",
+        "effects": {
+          "attributes": {
+            "comprehension": 2
+          },
+          "npcAffinity": {
+            "mysterious_elder": 8
+          },
+          "narrative": "老者的话如一把钥匙，打开了你心中某扇紧闭的门。当你回过神，他已悄然离去，只留下石凳上一枚不知名的药丸。"
+        }
+      },
+      {
+        "id": "sit_in_silence",
+        "text": "与他并肩静坐，无言相伴",
+        "effects": {
+          "attributes": {
+            "innerForce": 2
+          },
+          "npcAffinity": {
+            "mysterious_elder": 10
+          },
+          "narrative": "两人一坐便是一个时辰，无言胜有言。你的真气在那片寂静中悄然增长，仿佛天地都在为你庆生。"
+        }
+      }
     ]
   },
   {
@@ -1066,25 +2070,44 @@
     "weight": 5,
     "title": "白衣剑客",
     "text": "城郊偏僻的山道上，你遭遇了影堂的三名刺客。对方来势汹汹，你以一敌三，渐渐落了下风。\n\n就在刺客最后一击即将落下的刹那，一道白影破空而至——三道剑光凌厉如冰刃，转瞬之间三名刺客皆告倒地。\n\n白衣女子收剑回鞘，连头都没转：「运气不错。」\n\n你终于看清了她的面容：眉眼清冷，白衣如雪，腰侧长剑的剑鞘上刻着一朵细小的冰花。她的出手如此流畅，却让你背后生出一层冷汗——那种流畅，不像是身经百战，更像是……从来不曾犹豫过。",
-    "conditions": { "flags": { "met_ling_xue": false }, "minAgeYears": 17 },
+    "conditions": {
+      "flags": {
+        "met_ling_xue": false
+      },
+      "minAgeYears": 17
+    },
     "choices": [
       {
         "id": "approach_grateful",
         "text": "上前致谢，问她姓名",
         "effects": {
-          "flags": { "met_ling_xue": true },
-          "npcAffinity": { "ling_xue": 20 },
+          "flags": {
+            "met_ling_xue": true
+          },
+          "npcAffinity": {
+            "ling_xue": 20
+          },
           "narrative": "她回头看了你一眼，目光像是在打量，又像是在计算什么。片刻后，她说：「凌雪。」两个字，不冷不热。你说了自己的名字，她点了点头，便转身离去。那背影消失得很快，像雪地里一道浅浅的足迹。"
         }
       },
       {
         "id": "observe_stance",
         "text": "道谢之余，暗中观察她的剑法路数",
-        "requirements": { "minAttributes": { "comprehension": 12 } },
+        "requirements": {
+          "minAttributes": {
+            "comprehension": 12
+          }
+        },
         "effects": {
-          "flags": { "met_ling_xue": true },
-          "npcAffinity": { "ling_xue": 25 },
-          "attributes": { "comprehension": 1 },
+          "flags": {
+            "met_ling_xue": true
+          },
+          "npcAffinity": {
+            "ling_xue": 25
+          },
+          "attributes": {
+            "comprehension": 1
+          },
           "narrative": "你在道谢的同时，悄悄回想她方才出手的细节——剑路奇特，路数深不可测，既不似任何你见过的门派，却处处带着一种异样的笃定。是一个对自己所走的路从未动摇过的人，才能练出来的剑。她见你若有所思，眼神里有什么东西一闪而过。「叫凌雪，」她说，「下次最好别再遇上这种麻烦。」"
         }
       },
@@ -1092,8 +2115,12 @@
         "id": "ask_motive",
         "text": "压下疑虑，只是拱手道谢，顺口问她为何出手相助",
         "effects": {
-          "flags": { "met_ling_xue": true },
-          "npcAffinity": { "ling_xue": 18 },
+          "flags": {
+            "met_ling_xue": true
+          },
+          "npcAffinity": {
+            "ling_xue": 18
+          },
           "narrative": "她停下脚步，沉默了一会儿，才说：「路见不平，顺手罢了。」语气平淡，听不出情绪。但你注意到，她说这话时，目光在你脸上停了一停，像是在核对某件事。她走了，留下一个说不清是漠然还是若有所思的背影。"
         }
       }
@@ -1110,17 +2137,33 @@
       {
         "id": "study_diagrams",
         "text": "静心钻研剑法图解，领悟其中真意",
-        "effects": { "attributes": { "comprehension": 2, "innerForce": 1 }, "narrative": "你在洞中枯坐三日，终于从那模糊的图解中悟出了一丝剑意的真谛，内力与悟性均有所提升。" }
+        "effects": {
+          "attributes": {
+            "comprehension": 2,
+            "innerForce": 1
+          },
+          "narrative": "你在洞中枯坐三日，终于从那模糊的图解中悟出了一丝剑意的真谛，内力与悟性均有所提升。"
+        }
       },
       {
         "id": "copy_diagrams",
         "text": "将图解誊抄下来，留待日后慢慢研究",
-        "effects": { "attributes": { "comprehension": 1 }, "narrative": "你将能看清的图解一一誊抄，虽一时难以完全参透，日后必有所获。悟性小有提升。" }
+        "effects": {
+          "attributes": {
+            "comprehension": 1
+          },
+          "narrative": "你将能看清的图解一一誊抄，虽一时难以完全参透，日后必有所获。悟性小有提升。"
+        }
       },
       {
         "id": "ignore",
         "text": "此地阴气太重，不宜久留，速速离开",
-        "effects": { "attributes": { "luck": 1 }, "narrative": "你心生警惕，果断撤出洞穴。出口处，一块石头绊了你一跤，却让你发现了地下埋藏的一枚铜钱，倒是沾了点运气。" }
+        "effects": {
+          "attributes": {
+            "luck": 1
+          },
+          "narrative": "你心生警惕，果断撤出洞穴。出口处，一块石头绊了你一跤，却让你发现了地下埋藏的一枚铜钱，倒是沾了点运气。"
+        }
       }
     ]
   },
@@ -1135,17 +2178,35 @@
       {
         "id": "push_through",
         "text": "顶风冒雨，强行赶路",
-        "effects": { "attributes": { "constitution": 2 }, "hp": -8, "narrative": "你咬牙冲进风雨，体力损耗极大，却也在这般磨砺中筋骨更加强健。" }
+        "effects": {
+          "attributes": {
+            "constitution": 2
+          },
+          "hp": -8,
+          "narrative": "你咬牙冲进风雨，体力损耗极大，却也在这般磨砺中筋骨更加强健。"
+        }
       },
       {
         "id": "find_shelter",
         "text": "寻找避雨之处，等雨停再走",
-        "effects": { "attributes": { "luck": 1 }, "narrative": "你找到一处破庙暂避风雨，与几位同行旅人相谈甚欢，还从他们口中听说了一些江湖消息，运气不坏。" }
+        "effects": {
+          "attributes": {
+            "luck": 1
+          },
+          "narrative": "你找到一处破庙暂避风雨，与几位同行旅人相谈甚欢，还从他们口中听说了一些江湖消息，运气不坏。"
+        }
       },
       {
         "id": "train_in_rain",
         "text": "借着雨势练功，感悟水的刚柔之道",
-        "effects": { "attributes": { "innerForce": 1, "constitution": 1 }, "hp": -5, "narrative": "雨中练功，天地浑然一体。你在淋漓大雨中感悟到了以柔克刚的一丝真意，内力与体质均有小幅提升。" }
+        "effects": {
+          "attributes": {
+            "innerForce": 1,
+            "constitution": 1
+          },
+          "hp": -5,
+          "narrative": "雨中练功，天地浑然一体。你在淋漓大雨中感悟到了以柔克刚的一丝真意，内力与体质均有小幅提升。"
+        }
       }
     ]
   },
@@ -1160,17 +2221,34 @@
       {
         "id": "spar",
         "text": "恭敬行礼，请求赐教",
-        "effects": { "attributes": { "comprehension": 2, "reputation": 2 }, "narrative": "老剑客点头微笑，与你切磋半日。他的剑法看似平淡无奇，却蕴含无尽变化。你虽远不及他，却从中领悟到了许多，悟性与声望均大有提升。" }
+        "effects": {
+          "attributes": {
+            "comprehension": 2,
+            "reputation": 2
+          },
+          "narrative": "老剑客点头微笑，与你切磋半日。他的剑法看似平淡无奇，却蕴含无尽变化。你虽远不及他，却从中领悟到了许多，悟性与声望均大有提升。"
+        }
       },
       {
         "id": "ask_advice",
         "text": "虚心请教江湖经验与处世之道",
-        "effects": { "attributes": { "comprehension": 1, "luck": 1 }, "narrative": "老剑客抚须而笑，娓娓道来数十年走江湖的见闻。其中有一句话令你若有所悟——「剑走偏锋，不如以正合，以奇胜。」" }
+        "effects": {
+          "attributes": {
+            "comprehension": 1,
+            "luck": 1
+          },
+          "narrative": "老剑客抚须而笑，娓娓道来数十年走江湖的见闻。其中有一句话令你若有所悟——「剑走偏锋，不如以正合，以奇胜。」"
+        }
       },
       {
         "id": "decline_politely",
         "text": "婉言谢绝，继续赶路",
-        "effects": { "attributes": { "agility": 1 }, "narrative": "你礼貌推辞后快步离去，倒是这一路越走越快，步伐比往日更加轻盈。" }
+        "effects": {
+          "attributes": {
+            "agility": 1
+          },
+          "narrative": "你礼貌推辞后快步离去，倒是这一路越走越快，步伐比往日更加轻盈。"
+        }
       }
     ]
   },
@@ -1185,12 +2263,23 @@
       {
         "id": "deep_meditation",
         "text": "沉入深度冥想，感受丹田气息流转",
-        "effects": { "attributes": { "innerForce": 2 }, "narrative": "子时一过，你忽觉体内真气如江河奔涌，周天运转顺畅无比。一夜打坐，内力大进。" }
+        "effects": {
+          "attributes": {
+            "innerForce": 2
+          },
+          "narrative": "子时一过，你忽觉体内真气如江河奔涌，周天运转顺畅无比。一夜打坐，内力大进。"
+        }
       },
       {
         "id": "mental_cultivation",
         "text": "以心证道，回想近日见闻，参悟武理",
-        "effects": { "attributes": { "comprehension": 1, "innerForce": 1 }, "narrative": "你将近日所见所闻在心中细细回味，从平凡小事中悟出了武道的一丝真谛，悟性与内力均有所长进。" }
+        "effects": {
+          "attributes": {
+            "comprehension": 1,
+            "innerForce": 1
+          },
+          "narrative": "你将近日所见所闻在心中细细回味，从平凡小事中悟出了武道的一丝真谛，悟性与内力均有所长进。"
+        }
       }
     ]
   },
@@ -1205,17 +2294,35 @@
       {
         "id": "strength_training",
         "text": "手握巨石，对着崖壁反复出拳，以崖风为阻力练力",
-        "effects": { "attributes": { "strength": 3 }, "hp": -10, "narrative": "崖风凛冽，阻力极大，你每一拳都要耗费数倍力气。一番苦练下来，力量明显增强，却也肌肉酸痛难当。" }
+        "effects": {
+          "attributes": {
+            "strength": 3
+          },
+          "hp": -10,
+          "narrative": "崖风凛冽，阻力极大，你每一拳都要耗费数倍力气。一番苦练下来，力量明显增强，却也肌肉酸痛难当。"
+        }
       },
       {
         "id": "agility_training",
         "text": "在崖边窄道来回飞奔，以险境磨练轻功步法",
-        "effects": { "attributes": { "agility": 2 }, "hp": -5, "narrative": "数次险些踏空，每一步都是在鬼门关前打滚。终于，你的步伐渐渐与崖风的节奏融为一体，身法大有进益。" }
+        "effects": {
+          "attributes": {
+            "agility": 2
+          },
+          "hp": -5,
+          "narrative": "数次险些踏空，每一步都是在鬼门关前打滚。终于，你的步伐渐渐与崖风的节奏融为一体，身法大有进益。"
+        }
       },
       {
         "id": "meditation_at_cliff",
         "text": "面对深渊枯坐，体悟生死之道，凝练精神",
-        "effects": { "attributes": { "comprehension": 1, "innerForce": 1 }, "narrative": "望着脚下万丈深渊，你的杂念反而慢慢消散，心如止水。这份对生死的彻悟，让你的内力与悟性同步增长。" }
+        "effects": {
+          "attributes": {
+            "comprehension": 1,
+            "innerForce": 1
+          },
+          "narrative": "望着脚下万丈深渊，你的杂念反而慢慢消散，心如止水。这份对生死的彻悟，让你的内力与悟性同步增长。"
+        }
       }
     ]
   },
@@ -1230,17 +2337,33 @@
       {
         "id": "offer_incense",
         "text": "虔诚上香祈福，求得一分庇佑",
-        "effects": { "attributes": { "luck": 2 }, "narrative": "你恭恭敬敬上了三炷香，老僧为你诵经片刻后微微一笑：「施主今日善缘，他日必有回响。」运气冥冥中似有提升。" }
+        "effects": {
+          "attributes": {
+            "luck": 2
+          },
+          "narrative": "你恭恭敬敬上了三炷香，老僧为你诵经片刻后微微一笑：「施主今日善缘，他日必有回响。」运气冥冥中似有提升。"
+        }
       },
       {
         "id": "talk_to_monk",
         "text": "与老僧攀谈，请其为你解惑",
-        "effects": { "attributes": { "comprehension": 1, "luck": 1 }, "narrative": "老僧谈吐不凡，数语之间便点破了你修炼中的一处迷障。临别时他送你一粒素色药丸，说是可调和气脉，悟性与运气均有小幅提升。" }
+        "effects": {
+          "attributes": {
+            "comprehension": 1,
+            "luck": 1
+          },
+          "narrative": "老僧谈吐不凡，数语之间便点破了你修炼中的一处迷障。临别时他送你一粒素色药丸，说是可调和气脉，悟性与运气均有小幅提升。"
+        }
       },
       {
         "id": "donate",
         "text": "慷慨解囊，为庙宇捐出身上的盘缠",
-        "effects": { "attributes": { "reputation": 3 }, "narrative": "老僧感激不尽，将你的善举告知了数位路过的香客。不出月余，你乐善好施的名声便在附近传扬开来，声望大涨。" }
+        "effects": {
+          "attributes": {
+            "reputation": 3
+          },
+          "narrative": "老僧感激不尽，将你的善举告知了数位路过的香客。不出月余，你乐善好施的名声便在附近传扬开来，声望大涨。"
+        }
       }
     ]
   },
@@ -1255,12 +2378,24 @@
       {
         "id": "inner_force_focus",
         "text": "专注运转内功心法，打通奇经八脉",
-        "effects": { "attributes": { "innerForce": 3 }, "hp": -5, "narrative": "整整七七四十九天，你以寒气淬炼真气，以冰雪磨砺心境。闭关结束时，内力已非昔日可比。" }
+        "effects": {
+          "attributes": {
+            "innerForce": 3
+          },
+          "hp": -5,
+          "narrative": "整整七七四十九天，你以寒气淬炼真气，以冰雪磨砺心境。闭关结束时，内力已非昔日可比。"
+        }
       },
       {
         "id": "balanced_cultivation",
         "text": "内外兼修，轮流练习内功与体术",
-        "effects": { "attributes": { "innerForce": 2, "constitution": 1 }, "narrative": "以内功温养体魄，以体术催动内力，两者相辅相成。这个寒冬的苦修，让你内外兼备，大有收获。" }
+        "effects": {
+          "attributes": {
+            "innerForce": 2,
+            "constitution": 1
+          },
+          "narrative": "以内功温养体魄，以体术催动内力，两者相辅相成。这个寒冬的苦修，让你内外兼备，大有收获。"
+        }
       }
     ]
   },
@@ -1275,17 +2410,35 @@
       {
         "id": "gamble_big",
         "text": "押下重注，赌他一把",
-        "effects": { "attributes": { "agility": 1, "constitution": 1 }, "hp": -5, "narrative": "你财运亨通，一把赢下不少，但输家不服，暗中捅了你一刀后溜走。带伤离场，荷包鼓了，身上却多了道伤。" }
+        "effects": {
+          "attributes": {
+            "agility": 1,
+            "constitution": 1
+          },
+          "hp": -5,
+          "narrative": "你财运亨通，一把赢下不少，但输家不服，暗中捅了你一刀后溜走。带伤离场，荷包鼓了，身上却多了道伤。"
+        }
       },
       {
         "id": "observe",
         "text": "在旁观察，寻找其中规律",
-        "effects": { "attributes": { "comprehension": 1, "luck": 1 }, "narrative": "你冷眼旁观，逐渐看出骰子的偏重。临走前押了小注，不声不响赢了几文钱。观察所得，远比金银更值钱。" }
+        "effects": {
+          "attributes": {
+            "comprehension": 1,
+            "luck": 1
+          },
+          "narrative": "你冷眼旁观，逐渐看出骰子的偏重。临走前押了小注，不声不响赢了几文钱。观察所得，远比金银更值钱。"
+        }
       },
       {
         "id": "walk_away",
         "text": "此等赌局，不沾为妙，拂袖而去",
-        "effects": { "attributes": { "reputation": 1 }, "narrative": "你昂首离去，恰好被路过的几位侠客看见，纷纷称赞你定力过人，声誉略有提升。" }
+        "effects": {
+          "attributes": {
+            "reputation": 1
+          },
+          "narrative": "你昂首离去，恰好被路过的几位侠客看见，纷纷称赞你定力过人，声誉略有提升。"
+        }
       }
     ]
   },
@@ -1295,17 +2448,32 @@
     "weight": 4,
     "title": "前世梦回",
     "text": "入夜，你做了一个奇异的梦。梦中的你站在一片虚空之中，四周皆是自己前世的残影——有人笑，有人哭，有人死战不退，有人含笑而终。那些过去的自己，都在无言地凝视着你。",
-    "conditions": { "rebirthCount": 1 },
+    "conditions": {
+      "rebirthCount": 1
+    },
     "choices": [
       {
         "id": "embrace_memories",
         "text": "向前走去，直面每一段前世的记忆",
-        "effects": { "attributes": { "comprehension": 2, "innerForce": 1 }, "narrative": "你伸出手，触碰每一道残影。那些悲欢离合，那些生死际遇，不再是沉重的枷锁，而是化作了更深厚的底蕴。悟性与内力同时增长。" }
+        "effects": {
+          "attributes": {
+            "comprehension": 2,
+            "innerForce": 1
+          },
+          "narrative": "你伸出手，触碰每一道残影。那些悲欢离合，那些生死际遇，不再是沉重的枷锁，而是化作了更深厚的底蕴。悟性与内力同时增长。"
+        }
       },
       {
         "id": "find_strongest_self",
         "text": "在诸多残影中，寻找最强大的那个自己",
-        "effects": { "attributes": { "strength": 1, "agility": 1, "innerForce": 1 }, "narrative": "你找到了那个死战到最后一刻的自己，感受到那份不屈的意志通过梦境传递而来，力量、敏捷、内力均有微幅提升。" }
+        "effects": {
+          "attributes": {
+            "strength": 1,
+            "agility": 1,
+            "innerForce": 1
+          },
+          "narrative": "你找到了那个死战到最后一刻的自己，感受到那份不屈的意志通过梦境传递而来，力量、敏捷、内力均有微幅提升。"
+        }
       }
     ]
   },
@@ -1320,17 +2488,35 @@
       {
         "id": "fight_bandits",
         "text": "拔剑而出，救下被围商人",
-        "effects": { "attributes": { "reputation": 3, "strength": 2 }, "hp": -10, "narrative": "你与三名劫匪大战一场，虽身受数处轻伤，终究将其击退。被救商人千恩万谢，此事很快在附近传开，声望大涨，力量也在实战中得到锤炼。" }
+        "effects": {
+          "attributes": {
+            "reputation": 3,
+            "strength": 2
+          },
+          "hp": -10,
+          "narrative": "你与三名劫匪大战一场，虽身受数处轻伤，终究将其击退。被救商人千恩万谢，此事很快在附近传开，声望大涨，力量也在实战中得到锤炼。"
+        }
       },
       {
         "id": "intimidate",
         "text": "以气势震慑，逼退劫匪",
-        "effects": { "attributes": { "reputation": 2 }, "narrative": "你缓缓抽出半截剑，眼神冰冷地扫向劫匪。为首的头目仿佛感受到了你不同寻常的气场，慌忙带人撤走。商人对你感激涕零，声名因此传扬。" }
+        "effects": {
+          "attributes": {
+            "reputation": 2
+          },
+          "narrative": "你缓缓抽出半截剑，眼神冰冷地扫向劫匪。为首的头目仿佛感受到了你不同寻常的气场，慌忙带人撤走。商人对你感激涕零，声名因此传扬。"
+        }
       },
       {
         "id": "sneak_help",
         "text": "暗中吸引劫匪注意，让商人趁机逃脱",
-        "effects": { "attributes": { "agility": 1, "luck": 1 }, "narrative": "你绕到另一侧投石引开劫匪，商人趁乱逃脱。你也悄然撤离，全程如履无人之境，身法更加灵动。" }
+        "effects": {
+          "attributes": {
+            "agility": 1,
+            "luck": 1
+          },
+          "narrative": "你绕到另一侧投石引开劫匪，商人趁乱逃脱。你也悄然撤离，全程如履无人之境，身法更加灵动。"
+        }
       }
     ]
   },
@@ -1342,12 +2528,33 @@
     "title": "天魔降世",
     "text": "二十岁生辰。\n\n你以为这天会和往常一样，直到一阵冷风拂过——他来了。\n\n天魔站在你面前，如同一道深渊。他没有派使者，没有递战书，只是静静地看着你，开口道：「每一世，我都在等你。不知这一次，你准备好了吗？」\n\n无论你的答案是什么，这一战，无可避免。这就是你生来的命运。",
     "conditions": {},
-
     "choices": [
       {
         "id": "accept_battle",
         "text": "慨然接受，决一死战",
-        "effects": { "combat": "tianmo", "narrative": "你深吸一口气，聚全身真气于剑刃之上，迎向天魔。" }
+        "effects": {
+          "combat": "tianmo",
+          "narrative": "你深吸一口气，聚全身真气于剑刃之上，迎向天魔。"
+        }
+      }
+    ]
+  },
+  {
+    "id": "elder_true_form_appears",
+    "type": "boss",
+    "weight": 0,
+    "title": "轮回的终局",
+    "text": "剑意化为飞灰，玉牌归于沉寂。\n\n你低下头，感受着缠绕多世的力量终于归于平静——剑魂，就此终结。\n\n然而，身后传来一阵极为熟悉的脚步声。\n\n你不需要回头，就知道那是谁。\n\n「你做到了，」沈玄清的声音从身后传来，一如往常的平静温和，「就差最后一步了。」\n\n你转过身。他站在那里，须发皆白，眼神清澈——但这一次，你看见了他从未展示过的东西：一种历经九百年的执念，终于浮出水面。\n\n「现在，」他说，「让我将这份力量正式交给你。」\n\n他抬起手，那双你熟悉的手——是他传授你内力时的那双手——涌现出一种截然不同的气息。\n\n不是传授。是收割。\n\n你明白过来了。这是九百年计划的最后一步。不是问你是否愿意——是不给你拒绝的机会。\n\n「对不起，」他说，第一次，你听见了他声音里的歉意，「这是唯一的办法。」",
+    "conditions": {},
+    "choices": [
+      {
+        "id": "resist_elder",
+        "text": "拔剑——以自己的意志，拒绝这个安排",
+        "effects": {
+          "hp": 500,
+          "combat": "elder_true_form",
+          "narrative": "你握紧剑柄，深吸一口气。\n\n九百年的设计，在这一刻，被你以一个动作打断。"
+        }
       }
     ]
   }
