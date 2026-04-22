@@ -603,6 +603,8 @@ const UI = {
 
     restoreLog(entries) {
         if (!entries || !entries.length) return;
+        this.logEl.innerHTML = '';
+        this.logBuffer = [];
         const sep = document.createElement('div');
         sep.className = 'log-entry log-system';
         sep.textContent = '── 上次存档 ──';

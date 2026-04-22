@@ -1355,6 +1355,9 @@ const Engine = {
             UI.renderAll(this.state);
             const mName = this.BIRTH_MONTH_NAMES[newChar.birthMonth - 1];
             UI.addLog(`✨ ${newChar.rebirthCount + 1}周目。【${newChar.name}】再度降生。和上一世一样，生于${mName}。天魔之约，依然在候。`, 'system');
+            // Don't persist the rebirth intro logs — they're ephemeral transition entries.
+            // Clear the buffer so wuxia_log starts clean for the new life.
+            UI.logBuffer = [];
             this.saveGame();
         } catch(err) {
             console.error('executeRebirth failed:', err);
