@@ -81,7 +81,7 @@ const Character = {
     },
 
     getAttackPower(char, job) {
-        const base = Math.floor(char.attributes.strength * 0.7 + char.attributes.agility * 0.3);
+        const base = Math.floor(char.attributes.strength);
         const jobBase = job ? job.baseAttack : 3;
         // Sum fixed bonuses from all learned skills
         const skills = char.learnedSkills || [];
@@ -107,7 +107,7 @@ const Character = {
     },
 
     getDefensePower(char, job) {
-        const base = Math.floor(char.attributes.constitution * 0.7 + char.attributes.agility * 0.3);
+        const base = Math.floor(char.attributes.constitution * 0.4 + char.attributes.agility * 0.6);
         const jobBase = job ? job.baseDefense : 2;
         const skills = char.learnedSkills || [];
         const skillBonus = skills.reduce((s, sk) => s + (sk.bonuses && sk.bonuses.defense || 0), 0);
