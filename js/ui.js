@@ -654,8 +654,7 @@ const UI = {
         const job = state.jobs.find(j => j.id === char.job);
         const atk = Character.getAttackPower(char, job);
         const def = Character.getDefensePower(char, job);
-        const displayName = (cs.enemy.isHiddenBoss || cs.enemy.isTrueFinalBoss) ? '????' : cs.enemy.name;
-        document.getElementById('combatEnemyName').textContent  = displayName;
+        document.getElementById('combatEnemyName').textContent  = cs.enemy.name;
         const eqsText = cs.enemyQiShield > 0 ? `  盾 ${cs.enemyQiShield}` : '';
         document.getElementById('combatEnemyStats').textContent = `攻 ${cs.enemyEffAtk}  防 ${cs.enemyEffDef}${eqsText}`;
         document.getElementById('combatPlayerName').textContent = char.name;
@@ -1066,8 +1065,9 @@ const UI = {
                 return { e, eff, winPct };
             }).sort((a, b) => b.winPct - a.winPct || (a.eff.attack + a.eff.defense + a.eff.hp) - (b.eff.attack + b.eff.defense + b.eff.hp)).map(({ e, eff, winPct }) => {
                 const pctColor = winPct >= 70 ? '🟢' : winPct >= 40 ? '🟡' : '🔴';
+                const listName = (e.isHiddenBoss || e.isTrueFinalBoss) ? '????' : e.name;
                 return `<button class="visit-npc-btn" onclick="Engine.startTestCombat('${e.id}'); document.getElementById('testCombatPanel').style.display='none'">
-                    <span class="visit-npc-name">${e.name}</span>
+                    <span class="visit-npc-name">${listName}</span>
                     <span class="visit-npc-info">攻${eff.attack} 防${eff.defense} 血${eff.hp}  ${pctColor}胜率${winPct}%</span>
                 </button>`;
             }).join('');

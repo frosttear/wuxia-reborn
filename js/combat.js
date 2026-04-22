@@ -150,14 +150,14 @@ const Combat = {
         // ── FLEE ────────────────────────────────────────────────────────────
         if (action === 'flee') {
             if (Math.random() < cs.fleeChance) {
-                lines.push(`趁${this._eName(cs)}换招之际，你拼命脱身——<b>逃跑成功！</b>`);
+                lines.push(`趁${cs.enemy.name}换招之际，你拼命脱身——<b>逃跑成功！</b>`);
                 result = 'fled'; combatOver = true;
             } else {
                 const rawDmgFlee = Math.max(1, cs.enemyEffAtk - Math.floor(playerDef / 2));
                 const dmg = Math.max(1, rawDmgFlee - qiShield);
                 Character.takeDamage(char, dmg);
                 cs.totalDmgReceived += dmg;
-                lines.push(`逃跑失败！${this._eName(cs)}${this._pick(this.ENEMY_HEAVY_DESCS)}，你仓皇受击，损失 <b>${dmg}</b> 气血。`);
+                lines.push(`逃跑失败！${cs.enemy.name}${this._pick(this.ENEMY_HEAVY_DESCS)}，你仓皇受击，损失 <b>${dmg}</b> 气血。`);
                 cs.fleeChance = Math.min(0.85, cs.fleeChance + 0.15);
                 if (char.hp <= 0) { result = 'lost'; combatOver = true; }
             }
@@ -318,7 +318,7 @@ const Combat = {
                             ? '<b style="color:#6fcf97">洞察反击</b>'
                             : '<b style="color:#e0c060">化解反击</b>';
                         const skillNote = skillName ? `【<b style="color:#e07b39">${skillName}</b>】` : '';
-                        lines.push(`${this._eName(cs)}${skillNote}${this._pick(this.ENEMY_HEAVY_DESCS)}——你【${counterLabel}】！${counterText}，你承受 <b>${parryDmg}</b> 点冲击。`);
+                        lines.push(`${cs.enemy.name}${skillNote}${this._pick(this.ENEMY_HEAVY_DESCS)}——你【${counterLabel}】！${counterText}，你承受 <b>${parryDmg}</b> 点冲击。`);
                         if (char.hp <= 0) { result = 'lost'; combatOver = true; }
                         if (!combatOver && cs.enemyHp <= 0) { result = 'won'; combatOver = true; }
                         // Break: successful parry disrupts enemy skill charge
@@ -340,7 +340,7 @@ const Combat = {
                         Character.takeDamage(char, parryPunishDmg);
                         cs.totalDmgReceived += parryPunishDmg;
                         const sl = pend ? `【<b style="color:#e07b39">${pend.name}</b>】` : '';
-                        lines.push(`破招失败！${this._eName(cs)}${sl}${this._pick(this.ENEMY_SWIFT_DESCS)}，打破你的架势，你受到 <b>${parryPunishDmg}</b> 伤害！`);
+                        lines.push(`破招失败！${cs.enemy.name}${sl}${this._pick(this.ENEMY_SWIFT_DESCS)}，打破你的架势，你受到 <b>${parryPunishDmg}</b> 伤害！`);
                         if (char.hp <= 0) { result = 'lost'; combatOver = true; }
                     }
                 } else if (cs.enemyStunned) {
@@ -350,7 +350,7 @@ const Combat = {
                     const stunDmg = Math.max(1, stunRaw - qiShield);
                     Character.takeDamage(char, stunDmg);
                     cs.totalDmgReceived += stunDmg;
-                    lines.push(`${this._eName(cs)}被震慑，强撑出手，你承受 <b>${stunDmg}</b> 点冲击（力道大减）。`);
+                    lines.push(`${cs.enemy.name}被震慑，强撑出手，你承受 <b>${stunDmg}</b> 点冲击（力道大减）。`);
                     if (char.hp <= 0) { result = 'lost'; combatOver = true; }
                 } else {
                     // Normal enemy attack — enemy momentum: decrement cooldown or accumulate
@@ -389,13 +389,13 @@ const Combat = {
                         : this._pick(customPool || attackPool);
 
                     if (Math.random() < Character.getLuckDodgeChance(char)) {
-                        lines.push(`${this._eName(cs)}${ed}——你【<b>灵巧闪避</b>】，未受伤害！`);
+                        lines.push(`${cs.enemy.name}${ed}——你【<b>灵巧闪避</b>】，未受伤害！`);
                     } else {
                         Character.takeDamage(char, finalDmg);
                         cs.totalDmgReceived += finalDmg;
                         const reduceNote = incomingMult < 1.0
                             ? `（减伤 ${Math.round((1 - incomingMult) * 100)}%）` : '';
-                        lines.push(`${this._eName(cs)}${ed}，你承受 <b>${finalDmg}</b> 伤害${reduceNote}。`);
+                        lines.push(`${cs.enemy.name}${ed}，你承受 <b>${finalDmg}</b> 伤害${reduceNote}。`);
                         if (char.hp <= 0) { result = 'lost'; combatOver = true; }
                     }
 
@@ -454,7 +454,6 @@ const Combat = {
 
     _rand(min, max) { return Math.floor(Math.random() * (max - min + 1)) + min; },
     _pick(arr) { return arr[Math.floor(Math.random() * arr.length)]; },
-    _eName(cs) { return (cs.enemy.isHiddenBoss || cs.enemy.isTrueFinalBoss) ? '????' : cs.enemy.name; },
 
     // Compute flat defense penetration for strike (used by UI tooltip)
     getStrikeDefIgnore(playerAtk, enemyDef) {
