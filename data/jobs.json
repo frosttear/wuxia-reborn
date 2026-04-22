@@ -99,7 +99,7 @@
       "desc": "气贯长虹，无视铠甲",
       "momentumCost": 4,
       "type": "burst",
-      "power": 2.2
+      "power": 2.4
     },
     "skills": [
       {
@@ -136,7 +136,7 @@
       "desc": "剑道极境，一剑震魂，对手下回合力道大减",
       "momentumCost": 4,
       "type": "stun",
-      "power": 2.4
+      "power": 2.8
     },
     "skills": [
       {
