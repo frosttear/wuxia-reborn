@@ -654,7 +654,8 @@ const UI = {
         const job = state.jobs.find(j => j.id === char.job);
         const atk = Character.getAttackPower(char, job);
         const def = Character.getDefensePower(char, job);
-        document.getElementById('combatEnemyName').textContent  = cs.enemy.name;
+        const isHidden = (cs.enemy.isHiddenBoss || cs.enemy.isTrueFinalBoss) && state._isTestCombat;
+        document.getElementById('combatEnemyName').textContent  = isHidden ? '????' : cs.enemy.name;
         const eqsText = cs.enemyQiShield > 0 ? `  盾 ${cs.enemyQiShield}` : '';
         document.getElementById('combatEnemyStats').textContent = `攻 ${cs.enemyEffAtk}  防 ${cs.enemyEffDef}${eqsText}`;
         document.getElementById('combatPlayerName').textContent = char.name;
