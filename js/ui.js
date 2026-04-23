@@ -104,9 +104,12 @@ const UI = {
         this._imgCache = [];
         const preload = src => { const img = new Image(); img.src = src; this._imgCache.push(img); };
 
-        // Defer all image preloading so it doesn't compete with critical page resources
+        // Player portrait loads immediately — visible as soon as the game starts
+        preload('assets/characters/player.png');
+
+        // NPC avatars deferred so they don't compete with critical page resources
         setTimeout(() => {
-            ['player', 'li-yunshu', 'wang-tie', 'mysterious-elder', 'yan-chixing', 'ling-xue', 'su-qing']
+            ['li-yunshu', 'wang-tie', 'mysterious-elder', 'yan-chixing', 'ling-xue', 'su-qing']
                 .forEach(id => preload(`assets/characters/${id}.png`));
         }, 3000);
 
