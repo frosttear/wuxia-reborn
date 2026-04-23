@@ -1,27 +1,32 @@
 // ui.js - UI rendering and DOM management
 
-// Shows LQ JPG immediately, loads HQ PNG in background, crossfades on swap.
-// Falls back to HQ directly when no low/ version exists.
+// Loads HQ immediately; if cached it appears at once with no blur.
+// If HQ takes >50ms (network load), shows LQ blur as placeholder then crossfades.
 // fallbackSrc: shown on total failure; null hides the element.
 function loadProgressiveImg(img, hqSrc, fallbackSrc) {
     const lowSrc = hqSrc.replace(/(assets\/[^/]+\/)([^/]+)\.\w+$/, '$1low/$2.jpg');
     const onError = fallbackSrc
         ? () => { img.src = fallbackSrc; img.classList.remove('img-lq'); img.onerror = null; }
         : () => { img.style.display = 'none'; };
-    const lqProbe = new Image();
-    lqProbe.onload = () => {
-        img.src = lowSrc;
-        img.classList.add('img-lq');
-        const hqProbe = new Image();
-        hqProbe.onload = () => { img.src = hqSrc; img.classList.remove('img-lq'); };
-        hqProbe.onerror = onError;
-        hqProbe.src = hqSrc;
-    };
-    lqProbe.onerror = () => {
+
+    const hqProbe = new Image();
+    let settled = false;
+
+    hqProbe.onload = () => {
+        settled = true;
         img.src = hqSrc;
-        img.onerror = onError;
+        img.classList.remove('img-lq');
     };
-    lqProbe.src = lowSrc;
+    hqProbe.onerror = () => { settled = true; onError(); };
+    hqProbe.src = hqSrc;
+
+    // Only show LQ blur if HQ hasn't arrived after a short delay
+    setTimeout(() => {
+        if (settled) return;
+        const lqProbe = new Image();
+        lqProbe.onload = () => { if (!settled) { img.src = lowSrc; img.classList.add('img-lq'); } };
+        lqProbe.src = lowSrc;
+    }, 50);
 }
 
 const ATTR_NAMES = {
