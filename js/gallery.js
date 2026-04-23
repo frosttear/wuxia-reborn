@@ -131,54 +131,63 @@ const Gallery = {
         const unlocked = this._getUnlocked();
         const items = GALLERY_DATA.filter(d => d.category === category);
         this._grid.innerHTML = '';
+        this._grid.classList.remove('has-pinned');
 
         items.forEach((item, i) => {
             const isUnlocked = unlocked.includes(item.id);
             const card = document.createElement('div');
             card.className = 'gallery-card' + (isUnlocked ? '' : ' locked');
 
+            // Inner element receives tilt transform so the card's grid boundary never moves
+            const inner = document.createElement('div');
+            inner.className = 'gallery-card-inner';
+
             const img = document.createElement('img');
             img.src = `assets/illustrations/${item.id}.png`;
             img.alt = item.name;
             img.loading = 'lazy';
-
-            const label = document.createElement('div');
-            label.className = 'gallery-card-label';
-            label.textContent = isUnlocked ? item.name : '???';
-
-            card.appendChild(img);
+            inner.appendChild(img);
 
             if (!isUnlocked) {
                 const lock = document.createElement('div');
                 lock.className = 'gallery-card-lock-icon';
                 lock.textContent = '🔒';
-                card.appendChild(lock);
+                inner.appendChild(lock);
 
                 const hint = document.createElement('div');
                 hint.className = 'gallery-card-hint';
                 hint.textContent = item.hint;
-                card.appendChild(hint);
+                inner.appendChild(hint);
 
                 card.onclick = () => {
                     const wasVisible = card.classList.contains('hint-visible');
                     this._grid.querySelectorAll('.hint-visible').forEach(c => c.classList.remove('hint-visible'));
-                    if (!wasVisible) card.classList.add('hint-visible');
+                    if (!wasVisible) {
+                        card.classList.add('hint-visible');
+                        this._grid.classList.add('has-pinned');
+                    } else {
+                        this._grid.classList.remove('has-pinned');
+                    }
                 };
             }
 
-            card.appendChild(label);
+            const label = document.createElement('div');
+            label.className = 'gallery-card-label';
+            label.textContent = isUnlocked ? item.name : '???';
+            inner.appendChild(label);
+
+            card.appendChild(inner);
 
             if (isUnlocked) {
                 card.onclick = () => this.openLightbox(item.id, category);
-                // Tilt effect
                 card.addEventListener('mousemove', e => {
                     const r = card.getBoundingClientRect();
                     const x = (e.clientX - r.left) / r.width  - 0.5;
                     const y = (e.clientY - r.top)  / r.height - 0.5;
-                    card.style.transform = `rotateX(${-y * 8}deg) rotateY(${x * 8}deg)`;
+                    inner.style.transform = `rotateX(${-y * 8}deg) rotateY(${x * 8}deg)`;
                 });
                 card.addEventListener('mouseleave', () => {
-                    card.style.transform = '';
+                    inner.style.transform = '';
                 });
             }
 

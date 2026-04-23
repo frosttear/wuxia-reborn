@@ -869,16 +869,21 @@ button:disabled { opacity: 0.4; cursor: not-allowed; }
     to   { opacity: 1; transform: scale(1); }
 }
 .gallery-card {
-    position: relative; border-radius: 8px; overflow: hidden;
+    position: relative; border-radius: 8px; overflow: clip;
     border: 1px solid var(--border); cursor: pointer;
     transition: box-shadow 0.25s, border-color 0.25s;
     aspect-ratio: 3/4; opacity: 0;
+    align-self: start; width: 100%;
+    isolation: isolate;
 }
 .gallery-card.entered {
     animation: gallery-card-in 0.35s ease forwards;
 }
 .gallery-card:not(.locked):hover {
     z-index: 1;
+}
+.gallery-card-inner {
+    position: absolute; inset: 0;
 }
 .gallery-card img {
     width: 100%; height: 100%; object-fit: cover; display: block;
@@ -891,7 +896,7 @@ button:disabled { opacity: 0.4; cursor: not-allowed; }
 .gallery-card:not(.locked):hover img { transform: scale(1.05); }
 
 .gallery-card.locked { cursor: pointer; border-color: rgba(255,255,255,0.05); }
-.gallery-card.locked img { filter: blur(12px) brightness(0.3) grayscale(0.5); }
+.gallery-card.locked img { filter: blur(8px) brightness(0.3) grayscale(0.5); }
 
 .gallery-card-hint {
     position: absolute; inset: 0; z-index: 2;
@@ -903,6 +908,7 @@ button:disabled { opacity: 0.4; cursor: not-allowed; }
 }
 .gallery-card.locked:hover .gallery-card-hint,
 .gallery-card.locked.hint-visible .gallery-card-hint { opacity: 1; }
+.gallery-grid.has-pinned .gallery-card.locked:not(.hint-visible):hover .gallery-card-hint { opacity: 0; }
 
 .gallery-card-lock-icon {
     position: absolute; inset: 0;
