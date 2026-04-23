@@ -93,11 +93,49 @@ const Gallery = {
         });
 
         let _touchStartX = 0;
-        this._lightbox.addEventListener('touchstart', e => { _touchStartX = e.touches[0].clientX; }, { passive: true });
+        let _swiping = false;
+        const lbContent = this._lightbox.querySelector('.gallery-lb-content');
+
+        this._lightbox.addEventListener('touchstart', e => {
+            _touchStartX = e.touches[0].clientX;
+            _swiping = true;
+            if (lbContent) lbContent.style.transition = 'none';
+        }, { passive: true });
+
+        this._lightbox.addEventListener('touchmove', e => {
+            if (!_swiping || !lbContent || !this._lightbox.classList.contains('active')) return;
+            const dx = e.touches[0].clientX - _touchStartX;
+            lbContent.style.transform = `translateX(${dx}px)`;
+        }, { passive: true });
+
         this._lightbox.addEventListener('touchend', e => {
-            if (!this._lightbox.classList.contains('active')) return;
+            if (!_swiping || !this._lightbox.classList.contains('active')) return;
+            _swiping = false;
             const dx = e.changedTouches[0].clientX - _touchStartX;
-            if (Math.abs(dx) > 50) this.navigateLightbox(dx < 0 ? 1 : -1);
+            if (Math.abs(dx) > 50) {
+                const goNext = dx < 0;
+                const exitX = goNext ? -window.innerWidth : window.innerWidth;
+                if (lbContent) {
+                    lbContent.style.transition = 'transform 0.22s ease';
+                    lbContent.style.transform = `translateX(${exitX}px)`;
+                }
+                setTimeout(() => {
+                    this.navigateLightbox(goNext ? 1 : -1);
+                    if (lbContent) {
+                        lbContent.style.transition = 'none';
+                        lbContent.style.transform = `translateX(${-exitX}px)`;
+                        requestAnimationFrame(() => requestAnimationFrame(() => {
+                            lbContent.style.transition = 'transform 0.22s ease';
+                            lbContent.style.transform = '';
+                        }));
+                    }
+                }, 220);
+            } else {
+                if (lbContent) {
+                    lbContent.style.transition = 'transform 0.22s ease';
+                    lbContent.style.transform = '';
+                }
+            }
         }, { passive: true });
     },
 
