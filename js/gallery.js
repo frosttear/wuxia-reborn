@@ -159,7 +159,11 @@ const Gallery = {
                 hint.textContent = item.hint;
                 card.appendChild(hint);
 
-                card.onclick = () => card.classList.toggle('hint-visible');
+                card.onclick = () => {
+                    const wasVisible = card.classList.contains('hint-visible');
+                    this._grid.querySelectorAll('.hint-visible').forEach(c => c.classList.remove('hint-visible'));
+                    if (!wasVisible) card.classList.add('hint-visible');
+                };
             }
 
             card.appendChild(label);
