@@ -280,6 +280,16 @@
     ],
     "winNarrative": "你击败了劫镖头目，他的手下作鸟兽散，镖货得以安然保全。",
     "loseNarrative": "劫镖头目武艺高强，你力战力竭，镖货被劫，颜面尽失。",
+    "skills": [
+      {
+        "id": "slash_desperate",
+        "name": "刀光斜劈",
+        "telegraph": "头目双手握刀，猛地起势，借势斜劈——⚠ 刀势凌厉，务必【格挡】！",
+        "damageMult": 2.0,
+        "momentumCost": 3,
+        "hpThreshold": 0.6
+      }
+    ],
     "winEffects": {
       "reputation": 2,
       "agility": 1
@@ -611,6 +621,16 @@
       "回旋一剑，意到剑至",
       "步法灵动，侧击而来"
     ],
+    "skills": [
+      {
+        "id": "flowing_cloud_sword",
+        "name": "流云剑法",
+        "telegraph": "云舒凝神敛气，剑势悄然充盈——⚠ 此招剑意连绵，务必【格挡】！",
+        "damageMult": 2.2,
+        "momentumCost": 3,
+        "hpThreshold": 0.5
+      }
+    ],
     "winNarrative": "李云舒收剑，愣了一瞬，随即爽快笑道：「好，你真的进步了！」她把剑插回剑鞘，看着你的眼神里，带着真诚的赞许。",
     "loseNarrative": "李云舒收招，伸手拍了拍你肩膀：「不错了，差一点。再练。」语气是轻松的，眼神里却是认真的勉励。",
     "winEffects": {
@@ -689,6 +709,24 @@
       "一拳带风，势大力沉",
       "连环拳打来，拳拳到肉",
       "欺身近前，肘膝齐出"
+    ],
+    "skills": [
+      {
+        "id": "bully_rush",
+        "name": "横行霸道",
+        "telegraph": "头目大喝一声，猛然突进，来势汹汹——⚠ 力大势沉，务必【防御】！",
+        "damageMult": 2.2,
+        "momentumCost": 3,
+        "hpThreshold": 0.6
+      },
+      {
+        "id": "desperate_rampage",
+        "name": "亡命反扑",
+        "telegraph": "头目眼中充血，招式不管不顾——他要拼了！⚠ 此招极猛，务必【防御】！",
+        "damageMult": 3.2,
+        "momentumCost": 3,
+        "hpThreshold": 0.3
+      }
     ],
     "winNarrative": "头目捂着胸口退了几步，脸色铁青。他没想到你能连过两关。「好……好小子。」他咬着牙，朝手下一挥手：「走！」转身便撤，再不敢回头。\n\n李云舒望着你的背影，沉默了很久，声音有些轻：「谢谢。我不知道……你会真的动手。」",
     "loseNarrative": "头目的拳头比爪牙们重得多。你在消耗了大量体力对付爪牙之后，终究没能扛住头目的攻势，被迫撤退。此事暂时搁置，但李云舒家的困境还在。",
@@ -829,6 +867,16 @@
       "虚晃一招，刀锋直指要害",
       "踏地借力，急斩而下"
     ],
+    "skills": [
+      {
+        "id": "piercing_sky_slash",
+        "name": "穿云斩",
+        "telegraph": "燕赤行刀意骤然聚敛，出招在即——⚠ 刀势极猛，务必【格挡】！",
+        "damageMult": 2.4,
+        "momentumCost": 3,
+        "hpThreshold": 0.5
+      }
+    ],
     "winNarrative": "燕赤行收刀，看了你片刻，低声道：「还可以。」从他嘴里说出来，这三个字分量不轻。",
     "loseNarrative": "燕赤行收刀：「有进步，但还不够。」他转身走了几步，顿住：「再练。」",
     "winEffects": {
@@ -919,6 +967,24 @@
       "仗着旧门招法，抢先一步",
       "借势近身，以力制胜",
       "凶性发作，不计后果猛攻"
+    ],
+    "skills": [
+      {
+        "id": "traitor_trick",
+        "name": "偷天换日",
+        "telegraph": "他趁换招间隙悄然变招，以旧门秘技偷袭——⚠ 小心突袭，务必【格挡】！",
+        "damageMult": 1.8,
+        "momentumCost": 3,
+        "hpThreshold": 0.6
+      },
+      {
+        "id": "desperate_surge",
+        "name": "亡命狂扑",
+        "telegraph": "他双目赤红，彻底不管不顾——⚠ 他不要命了，务必【防御】！",
+        "damageMult": 2.8,
+        "momentumCost": 3,
+        "hpThreshold": 0.3
+      }
     ],
     "winNarrative": "他跌倒在地，抬眼看向燕赤行——那目光里有恐惧、不甘，还有某种说不清楚的东西。燕赤行看着他，手没有动。沉默良久，燕赤行转身：「走。」那一刻，你知道那段旧事真的结束了。",
     "loseNarrative": "他把你和燕赤行都逼退了，一言不发地离去——但那道始终未愈的伤，又深了几分。",
