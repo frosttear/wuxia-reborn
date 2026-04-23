@@ -161,10 +161,8 @@ const Gallery = {
             inner.className = 'gallery-card-inner';
 
             const img = document.createElement('img');
-            img.src = `assets/illustrations/${item.id}.png`;
             img.alt = item.name;
-            img.loading = 'lazy';
-            img.onerror = () => { img.src = 'assets/illustrations/placeholder.svg'; img.onerror = null; };
+            loadProgressiveImg(img, `assets/illustrations/${item.id}.png`, 'assets/illustrations/placeholder.svg');
             inner.appendChild(img);
 
             if (!isUnlocked) {
@@ -244,8 +242,7 @@ const Gallery = {
         const id = this._lightboxItems[this._lightboxIdx];
         const meta = GALLERY_DATA.find(d => d.id === id) || { name: id, hint: '', category: 'scenes' };
         const lbImg = document.getElementById('galleryLbImg');
-        lbImg.onerror = () => { lbImg.src = 'assets/illustrations/placeholder.svg'; lbImg.onerror = null; };
-        lbImg.src = `assets/illustrations/${id}.png`;
+        loadProgressiveImg(lbImg, `assets/illustrations/${id}.png`, 'assets/illustrations/placeholder.svg');
         document.getElementById('galleryLbName').textContent = meta.name;
         document.getElementById('galleryLbCategory').textContent = CATEGORY_LABELS[meta.category] || '';
         document.getElementById('galleryLbHint').textContent = meta.hint;

@@ -1,5 +1,29 @@
 // ui.js - UI rendering and DOM management
 
+// Shows LQ JPG immediately, loads HQ PNG in background, crossfades on swap.
+// Falls back to HQ directly when no low/ version exists.
+// fallbackSrc: shown on total failure; null hides the element.
+function loadProgressiveImg(img, hqSrc, fallbackSrc) {
+    const lowSrc = hqSrc.replace(/(assets\/[^/]+\/)([^/]+)\.\w+$/, '$1low/$2.jpg');
+    const onError = fallbackSrc
+        ? () => { img.src = fallbackSrc; img.classList.remove('img-lq'); img.onerror = null; }
+        : () => { img.style.display = 'none'; };
+    const lqProbe = new Image();
+    lqProbe.onload = () => {
+        img.src = lowSrc;
+        img.classList.add('img-lq');
+        const hqProbe = new Image();
+        hqProbe.onload = () => { img.src = hqSrc; img.classList.remove('img-lq'); };
+        hqProbe.onerror = onError;
+        hqProbe.src = hqSrc;
+    };
+    lqProbe.onerror = () => {
+        img.src = hqSrc;
+        img.onerror = onError;
+    };
+    lqProbe.src = lowSrc;
+}
+
 const ATTR_NAMES = {
     strength: '力量', agility: '敏捷', constitution: '体质',
     innerForce: '内力', comprehension: '悟性', luck: '运气', reputation: '声望'
@@ -8,7 +32,7 @@ const ATTR_NAMES = {
 const UI = {
     showPlayerLightbox() {
         const lb = document.getElementById('avatarLightbox');
-        document.getElementById('avatarLightboxImg').src = 'assets/characters/player.png';
+        loadProgressiveImg(document.getElementById('avatarLightboxImg'), 'assets/characters/player.png', null);
 
         const { char, jobs } = Engine.state;
         const job = (jobs || []).find(j => j.id === char.job);
@@ -48,7 +72,7 @@ const UI = {
 
     showAvatarLightbox(src, npcId) {
         const lb = document.getElementById('avatarLightbox');
-        document.getElementById('avatarLightboxImg').src = src;
+        loadProgressiveImg(document.getElementById('avatarLightboxImg'), src, null);
 
         const npcs = Engine.state.npcs || [];
         const bonds = Engine.state.bonds || {};
@@ -104,10 +128,15 @@ const UI = {
         this._imgCache = [];
         const preload = src => { const img = new Image(); img.src = src; this._imgCache.push(img); };
 
-        // Player portrait loads immediately — visible as soon as the game starts
+        // Player portrait: LQ immediately, HQ right after
+        preload('assets/characters/low/player.jpg');
         preload('assets/characters/player.png');
 
-        // NPC avatars deferred so they don't compete with critical page resources
+        // NPC LQ portraits immediately (small files, visible on game screen)
+        ['li-yunshu', 'wang-tie', 'mysterious-elder', 'yan-chixing', 'ling-xue', 'su-qing']
+            .forEach(id => preload(`assets/characters/low/${id}.jpg`));
+
+        // NPC HQ portraits deferred so they don't compete with critical resources
         setTimeout(() => {
             ['li-yunshu', 'wang-tie', 'mysterious-elder', 'yan-chixing', 'ling-xue', 'su-qing']
                 .forEach(id => preload(`assets/characters/${id}.png`));
@@ -290,8 +319,9 @@ const UI = {
                 `<span class="bond-dot ${i < bondLevel ? 'bond-dot-filled' : ''}">◆</span>`
             ).join('');
             const avatarFile = npc.id.replace(/_/g, '-');
+            const avatarHqSrc = `assets/characters/${avatarFile}.png`;
             div.innerHTML = `
-                <img class="npc-avatar" src="assets/characters/${avatarFile}.png" alt="${npc.name}" decoding="async" onclick="UI.showAvatarLightbox(this.src,'${npc.id}')" onerror="this.style.display='none'">
+                <img class="npc-avatar" data-prog="${avatarHqSrc}" alt="${npc.name}" decoding="async" onclick="UI.showAvatarLightbox(this.dataset.prog,'${npc.id}')">
                 <div class="npc-info">
                     <div class="npc-header">
                         <span class="npc-name">${npc.name}</span>
@@ -305,6 +335,7 @@ const UI = {
                     <div class="bond-level-row">羁绊 ${bondDots}</div>
                 </div>`;
             div.title = npc.description;
+            loadProgressiveImg(div.querySelector('.npc-avatar'), avatarHqSrc, null);
             el.appendChild(div);
         }
     },
@@ -1093,8 +1124,9 @@ const UI = {
                     : `<span class="visit-remain visit-remain-out">今年已达上限</span>`;
             }
             const avatarFile = v.npcId.replace(/_/g, '-');
+            const visitHqSrc = `assets/characters/${avatarFile}.png`;
             return `<button class="${cls}" onclick="Engine.visitNPC('${v.npcId}'); UI.visitPanel.style.display='none'">
-                <img class="visit-npc-avatar" src="assets/characters/${avatarFile}.png" alt="${v.npc.name}" decoding="async" onclick="event.stopPropagation();UI.showAvatarLightbox(this.src,'${v.npcId}')" onerror="this.style.display='none'">
+                <img class="visit-npc-avatar" data-prog="${visitHqSrc}" alt="${v.npc.name}" decoding="async" onclick="event.stopPropagation();UI.showAvatarLightbox(this.dataset.prog,'${v.npcId}')">
                 <div class="visit-npc-detail">
                     <span class="visit-npc-name">${v.npc.name}</span>
                     <span class="visit-npc-info">${infoText}</span>
@@ -1102,6 +1134,7 @@ const UI = {
                 </div>
             </button>`;
         }).join('');
+        panel.querySelectorAll('[data-prog]').forEach(img => loadProgressiveImg(img, img.dataset.prog, null));
         panel.style.display = 'block';
     },
 
