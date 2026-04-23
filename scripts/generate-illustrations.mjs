@@ -70,6 +70,85 @@ const ILLUSTRATIONS = [
     name: "凌雪 — 凌霜剑域",
     prompt: "Stark beautiful wuxia scene, a young swordswoman in white (凌雪) and a young swordsman in midnight blue standing side by side on a frozen battlefield, facing the same direction into an approaching storm of ice and snow, both with swords drawn, the icy wind sweeping long flowing hair and robes behind them, neither looking at each other but standing as equals facing the same horizon, a sense of choice made and past shed, frost crystals in the air catching the pale light, wide cinematic composition, Chinese ink painting aesthetic with white silver and deep blue-black tones, resolute melancholic atmosphere, anime-inspired semi-realistic art, high quality detailed scene"
   },
+  // ── First-met ──
+  {
+    id: "wang-tie-meet",
+    name: "王铁 — 初遇",
+    prompt: "Wuxia chance-meeting scene, a chance encounter at a busy roadside inn at dusk, a broad-shouldered rugged Chinese man in roughspun escort clothes with an iron badge plaque at his belt (王铁) sizing up a young Chinese male swordsman in a midnight blue robe, both holding cups of tea across a wooden table, Wang Tie's gruff weathered face showing cautious appraisal, lantern glow inside the inn, warm amber light, the understated tension of two strangers reading each other, wide cinematic composition, Chinese ink painting aesthetic with warm amber and deep brown tones, atmospheric and grounded, anime-inspired semi-realistic art, high quality detailed scene"
+  },
+  {
+    id: "li-yunshu-meet",
+    name: "李云舒 — 初遇",
+    prompt: "Lively wuxia first-encounter scene, a radiant young Chinese swordswoman in a bright peach and goose-yellow hanfu with high-looped hair and golden ribbons (李云舒) suddenly blocking the path of a young Chinese male swordsman in midnight blue on a sunlit mountain trail, her quick bright eyes full of mischief and curiosity as she studies him, cherry blossoms drifting past, spring afternoon light, infectious cheerful energy of someone who has no fear of strangers, wide cinematic composition, Chinese ink painting aesthetic with warm peach and soft gold tones, lively and vivid atmosphere, anime-inspired semi-realistic art, high quality detailed scene"
+  },
+  {
+    id: "yan-chixing-meet",
+    name: "燕赤行 — 初遇",
+    prompt: "Atmospheric wuxia first-encounter scene, a tall lean Chinese swordsman with a scar across his jaw in worn dark red traveling clothes (燕赤行) standing alone at the edge of a moonlit cliff overlooking a misty river valley, turning his head slightly as a young Chinese male swordsman in midnight blue approaches from behind, Yan Chixing's expression guarded and assessing without hostility, the two strangers sharing a moment of mutual sizing-up in silence, cold moonlight, mist below, solitary atmosphere on the cliff edge, wide cinematic composition, Chinese ink painting aesthetic with deep indigo and cold silver tones, brooding and restrained atmosphere, anime-inspired semi-realistic art, high quality detailed scene"
+  },
+  {
+    id: "su-qing-meet",
+    name: "苏青 — 初遇",
+    prompt: "Gentle wuxia first-encounter scene, a calm young Chinese woman in muted sage green medicinal robes (苏青) looking up from tending a patient under a simple roadside shelter, her composed attentive eyes meeting those of a young Chinese male swordsman in midnight blue who has just arrived, medicinal herb bundles and a wooden medicine chest around her, soft dappled afternoon light through bamboo leaves, the quiet steady presence of someone grounded in their purpose, wide cinematic composition, Chinese ink painting aesthetic with soft green and warm earth tones, peaceful and measured atmosphere, anime-inspired semi-realistic art, high quality detailed scene"
+  },
+  {
+    id: "ling-xue-meet",
+    name: "凌雪 — 初遇",
+    prompt: "Tense wuxia first-encounter scene, a cold beautiful young Chinese swordswoman in pristine white robes with a silver hair ornament (凌雪) standing in a snowy forest clearing, sword leveled calmly toward a young Chinese male swordsman in midnight blue who has inadvertently entered her training ground, her expression sharp and unreadable — not hostile but giving nothing away, snow falling softly around them, bare winter trees, icy blue-white light, the charged stillness of two blades in the same space, wide cinematic composition, Chinese ink painting aesthetic with stark white and deep ink-blue tones, cold and precise atmosphere, anime-inspired semi-realistic art, high quality detailed scene"
+  },
+  // ── Bond ch.1 ──
+  {
+    id: "wang-tie-bond-1",
+    name: "王铁 — 第一章",
+    prompt: "Warm wuxia bonding scene, Wang Tie (王铁) a broad rugged Chinese escort warrior in roughspun clothes and a young Chinese male swordsman in midnight blue sitting across from each other at a roadside campfire after surviving their first danger together, Wang Tie extending a rough calloused hand across the fire in a gesture of brotherhood, his iron badge plaque glinting in the firelight, the young swordsman meeting the grip, the first real acknowledgment of mutual respect between two warriors, dark night forest behind them, warm amber campfire glow, wide cinematic composition, Chinese ink painting aesthetic with deep shadow and warm amber tones, quiet camaraderie, anime-inspired semi-realistic art, high quality detailed scene"
+  },
+  {
+    id: "li-yunshu-bond-1",
+    name: "李云舒 — 第一章",
+    prompt: "Energetic wuxia bonding scene, Li Yunshu (李云舒) in her bright peach and yellow hanfu and the young Chinese male swordsman in midnight blue in a spontaneous sword sparring match in an open field at golden hour, both laughing as their blades meet, her golden hair ribbons streaming behind her, the uninhibited joy of two people discovering a real connection through play and competition, long evening shadows across the grass, warm amber and gold light, wide cinematic composition, Chinese ink painting aesthetic with vibrant warm gold and green tones, joyful and energetic atmosphere, anime-inspired semi-realistic art, high quality detailed scene"
+  },
+  {
+    id: "yan-chixing-bond-1",
+    name: "燕赤行 — 第一章",
+    prompt: "Dramatic wuxia bonding scene, Yan Chixing (燕赤行) in dark red robes with his scarred jaw set in concentration, gripping the arm of an injured young Chinese male swordsman in midnight blue and pulling him into shelter under a stone overhang during heavy rain, the scarred man's guarded expression showing the first crack — not warmth yet, but unmistakable choice, rain hammering the ground outside the shelter, the two catching their breath, the unspoken transaction of trust between survivors, wide cinematic composition, Chinese ink painting aesthetic with dark charcoal and cold rain-blue tones with a point of warmth, tense and quietly emotional, anime-inspired semi-realistic art, high quality detailed scene"
+  },
+  {
+    id: "su-qing-bond-1",
+    name: "苏青 — 第一章",
+    prompt: "Tender wuxia bonding scene, Su Qing (苏青) in muted sage green medicinal robes leaning forward in concentration as she carefully applies herbal poultice to the bandaged arm of a young Chinese male swordsman in midnight blue who sits on a low wooden stool, her focused gentle hands steady and precise, the swordsman watching her work with quiet gratitude, candlelight illuminating the small medicine hall, dried herbs hanging from the rafters above, the intimacy of being cared for without judgment, wide cinematic composition, Chinese ink painting aesthetic with warm amber candlelight and soft green tones, quiet and tender atmosphere, anime-inspired semi-realistic art, high quality detailed scene"
+  },
+  {
+    id: "ling-xue-bond-1",
+    name: "凌雪 — 第一章",
+    prompt: "Restrained wuxia bonding scene, Ling Xue (凌雪) in pristine white winter robes standing beside a young Chinese male swordsman in midnight blue on a snow-covered mountain training ground, both facing forward in an opening sword stance, her posture precise and demanding as she demonstrates a technique with quiet authority, the young swordsman mirroring her form with focused attention, cold grey sky above, snow underfoot, the first tentative thaw in her reserved exterior visible only in the patience of her instruction, wide cinematic composition, Chinese ink painting aesthetic with white and deep grey-blue tones, disciplined and quietly evolving atmosphere, anime-inspired semi-realistic art, high quality detailed scene"
+  },
+  // ── Bond ch.2 ──
+  {
+    id: "wang-tie-bond-2",
+    name: "王铁 — 第二章",
+    prompt: "Dynamic wuxia bonding scene, Wang Tie (王铁) in roughspun escort clothes and the young Chinese male swordsman in midnight blue fighting back to back against a ring of bandits on a narrow mountain road at amber dusk, the two moving in wordless coordination, Wang Tie's broad back a wall protecting his companion, trust made entirely physical and unspoken, action composition with motion and dust, warm dusk light, wide cinematic landscape, Chinese ink painting aesthetic with amber and ochre tones and dark silhouettes, kinetic and visceral atmosphere, anime-inspired semi-realistic art, high quality detailed scene"
+  },
+  {
+    id: "li-yunshu-bond-2",
+    name: "李云舒 — 第二章",
+    prompt: "Warm wuxia bonding scene, Li Yunshu (李云舒) in her bright peach and yellow hanfu sitting beside the young Chinese male swordsman in midnight blue on a rooftop ledge at night during a lantern festival, glowing paper lanterns floating up all around them like rising stars, she leaning forward with animated hands telling a story, her face radiant in the lantern light, he watching her with a quiet smile too small to hide, the city glowing below, festival music distant, a moment of pure unhurried happiness between two people who know each other now, wide cinematic composition, Chinese ink painting aesthetic with warm gold and deep night-blue tones, luminous and intimate atmosphere, anime-inspired semi-realistic art, high quality detailed scene"
+  },
+  {
+    id: "yan-chixing-bond-2",
+    name: "燕赤行 — 第二章",
+    prompt: "Intimate wuxia bonding scene, Yan Chixing (燕赤行) in dark red robes and the young Chinese male swordsman in midnight blue sitting across from each other in a dim near-empty teahouse at night, Yan Chixing's scarred face finally showing something raw and real as he speaks with low intensity, the young swordsman listening without shifting his gaze, a low clay oil lamp between them casting unsteady warm light over their serious expressions, the stillness of a conversation that matters, wide cinematic composition, Chinese ink painting aesthetic with deep shadow and low amber oil-lamp tones, confessional and charged atmosphere, anime-inspired semi-realistic art, high quality detailed scene"
+  },
+  {
+    id: "su-qing-bond-2",
+    name: "苏青 — 第二章",
+    prompt: "Serene wuxia bonding scene, Su Qing (苏青) in muted sage green walking alongside the young Chinese male swordsman in midnight blue through a sun-dappled summer herb garden, she pointing out medicinal plants with quiet expertise, he listening carefully with genuine interest, a natural unhurried companionship between them, tall medicinal plants around them in full leaf, warm summer afternoon light filtering through foliage, the ease of two people who no longer need to perform for each other, wide cinematic composition, Chinese ink painting aesthetic with lush green and warm gold tones, gentle and domestic atmosphere, anime-inspired semi-realistic art, high quality detailed scene"
+  },
+  {
+    id: "ling-xue-bond-2",
+    name: "凌雪 — 第二章",
+    prompt: "Melancholic wuxia bonding scene, Ling Xue (凌雪) in white winter robes standing at the edge of a frozen lake at blue twilight, her usual cold composure gone for just a moment as she looks out at the ice with a distant and pained expression, the young Chinese male swordsman in midnight blue standing nearby close enough to be present without crowding, neither speaking, the space between them filled with unspoken understanding, ice-reflected twilight rippling across both their faces in pale blue light, wide cinematic composition, Chinese ink painting aesthetic with cold blue and deep indigo tones, still and charged emotional atmosphere, anime-inspired semi-realistic art, high quality detailed scene"
+  },
+  // ── Journey / Environment ──
   {
     id: "journey-dawn",
     name: "黎明出行",
