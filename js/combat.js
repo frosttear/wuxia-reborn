@@ -31,7 +31,7 @@ const Combat = {
             defense: enemy.defense + tier * (enemy.defenseScale || 0),
             hp,
             innerForce,
-            qiShield: Math.floor(innerForce / 8)
+            qiShield: innerForce >= 35 ? Math.floor(innerForce / 8) : 0
         };
     },
 
