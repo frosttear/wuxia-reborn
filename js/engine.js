@@ -92,12 +92,17 @@ const Engine = {
         const { char } = this.state;
         if (!char || this.state.gamePhase !== 'idle') return;
 
-        // Safeguard: age past 20y1m and still exploring means either the boss was never
-        // triggered or the boss fight completed but rebirth failed. Force boss fight every
-        // time until rebirth resets ageMonths below 241.
+        // Safeguard: age past 20y1m still in exploration = boss never fired or rebirth broke.
+        // Re-fire every click until rebirth resets ageMonths below 241.
         if (char.ageMonths >= 241) {
             const bossEvent = this.state.events.find(e => e.id === 'tianmo_appears');
-            if (bossEvent) { this.triggerEvent(bossEvent); return; }
+            if (bossEvent) {
+                this.triggerEvent(bossEvent);
+            } else {
+                // Events array corrupted — skip boss fight, force rebirth directly
+                this.triggerDeath('天魔降临，命运终结——');
+            }
+            return;
         }
 
         char.flags._is_birthday = false; // clear from last birthday
