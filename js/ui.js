@@ -1141,6 +1141,7 @@ const UI = {
                 <h2>✦ 世界线回溯 ✦</h2>
                 <div class="modal-cause">${causeText}</div>
                 <div class="rebirth-narrative">${rebirthNarrative}</div>
+                <div class="modal-illustration"><img src="assets/illustrations/rebirth.png" class="modal-illustration-img" decoding="async" onerror="this.parentElement.style.display='none'"></div>
                 <pre class="modal-summary">${summary}</pre>
                 <div class="modal-section">
                     <div class="modal-label">你的记忆将随玉佩传至新的世界线，继承 <strong>10%</strong> 属性</div>

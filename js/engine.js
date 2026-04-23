@@ -1403,7 +1403,6 @@ const Engine = {
             this.state.seenEvents = new Set();
             if (typeof GameAudio !== 'undefined') GameAudio.playBGM('explore');
             UI.clearLog();
-            UI.addIllustration('rebirth');
             if (typeof GameAudio !== 'undefined') GameAudio.playSFX('rebirth');
             UI.renderAll(this.state);
             const mName = this.BIRTH_MONTH_NAMES[newChar.birthMonth - 1];
