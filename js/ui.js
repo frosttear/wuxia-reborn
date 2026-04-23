@@ -596,7 +596,7 @@ const UI = {
         img.src = `assets/illustrations/${id}.png`;
         img.className = 'event-illustration';
         img.decoding = 'async';
-        img.onerror = () => wrap.remove();
+        img.onerror = () => { img.src = 'assets/illustrations/placeholder.svg'; img.onerror = null; };
         wrap.appendChild(img);
         this.logEl.appendChild(wrap);
         this.logEl.scrollTop = this.logEl.scrollHeight;

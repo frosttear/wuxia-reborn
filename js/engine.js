@@ -809,7 +809,15 @@ const Engine = {
         const { char } = this.state;
         const reward = chain.completionReward || {};
         UI.addLog(`✦ 事件系列【${chain.name}】全部完成！`, 'unlock');
-        if (chain.id === 'wuxiang_sword') UI.addIllustration('wuxiang-unlock');
+        const CHAIN_ILLUSTRATIONS = {
+            wuxiang_sword:        'wuxiang-unlock',
+            li_yunshu_afterstory: 'li-yunshu-afterstory',
+            su_qing_afterstory:   'su-qing-afterstory',
+            lingxue_afterstory:   'ling-xue-afterstory',
+            elder_afterstory:     'mysterious-elder-afterstory',
+            yan_afterstory:       'yan-chixing-afterstory',
+        };
+        if (CHAIN_ILLUSTRATIONS[chain.id]) UI.addIllustration(CHAIN_ILLUSTRATIONS[chain.id]);
         if (reward.narrative) UI.addLog(reward.narrative, 'result');
         if (reward.attributes) {
             Character.applyAttributeChanges(char, reward.attributes);
@@ -1473,8 +1481,8 @@ const Engine = {
         if (!char.chainProgress) char.chainProgress = {};
         if (!char.bondRetryStep) char.bondRetryStep = {};
         if (!char.unlockedIllustrations) char.unlockedIllustrations = [];
-        // Retroactive illustration unlock for saves predating gallery (v0.21.0)
-        if (char.unlockedIllustrations.length === 0) {
+        // Retroactive illustration unlock — always run so new gallery entries are unlocked for old saves
+        {
             const f = char.flags || {};
             const bl = char.bondLevels || {};
             const push = id => { if (!char.unlockedIllustrations.includes(id)) char.unlockedIllustrations.push(id); };
@@ -1484,10 +1492,17 @@ const Engine = {
                 if (f['met_' + npcId]) push(h + '-meet');
                 if (lvl >= 1) push(h + '-bond-1');
                 if (lvl >= 2) push(h + '-bond-2');
-                if (lvl >= 3) push(h + '-ending');
+                if (lvl >= 3) push(h + '-bond-3');
+                if (lvl >= 4) push(h + '-bond-4');
+                if (lvl >= 5) push(h + '-ending');
             }
             if ((char.rebirthCount || 0) > 0) push('rebirth');
             if (f.elder_true_form_seen || f.zhushi_chain_done) push('mysterious-elder-ending');
+            if (f.li_afterstory_done)    push('li-yunshu-afterstory');
+            if (f.su_afterstory_done)    push('su-qing-afterstory');
+            if (f.lx_afterstory_done)    push('ling-xue-afterstory');
+            if (f.elder_afterstory_done) push('mysterious-elder-afterstory');
+            if (f.yan_afterstory_done)   push('yan-chixing-afterstory');
         }
         // Re-derive jade_tablet_awakened for saves past the 19th birthday
         if (!char.flags.jade_tablet_awakened && char.flags.elder_revelation &&
