@@ -32,7 +32,9 @@ const ATTR_NAMES = {
 const UI = {
     showPlayerLightbox() {
         const lb = document.getElementById('avatarLightbox');
-        loadProgressiveImg(document.getElementById('avatarLightboxImg'), 'assets/characters/player.png', null);
+        const ver = document.querySelector('link[rel=stylesheet]')?.href.match(/v=([^&"]+)/)?.[1];
+        const playerSrc = `assets/characters/player.png${ver ? '?v=' + ver : ''}`;
+        loadProgressiveImg(document.getElementById('avatarLightboxImg'), playerSrc, null);
 
         const { char, jobs } = Engine.state;
         const job = (jobs || []).find(j => j.id === char.job);
@@ -121,9 +123,6 @@ const UI = {
         this.chainPanel = document.getElementById('chainPanel');
         this.logBuffer = [];
         this._preloadAvatars();
-        // Force player avatar through SW so version bumps always serve fresh image
-        const playerAvatar = document.querySelector('.player-avatar');
-        if (playerAvatar) loadProgressiveImg(playerAvatar, 'assets/characters/player.png', null);
         if (typeof Gallery !== 'undefined') Gallery.init();
     },
 
@@ -131,9 +130,15 @@ const UI = {
         this._imgCache = [];
         const preload = src => { const img = new Image(); img.src = src; this._imgCache.push(img); };
 
-        // Player portrait: LQ immediately, HQ right after
+        // Player portrait: versioned URL bypasses all caches when version bumps
+        const ver = document.querySelector('link[rel=stylesheet]')?.href.match(/v=([^&"]+)/)?.[1];
+        const playerSrc = `assets/characters/player.png${ver ? '?v=' + ver : ''}`;
+        const playerEl = document.querySelector('.player-avatar');
+        if (playerEl) {
+            playerEl.src = playerSrc;
+            playerEl.onerror = () => { playerEl.style.display = 'none'; };
+        }
         preload('assets/characters/low/player.jpg');
-        preload('assets/characters/player.png');
 
         // NPC LQ portraits immediately (small files, visible on game screen)
         ['li-yunshu', 'wang-tie', 'mysterious-elder', 'yan-chixing', 'ling-xue', 'su-qing']
