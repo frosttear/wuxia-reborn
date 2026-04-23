@@ -16,12 +16,30 @@ const GALLERY_DATA = [
     { id: 'sword-soul-lose',         name: '败于剑意',         hint: '在与剑魂的对决中落败',                   category: 'bosses'  },
     { id: 'tianmo-win',              name: '天魔陨落',         hint: '击败天魔，完成二十岁的宿命',             category: 'bosses'  },
     { id: 'tianmo-lose',             name: '魔焰吞噬',         hint: '在天魔降临时力战不敌',                   category: 'bosses'  },
-    // 羁绊情缘
-    { id: 'wang-tie-ending',         name: '王铁·义薄云天',   hint: '与王铁羁绊圆满',                         category: 'bonds'   },
-    { id: 'li-yunshu-ending',        name: '李云舒·情缘终章', hint: '与李云舒羁绊圆满',                       category: 'bonds'   },
-    { id: 'yan-chixing-ending',      name: '燕赤行·侠骨柔情', hint: '与燕赤行羁绊圆满',                       category: 'bonds'   },
-    { id: 'su-qing-ending',          name: '苏青·剑心相知',   hint: '与苏青羁绊圆满',                         category: 'bonds'   },
-    { id: 'ling-xue-ending',         name: '凌雪·冰心一诺',   hint: '与凌雪羁绊圆满',                         category: 'bonds'   },
+    // 羁绊情缘 — 初遇
+    { id: 'wang-tie-meet',           name: '王铁·萍水相逢',   hint: '与王铁初次相识',                         category: 'bonds'   },
+    { id: 'li-yunshu-meet',          name: '李云舒·初遇',     hint: '与李云舒初次相遇',                       category: 'bonds'   },
+    { id: 'yan-chixing-meet',        name: '燕赤行·结识',     hint: '与燕赤行萍水相逢',                       category: 'bonds'   },
+    { id: 'su-qing-meet',            name: '苏青·一面之缘',   hint: '与苏青初次邂逅',                         category: 'bonds'   },
+    { id: 'ling-xue-meet',           name: '凌雪·初见',       hint: '与凌雪初次相见',                         category: 'bonds'   },
+    // 羁绊情缘 — 第一章
+    { id: 'wang-tie-bond-1',         name: '王铁·结义之始',     hint: '与王铁完成第一章羁绊',                 category: 'bonds'   },
+    { id: 'li-yunshu-bond-1',        name: '李云舒·情缘初章',   hint: '与李云舒完成第一章羁绊',               category: 'bonds'   },
+    { id: 'yan-chixing-bond-1',      name: '燕赤行·侠义第一章', hint: '与燕赤行完成第一章羁绊',               category: 'bonds'   },
+    { id: 'su-qing-bond-1',          name: '苏青·剑缘初启',     hint: '与苏青完成第一章羁绊',                 category: 'bonds'   },
+    { id: 'ling-xue-bond-1',         name: '凌雪·冰心初融',     hint: '与凌雪完成第一章羁绊',                 category: 'bonds'   },
+    // 羁绊情缘 — 第二章
+    { id: 'wang-tie-bond-2',         name: '王铁·同甘共苦',     hint: '与王铁完成第二章羁绊',                 category: 'bonds'   },
+    { id: 'li-yunshu-bond-2',        name: '李云舒·情深一章',   hint: '与李云舒完成第二章羁绊',               category: 'bonds'   },
+    { id: 'yan-chixing-bond-2',      name: '燕赤行·肝胆相照',   hint: '与燕赤行完成第二章羁绊',               category: 'bonds'   },
+    { id: 'su-qing-bond-2',          name: '苏青·并肩而行',     hint: '与苏青完成第二章羁绊',                 category: 'bonds'   },
+    { id: 'ling-xue-bond-2',         name: '凌雪·雪中相伴',     hint: '与凌雪完成第二章羁绊',                 category: 'bonds'   },
+    // 羁绊情缘 — 圆满
+    { id: 'wang-tie-ending',         name: '王铁·义薄云天',     hint: '与王铁羁绊圆满',                       category: 'bonds'   },
+    { id: 'li-yunshu-ending',        name: '李云舒·情缘终章',   hint: '与李云舒羁绊圆满',                     category: 'bonds'   },
+    { id: 'yan-chixing-ending',      name: '燕赤行·侠骨柔情',   hint: '与燕赤行羁绊圆满',                     category: 'bonds'   },
+    { id: 'su-qing-ending',          name: '苏青·剑心相知',     hint: '与苏青羁绊圆满',                       category: 'bonds'   },
+    { id: 'ling-xue-ending',         name: '凌雪·冰心一诺',     hint: '与凌雪羁绊圆满',                       category: 'bonds'   },
 ];
 
 const CATEGORY_LABELS = {

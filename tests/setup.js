@@ -16,6 +16,7 @@ global.UI = {
     updateControls: jest.fn(),
     showEvent: jest.fn(),
     addCombatSummary: jest.fn(),
+    addIllustration: jest.fn(),
     getLogBuffer: jest.fn(() => []),
 };
 

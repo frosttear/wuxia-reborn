@@ -315,6 +315,11 @@ const Engine = {
             old_swordsman: 'journey-dawn',
             deja_vu_road: 'past-life-dream',
             elder_true_form_appears: 'mysterious-elder-ending',
+            meet_wang_tie:    'wang-tie-meet',
+            meet_li_yunshu:   'li-yunshu-meet',
+            meet_yan_chixing: 'yan-chixing-meet',
+            meet_su_qing:     'su-qing-meet',
+            meet_lingxue:     'ling-xue-meet',
         };
         if (_illustrationMap[event.id]) UI.addIllustration(_illustrationMap[event.id]);
 
@@ -481,6 +486,9 @@ const Engine = {
         UI.addLog(`💞 与【${npc ? npc.name : npcId}】的羁绊加深！（第${level}章）`, 'unlock');
         const npcBonds = this.state.bonds[npcId];
         const maxLevel = npcBonds ? npcBonds.length : 0;
+        if (level < maxLevel) {
+            UI.addIllustration(npcId.replace(/_/g, '-') + '-bond-' + level);
+        }
         if (level >= maxLevel) {
             const bondChapter = npcBonds.find(b => b.level === level);
             if (bondChapter && bondChapter.passive) {
