@@ -1,6 +1,14 @@
 # 轮回江湖 — 开发进度
 
-## 当前版本：v0.21.4
+## 当前版本：v0.21.5
+
+---
+
+### v0.21.5（2026-04-23）
+
+- 修复图鉴卡片两行重叠：去除 `transform-style: preserve-3d`（导致z轴跨行堆叠），网格 flex 子元素补充 `min-height: 0`（允许滚动），`align-content: start`（防止行高拉伸）
+- 生成脚本自动加载项目根目录 `.env` 文件读取 `AIHORDE_API_KEY`，匿名 key 时发出警告
+- `.gitignore` 添加 `.env`，避免密钥提交
 
 ---
 

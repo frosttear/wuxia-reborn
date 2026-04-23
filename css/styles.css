@@ -860,19 +860,19 @@ button:disabled { opacity: 0.4; cursor: not-allowed; }
 .gallery-grid {
     display: grid;
     grid-template-columns: repeat(auto-fill, minmax(155px, 1fr));
-    gap: 16px; padding: 20px; overflow-y: auto; flex: 1;
+    gap: 16px; padding: 20px; overflow-y: auto; flex: 1; min-height: 0;
+    align-content: start;
 }
 
 @keyframes gallery-card-in {
-    from { opacity: 0; transform: translateY(18px); }
+    from { opacity: 0; transform: translateY(14px); }
     to   { opacity: 1; transform: translateY(0); }
 }
 .gallery-card {
     position: relative; border-radius: 8px; overflow: hidden;
     border: 1px solid var(--border); cursor: pointer;
-    transition: transform 0.25s cubic-bezier(.2,.8,.2,1), box-shadow 0.25s, border-color 0.25s;
-    transform-style: preserve-3d; aspect-ratio: 3/4;
-    opacity: 0; transform: translateY(18px);
+    transition: box-shadow 0.25s, border-color 0.25s;
+    aspect-ratio: 3/4; opacity: 0;
 }
 .gallery-card.entered {
     animation: gallery-card-in 0.4s ease forwards;

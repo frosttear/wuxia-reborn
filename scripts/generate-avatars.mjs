@@ -3,9 +3,22 @@ import path from "path";
 import { fileURLToPath } from "url";
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
+
+// Load .env from project root if present
+const envPath = path.join(__dirname, "..", ".env");
+if (fs.existsSync(envPath)) {
+  for (const line of fs.readFileSync(envPath, "utf8").split("\n")) {
+    const m = line.match(/^\s*([^#=]+?)\s*=\s*(.*?)\s*$/);
+    if (m) process.env[m[1]] = m[2];
+  }
+}
+
 const OUTPUT_DIR = path.join(__dirname, "..", "assets", "characters");
 const API_URL = "https://aihorde.net/api/v2";
 const API_KEY = process.env.AIHORDE_API_KEY || "0000000000";
+if (API_KEY === "0000000000") {
+  console.warn("⚠  AIHORDE_API_KEY not set — using anonymous key (very slow queue). Set it in .env or environment.");
+}
 const POLL_INTERVAL = 5000;
 const NEGATIVE = "nsfw, nudity, modern clothing, western features, heavy makeup, gore, deformed hands, extra fingers, blurry face, low quality, watermark, text, holding blade, gripping blade, touching sharp edge, hand on blade, curved sword, bent blade, katana, dao, sabre";
 
