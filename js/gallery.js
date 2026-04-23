@@ -161,7 +161,7 @@ const Gallery = {
 
             const img = document.createElement('img');
             img.alt = item.name;
-            loadProgressiveImg(img, `assets/illustrations/${item.id}.png`, 'assets/illustrations/placeholder.svg');
+            loadProgressiveImg(img, `assets/illustrations/${item.id}.jpg`, 'assets/illustrations/placeholder.svg');
             inner.appendChild(img);
 
             if (!isUnlocked) {
@@ -241,7 +241,7 @@ const Gallery = {
         const id = this._lightboxItems[this._lightboxIdx];
         const meta = GALLERY_DATA.find(d => d.id === id) || { name: id, hint: '', category: 'scenes' };
         const lbImg = document.getElementById('galleryLbImg');
-        loadProgressiveImg(lbImg, `assets/illustrations/${id}.png`, 'assets/illustrations/placeholder.svg');
+        loadProgressiveImg(lbImg, `assets/illustrations/${id}.jpg`, 'assets/illustrations/placeholder.svg');
         document.getElementById('galleryLbName').textContent = meta.name;
         document.getElementById('galleryLbCategory').textContent = CATEGORY_LABELS[meta.category] || '';
         document.getElementById('galleryLbHint').textContent = meta.hint;

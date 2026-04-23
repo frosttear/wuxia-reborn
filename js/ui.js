@@ -160,7 +160,7 @@ const UI = {
              'yan-chixing-ending', 'su-qing-ending', 'ling-xue-ending',
              'sword-soul-win', 'sword-soul-lose', 'tianmo-win', 'tianmo-lose',
              'rebirth', 'wuxiang-unlock']
-                .forEach(id => preload(`assets/illustrations/${id}.png`));
+                .forEach(id => preload(`assets/illustrations/${id}.jpg`));
         }, 8000);
     },
 
@@ -637,7 +637,7 @@ const UI = {
         const wrap = document.createElement('div');
         wrap.className = 'log-illustration';
         const img = document.createElement('img');
-        img.src = `assets/illustrations/${id}.png`;
+        img.src = `assets/illustrations/${id}.jpg`;
         img.className = 'event-illustration';
         img.decoding = 'async';
         img.onerror = () => { img.src = 'assets/illustrations/placeholder.svg'; img.onerror = null; };
@@ -1203,7 +1203,7 @@ const UI = {
                 <h2>✦ 世界线回溯 ✦</h2>
                 <div class="modal-cause">${causeText}</div>
                 <div class="rebirth-narrative">${rebirthNarrative}</div>
-                <div class="modal-illustration"><img src="assets/illustrations/rebirth.png" class="modal-illustration-img" decoding="async" onerror="this.parentElement.style.display='none'"></div>
+                <div class="modal-illustration"><img src="assets/illustrations/rebirth.jpg" class="modal-illustration-img" decoding="async" onerror="this.parentElement.style.display='none'"></div>
                 <pre class="modal-summary">${summary}</pre>
                 <div class="modal-section">
                     <div class="modal-label">你的记忆将随玉佩传至新的世界线，继承 <strong>10%</strong> 属性</div>

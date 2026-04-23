@@ -1,6 +1,16 @@
 # 轮回江湖 — 开发进度
 
-## 当前版本：v0.21.19
+## 当前版本：v0.21.20
+
+---
+
+### v0.21.20（2026-04-24）
+
+**图片优化**
+- 将所有插画从 PNG 转为 JPEG（quality 85，mozjpeg），总体积从 12 MB 压缩至 2.1 MB（减少 82%）；李云舒系列从 2–2.5 MB 缩至 182–257 KB（减少 90%）
+- 重新生成所有 low/ 缩略图（600px 宽，quality 20），体积 3–11 KB，首次加载毫秒级显示
+- 原始 PNG 备份至 assets/illustrations/originals/
+- 新增 scripts/optimize-illustrations.mjs 用于后续批量转换
 
 ---
 
