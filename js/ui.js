@@ -731,6 +731,45 @@ const UI = {
             skillEl.style.display = 'none';
         }
 
+        // Enemy momentum bar (only shown when enemy has skills)
+        const enemyMomWrap = document.getElementById('combatEnemyMomentumWrap');
+        if (cs.enemy && cs.enemy.skills && cs.enemy.skills.length > 0) {
+            enemyMomWrap.style.display = '';
+            const eMom = cs.enemyMomentum || 0;
+            // Find the next skill available at current HP (or the one pending)
+            const hpPctE = cs.enemyHp / cs.enemyMaxHp;
+            const availableE = cs.enemy.skills
+                .filter(s => hpPctE <= (s.hpThreshold || 0.5))
+                .sort((a, b) => (a.momentumCost || 3) - (b.momentumCost || 3));
+            const nextSkE = cs.pendingSkill || availableE[0];
+            if (nextSkE) {
+                const maxMom = nextSkE.momentumCost || 3;
+                document.getElementById('combatEnemyMomentumVal').textContent = Math.min(eMom, maxMom);
+                document.getElementById('combatEnemyMomentumMax').textContent = maxMom;
+                document.getElementById('combatEnemyMomentumFill').style.width = (Math.min(eMom, maxMom) / maxMom * 100) + '%';
+                const chargeEl = document.getElementById('combatEnemySkillCharge');
+                if (cs.pendingSkill) {
+                    chargeEl.style.display = '';
+                    chargeEl.className = 'combat-enemy-skill-pending';
+                    chargeEl.textContent = `⚠ 对方已蓄势「${cs.pendingSkill.name}」——准备格挡！`;
+                } else {
+                    const needed = maxMom - eMom;
+                    chargeEl.style.display = '';
+                    chargeEl.className = 'combat-enemy-skill-charging';
+                    chargeEl.textContent = needed > 0
+                        ? `「${nextSkE.name}」还差 ${needed} 势`
+                        : `⚠ 「${nextSkE.name}」随时可发！`;
+                }
+            } else {
+                document.getElementById('combatEnemyMomentumVal').textContent = eMom;
+                document.getElementById('combatEnemyMomentumMax').textContent = '—';
+                document.getElementById('combatEnemyMomentumFill').style.width = '0%';
+                document.getElementById('combatEnemySkillCharge').style.display = 'none';
+            }
+        } else {
+            enemyMomWrap.style.display = 'none';
+        }
+
         // Enemy intent hint (accuracy gated by comprehension)
         const intentEl = document.getElementById('combatIntentHint');
         if (cs.enemyIntentHint) {

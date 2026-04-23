@@ -541,7 +541,10 @@ button:disabled { opacity: 0.4; cursor: not-allowed; }
 .combat-momentum-label { font-size: 0.75rem; color: var(--muted); white-space: nowrap; flex-shrink: 0; }
 .combat-momentum-bar-bg { flex: 1; height: 6px; background: rgba(255,255,255,0.08); border-radius: 3px; overflow: hidden; }
 .combat-momentum-fill { height: 100%; background: linear-gradient(90deg, #c9a84c, #f4c430); border-radius: 3px; transition: width 0.2s ease; }
+.enemy-momentum-fill  { background: linear-gradient(90deg, #c0392b, #e74c3c); }
 .combat-skill-ready    { font-size: 0.78rem; color: #f4c430; font-weight: bold; padding: 3px 0; animation: pulse-glow 1.2s ease-in-out infinite; }
+.combat-enemy-skill-pending  { font-size: 0.78rem; color: #f4a261; font-weight: bold; padding: 3px 0; animation: pulse-glow 1.2s ease-in-out infinite; }
+.combat-enemy-skill-charging { font-size: 0.78rem; color: var(--muted); padding: 3px 0; }
 .combat-skill-charging { font-size: 0.78rem; color: var(--muted); padding: 3px 0; }
 .combat-skill-cooldown { font-size: 0.78rem; color: rgba(160,130,220,0.7); padding: 3px 0; }
 .skill-cost-tag { font-size: 0.72rem; opacity: 0.8; margin-left: 4px; }
