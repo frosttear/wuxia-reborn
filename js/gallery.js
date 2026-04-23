@@ -153,6 +153,13 @@ const Gallery = {
                 lock.className = 'gallery-card-lock-icon';
                 lock.textContent = '🔒';
                 card.appendChild(lock);
+
+                const hint = document.createElement('div');
+                hint.className = 'gallery-card-hint';
+                hint.textContent = item.hint;
+                card.appendChild(hint);
+
+                card.onclick = () => card.classList.toggle('hint-visible');
             }
 
             card.appendChild(label);

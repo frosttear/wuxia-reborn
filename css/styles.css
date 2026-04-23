@@ -887,8 +887,18 @@ button:disabled { opacity: 0.4; cursor: not-allowed; }
 }
 .gallery-card:not(.locked):hover img { transform: scale(1.05); }
 
-.gallery-card.locked { cursor: default; border-color: rgba(255,255,255,0.05); }
+.gallery-card.locked { cursor: pointer; border-color: rgba(255,255,255,0.05); }
 .gallery-card.locked img { filter: blur(12px) brightness(0.3) grayscale(0.5); }
+
+.gallery-card-hint {
+    position: absolute; bottom: 0; left: 0; right: 0;
+    padding: 28px 10px 10px;
+    background: linear-gradient(transparent, rgba(0,0,0,0.9) 50%);
+    font-size: 0.72rem; color: #bba; text-align: center; line-height: 1.4;
+    opacity: 0; transition: opacity 0.22s; pointer-events: none;
+}
+.gallery-card.locked:hover .gallery-card-hint,
+.gallery-card.locked.hint-visible .gallery-card-hint { opacity: 1; }
 
 .gallery-card-lock-icon {
     position: absolute; inset: 0;

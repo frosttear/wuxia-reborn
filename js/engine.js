@@ -1473,6 +1473,22 @@ const Engine = {
         if (!char.chainProgress) char.chainProgress = {};
         if (!char.bondRetryStep) char.bondRetryStep = {};
         if (!char.unlockedIllustrations) char.unlockedIllustrations = [];
+        // Retroactive illustration unlock for saves predating gallery (v0.21.0)
+        if (char.unlockedIllustrations.length === 0) {
+            const f = char.flags || {};
+            const bl = char.bondLevels || {};
+            const push = id => { if (!char.unlockedIllustrations.includes(id)) char.unlockedIllustrations.push(id); };
+            for (const npcId of ['wang_tie', 'li_yunshu', 'yan_chixing', 'su_qing', 'ling_xue']) {
+                const h = npcId.replace(/_/g, '-');
+                const lvl = bl[npcId] || 0;
+                if (f['met_' + npcId]) push(h + '-meet');
+                if (lvl >= 1) push(h + '-bond-1');
+                if (lvl >= 2) push(h + '-bond-2');
+                if (lvl >= 3) push(h + '-ending');
+            }
+            if ((char.rebirthCount || 0) > 0) push('rebirth');
+            if (f.elder_true_form_seen || f.zhushi_chain_done) push('mysterious-elder-ending');
+        }
         // Re-derive jade_tablet_awakened for saves past the 19th birthday
         if (!char.flags.jade_tablet_awakened && char.flags.elder_revelation &&
             Character.getAgeYears(char) > 19) {
