@@ -92,6 +92,13 @@ const Engine = {
         const { char } = this.state;
         if (!char || this.state.gamePhase !== 'idle') return;
 
+        // Safeguard: corrupted saves where boss was never triggered past age 20y1m
+        if (char.ageMonths >= 241 && !char.flags.boss_triggered) {
+            char.flags.boss_triggered = true;
+            const bossEvent = this.state.events.find(e => e.id === 'tianmo_appears');
+            if (bossEvent) { this.triggerEvent(bossEvent); return; }
+        }
+
         char.flags._is_birthday = false; // clear from last birthday
         char.ageMonths++;
 
