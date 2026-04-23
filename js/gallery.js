@@ -62,7 +62,10 @@ const Gallery = {
         const char = (typeof Engine !== 'undefined') && Engine.state && Engine.state.char;
         if (!char) return;
         if (!char.unlockedIllustrations) char.unlockedIllustrations = [];
-        if (!char.unlockedIllustrations.includes(id)) char.unlockedIllustrations.push(id);
+        if (!char.unlockedIllustrations.includes(id)) {
+            char.unlockedIllustrations.push(id);
+            if (typeof Engine !== 'undefined') Engine.saveGame();
+        }
     },
 
     _getUnlocked() {

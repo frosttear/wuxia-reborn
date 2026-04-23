@@ -1464,6 +1464,7 @@ const Engine = {
         if (char.injuredMonths === undefined) char.injuredMonths = 0;
         if (!char.chainProgress) char.chainProgress = {};
         if (!char.bondRetryStep) char.bondRetryStep = {};
+        if (!char.unlockedIllustrations) char.unlockedIllustrations = [];
         // Re-derive jade_tablet_awakened for saves past the 19th birthday
         if (!char.flags.jade_tablet_awakened && char.flags.elder_revelation &&
             Character.getAgeYears(char) > 19) {
