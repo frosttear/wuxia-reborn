@@ -268,6 +268,7 @@ const Engine = {
 
         if (cond.minRebirth !== undefined && char.rebirthCount < cond.minRebirth) return false;
         if (cond.rebirthCount !== undefined && char.rebirthCount < cond.rebirthCount) return false;
+        if (cond.minLegacyTalents !== undefined && (char.legacyTalents || []).length < cond.minLegacyTalents) return false;
 
         // Bond level conditions: { npcId: minLevel }
         if (cond.bondLevels) {
@@ -839,6 +840,16 @@ const Engine = {
             UI.addLog('【羁绊未满】你感到胸中力量空缺……或许，集齐所有羁绊才能撼动此敌。', 'info');
         }
         if (enemy.isFinalBoss || enemy.isHiddenBoss || enemy.isTrueFinalBoss) cs.noFlee = true;
+        if (enemy.isTrueFinalBoss && (char.passives || []).some(p => p.rebirthPower)) {
+            const MARK_FLAGS = ['mark_warrior_power', 'mark_hermit_power', 'mark_wuxiang_power', 'mark_rebirth_power', 'mark_afterstory_power'];
+            const markCount = MARK_FLAGS.filter(m => (char.flags || {})[m]).length;
+            if (markCount > 0) {
+                cs.rebirthPowerBonus = { atk: markCount * 25, def: markCount * 20 };
+                cs.playerHP  = Math.min(cs.playerHP  + markCount * 300, cs.playerMaxHP + markCount * 300);
+                cs.playerMaxHP += markCount * 300;
+                UI.addLog(`【轮回之力】${markCount}枚印记共鸣——诸世之我，共赴一战！攻击+${markCount * 25}，防御+${markCount * 20}，气血+${markCount * 300}！`, 'unlock');
+            }
+        }
         this.state.combatState = cs;
         this.state.gamePhase = 'combat';
         UI.updateControls(this.state);
@@ -1055,6 +1066,7 @@ const Engine = {
             // Show win narrative and rewards AFTER combat summary
             UI.addLog(enemy.winNarrative, 'win');
             if (Object.keys(rewards).length > 0) this.applyEffects({ attributes: rewards });
+            if (enemy.winFlags) Object.assign(char.flags, enemy.winFlags);
             // Complete chain step on combat victory
             if (this.state.pendingChainStep) {
                 const { chainId, stepIdx } = this.state.pendingChainStep;
@@ -1078,6 +1090,10 @@ const Engine = {
             UI.renderCharacter(char, this.state.jobs);
             if (enemy.isTrueFinalBoss) {
                 UI.addLog(enemy.loseNarrative, 'lose');
+                char.flags.lost_to_final_boss = true;
+                if (!char.flags.zhushi_chain_done) {
+                    UI.addLog('【提示】击败那个老者需要更强的力量。下一轮回，在【任务】面板中寻找「诸世之我」——以所有世界线上的自己，来对抗他。', 'info');
+                }
                 UI.addIllustration('sword-soul-lose');
                 UI.showCombatReturnBtn('lost', () => {
                     UI.hideCombatOverlay();
@@ -1217,6 +1233,9 @@ const Engine = {
         if (typeof GameAudio !== 'undefined') GameAudio.stopBGM();
         if (typeof GameAudio !== 'undefined') GameAudio.playSFX('death');
         const { char } = this.state;
+        // Mark hermit run: lived with no deep bonds (all bond levels < 3)
+        const maxBondLevel = Math.max(0, ...Object.values(char.bondLevels || {}).map(Number));
+        if (maxBondLevel < 3) char.flags.mark_hermit = true;
         this.state.gamePhase = 'rebirth';
         this.stopAuto();
         this.saveGame(); // persist rebirth state so it survives page refresh

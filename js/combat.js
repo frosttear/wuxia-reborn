@@ -14,6 +14,10 @@ const Combat = {
         heavy: '对方气沉丹田——<b>刚攻将至</b>',
         swift: '对方步法游走——<b>巧攻难测</b>',
     },
+    ENEMY_INTENT_PERFECT: {
+        heavy: '对方气沉丹田——<b>重击将至</b>',
+        swift: '对方步法游走——<b>快攻在即</b>',
+    },
     UNREADABLE_MSGS: [
         '对方行迹难以捉摸，看不出端倪',
         '对方气势沉敛，完全看不出意图',
@@ -80,7 +84,7 @@ const Combat = {
         cs.enemyNextAction = firstAction;
         const hasPerfectRead = (char.passives || []).some(p => p.perfectIntentRead);
         if (hasPerfectRead) {
-            cs.enemyIntentHint = this._getIntentHint(enemy, firstAction);
+            cs.enemyIntentHint = this._getIntentHint(enemy, firstAction, true);
             cs.enemyIntentType = 'perfect';
         } else {
             const playerComp = (char.attributes && char.attributes.comprehension) || 0;
@@ -132,7 +136,9 @@ const Combat = {
 
         let playerAtk = Character.getAttackPower(char, job);
         if (cs.allBondsBonus) playerAtk += 60;
-        const playerDef = Character.getDefensePower(char, job);
+        if (cs.rebirthPowerBonus) playerAtk += cs.rebirthPowerBonus.atk;
+        let playerDef = Character.getDefensePower(char, job);
+        if (cs.rebirthPowerBonus) playerDef += cs.rebirthPowerBonus.def;
         const qiShield  = Character.getQiShield(char);       // flat reduction per hit
         // Inner-force advantage amp: relative formula; 0 when equal or player weaker
         const innerAmp  = this._effectiveSkillAmp(char.attributes.innerForce || 0, cs.enemyInnerForce)
@@ -430,7 +436,7 @@ const Combat = {
             cs.enemyNextAction  = next;
             const hasPerfectRead = (char.passives || []).some(p => p.perfectIntentRead);
             if (hasPerfectRead) {
-                cs.enemyIntentHint = this._getIntentHint(cs.enemy, next);
+                cs.enemyIntentHint = this._getIntentHint(cs.enemy, next, true);
                 cs.enemyIntentType = 'perfect';
             } else {
                 const playerComp    = (char.attributes && char.attributes.comprehension) || 0;
@@ -540,10 +546,10 @@ const Combat = {
             incoming: { fullDmg, dodgeChance },
         };
     },
-    _getIntentHint(enemy, action) {
+    _getIntentHint(enemy, action, perfect = false) {
         const pool = enemy.intentReadMsgs && enemy.intentReadMsgs[action];
         if (pool && pool.length) return this._pick(pool);
-        return this.ENEMY_INTENT[action] || '';
+        return (perfect ? this.ENEMY_INTENT_PERFECT : this.ENEMY_INTENT)[action] || '';
     },
     _getUnreadableHint(enemy) {
         const pool = enemy.intentUnreadMsgs;

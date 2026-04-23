@@ -241,6 +241,25 @@ const Rebirth = {
         const newChar = Character.create(char.name, inheritedAttrs, newTalents);
         newChar.rebirthCount = char.rebirthCount + 1;
 
+        // Persist critical meta-flags that must survive rebirth
+        const PERSIST_FLAGS = [
+            'lost_to_final_boss', 'zhushi_chain_done', 'mark_hermit',
+            'mark_warrior_power', 'mark_wuxiang_power',
+            'mark_rebirth_power', 'mark_afterstory_power', 'mark_hermit_power'
+        ];
+        for (const f of PERSIST_FLAGS) {
+            if (char.flags[f]) newChar.flags[f] = char.flags[f];
+        }
+        // Re-grant rebirth_power passive if chain was completed in a previous life
+        if (char.flags.zhushi_chain_done) {
+            if (!newChar.passives) newChar.passives = [];
+            newChar.passives.push({
+                id: 'rebirth_power', name: '轮回之力',
+                desc: '诸世之我的意志共鸣——以所有的自己，对抗设计者',
+                rebirthPower: true
+            });
+        }
+
         // Inherit bond levels (世界线记忆)
         newChar.inheritedBonds = Object.assign({}, char.bondLevels);
 

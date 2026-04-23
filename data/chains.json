@@ -1728,6 +1728,213 @@
         },
         "narrative": "五块碎片，一张棋局，一个横跨九百年的设计者。你站在所有真相之上，第一次真正看清了这条路的全貌——以及，你自己想走向哪里。"
       }
+    },
+    {
+    "id": "zhushi_zhi_wo",
+    "name": "诸世之我",
+    "desc": "你曾败在那个设计者手下。轮回后的某一夜，断裂的回声从虚空中传来——那是你自己。",
+    "steps": [
+      {
+        "id": "zhushi_1",
+        "title": "轮回回声",
+        "unlockConditions": {
+          "flags": { "lost_to_final_boss": true, "zhushi_chain_done": false },
+          "minRebirth": 1
+        },
+        "text": "你败在了那个老者手下。\n\n他说「再来一次吧」——然后你就回来了。你不知道是第几次了。你只知道，这一次，某样东西不一样了。\n\n某个夜里，你盘坐入定，意识飘远。你感到一道断裂的回声从很深的地方传来——不是敌人的，是你的。是另一个自己在那场战斗中最后的一口气。\n\n然后，像是一颗石子投入水中，那道回声激起了更多的涟漪。你感到不止一道，而是很多很多道——来自不同时间线上的自己，每一个都走到了不同的尽头。\n\n那些回声都在等你做一件事：\n\n把它们聚在一起。",
+        "choices": [
+          {
+            "id": "enter_zhushi",
+            "text": "向那些回声走近，接住每一道属于自己的余音",
+            "effects": {
+              "attributes": { "comprehension": 2, "innerForce": 1 },
+              "narrative": "你在漫长的入定中，感受到了那些断裂的意识碎片——它们在等你。\n\n每一道都是一个选择，一条路，一个不同的结局。它们不是陌生的，是你。"
+            }
+          }
+        ],
+        "onComplete": {
+          "flags": { "zhushi_echo_felt": true }
+        }
+      },
+      {
+        "id": "zhushi_2",
+        "title": "武者之魂",
+        "unlockConditions": {},
+        "text": "那些回声中，有一道最为沉重。\n\n你看见的不是画面，是一股纯粹到极致的力道——拳意、刀意、剑意，全部熔在一起，没有一丝杂念，没有一个名字，没有一段故事，只有武道本身。\n\n那是某一世的你，将全部生命押注在了修炼上。他走得很远——也许比任何人都远——但在他最后抬头的地方，没有一个人。\n\n那道影子现在站在你面前，不说话，只是等你出手。",
+        "choices": [
+          {
+            "id": "fight_shadow_warrior",
+            "text": "迎战——这是另一个自己选择的极限",
+            "requirements": { "minLegacyTalents": 4 },
+            "effects": {
+              "combat": "shadow_warrior",
+              "narrative": "你握紧手，向那道武者之影踏出一步。"
+            }
+          },
+          {
+            "id": "observe_warrior",
+            "text": "那道影子望了你一眼，缓缓消散——你们走的不是同一条路",
+            "effects": {
+              "attributes": { "comprehension": 1 },
+              "narrative": "那道武者之影站在那里看了你很久，最终慢慢散开。\n\n你没有走过那条路——所以它认不出你，你也读不出它。但它消散的样子，让你隐隐感到：不是所有的路，都必须走过，才算是自己的。"
+            }
+          }
+        ],
+        "onComplete": {
+          "flags": { "zhushi_2_done": true }
+        }
+      },
+      {
+        "id": "zhushi_3",
+        "title": "孤道之魂",
+        "unlockConditions": {},
+        "text": "第二道回声，比你想象的要安静。\n\n你看见的不是影子，是一段沉默——某一世的你，从头到尾，都没有真正靠近任何人。不是不想，是不知道怎么。他把所有的力气都用在了对抗自己身上。\n\n那道孤独的影子站在虚空中央，周围空荡荡的，一个人都没有。\n\n他看见你，眼神里有一点惊讶——惊讶于你身边有那么多人留下的痕迹。",
+        "choices": [
+          {
+            "id": "fight_shadow_hermit",
+            "text": "走上前——你认出了那段孤独，因为你也曾经历过",
+            "requirements": { "flags": { "mark_hermit": true } },
+            "effects": {
+              "combat": "shadow_hermit",
+              "narrative": "你踏入那片孤独的虚空，与那道影子对峙。"
+            }
+          },
+          {
+            "id": "observe_hermit",
+            "text": "那道影子向你点了点头，消散在虚空中——你与他走了不同的路",
+            "effects": {
+              "attributes": { "comprehension": 1 },
+              "narrative": "那道孤独的影子看着你，看了很久。最终，它点了点头，好像在说：你选了另一条路。不好不坏，只是不同。\n\n它消散了，留下一点淡淡的寂静。"
+            }
+          }
+        ],
+        "onComplete": {
+          "flags": { "zhushi_3_done": true }
+        }
+      },
+      {
+        "id": "zhushi_4",
+        "title": "无相之魂",
+        "unlockConditions": {},
+        "text": "第三道回声，带着一种奇异的清明。\n\n你看见那道影子之前，先感受到了它——它在感知你，就像你感知它一样。无相剑意，让它能洞察每一个人，包括另一个自己。\n\n那是走完了六段羁绊、承接了上古剑修遗愿的你。它拥有你已经拥有、或者永远没有机会拥有的东西。\n\n它出招之前，你就知道它要出招。\n\n但问题是——它也知道你知道。",
+        "choices": [
+          {
+            "id": "fight_shadow_wuxiang",
+            "text": "迎战——以洞见对洞见，以心对心",
+            "requirements": { "flags": { "wuxiang_sword_mastered": true } },
+            "effects": {
+              "combat": "shadow_wuxiang",
+              "narrative": "你与那道无相之影相对而立，彼此都能感知对方下一步的意图——这场战斗，考验的不是预判，是超越预判的决断。"
+            }
+          },
+          {
+            "id": "observe_wuxiang",
+            "text": "那道影子朝你微微颔首，消散——它能洞察你没有走过那条路",
+            "effects": {
+              "attributes": { "innerForce": 1 },
+              "narrative": "那道无相之影看着你，看了一眼，就知道了。\n\n它没有说话，只是颔首，然后消散。它能感知所有人，自然也感知到了：你们走的是不同的路。不是遗憾，只是如此。"
+            }
+          }
+        ],
+        "onComplete": {
+          "flags": { "zhushi_4_done": true }
+        }
+      },
+      {
+        "id": "zhushi_5",
+        "title": "轮回之魂",
+        "unlockConditions": {},
+        "text": "第四道回声，比其他的都要厚重。\n\n你看见的是一道几乎压弯了空间的影子——那是经历了无数轮回的自己。每一世都留下了点什么，每一世都带走了点什么，积累到最后，变成了一种超乎寻常的重量。\n\n那道影子站在虚空里，背脊略微弯着，不是因为衰老，是因为太多。\n\n它看见你，眼神里有一点欣慰：你也走到这里了。",
+        "choices": [
+          {
+            "id": "fight_shadow_rebirth",
+            "text": "与那道轮回之影相对——你们都知道这条路有多长",
+            "requirements": { "minRebirth": 3 },
+            "effects": {
+              "combat": "shadow_rebirth",
+              "narrative": "你与那道轮回之影对视，那双眼睛里有你见过的所有世界线——以及你自己的影子。"
+            }
+          },
+          {
+            "id": "observe_rebirth",
+            "text": "那道影子叹了口气，消散——你们尚在不同的时间里",
+            "effects": {
+              "attributes": { "comprehension": 1 },
+              "narrative": "那道轮回之影看着你，叹了一口气，不是失望，更像是：「再多走几世吧，那时候你就懂了。」\n\n然后它消散了。你站在原地，感到一种奇异的被期待的感觉。"
+            }
+          }
+        ],
+        "onComplete": {
+          "flags": { "zhushi_5_done": true }
+        }
+      },
+      {
+        "id": "zhushi_6",
+        "title": "知缘之魂",
+        "unlockConditions": {},
+        "text": "第五道回声，带着一种温柔的沉重。\n\n你看见的是另一个走完了所有人故事的自己——那个留下来，见证了王铁、李云舒、燕赤行、苏青、凌雪每一段后来的自己。\n\n那道影子站在那里，身边仿佛有六道淡淡的光，是曾经真正认识过的人留下的印记。\n\n它看见你，没有说话，只是把那六道光向你推了过来。",
+        "choices": [
+          {
+            "id": "fight_shadow_afterstory",
+            "text": "接住那六道光，与那道知晓所有后缘的影子对峙",
+            "requirements": { "flags": { "li_afterstory_done": true } },
+            "effects": {
+              "combat": "shadow_afterstory",
+              "narrative": "六道光芒落在你身上。那是你认识过的人的重量——你站在那道影子对面，感到胸口有什么东西在共鸣。"
+            }
+          },
+          {
+            "id": "observe_afterstory",
+            "text": "那六道光在你面前消散——你还没有见完所有人的故事",
+            "effects": {
+              "attributes": { "luck": 1 },
+              "narrative": "那六道光向你漂来，但还没有落定就散开了。\n\n你还没有走完那些后来的故事——所以它们认不出你来。那道影子看着你，点了点头，随那六道光一起消散了。"
+            }
+          }
+        ],
+        "onComplete": {
+          "flags": { "zhushi_6_done": true }
+        }
+      },
+      {
+        "id": "zhushi_7",
+        "title": "诸世共鸣",
+        "unlockConditions": {},
+        "text": "你走过了所有的回声。\n\n无论认出了多少，跳过了多少——它们都是你。走过不同路的你，做出不同选择的你，走到不同终点的你。\n\n现在它们同时出现了，站在你四周，每一道都望向你。\n\n不是评判，不是施压——是某种沉默的聚集，像是在说：我们都在这里。我们都等你做那一件事。\n\n它们合而为一，化作一道汇聚了所有自己的极限之影，向你走来。\n\n这是最后一个考验——承接所有的自己，然后超越它们。",
+        "choices": [
+          {
+            "id": "fight_strongest_shadow",
+            "text": "站定脚步，迎接所有自己汇聚的力量",
+            "effects": {
+              "combat": "shadow_strongest",
+              "narrative": "那道汇聚了所有自己的影子，在虚空中缓缓成形。你握紧手，感到背后有什么在支撑你——是那些消散了的回声，是所有走过的路。"
+            }
+          }
+        ],
+        "onComplete": {
+          "flags": { "zhushi_chain_done": true }
+        }
+      }
+    ],
+    "completionReward": {
+      "attributes": {
+        "comprehension": 5,
+        "innerForce": 5,
+        "strength": 3
+      },
+      "flags": {
+        "zhushi_chain_done": true
+      },
+      "passives": [
+        {
+          "id": "rebirth_power",
+          "name": "轮回之力",
+          "desc": "诸世之我的意志共鸣——以所有的自己，对抗设计者",
+          "rebirthPower": true
+        }
+      ],
+      "narrative": "那道最强的影子散开，化作漫天光芒，全部沉入你的体内。\n\n温热从胸口漫开，蔓延到手指尖。这不是别人给你的力量——这是你本来就有的力量，只是终于第一次聚在了一起。\n\n你睁开眼，窗外还是深夜。但某样东西已经不同了。\n\n「诸世之我，共赴一战。」"
     }
+  }
   ]
 }

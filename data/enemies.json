@@ -1255,5 +1255,168 @@
     ],
     "winNarrative": "老者最终倒下，双手放开。\n\n他望着你，表情不是失败者的绝望——而是一种复杂的释然，像是放下了一件搬了九百年的重物。\n\n「你赢了，」他说，声音很轻，「这个结果……也许比我计划的，要好得多。」\n\n「不是因为你击败了我，」他闭上眼，「而是因为——你是第一个真正做出选择的人。不是被安排的，不是被设计的。是你自己的。」\n\n双鱼玉佩的碎片在他手中化为光点，散入天地。轮回的枷锁，就此断裂。",
     "loseNarrative": "那九百年积蓄的力量将你压倒。\n\n老者站在你面前，叹了口气：「你已经是我见过最接近的人了。」\n\n「再来一次吧，」他说，「这一次，你比上一次更近了。」\n\n这一世，就到这里了。"
+  },
+  {
+    "id": "shadow_warrior",
+    "name": "武者之影",
+    "description": "另一条世界线上的自己——那个将全部生命押注在武道上的自己。它不说话，只是出招。",
+    "attack": 85,
+    "defense": 50,
+    "hp": 500,
+    "hpScale": 0,
+    "attackScale": 0,
+    "defenseScale": 0,
+    "innerForce": 20,
+    "comprehension": 30,
+    "isShadow": true,
+    "attackDescs": [
+      "那道影子以极致纯粹的力道挥出一拳",
+      "武道之力凝聚，直接贯穿防御",
+      "刀光划过，无一字多余"
+    ],
+    "skills": [
+      {
+        "id": "martial_peak",
+        "name": "武道极意",
+        "telegraph": "那道影子气势骤然收敛，武道之力凝到极点——⚠ 【武道极意】将至，务必【防御】！",
+        "damageMult": 2.2,
+        "hpThreshold": 0.5,
+        "momentumCost": 3
+      }
+    ],
+    "winNarrative": "那道影子的拳势渐渐散开。\n\n在它消散之前，它看着你——不是败者的眼神，是一种奇异的认可。\n\n它将手中凝聚的武道之力，推向了你。你感到一股力量沉入丹田，与你自己的力量混合在一起。",
+    "loseNarrative": "武者之影击败了你。\n\n它站在你面前，没有话语——只是等待你重新站起来。",
+    "winFlags": { "mark_warrior_power": true },
+    "winEffects": {},
+    "loseEffects": {}
+  },
+  {
+    "id": "shadow_hermit",
+    "name": "孤道之影",
+    "description": "另一条世界线上的自己——那个从未让任何人靠近过的自己。孤独是它的武器，也是它的枷锁。",
+    "attack": 70,
+    "defense": 65,
+    "hp": 580,
+    "hpScale": 0,
+    "attackScale": 0,
+    "defenseScale": 0,
+    "innerForce": 20,
+    "comprehension": 25,
+    "isShadow": true,
+    "attackDescs": [
+      "孤独凝成刃，无声无息地刺来",
+      "独行者的力量，不借任何外力",
+      "一人之力，拒绝一切牵绊"
+    ],
+    "winNarrative": "孤道之影停下了。\n\n它望着你，似乎在问：你为什么没有走我的路？\n\n你没有答案——但你知道，那不是问句，是感慨。它将孤独中锻出的那部分力量，给了你。",
+    "loseNarrative": "孤道之影击败了你。孤独的极致，是一种难以撼动的力量。",
+    "winFlags": { "mark_hermit_power": true },
+    "winEffects": {},
+    "loseEffects": {}
+  },
+  {
+    "id": "shadow_wuxiang",
+    "name": "无相之影",
+    "description": "另一条世界线上的自己——那个走遍六段羁绊、承接了无相剑意的自己。它能感知你所有的意图。",
+    "attack": 95,
+    "defense": 45,
+    "hp": 480,
+    "hpScale": 0,
+    "attackScale": 0,
+    "defenseScale": 0,
+    "innerForce": 28,
+    "comprehension": 70,
+    "isShadow": true,
+    "attackDescs": [
+      "那道影子在你出招之前，已经预判了方向",
+      "无相剑意——每一步都被它感知",
+      "以万变应万变，你的每一个意图它都洞察"
+    ],
+    "winNarrative": "那道持有无相剑意的影子，在你击败它的那一刻，笑了一下。\n\n它说——或者说，那缕剑意说：「很好。你不是因为能看穿我才赢的。是因为，即使被看穿，你依然做出了正确的选择。」\n\n无相剑意的一部分，永远留在了你身上。",
+    "loseNarrative": "无相之影感知了你所有的动作。被另一个更懂得人心的自己击败，算是一种奇异的体验。",
+    "winFlags": { "mark_wuxiang_power": true },
+    "winEffects": {},
+    "loseEffects": {}
+  },
+  {
+    "id": "shadow_rebirth",
+    "name": "轮回之影",
+    "description": "另一条世界线上的自己——那个历经无数轮回、积累了沉重遗产的自己。岁月的重量，化为了力量。",
+    "attack": 80,
+    "defense": 60,
+    "hp": 650,
+    "hpScale": 0,
+    "attackScale": 0,
+    "defenseScale": 0,
+    "innerForce": 30,
+    "comprehension": 35,
+    "isShadow": true,
+    "attackDescs": [
+      "多世积累的力量，层层叠加",
+      "前世的遗产，在这一击中涌现",
+      "轮回的重量，压倒了一切"
+    ],
+    "winNarrative": "轮回之影散开，化作点点光芒。\n\n那是前世前世前世的自己——每一世都在这道影子里留下了一点什么。击败它，不是击败他们，而是承接了他们。",
+    "loseNarrative": "轮回积累的重量，超过了你现在所能承受的。",
+    "winFlags": { "mark_rebirth_power": true },
+    "winEffects": {},
+    "loseEffects": {}
+  },
+  {
+    "id": "shadow_afterstory",
+    "name": "知缘之影",
+    "description": "另一条世界线上的自己——那个见证了所有人后日谈的自己。它知道每个人最终去向何方。",
+    "attack": 75,
+    "defense": 55,
+    "hp": 520,
+    "hpScale": 0,
+    "attackScale": 0,
+    "defenseScale": 0,
+    "innerForce": 18,
+    "comprehension": 45,
+    "isShadow": true,
+    "attackDescs": [
+      "那道影子出手时，眼中有一丝悲悯",
+      "它知道所有的结局，包括这一战的结局",
+      "见证了所有人的命运，也包括你自己的"
+    ],
+    "winNarrative": "知缘之影消散。\n\n散去之前，它轻声说了几个名字——王铁、李云舒、沈玄清、燕赤行、苏青、凌雪。\n\n每一个名字说出来，你心里都有一个画面。那是他们各自的结局，是你用一世时间见证的缘分。",
+    "loseNarrative": "那些知晓所有后缘的力量，超出了你现在的境界。",
+    "winFlags": { "mark_afterstory_power": true },
+    "winEffects": {},
+    "loseEffects": {}
+  },
+  {
+    "id": "shadow_strongest",
+    "name": "诸世最强之影",
+    "description": "你所有的前世合而为一的极限——所有走过的路，所有做出的选择，汇聚而成的终极影子。",
+    "attack": 110,
+    "defense": 75,
+    "hp": 900,
+    "hpScale": 0,
+    "attackScale": 0,
+    "defenseScale": 0,
+    "innerForce": 32,
+    "comprehension": 50,
+    "isShadow": true,
+    "attackDescs": [
+      "所有路线的力量合流，发出难以想象的一击",
+      "诸世意志汇聚，攻势如山倒海来",
+      "这是你所有自我的极限"
+    ],
+    "skills": [
+      {
+        "id": "all_selves_strike",
+        "name": "诸世合击",
+        "telegraph": "那道汇聚了所有自己的影子气势骤然涌现，无数世界线的意志化为一击——⚠ 务必【防御】！",
+        "damageMult": 2.5,
+        "hpThreshold": 0.6,
+        "momentumCost": 3
+      }
+    ],
+    "winNarrative": "那道汇聚了所有自己的影子，在你击败它的那一刻，化为漫天光芒。\n\n光芒散入你的身体，一股温热从胸口蔓延到四肢。这不是外来的力量——这是你本来就有的力量，只是从未聚拢在一起过。\n\n「诸世之我，共赴一战。」",
+    "loseNarrative": "面对所有自己的合力，你还没有做好准备。但没关系——那道影子将在这里等待，等你准备好的那一天。",
+    "winEffects": {},
+    "loseEffects": {}
   }
 ]
