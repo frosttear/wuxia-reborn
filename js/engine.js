@@ -92,9 +92,10 @@ const Engine = {
         const { char } = this.state;
         if (!char || this.state.gamePhase !== 'idle') return;
 
-        // Safeguard: corrupted saves where boss was never triggered past age 20y1m
-        if (char.ageMonths >= 241 && !char.flags.boss_triggered) {
-            char.flags.boss_triggered = true;
+        // Safeguard: age past 20y1m and still exploring means either the boss was never
+        // triggered or the boss fight completed but rebirth failed. Force boss fight every
+        // time until rebirth resets ageMonths below 241.
+        if (char.ageMonths >= 241) {
             const bossEvent = this.state.events.find(e => e.id === 'tianmo_appears');
             if (bossEvent) { this.triggerEvent(bossEvent); return; }
         }
