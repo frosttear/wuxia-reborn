@@ -740,7 +740,7 @@ const UI = {
             const hpPctE = cs.enemyHp / cs.enemyMaxHp;
             const availableE = cs.enemy.skills
                 .filter(s => hpPctE <= (s.hpThreshold || 0.5))
-                .sort((a, b) => (a.momentumCost || 3) - (b.momentumCost || 3));
+                .sort((a, b) => ((a.momentumCost || 3) - (b.momentumCost || 3)) || ((a.hpThreshold || 0) - (b.hpThreshold || 0)));
             const nextSkE = cs.pendingSkill || availableE[0];
             if (nextSkE) {
                 const maxMom = nextSkE.momentumCost || 3;

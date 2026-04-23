@@ -202,7 +202,8 @@ const Combat = {
                     const total = Math.max(1, rawSum - enemyQS);
                     cs.enemyHp = Math.max(0, cs.enemyHp - total);
                     cs.totalDmgDealt += total;
-                    lines.push(`【<b style="color:#f4c430">${sk.name}</b>】连击（${parts.join('+')}=${rawSum}，气盾减 <b>${total}</b>），对方剩余气血 ${Math.max(0, cs.enemyHp)}。${ampNote}`);
+                    const qsNote = enemyQS > 0 ? `，气盾抵消${enemyQS}，实际 <b>${total}</b>` : `，共 <b>${total}</b>`;
+                    lines.push(`【<b style="color:#f4c430">${sk.name}</b>】连击（${parts.join('+')}=${rawSum}${qsNote}），对方剩余气血 ${Math.max(0, cs.enemyHp)}。${ampNote}`);
                 } else {
                     const dmg = Math.max(1, Math.floor(playerAtk * sk.power * defRatio * (1 + innerAmp)) - enemyQS);
                     cs.enemyHp = Math.max(0, cs.enemyHp - dmg);
@@ -291,9 +292,10 @@ const Combat = {
                                 counterDmg = Math.max(1, rawSum - enemyQS);
                                 if (isCrit) counterDmg = Math.floor(counterDmg * 1.5);
                                 if (sk.type === 'stun') cs.enemyStunned = true;
+                                const cqsNote = enemyQS > 0 ? `，气盾抵消${enemyQS}，实际 <b>${counterDmg}</b>` : `，共 <b>${counterDmg}</b>`;
                                 counterText = heavyAnticipated
-                                    ? `你早已洞悉来招，顺势以【<b style="color:#f4c430">${sk.name}</b>】反击！${critTag}${ampNote}连击（${parts.join('+')}=${rawSum}，气盾减 <b>${counterDmg}</b>）`
-                                    : `凭直觉化解来招，以【<b style="color:#f4c430">${sk.name}</b>】反击！${critTag}${ampNote}连击（${parts.join('+')}=${rawSum}，气盾减 <b>${counterDmg}</b>）`;
+                                    ? `你早已洞悉来招，顺势以【<b style="color:#f4c430">${sk.name}</b>】反击！${critTag}${ampNote}连击（${parts.join('+')}=${rawSum}${cqsNote}）`
+                                    : `凭直觉化解来招，以【<b style="color:#f4c430">${sk.name}</b>】反击！${critTag}${ampNote}连击（${parts.join('+')}=${rawSum}${cqsNote}）`;
                             } else {
                                 counterDmg = Math.max(1, Math.floor(playerAtk * sk.power * ctrDefRatio * (1 + innerAmp)) - enemyQS);
                                 if (isCrit) counterDmg = Math.floor(counterDmg * 1.5);
@@ -404,7 +406,7 @@ const Combat = {
                         const hpPct = cs.enemyHp / cs.enemyMaxHp;
                         const available = cs.enemy.skills
                             .filter(s => hpPct <= (s.hpThreshold || 0.5))
-                            .sort((a, b) => (a.hpThreshold || 0) - (b.hpThreshold || 0));
+                            .sort((a, b) => ((a.momentumCost || 3) - (b.momentumCost || 3)) || ((a.hpThreshold || 0) - (b.hpThreshold || 0)));
                         const nextSk = available[0];
                         if (nextSk && cs.enemyMomentum >= (nextSk.momentumCost || 3)) {
                             cs.pendingSkill = nextSk;
