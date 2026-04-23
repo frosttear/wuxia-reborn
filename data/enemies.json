@@ -642,6 +642,58 @@
     }
   },
   {
+    "id": "li_yunshu_sparring_returned",
+    "name": "李云舒",
+    "description": "学成归来的李云舒，眉目间多了一丝从容与锋锐。她以自创剑法相迎，每一招都轻而凌厉——这已不是当初那个切磋的少女。",
+    "comprehension": 24,
+    "innerForce": 22,
+    "attack": 42,
+    "defense": 32,
+    "hp": 200,
+    "attackScale": 0,
+    "defenseScale": 0,
+    "hpScale": 0,
+    "intentReadMsgs": {
+      "heavy": [
+        "云舒凝气沉步，剑势一变，气息骤然厚重——<b>重剑将至</b>",
+        "她眼神收束，剑意沛然蓄满——<b>重击将至</b>"
+      ],
+      "swift": [
+        "云舒足下一轻，身形如叶随风，剑尖悄然迫近——<b>快攻将至</b>",
+        "她侧身错步，瞬间拉近距离——<b>快攻将至</b>"
+      ]
+    },
+    "intentUnreadMsgs": [
+      "她的自创剑法变化无常，寻不到规律",
+      "云舒此刻的剑意深沉，已非昔日可比，看不透"
+    ],
+    "attackDescs": [
+      "剑意如春风化雨，绵绵不绝",
+      "一剑轻灵，如行云流水",
+      "急步逼近，剑锋直指要害",
+      "侧步换位，剑走偏锋"
+    ],
+    "skills": [
+      {
+        "id": "lingering_cloud_sword",
+        "name": "凌云剑意",
+        "telegraph": "云舒深吸一口气，剑意猛然凝聚——这是她自创的招式，气势远胜从前！⚠ 务必【格挡】！",
+        "damageMult": 2.6,
+        "momentumCost": 3,
+        "hpThreshold": 0.5
+      }
+    ],
+    "winNarrative": "她看着你，笑了——这次的笑里没有惊讶，只有满足。「就知道你能接住，」她轻声说，把剑插回鞘，「我没猜错人。」",
+    "loseNarrative": "李云舒收剑，目光平静：「还差一点——但你已经比出发前强了不止一倍。」她把剑插回鞘，「再练，你能接住的。」",
+    "winEffects": {
+      "agility": 3,
+      "comprehension": 2
+    },
+    "loseEffects": {
+      "agility": 1
+    }
+  },
+  {
     "id": "local_bully_gang",
     "name": "地头蛇爪牙",
     "description": "本地势力的几个打手，仗势欺人惯了，见你单枪匹马前来，嚣张之气未减。",
