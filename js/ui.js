@@ -1,7 +1,7 @@
 // ui.js - UI rendering and DOM management
 
-// Loads HQ immediately; if cached it appears at once with no blur.
-// If HQ takes >50ms (network load), shows LQ blur as placeholder then crossfades.
+// Both probes start immediately. LQ (3-11 KB) nearly always beats HQ, so the
+// dim placeholder appears at once. When HQ arrives, swap and restore opacity.
 // fallbackSrc: shown on total failure; null hides the element.
 function loadProgressiveImg(img, hqSrc, fallbackSrc) {
     const lowSrc = hqSrc.replace(/(assets\/[^/]+\/)([^/]+)\.\w+$/, '$1low/$2.jpg');
@@ -9,24 +9,20 @@ function loadProgressiveImg(img, hqSrc, fallbackSrc) {
         ? () => { img.src = fallbackSrc; img.classList.remove('img-lq'); img.onerror = null; }
         : () => { img.style.display = 'none'; };
 
-    const hqProbe = new Image();
-    let settled = false;
+    let hqSettled = false;
 
+    const hqProbe = new Image();
     hqProbe.onload = () => {
-        settled = true;
+        hqSettled = true;
         img.src = hqSrc;
         img.classList.remove('img-lq');
     };
-    hqProbe.onerror = () => { settled = true; onError(); };
+    hqProbe.onerror = () => { hqSettled = true; onError(); };
     hqProbe.src = hqSrc;
 
-    // Only show LQ blur if HQ hasn't arrived after a short delay
-    setTimeout(() => {
-        if (settled) return;
-        const lqProbe = new Image();
-        lqProbe.onload = () => { if (!settled) { img.src = lowSrc; img.classList.add('img-lq'); } };
-        lqProbe.src = lowSrc;
-    }, 50);
+    const lqProbe = new Image();
+    lqProbe.onload = () => { if (!hqSettled) { img.src = lowSrc; img.classList.add('img-lq'); } };
+    lqProbe.src = lowSrc;
 }
 
 const ATTR_NAMES = {

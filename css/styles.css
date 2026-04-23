@@ -263,7 +263,7 @@ body {
 
 /* NPC relationships */
 .npc-row      { margin-bottom: 10px; display: flex; gap: 8px; align-items: flex-start; }
-.npc-avatar   { width: 64px; height: 64px; border-radius: 50%; object-fit: cover; border: 1.5px solid var(--accent2); flex-shrink: 0; margin-top: 2px; cursor: pointer; transition: border-color 0.2s, filter 0.4s ease; }
+.npc-avatar   { width: 64px; height: 64px; border-radius: 50%; object-fit: cover; border: 1.5px solid var(--accent2); flex-shrink: 0; margin-top: 2px; cursor: pointer; transition: border-color 0.2s, opacity 0.4s ease; }
 .npc-avatar:hover { border-color: var(--accent); }
 .npc-info     { flex: 1; min-width: 0; }
 .npc-header   { display: flex; align-items: baseline; gap: 5px; margin-bottom: 3px; flex-wrap: wrap; }
@@ -435,7 +435,7 @@ button:disabled { opacity: 0.4; cursor: not-allowed; }
 .visit-npc-btn:hover:not(:disabled) { border-color: var(--accent); background: rgba(201,168,76,0.1); }
 .visit-npc-btn.visit-bond-ready { border-color: rgba(92,191,122,0.5); background: rgba(92,191,122,0.07); }
 .visit-npc-btn.visit-bond-ready:hover:not(:disabled) { border-color: var(--green); background: rgba(92,191,122,0.15); }
-.visit-npc-avatar { width: 48px; height: 48px; border-radius: 50%; object-fit: cover; border: 1.5px solid var(--accent2); flex-shrink: 0; cursor: pointer; transition: border-color 0.2s, filter 0.4s ease; }
+.visit-npc-avatar { width: 48px; height: 48px; border-radius: 50%; object-fit: cover; border: 1.5px solid var(--accent2); flex-shrink: 0; cursor: pointer; transition: border-color 0.2s, opacity 0.4s ease; }
 .visit-npc-avatar:hover { border-color: var(--accent); }
 .visit-npc-detail { display: flex; flex-direction: column; gap: 2px; }
 .visit-npc-name { font-size: 0.88rem; color: var(--accent2); font-weight: bold; }
@@ -888,7 +888,7 @@ button:disabled { opacity: 0.4; cursor: not-allowed; }
 }
 .gallery-card img {
     width: 100%; height: 100%; object-fit: cover; display: block;
-    transition: transform 0.35s ease, filter 0.35s;
+    transition: transform 0.35s ease, opacity 0.35s;
 }
 .gallery-card:not(.locked):hover {
     box-shadow: 0 8px 32px rgba(201,168,76,0.3);
@@ -944,9 +944,9 @@ button:disabled { opacity: 0.4; cursor: not-allowed; }
     max-height: 78vh; max-width: min(900px, 90vw);
     object-fit: contain; border-radius: 8px;
     box-shadow: 0 8px 56px rgba(0,0,0,0.8); display: block;
-    transition: filter 0.4s ease;
+    transition: opacity 0.4s ease;
 }
-.img-lq { filter: blur(8px); }
+.img-lq { opacity: 0.55; }
 .gallery-lb-info {
     padding: 14px 24px; text-align: center; max-width: min(900px, 90vw);
 }

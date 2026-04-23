@@ -91,6 +91,14 @@ const Gallery = {
                 if (e.key === 'ArrowRight') this.navigateLightbox(1);
             }
         });
+
+        let _touchStartX = 0;
+        this._lightbox.addEventListener('touchstart', e => { _touchStartX = e.touches[0].clientX; }, { passive: true });
+        this._lightbox.addEventListener('touchend', e => {
+            if (!this._lightbox.classList.contains('active')) return;
+            const dx = e.changedTouches[0].clientX - _touchStartX;
+            if (Math.abs(dx) > 50) this.navigateLightbox(dx < 0 ? 1 : -1);
+        }, { passive: true });
     },
 
     unlockIllustration(id) {
