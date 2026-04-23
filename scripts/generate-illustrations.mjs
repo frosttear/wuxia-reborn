@@ -200,14 +200,14 @@ async function submitJob(prompt) {
         sampler_name: "k_euler_a",
         cfg_scale: 7,
         steps: 30,
-        width: 1216,
-        height: 832,
+        width: 1024,
+        height: 704,
         karras: true,
         hires_fix: false,
-        clip_skip: 2,
+        clip_skip: 1,
         n: 1,
       },
-      models: ["Nova Anime XL"],
+      models: ["DreamShaper XL"],
       slow_workers: true,
       trusted_workers: false
     })

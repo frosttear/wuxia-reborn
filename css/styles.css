@@ -891,10 +891,11 @@ button:disabled { opacity: 0.4; cursor: not-allowed; }
 .gallery-card.locked img { filter: blur(12px) brightness(0.3) grayscale(0.5); }
 
 .gallery-card-hint {
-    position: absolute; bottom: 0; left: 0; right: 0;
-    padding: 28px 10px 10px;
-    background: linear-gradient(transparent, rgba(0,0,0,0.9) 50%);
-    font-size: 0.72rem; color: #bba; text-align: center; line-height: 1.4;
+    position: absolute; inset: 0; z-index: 2;
+    display: flex; align-items: center; justify-content: center;
+    padding: 12px;
+    background: rgba(0,0,0,0.78);
+    font-size: 0.72rem; color: #ccc; text-align: center; line-height: 1.5;
     opacity: 0; transition: opacity 0.22s; pointer-events: none;
 }
 .gallery-card.locked:hover .gallery-card-hint,
