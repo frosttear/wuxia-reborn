@@ -121,6 +121,9 @@ const UI = {
         this.chainPanel = document.getElementById('chainPanel');
         this.logBuffer = [];
         this._preloadAvatars();
+        // Force player avatar through SW so version bumps always serve fresh image
+        const playerAvatar = document.querySelector('.player-avatar');
+        if (playerAvatar) loadProgressiveImg(playerAvatar, 'assets/characters/player.png', null);
         if (typeof Gallery !== 'undefined') Gallery.init();
     },
 
