@@ -37,7 +37,8 @@ body {
     flex-shrink: 0;
 }
 .game-title-logo { height: 36px; width: auto; display: block; }
-.header-controls { display: flex; gap: 8px; }
+.header-controls { display: flex; gap: 8px; flex-wrap: wrap; justify-content: flex-end; }
+* { touch-action: manipulation; }
 
 /* Layout */
 .game-layout {

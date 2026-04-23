@@ -1,6 +1,13 @@
 # 轮回江湖 — 开发进度
 
-## 当前版本：v0.21.11
+## 当前版本：v0.21.12
+
+---
+
+### v0.21.12（2026-04-23）
+
+- 修复顶栏「重置」按钮被挤出屏幕：`header-controls` 改为 `flex-wrap: wrap`，按钮过多时自动换行
+- 禁止移动端双击放大：viewport 添加 `maximum-scale=1.0`，全局 CSS 设置 `touch-action: manipulation`
 
 ---
 

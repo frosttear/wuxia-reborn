@@ -13,7 +13,7 @@ describe('index.html - basic structure', () => {
     });
 
     test('has valid meta viewport tag', () => {
-        expect(html).toMatch(/<meta\s+name="viewport"\s+content="width=device-width,\s*initial-scale=1\.0">/);
+        expect(html).toMatch(/<meta\s+name="viewport"\s+content="width=device-width,\s*initial-scale=1\.0[^"]*">/);
     });
 
     test('has meta charset', () => {
