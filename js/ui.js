@@ -654,7 +654,8 @@ const UI = {
         const job = state.jobs.find(j => j.id === char.job);
         const atk = Character.getAttackPower(char, job);
         const def = Character.getDefensePower(char, job);
-        document.getElementById('combatEnemyName').textContent  = cs.enemy.name;
+        const isHidden = (cs.enemy.isHiddenBoss || cs.enemy.isTrueFinalBoss) && state._isTestCombat;
+        document.getElementById('combatEnemyName').textContent  = isHidden ? '????' : cs.enemy.name;
         const eqsText = cs.enemyQiShield > 0 ? `  盾 ${cs.enemyQiShield}` : '';
         document.getElementById('combatEnemyStats').textContent = `攻 ${cs.enemyEffAtk}  防 ${cs.enemyEffDef}${eqsText}`;
         document.getElementById('combatPlayerName').textContent = char.name;
@@ -730,6 +731,45 @@ const UI = {
             skillEl.style.display = 'none';
         }
 
+        // Enemy momentum bar (only shown when enemy has skills)
+        const enemyMomWrap = document.getElementById('combatEnemyMomentumWrap');
+        if (cs.enemy && cs.enemy.skills && cs.enemy.skills.length > 0) {
+            enemyMomWrap.style.display = '';
+            const eMom = cs.enemyMomentum || 0;
+            // Find the next skill available at current HP (or the one pending)
+            const hpPctE = cs.enemyHp / cs.enemyMaxHp;
+            const availableE = cs.enemy.skills
+                .filter(s => hpPctE <= (s.hpThreshold || 0.5))
+                .sort((a, b) => (a.momentumCost || 3) - (b.momentumCost || 3));
+            const nextSkE = cs.pendingSkill || availableE[0];
+            if (nextSkE) {
+                const maxMom = nextSkE.momentumCost || 3;
+                document.getElementById('combatEnemyMomentumVal').textContent = Math.min(eMom, maxMom);
+                document.getElementById('combatEnemyMomentumMax').textContent = maxMom;
+                document.getElementById('combatEnemyMomentumFill').style.width = (Math.min(eMom, maxMom) / maxMom * 100) + '%';
+                const chargeEl = document.getElementById('combatEnemySkillCharge');
+                if (cs.pendingSkill) {
+                    chargeEl.style.display = '';
+                    chargeEl.className = 'combat-enemy-skill-pending';
+                    chargeEl.textContent = `⚠ 对方已蓄势「${cs.pendingSkill.name}」——准备格挡！`;
+                } else {
+                    const needed = maxMom - eMom;
+                    chargeEl.style.display = '';
+                    chargeEl.className = 'combat-enemy-skill-charging';
+                    chargeEl.textContent = needed > 0
+                        ? `「${nextSkE.name}」还差 ${needed} 势`
+                        : `⚠ 「${nextSkE.name}」随时可发！`;
+                }
+            } else {
+                document.getElementById('combatEnemyMomentumVal').textContent = eMom;
+                document.getElementById('combatEnemyMomentumMax').textContent = '—';
+                document.getElementById('combatEnemyMomentumFill').style.width = '0%';
+                document.getElementById('combatEnemySkillCharge').style.display = 'none';
+            }
+        } else {
+            enemyMomWrap.style.display = 'none';
+        }
+
         // Enemy intent hint (accuracy gated by comprehension)
         const intentEl = document.getElementById('combatIntentHint');
         if (cs.enemyIntentHint) {
@@ -782,12 +822,12 @@ const UI = {
             fleeBtn.textContent = `🏃 逃跑 ${Math.round(cs.fleeChance * 100)}%`;
         }
 
-        // Dynamic strike tooltip (defense ignore scales with atk/def ratio)
+        // Dynamic strike tooltip (BD-style: effective hit rate = atk / (atk + def))
         const atk = Character.getAttackPower(char, job);
-        const defIgnorePct = Math.round(Combat.getStrikeDefIgnore(atk, cs.enemyEffDef) * 100);
+        const effRatioPct = Combat.getStrikeEffRatio(atk, cs.enemyEffDef);
         const strikeBtn = document.querySelector('#combatActions .combat-strike');
         if (strikeBtn) {
-            strikeBtn.title = `强攻：正面攻击，忽略对方${defIgnorePct}%防御，气力+2，可触发会心`;
+            strikeBtn.title = `强攻：正面攻击，有效命中率${effRatioPct}%，气力+2，可触发会心`;
         }
 
         this._selectedCombatAction = null;
@@ -839,7 +879,7 @@ const UI = {
             html = `<span class="preview-label">⚔ 强攻</span>`;
             html += `伤害 <span class="preview-good">${p.dmg}</span>`;
             if (p.critChance > 0) html += ` · 会心 <span class="preview-good">${p.critDmg}</span>（${p.critChance}%）`;
-            html += ` · 无视防御 ${p.defIgnorePct}% · 气力+2`;
+            html += ` · 气力+2`;
             if (sk) html += `<br><span class="preview-label">⚡ ${sk.name}</span>自动发动，伤害 <span class="preview-good">${sk.dmg}</span>`;
             html += `<br><span class="preview-muted">承受敌方攻击 ${preview.incoming.fullDmg}${preview.incoming.dodgeChance > 0 ? ` · 闪避 ${preview.incoming.dodgeChance}%` : ''}</span>`;
         } else if (action === 'defend') {
@@ -1065,8 +1105,9 @@ const UI = {
                 return { e, eff, winPct };
             }).sort((a, b) => b.winPct - a.winPct || (a.eff.attack + a.eff.defense + a.eff.hp) - (b.eff.attack + b.eff.defense + b.eff.hp)).map(({ e, eff, winPct }) => {
                 const pctColor = winPct >= 70 ? '🟢' : winPct >= 40 ? '🟡' : '🔴';
+                const listName = (e.isHiddenBoss || e.isTrueFinalBoss) ? '????' : e.name;
                 return `<button class="visit-npc-btn" onclick="Engine.startTestCombat('${e.id}'); document.getElementById('testCombatPanel').style.display='none'">
-                    <span class="visit-npc-name">${e.name}</span>
+                    <span class="visit-npc-name">${listName}</span>
                     <span class="visit-npc-info">攻${eff.attack} 防${eff.defense} 血${eff.hp}  ${pctColor}胜率${winPct}%</span>
                 </button>`;
             }).join('');

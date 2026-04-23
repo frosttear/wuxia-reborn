@@ -299,6 +299,8 @@ const Engine = {
             past_life_dream: 'past-life-dream',
             rainy_road: 'journey-dawn',
             old_swordsman: 'journey-dawn',
+            deja_vu_road: 'past-life-dream',
+            elder_true_form_appears: 'mysterious-elder-ending',
         };
         if (_illustrationMap[event.id]) UI.addIllustration(_illustrationMap[event.id]);
 
@@ -629,6 +631,9 @@ const Engine = {
             lx_assassin1_done: '完成「追杀令」', lx_assassin2_done: '完成「破阵」',
             elder_trace_found: '完成「微尘之踪」', elder_daughter_found: '完成「清风镇」',
             yan_mountain_visited: '完成「山上的名字」', yan_mountain_cleared: '完成「矿贼清剿」',
+            shard_wang_tie: '完成「铁哥的旧事」', shard_yan_chixing: '完成「独行剑客的记账」',
+            shard_su_qing: '完成「药师的检验」', shard_li_yunshu: '完成「焚书之记」',
+            shard_ling_xue: '完成「天魔的指令」', truth_assembled: '完成「轮回的设计者」',
         };
         const result = [];
         for (const chain of chains) {
@@ -814,13 +819,13 @@ const Engine = {
         const job = this.getJob(char.job);
         const cs = Combat.initState(char, enemy, job);
         cs.postNarrative = postNarrative || '';
-        if (enemy.isHiddenBoss && this.allBondsComplete(char)) {
+        if ((enemy.isHiddenBoss || enemy.isTrueFinalBoss) && this.allBondsComplete(char)) {
             cs.allBondsBonus = true;
-            UI.addLog('【羁绊之力】王铁、李云舒、神秘老者、凌雪……这一世结下的所有情谊，此刻化为无形之力，护持于你！', 'unlock');
+            UI.addLog('【羁绊之力】王铁、李云舒、神秘老者、燕赤行、苏青、凌雪……这一世结下的所有情谊，此刻化为无形之力，护持于你！', 'unlock');
         } else if (enemy.isHiddenBoss && !this.allBondsComplete(char)) {
             UI.addLog('【羁绊未满】你感到胸中力量空缺……或许，集齐所有羁绊才能撼动此敌。', 'info');
         }
-        if (enemy.isFinalBoss || enemy.isHiddenBoss) cs.noFlee = true;
+        if (enemy.isFinalBoss || enemy.isHiddenBoss || enemy.isTrueFinalBoss) cs.noFlee = true;
         this.state.combatState = cs;
         this.state.gamePhase = 'combat';
         UI.updateControls(this.state);
@@ -882,6 +887,8 @@ const Engine = {
             const variance = 0.3;
             const hpLost = Math.round(sim.avgHpLost * (1 - variance + Math.random() * variance * 2));
             Character.takeDamage(char, Math.min(hpLost, char.hp - 1));
+        } else {
+            char.hp = 0;
         }
 
         // Patch cs summary stats for endCombat display
@@ -998,6 +1005,16 @@ const Engine = {
                 }
             }
 
+            if (enemy.isTrueFinalBoss) {
+                char.flags.true_final_boss_beaten = true;
+                UI.addLog(enemy.winNarrative, 'win');
+                UI.addIllustration('journey-dawn');
+                UI.showCombatReturnBtn('won', () => {
+                    UI.hideCombatOverlay();
+                    this.triggerTrueVictory();
+                });
+                return;
+            }
             if (enemy.isHiddenBoss) {
                 char.flags.hidden_boss_beaten = true;
                 UI.addLog(enemy.winNarrative, 'win');
@@ -1046,6 +1063,15 @@ const Engine = {
             const loseRewards = enemy.loseEffects || {};
             if (Object.keys(loseRewards).length > 0) this.applyEffects({ attributes: loseRewards });
             UI.renderCharacter(char, this.state.jobs);
+            if (enemy.isTrueFinalBoss) {
+                UI.addLog(enemy.loseNarrative, 'lose');
+                UI.addIllustration('sword-soul-lose');
+                UI.showCombatReturnBtn('lost', () => {
+                    UI.hideCombatOverlay();
+                    this.triggerDeath('true_final_boss');
+                });
+                return;
+            }
             if (enemy.isHiddenBoss) {
                 UI.addIllustration('sword-soul-lose');
                 UI.addLog('你击败了天魔，却败于那更深处的剑意。此生功亏一筑。', 'system');
@@ -1191,7 +1217,21 @@ const Engine = {
         const { char } = this.state;
 
         if (isTrueEnding) {
-            // True ending: defeated hidden boss
+            // If player chose to confront the elder, trigger true final boss after 剑魂
+            if (char.flags.elder_true_form_ready && !char.flags.elder_true_form_triggered) {
+                char.flags.elder_true_form_triggered = true;
+                this.state.gamePhase = 'idle';
+                UI.updateControls(this.state);
+                UI.addLog('剑意化为飞灰，玉牌归于沉寂。', 'win');
+                UI.addLog('你以为，一切终于结束了……', 'system');
+                setTimeout(() => {
+                    this.state.gamePhase = 'idle';
+                    const elderEvent = this.state.events.find(e => e.id === 'elder_true_form_appears');
+                    if (elderEvent) this.triggerEvent(elderEvent);
+                }, 2500);
+                return;
+            }
+            // Normal hidden boss true ending
             this.state.gamePhase = 'victory';
             this.stopAuto();
             UI.showVictoryScreen(char, this.state.jobs, this.state.bonds, this.state.npcs);
@@ -1233,6 +1273,19 @@ const Engine = {
                 this.triggerDeath('boss_aftermath');
             }, 3500);
         }, 3500);
+    },
+
+    triggerTrueVictory() {
+        this.state.gamePhase = 'victory';
+        this.stopAuto();
+        const { char } = this.state;
+        UI.addLog('────────────────────', 'system');
+        UI.addLog('那双掌握轮回九百年的手，就此散为微尘。', 'win');
+        UI.addLog('双鱼玉佩的碎片化为光点，在风中渐渐消散——那条无形的锁链，就此断裂。', 'system');
+        UI.addLog('你第一次感到，这个世界上没有任何人在注视你、等待你、安排你。', 'system');
+        UI.addLog('只有你自己，和这片天地。', 'system');
+        UI.addLog('这一世，是你的。', 'win');
+        UI.showVictoryScreen(char, this.state.jobs, this.state.bonds, this.state.npcs);
     },
 
     KILL_THRESHOLDS: [

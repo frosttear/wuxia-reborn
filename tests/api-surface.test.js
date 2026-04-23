@@ -51,7 +51,7 @@ describe('Combat API surface', () => {
         'calcWinChance',
         'getActionPreview',
         'getEffectiveStats',
-        'getStrikeDefIgnore',
+        'getStrikeEffRatio',
         'initState',
         'processTurn',
         'runQuickCombat',

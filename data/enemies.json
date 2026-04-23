@@ -5,8 +5,12 @@
     "description": "横行山道的普通山贼，武艺平平",
     "comprehension": 4,
     "innerForce": 0,
-    "attack": 12, "defense": 9, "hp": 68,
-    "attackScale": 3, "defenseScale": 2, "hpScale": 0.15,
+    "attack": 12,
+    "defense": 9,
+    "hp": 68,
+    "attackScale": 3,
+    "defenseScale": 2,
+    "hpScale": 0.15,
     "attackDescs": [
       "挥刀横劈，来势粗猛",
       "抡棍横扫，招式散乱",
@@ -14,13 +18,25 @@
       "趁你不备，偷袭而来"
     ],
     "intentReadMsgs": {
-      "heavy": ["此人重心下沉，握刀手背青筋暴起——<b>重击将至</b>", "山贼咬牙蓄力，刀势粗猛——<b>重击将至</b>"],
-      "swift": ["山贼脚步乱动，想抢先出手——<b>快攻将至</b>", "对方身子一矮，要偷袭抢攻——<b>快攻将至</b>"]
+      "heavy": [
+        "此人重心下沉，握刀手背青筋暴起——<b>重击将至</b>",
+        "山贼咬牙蓄力，刀势粗猛——<b>重击将至</b>"
+      ],
+      "swift": [
+        "山贼脚步乱动，想抢先出手——<b>快攻将至</b>",
+        "对方身子一矮，要偷袭抢攻——<b>快攻将至</b>"
+      ]
     },
-    "intentUnreadMsgs": ["山贼举动散乱，根本看不出章法", "此人横冲直撞，意图毫无规律可言"],
+    "intentUnreadMsgs": [
+      "山贼举动散乱，根本看不出章法",
+      "此人横冲直撞，意图毫无规律可言"
+    ],
     "winNarrative": "你三两下打倒了山贼，他们抱头鼠窜，落荒而逃。",
     "loseNarrative": "山贼人多势众，你寡不敌众，负伤撤退，狼狈不堪。",
-    "winEffects": { "reputation": 1, "agility": 1 },
+    "winEffects": {
+      "reputation": 1,
+      "agility": 1
+    },
     "loseEffects": {}
   },
   {
@@ -29,8 +45,12 @@
     "description": "身手不凡的江湖悍匪，经历过大风大浪",
     "comprehension": 10,
     "innerForce": 8,
-    "attack": 21, "defense": 16, "hp": 100,
-    "attackScale": 5, "defenseScale": 3, "hpScale": 0.18,
+    "attack": 21,
+    "defense": 16,
+    "hp": 100,
+    "attackScale": 5,
+    "defenseScale": 3,
+    "hpScale": 0.18,
     "attackDescs": [
       "狠劲一刀，直奔要害",
       "反手抽刀，刀势凌厉",
@@ -38,13 +58,26 @@
       "趁你换气，疾刺而来"
     ],
     "intentReadMsgs": {
-      "heavy": ["悍匪沉腰压势，刀气已凝——<b>重劈将至</b>", "对方面色一肃，握刀沉稳——<b>重击将至</b>"],
-      "swift": ["悍匪脚步错动，要绕至侧翼——<b>快攻将至</b>", "对方眼神一闪，快刀蓄势——<b>快攻将至</b>"]
+      "heavy": [
+        "悍匪沉腰压势，刀气已凝——<b>重劈将至</b>",
+        "对方面色一肃，握刀沉稳——<b>重击将至</b>"
+      ],
+      "swift": [
+        "悍匪脚步错动，要绕至侧翼——<b>快攻将至</b>",
+        "对方眼神一闪，快刀蓄势——<b>快攻将至</b>"
+      ]
     },
-    "intentUnreadMsgs": ["悍匪身法老练，你看不出破绽", "此人江湖经验丰富，意图难以捉摸"],
+    "intentUnreadMsgs": [
+      "悍匪身法老练，你看不出破绽",
+      "此人江湖经验丰富，意图难以捉摸"
+    ],
     "winNarrative": "恶战一场，你终于击败了悍匪，扬长而去，附近百姓纷纷喝彩。",
     "loseNarrative": "悍匪武艺超群，你力战不敌，带伤逃脱，心中郁郁。",
-    "winEffects": { "reputation": 2, "strength": 1, "constitution": 1 },
+    "winEffects": {
+      "reputation": 2,
+      "strength": 1,
+      "constitution": 1
+    },
     "loseEffects": {},
     "skills": [
       {
@@ -62,8 +95,12 @@
     "description": "山中出没的猛虎，爪牙锋利，凶猛异常",
     "comprehension": 4,
     "innerForce": 0,
-    "attack": 18, "defense": 12, "hp": 85,
-    "attackScale": 4, "defenseScale": 3, "hpScale": 0.15,
+    "attack": 18,
+    "defense": 12,
+    "hp": 85,
+    "attackScale": 4,
+    "defenseScale": 3,
+    "hpScale": 0.15,
     "attackDescs": [
       "猛地扑来，利爪横扫",
       "张开虎口，俯身咬来",
@@ -71,13 +108,25 @@
       "低吼一声，前爪猛拍"
     ],
     "intentReadMsgs": {
-      "heavy": ["猛虎低吼，后腿蹬地蓄力——<b>虎扑将至</b>", "虎躯前倾，利爪收紧——<b>重击将至</b>"],
-      "swift": ["猛虎步伐轻盈，正在寻找猎入时机——<b>疾扑将至</b>", "虎身忽然低伏，准备突然出击——<b>快攻将至</b>"]
+      "heavy": [
+        "猛虎低吼，后腿蹬地蓄力——<b>虎扑将至</b>",
+        "虎躯前倾，利爪收紧——<b>重击将至</b>"
+      ],
+      "swift": [
+        "猛虎步伐轻盈，正在寻找猎入时机——<b>疾扑将至</b>",
+        "虎身忽然低伏，准备突然出击——<b>快攻将至</b>"
+      ]
     },
-    "intentUnreadMsgs": ["猛虎游走不定，兽性难以预判", "野兽本能让它行踪飘忽，看不出规律"],
+    "intentUnreadMsgs": [
+      "猛虎游走不定，兽性难以预判",
+      "野兽本能让它行踪飘忽，看不出规律"
+    ],
     "winNarrative": "你与猛虎搏斗良久，终于将其击退。虎啸山林，你也感受到了自身力量的成长。",
     "loseNarrative": "猛虎凶猛异常，你被扑倒在地，拼死挣扎才得以逃脱，身上留下几道深痕。",
-    "winEffects": { "strength": 1, "constitution": 1 },
+    "winEffects": {
+      "strength": 1,
+      "constitution": 1
+    },
     "loseEffects": {},
     "skills": [
       {
@@ -95,8 +144,12 @@
     "description": "慕名而来的江湖武人，身手矫健，来者不善",
     "comprehension": 12,
     "innerForce": 12,
-    "attack": 26, "defense": 20, "hp": 118,
-    "attackScale": 6, "defenseScale": 4, "hpScale": 0.18,
+    "attack": 26,
+    "defense": 20,
+    "hp": 118,
+    "attackScale": 6,
+    "defenseScale": 4,
+    "hpScale": 0.18,
     "attackDescs": [
       "身形飘忽，掌风袭来",
       "快步近身，连环出掌",
@@ -104,14 +157,29 @@
       "凌空跃起，脚踢当胸"
     ],
     "intentReadMsgs": {
-      "heavy": ["挑战者深吸一口气，内力凝于双掌——<b>重击将至</b>", "对方步伐定住，蓄势将发重击——<b>重击将至</b>"],
-      "swift": ["挑战者脚步连动，快攻之意已显——<b>快攻将至</b>", "对方身形微侧，连招已在酝酿——<b>快攻将至</b>"]
+      "heavy": [
+        "挑战者深吸一口气，内力凝于双掌——<b>重击将至</b>",
+        "对方步伐定住，蓄势将发重击——<b>重击将至</b>"
+      ],
+      "swift": [
+        "挑战者脚步连动，快攻之意已显——<b>快攻将至</b>",
+        "对方身形微侧，连招已在酝酿——<b>快攻将至</b>"
+      ]
     },
-    "intentUnreadMsgs": ["此人身法飘忽，难以捕捉规律", "挑战者虚实相间，下一招看不穿"],
+    "intentUnreadMsgs": [
+      "此人身法飘忽，难以捕捉规律",
+      "挑战者虚实相间，下一招看不穿"
+    ],
     "winNarrative": "数十回合后，你以精妙的身法将对方逼退。他抱拳道：「阁下果然名不虚传，在下甘拜下风。」",
     "loseNarrative": "对方武艺高超，将你打得节节败退，最终拱手而去。此番切磋令你深感自身不足。",
-    "winEffects": { "reputation": 2, "comprehension": 1, "agility": 1 },
-    "loseEffects": { "comprehension": 1 },
+    "winEffects": {
+      "reputation": 2,
+      "comprehension": 1,
+      "agility": 1
+    },
+    "loseEffects": {
+      "comprehension": 1
+    },
     "skills": [
       {
         "id": "combo_strike",
@@ -128,8 +196,12 @@
     "description": "横行一方的江湖恶霸，铁拳无情",
     "comprehension": 18,
     "innerForce": 10,
-    "attack": 34, "defense": 25, "hp": 168,
-    "attackScale": 4, "defenseScale": 2, "hpScale": 0.12,
+    "attack": 34,
+    "defense": 25,
+    "hp": 168,
+    "attackScale": 4,
+    "defenseScale": 2,
+    "hpScale": 0.12,
     "attackDescs": [
       "铁拳轰出，虎虎生威",
       "大步踏来，臂力雄浑",
@@ -137,13 +209,25 @@
       "怒吼一声，重拳直砸"
     ],
     "intentReadMsgs": {
-      "heavy": ["赵霸天深吸一气，铁拳蓄力待发——<b>重拳将至</b>", "对方脚步一踏，双臂收紧——<b>重击将至</b>"],
-      "swift": ["赵霸天脚步出乎意料地轻移——<b>快攻将至</b>", "对方忽然加速，要抢先出手——<b>快攻将至</b>"]
+      "heavy": [
+        "赵霸天深吸一气，铁拳蓄力待发——<b>重拳将至</b>",
+        "对方脚步一踏，双臂收紧——<b>重击将至</b>"
+      ],
+      "swift": [
+        "赵霸天脚步出乎意料地轻移——<b>快攻将至</b>",
+        "对方忽然加速，要抢先出手——<b>快攻将至</b>"
+      ]
     },
-    "intentUnreadMsgs": ["赵霸天面不改色，看不出他要出什么招", "此人气势雄浑，从外表判断不了意图"],
+    "intentUnreadMsgs": [
+      "赵霸天面不改色，看不出他要出什么招",
+      "此人气势雄浑，从外表判断不了意图"
+    ],
     "winNarrative": "你与赵霸天大战数十回合，终于将其打倒在地。他怒视着你，强撑着离去，留下一句「后会有期」。",
     "loseNarrative": "赵霸天武艺精湛，你力战不敌。他大笑着扬长而去，你独自咬牙，心中暗誓日后必报此仇。",
-    "winEffects": { "reputation": 3, "strength": 1 },
+    "winEffects": {
+      "reputation": 3,
+      "strength": 1
+    },
     "loseEffects": {},
     "skills": [
       {
@@ -168,8 +252,12 @@
     "description": "率领手下劫镖的江湖人，刀法凌厉",
     "comprehension": 10,
     "innerForce": 6,
-    "attack": 19, "defense": 14, "hp": 92,
-    "attackScale": 5, "defenseScale": 3, "hpScale": 0.15,
+    "attack": 19,
+    "defense": 14,
+    "hp": 92,
+    "attackScale": 5,
+    "defenseScale": 3,
+    "hpScale": 0.15,
     "attackDescs": [
       "抽刀横劈，刀势凌厉",
       "快步逼近，连刺数剑",
@@ -177,13 +265,25 @@
       "转身回刀，出其不意"
     ],
     "intentReadMsgs": {
-      "heavy": ["头目沉腰蓄力，刀势已成——<b>重劈将至</b>", "对方双手握刀，气息一沉——<b>重击将至</b>"],
-      "swift": ["头目脚步轻灵，正在寻找刺击时机——<b>快刺将至</b>", "对方腕力微动，连刺蓄势——<b>快攻将至</b>"]
+      "heavy": [
+        "头目沉腰蓄力，刀势已成——<b>重劈将至</b>",
+        "对方双手握刀，气息一沉——<b>重击将至</b>"
+      ],
+      "swift": [
+        "头目脚步轻灵，正在寻找刺击时机——<b>快刺将至</b>",
+        "对方腕力微动，连刺蓄势——<b>快攻将至</b>"
+      ]
     },
-    "intentUnreadMsgs": ["头目刀法凌厉，行迹难以看透", "此人沙场经验丰富，看不出破绽"],
+    "intentUnreadMsgs": [
+      "头目刀法凌厉，行迹难以看透",
+      "此人沙场经验丰富，看不出破绽"
+    ],
     "winNarrative": "你击败了劫镖头目，他的手下作鸟兽散，镖货得以安然保全。",
     "loseNarrative": "劫镖头目武艺高强，你力战力竭，镖货被劫，颜面尽失。",
-    "winEffects": { "reputation": 2, "agility": 1 },
+    "winEffects": {
+      "reputation": 2,
+      "agility": 1
+    },
     "loseEffects": {}
   },
   {
@@ -191,14 +291,27 @@
     "name": "剑魂",
     "description": "噬魂真经的创始者——上古剑修临死前将毕生剑意灌注而成的自主意识。它存世千年，吞噬过无数修者的气血与剑意，是噬魂真经和天魔堕落的根源。沈玄清用七成修为将其封入玉牌，等待有人来终结这道千年剑意。",
     "comprehension": 60,
-    "innerForce": 48,
-    "attack": 115, "defense": 58, "hp": 680,
-    "attackScale": 0, "defenseScale": 0, "hpScale": 0,
+    "innerForce": 50,
+    "attack": 155,
+    "defense": 95,
+    "hp": 1100,
+    "attackScale": 0,
+    "defenseScale": 0,
+    "hpScale": 0,
     "intentReadMsgs": {
-      "heavy": ["剑魂剑意骤然收敛内聚，磅礴剑气即将爆发——<b>重击将至</b>", "那道剑光骤然加重，如渊如岳——<b>重击将至</b>"],
-      "swift": ["剑魂身形化风，剑势轻盈飘忽——<b>快攻将至</b>", "那道剑光忽然变得迅疾，快若流星——<b>快攻将至</b>"]
+      "heavy": [
+        "剑魂剑意骤然收敛内聚，磅礴剑气即将爆发——<b>重击将至</b>",
+        "那道剑光骤然加重，如渊如岳——<b>重击将至</b>"
+      ],
+      "swift": [
+        "剑魂身形化风，剑势轻盈飘忽——<b>快攻将至</b>",
+        "那道剑光忽然变得迅疾，快若流星——<b>快攻将至</b>"
+      ]
     },
-    "intentUnreadMsgs": ["剑魂以意化形，意图根本无从把握", "那凝结千年的剑意深不可测，你完全看不透"],
+    "intentUnreadMsgs": [
+      "剑魂以意化形，意图根本无从把握",
+      "那凝结千年的剑意深不可测，你完全看不透"
+    ],
     "attackDescs": [
       "剑光一闪，无迹可循",
       "虚空剑意，化形袭来",
@@ -207,7 +320,10 @@
     ],
     "winNarrative": "剑光骤熄。那道存世千年的剑意，终于消散了。\n\n它在消失的瞬间，忽然停顿了一下——那个无形无质的人影转过头，用一种你无法形容的目光看了你最后一眼。那不是恨意，甚至不是不甘。那是……释然。\n\n「千年了，」它的声音像远去的风，「终于有人……」话未说完，便化为了漫天流光。\n\n沈玄清说过——剑魂唯一的弱点，是不懂人心。但在最后那一刻，你觉得它也许懂了一点。\n\n玉牌的碎片在地上泛着微光，然后一片片化为流光，没入你的眉心，留下一阵温热。那是千年剑意最后的馈赠——不是作为敌人，而是作为一个终于得以安息的灵魂。",
     "loseNarrative": "剑魂的锋芒远超你的极限。千年积累的剑意如同汪洋，你在其中节节败退，最终倒下……意识离去前，你隐约听见它说了一句话：「不够。再来。」那道剑光在空中徘徊，重新凝回了玉牌的碎片中——它没有离开。它还在等。",
-    "winEffects": { "innerForce": 5, "comprehension": 3 },
+    "winEffects": {
+      "innerForce": 5,
+      "comprehension": 3
+    },
     "loseEffects": {},
     "isHiddenBoss": true,
     "skills": [
@@ -243,13 +359,26 @@
     "description": "天魔麾下的无面刺客，以魔气淬炼身躯，行动如鬼魅",
     "comprehension": 22,
     "innerForce": 20,
-    "attack": 38, "defense": 28, "hp": 195,
-    "attackScale": 6, "defenseScale": 4, "hpScale": 0.18,
+    "attack": 38,
+    "defense": 28,
+    "hp": 195,
+    "attackScale": 6,
+    "defenseScale": 4,
+    "hpScale": 0.18,
     "intentReadMsgs": {
-      "heavy": ["刺客魔气骤聚于手刃，重击将发——<b>重击将至</b>", "对方黑气凝实，沉重一击蓄势待发——<b>重击将至</b>"],
-      "swift": ["刺客身形开始错步，准备疾攻——<b>快攻将至</b>", "对方残影浮现，连击将至——<b>快攻将至</b>"]
+      "heavy": [
+        "刺客魔气骤聚于手刃，重击将发——<b>重击将至</b>",
+        "对方黑气凝实，沉重一击蓄势待发——<b>重击将至</b>"
+      ],
+      "swift": [
+        "刺客身形开始错步，准备疾攻——<b>快攻将至</b>",
+        "对方残影浮现，连击将至——<b>快攻将至</b>"
+      ]
     },
-    "intentUnreadMsgs": ["刺客行踪如鬼魅，完全无从判断", "魔气遮蔽了他的意图，看不清下一招"],
+    "intentUnreadMsgs": [
+      "刺客行踪如鬼魅，完全无从判断",
+      "魔气遮蔽了他的意图，看不清下一招"
+    ],
     "attackDescs": [
       "黑气凝手，无声袭来",
       "身形错步，残影连击",
@@ -258,8 +387,13 @@
     ],
     "winNarrative": "无面刺客重创倒地，临死前用一种你无法理解的语言低语了几个字，随即气绝。你站在原地，深吸一口气——天魔的人，已经盯上你了。",
     "loseNarrative": "刺客的魔气之力远超预估，你力战不敌，带伤脱身。他没有追来，只是消失在黑暗中，留下一句：「我主等着你。」",
-    "winEffects": { "innerForce": 2, "comprehension": 1 },
-    "loseEffects": { "comprehension": 1 },
+    "winEffects": {
+      "innerForce": 2,
+      "comprehension": 1
+    },
+    "loseEffects": {
+      "comprehension": 1
+    },
     "skills": [
       {
         "id": "demon_slash",
@@ -283,13 +417,26 @@
     "description": "被魔气强化的影堂首领，精通炼魂之术，武力凶横",
     "comprehension": 25,
     "innerForce": 40,
-    "attack": 52, "defense": 40, "hp": 280,
-    "attackScale": 7, "defenseScale": 5, "hpScale": 0.2,
+    "attack": 52,
+    "defense": 40,
+    "hp": 280,
+    "attackScale": 7,
+    "defenseScale": 5,
+    "hpScale": 0.2,
     "intentReadMsgs": {
-      "heavy": ["堂主炼魂之力汇聚于刀，沉重一击将至——<b>重击将至</b>", "对方阵纹骤亮，刀势蓄满——<b>重击将至</b>"],
-      "swift": ["堂主脚踏玄步，要以快制敌——<b>快攻将至</b>", "对方黑光流转，快刀蓄势——<b>快攻将至</b>"]
+      "heavy": [
+        "堂主炼魂之力汇聚于刀，沉重一击将至——<b>重击将至</b>",
+        "对方阵纹骤亮，刀势蓄满——<b>重击将至</b>"
+      ],
+      "swift": [
+        "堂主脚踏玄步，要以快制敌——<b>快攻将至</b>",
+        "对方黑光流转，快刀蓄势——<b>快攻将至</b>"
+      ]
     },
-    "intentUnreadMsgs": ["堂主的炼魂阵法遮蔽了他的意图", "阴刀路数诡异，看不出下一招方向"],
+    "intentUnreadMsgs": [
+      "堂主的炼魂阵法遮蔽了他的意图",
+      "阴刀路数诡异，看不出下一招方向"
+    ],
     "attackDescs": [
       "阴刀横扫，带起黑色气浪",
       "炼魂之力注入刀身，沉重劈落",
@@ -298,8 +445,13 @@
     ],
     "winNarrative": "影堂堂主轰然倒地，黑色的魔气从他体内缓缓消散。那些被炼魂术控制的武人，在他倒下的一刻，眼神里重新浮现出一丝清醒——你赢了。",
     "loseNarrative": "堂主的炼魂之力侵入你的经脉，让你寸步难行。他将你打倒在地，冷冷地说：「你还不够强。」然后转身离去——他似乎并不打算杀你。",
-    "winEffects": { "reputation": 3, "strength": 2 },
-    "loseEffects": { "comprehension": 1 },
+    "winEffects": {
+      "reputation": 3,
+      "strength": 2
+    },
+    "loseEffects": {
+      "comprehension": 1
+    },
     "skills": [
       {
         "id": "soul_drain",
@@ -321,15 +473,28 @@
     "id": "lingxue_enemy",
     "name": "凌雪",
     "description": "天魔门下首席弟子，以冰属剑意纵横江湖，正邪难辨，却自有一套不可动摇的信念与准则。",
-    "attack": 62, "defense": 48, "hp": 340,
-    "attackScale": 6, "defenseScale": 4, "hpScale": 0.18,
+    "attack": 62,
+    "defense": 48,
+    "hp": 340,
+    "attackScale": 6,
+    "defenseScale": 4,
+    "hpScale": 0.18,
     "comprehension": 38,
     "innerForce": 45,
     "intentReadMsgs": {
-      "heavy": ["凌雪步伐忽然停住，寒意骤聚于剑尖——<b>重击将至</b>", "她剑身凝起冰蓝光芒，重击蓄势——<b>重击将至</b>"],
-      "swift": ["凌雪步伐如雪花漫舞，疾刺之势已成——<b>快攻将至</b>", "她身形轻盈一转，快若流星——<b>快攻将至</b>"]
+      "heavy": [
+        "凌雪步伐忽然停住，寒意骤聚于剑尖——<b>重击将至</b>",
+        "她剑身凝起冰蓝光芒，重击蓄势——<b>重击将至</b>"
+      ],
+      "swift": [
+        "凌雪步伐如雪花漫舞，疾刺之势已成——<b>快攻将至</b>",
+        "她身形轻盈一转，快若流星——<b>快攻将至</b>"
+      ]
     },
-    "intentUnreadMsgs": ["凌雪的剑意如冰封雪覆，深不可测", "她的步法变幻如雪花，看不出规律"],
+    "intentUnreadMsgs": [
+      "凌雪的剑意如冰封雪覆，深不可测",
+      "她的步法变幻如雪花，看不出规律"
+    ],
     "attackDescs": [
       "凌雪剑光如白虹贯日，冷芒乍现",
       "她步伐忽变，似雪花漫舞，剑却直指咽喉",
@@ -338,8 +503,15 @@
     ],
     "winNarrative": "凌雪慢慢将剑收回剑鞘，沉默了很久。\n\n「我输了。」那三个字说得很平静，却有某种沉甸甸的分量。她从腰间取下一枚白玉令牌，双手托着递向你：\n\n「师父把这枚令牌交给我时说，把它给第一个能真正赢过我的人。」她顿了顿，「我当时以为那一天不会来。」\n\n你接过令牌，掌心里一丝淡淡的寒意。\n\n凌雪转过身，背对着你：「去找他吧。他……其实一直在等一个让他真正信服的人。只是他自己可能还不知道。」",
     "loseNarrative": "你重重跌倒，凌雪的剑抵住你的咽喉，停在那里，停了很长时间。最终，她缓缓收剑，叹了口气：「还不够。」\n\n「不是力量不够，」她说，「是你心里还有什么没有看清楚。」\n\n她转身走了几步，在门口停下，没有回头：「等你想清楚了，再来找我。」那句话轻轻的，像是一根细线，把什么东西系在了你胸口。",
-    "winEffects": { "innerForce": 4, "comprehension": 3, "reputation": 2 },
-    "loseEffects": { "comprehension": 2, "innerForce": 1 },
+    "winEffects": {
+      "innerForce": 4,
+      "comprehension": 3,
+      "reputation": 2
+    },
+    "loseEffects": {
+      "comprehension": 2,
+      "innerForce": 1
+    },
     "skills": [
       {
         "id": "frost_blade_burst",
@@ -363,18 +535,40 @@
     "description": "此人气息内敛，不怒自威，一双眼睛如渊似海——你感到，眼前这个人，正是你「意先招出」能否真正落地的试金石。",
     "comprehension": 60,
     "innerForce": 50,
-    "attack": 68, "defense": 52, "hp": 340,
-    "attackScale": 0, "defenseScale": 0, "hpScale": 0,
+    "attack": 68,
+    "defense": 52,
+    "hp": 340,
+    "attackScale": 0,
+    "defenseScale": 0,
+    "hpScale": 0,
     "intentReadMsgs": {
-      "heavy": ["剑客腰胯微沉，真气运于右臂——<b>重击将至</b>", "剑尖悄然下压，内劲暗涌——<b>重击将至</b>"],
-      "swift": ["剑客脚尖一转，重心陡然前移——<b>快攻将至</b>", "对方目光锁定你左肋，快攻已蓄势——<b>快攻将至</b>"]
+      "heavy": [
+        "剑客腰胯微沉，真气运于右臂——<b>重击将至</b>",
+        "剑尖悄然下压，内劲暗涌——<b>重击将至</b>"
+      ],
+      "swift": [
+        "剑客脚尖一转，重心陡然前移——<b>快攻将至</b>",
+        "对方目光锁定你左肋，快攻已蓄势——<b>快攻将至</b>"
+      ]
     },
-    "intentUnreadMsgs": ["此人气机浑厚，完全无懈可击，意图无从捕捉", "你静静感知，什么也看不出——此人已将意图隐入虚无"],
-    "attackDescs": ["剑光一闪，简洁凌厉", "无声踏步，剑尖已至咽喉", "以退为进，突然斜刺而来"],
+    "intentUnreadMsgs": [
+      "此人气机浑厚，完全无懈可击，意图无从捕捉",
+      "你静静感知，什么也看不出——此人已将意图隐入虚无"
+    ],
+    "attackDescs": [
+      "剑光一闪，简洁凌厉",
+      "无声踏步，剑尖已至咽喉",
+      "以退为进，突然斜刺而来"
+    ],
     "winNarrative": "最后一招落定，无名剑客缓缓收剑，神情平静：「意先招出，你做到了。」他点了点头，转身而去，再不多言。",
     "loseNarrative": "剑客收剑负手：「你对「意」的感知还未入骨，继续磨砺。」那话不是嘲讽，是实情。你默默退开，再次沉心钻研。",
-    "winEffects": { "comprehension": 3, "innerForce": 2 },
-    "loseEffects": { "comprehension": 1 },
+    "winEffects": {
+      "comprehension": 3,
+      "innerForce": 2
+    },
+    "loseEffects": {
+      "comprehension": 1
+    },
     "noFlee": true,
     "skills": [
       {
@@ -392,18 +586,40 @@
     "description": "李云舒按剑而立，眼神清亮，这是一场点到即止的切磋——但她的剑，绝不会手下留情。",
     "comprehension": 18,
     "innerForce": 14,
-    "attack": 28, "defense": 22, "hp": 120,
-    "attackScale": 0, "defenseScale": 0, "hpScale": 0,
+    "attack": 28,
+    "defense": 22,
+    "hp": 120,
+    "attackScale": 0,
+    "defenseScale": 0,
+    "hpScale": 0,
     "intentReadMsgs": {
-      "heavy": ["云舒步伐稳沉，握剑手背微微用力——<b>重剑将至</b>", "她眼神收紧，剑势已蓄——<b>重击将至</b>"],
-      "swift": ["云舒脚步轻盈错动，抢攻意图明显——<b>快攻将至</b>", "她侧身移步，剑尖游走——<b>快攻将至</b>"]
+      "heavy": [
+        "云舒步伐稳沉，握剑手背微微用力——<b>重剑将至</b>",
+        "她眼神收紧，剑势已蓄——<b>重击将至</b>"
+      ],
+      "swift": [
+        "云舒脚步轻盈错动，抢攻意图明显——<b>快攻将至</b>",
+        "她侧身移步，剑尖游走——<b>快攻将至</b>"
+      ]
     },
-    "intentUnreadMsgs": ["云舒走位飘逸，看不出下一招", "她的剑路灵动多变，暂时无法捉摸"],
-    "attackDescs": ["剑光轻盈，如风如影", "回旋一剑，意到剑至", "步法灵动，侧击而来"],
+    "intentUnreadMsgs": [
+      "云舒走位飘逸，看不出下一招",
+      "她的剑路灵动多变，暂时无法捉摸"
+    ],
+    "attackDescs": [
+      "剑光轻盈，如风如影",
+      "回旋一剑，意到剑至",
+      "步法灵动，侧击而来"
+    ],
     "winNarrative": "李云舒收剑，愣了一瞬，随即爽快笑道：「好，你真的进步了！」她把剑插回剑鞘，看着你的眼神里，带着真诚的赞许。",
     "loseNarrative": "李云舒收招，伸手拍了拍你肩膀：「不错了，差一点。再练。」语气是轻松的，眼神里却是认真的勉励。",
-    "winEffects": { "agility": 2, "comprehension": 1 },
-    "loseEffects": { "agility": 1 }
+    "winEffects": {
+      "agility": 2,
+      "comprehension": 1
+    },
+    "loseEffects": {
+      "agility": 1
+    }
   },
   {
     "id": "local_bully_gang",
@@ -411,14 +627,31 @@
     "description": "本地势力的几个打手，仗势欺人惯了，见你单枪匹马前来，嚣张之气未减。",
     "comprehension": 8,
     "innerForce": 2,
-    "attack": 30, "defense": 20, "hp": 120,
-    "attackScale": 3, "defenseScale": 2, "hpScale": 0.1,
+    "attack": 30,
+    "defense": 20,
+    "hp": 120,
+    "attackScale": 3,
+    "defenseScale": 2,
+    "hpScale": 0.1,
     "intentReadMsgs": {
-      "heavy": ["打手咬牙抡拳，憋了股狠劲——<b>重击将至</b>", "几人交换眼色，准备合力重攻——<b>重击将至</b>"],
-      "swift": ["打手见你有所防备，改变策略想偷袭——<b>快攻将至</b>", "一个打手趁乱想从侧面突袭——<b>快攻将至</b>"]
+      "heavy": [
+        "打手咬牙抡拳，憋了股狠劲——<b>重击将至</b>",
+        "几人交换眼色，准备合力重攻——<b>重击将至</b>"
+      ],
+      "swift": [
+        "打手见你有所防备，改变策略想偷袭——<b>快攻将至</b>",
+        "一个打手趁乱想从侧面突袭——<b>快攻将至</b>"
+      ]
     },
-    "intentUnreadMsgs": ["几个打手七嘴八舌，行动散乱，难以判断", "地痞横冲直撞，毫无章法"],
-    "attackDescs": ["挥拳横扫，蛮横无比", "几人围攻，乱棍打来", "冲上来就是一通乱打"],
+    "intentUnreadMsgs": [
+      "几个打手七嘴八舌，行动散乱，难以判断",
+      "地痞横冲直撞，毫无章法"
+    ],
+    "attackDescs": [
+      "挥拳横扫，蛮横无比",
+      "几人围攻，乱棍打来",
+      "冲上来就是一通乱打"
+    ],
     "chainCombat": "local_bully_boss",
     "chainCombatNarrative": "爪牙们被你打得东倒西歪，纷纷后退。正当你以为事情了结，一道沉重的脚步声从屋内传来——\n\n一个壮硕的中年男人踱步而出，身后带着一股压迫感。他扫了一眼满地狼藉的手下，冷笑道：「哟，还真有不怕死的。」\n\n他捏了捏拳头，骨节咔咔作响：「小子，打了我的人，总得给个说法吧？」",
     "winNarrative": "打手们被你打得东倒西歪，有人已经开始往后退。",
@@ -432,17 +665,37 @@
     "description": "本地势力的头目，横行乡里多年，拳脚功夫了得。比起手下那些乌合之众，他才是真正的硬茬。",
     "comprehension": 12,
     "innerForce": 6,
-    "attack": 38, "defense": 28, "hp": 160,
-    "attackScale": 3, "defenseScale": 2, "hpScale": 0.1,
+    "attack": 38,
+    "defense": 28,
+    "hp": 160,
+    "attackScale": 3,
+    "defenseScale": 2,
+    "hpScale": 0.1,
     "intentReadMsgs": {
-      "heavy": ["头目沉肩坠肘，一股横劲蓄势待发——<b>重击将至</b>", "他眯起眼，铁拳已经握紧——<b>重击将至</b>"],
-      "swift": ["头目身形一矮，脚下突然加速——<b>快攻将至</b>", "他虚晃一招，真正的攻势从侧面来——<b>快攻将至</b>"]
+      "heavy": [
+        "头目沉肩坠肘，一股横劲蓄势待发——<b>重击将至</b>",
+        "他眯起眼，铁拳已经握紧——<b>重击将至</b>"
+      ],
+      "swift": [
+        "头目身形一矮，脚下突然加速——<b>快攻将至</b>",
+        "他虚晃一招，真正的攻势从侧面来——<b>快攻将至</b>"
+      ]
     },
-    "intentUnreadMsgs": ["头目步法沉稳，进退自如，一时看不出虚实", "他的拳路老辣，不像爪牙那样容易读"],
-    "attackDescs": ["一拳带风，势大力沉", "连环拳打来，拳拳到肉", "欺身近前，肘膝齐出"],
+    "intentUnreadMsgs": [
+      "头目步法沉稳，进退自如，一时看不出虚实",
+      "他的拳路老辣，不像爪牙那样容易读"
+    ],
+    "attackDescs": [
+      "一拳带风，势大力沉",
+      "连环拳打来，拳拳到肉",
+      "欺身近前，肘膝齐出"
+    ],
     "winNarrative": "头目捂着胸口退了几步，脸色铁青。他没想到你能连过两关。「好……好小子。」他咬着牙，朝手下一挥手：「走！」转身便撤，再不敢回头。\n\n李云舒望着你的背影，沉默了很久，声音有些轻：「谢谢。我不知道……你会真的动手。」",
     "loseNarrative": "头目的拳头比爪牙们重得多。你在消耗了大量体力对付爪牙之后，终究没能扛住头目的攻势，被迫撤退。此事暂时搁置，但李云舒家的困境还在。",
-    "winEffects": { "reputation": 3, "strength": 1 },
+    "winEffects": {
+      "reputation": 3,
+      "strength": 1
+    },
     "loseEffects": {}
   },
   {
@@ -451,17 +704,37 @@
     "description": "三个训练有素的黑衣人，步伐整齐，配合默契——这不是随机的街头混混，是专门来寻仇的。",
     "comprehension": 14,
     "innerForce": 8,
-    "attack": 26, "defense": 20, "hp": 110,
-    "attackScale": 0, "defenseScale": 0, "hpScale": 0,
+    "attack": 26,
+    "defense": 20,
+    "hp": 110,
+    "attackScale": 0,
+    "defenseScale": 0,
+    "hpScale": 0,
     "intentReadMsgs": {
-      "heavy": ["黑衣人暗号一出，三人同时蓄势——<b>合击将至</b>", "领头者眼神一定，其余两人收势待命——<b>重击将至</b>"],
-      "swift": ["黑衣人变阵，一人绕后，一人佯攻——<b>快攻将至</b>", "三人散开包围，快攻意图明显——<b>快攻将至</b>"]
+      "heavy": [
+        "黑衣人暗号一出，三人同时蓄势——<b>合击将至</b>",
+        "领头者眼神一定，其余两人收势待命——<b>重击将至</b>"
+      ],
+      "swift": [
+        "黑衣人变阵，一人绕后，一人佯攻——<b>快攻将至</b>",
+        "三人散开包围，快攻意图明显——<b>快攻将至</b>"
+      ]
     },
-    "intentUnreadMsgs": ["黑衣人无声无息，行动训练有素，难以捉摸", "三人配合严密，看不出破绽"],
-    "attackDescs": ["三人协同，刀光连闪", "无声夹击，来势凶猛", "两刀引开注意，一刀从背后偷袭"],
+    "intentUnreadMsgs": [
+      "黑衣人无声无息，行动训练有素，难以捉摸",
+      "三人配合严密，看不出破绽"
+    ],
+    "attackDescs": [
+      "三人协同，刀光连闪",
+      "无声夹击，来势凶猛",
+      "两刀引开注意，一刀从背后偷袭"
+    ],
     "winNarrative": "三人被你一一击退，最后的黑衣人俯首落地，喘着粗气，再无余力。巷子里，燕赤行静静注视着这一切。",
     "loseNarrative": "三人合击，你左支右绌，终究还是负了伤。燕赤行挡在你身前：「走！」他用身体替你挡住最后一击。",
-    "winEffects": { "reputation": 1, "agility": 1 },
+    "winEffects": {
+      "reputation": 1,
+      "agility": 1
+    },
     "loseEffects": {},
     "skills": [
       {
@@ -479,18 +752,41 @@
     "description": "三十年走镖磨练出的硬功夫，架子稳、出手狠，点到为止——这是老镖师对你的考验。",
     "comprehension": 16,
     "innerForce": 12,
-    "attack": 32, "defense": 26, "hp": 140,
-    "attackScale": 0, "defenseScale": 0, "hpScale": 0,
+    "attack": 32,
+    "defense": 26,
+    "hp": 140,
+    "attackScale": 0,
+    "defenseScale": 0,
+    "hpScale": 0,
     "intentReadMsgs": {
-      "heavy": ["王铁脚步沉实，握刀手背青筋暴起——<b>重击将至</b>", "他眼神一凛，刀势蓄满——<b>重击将至</b>"],
-      "swift": ["王铁脚下一错，要抢占先手——<b>快攻将至</b>", "他腕力微动，快刀蓄势——<b>快攻将至</b>"]
+      "heavy": [
+        "王铁脚步沉实，握刀手背青筋暴起——<b>重击将至</b>",
+        "他眼神一凛，刀势蓄满——<b>重击将至</b>"
+      ],
+      "swift": [
+        "王铁脚下一错，要抢占先手——<b>快攻将至</b>",
+        "他腕力微动，快刀蓄势——<b>快攻将至</b>"
+      ]
     },
-    "intentUnreadMsgs": ["王铁走镖三十年，身法老练，看不出破绽", "他的刀法朴实无华，却处处藏机"],
-    "attackDescs": ["刀光横出，稳而有力", "踏步近身，侧劈而来", "沉腰蓄势，重刀直砸", "以虚为实，回刀反击"],
+    "intentUnreadMsgs": [
+      "王铁走镖三十年，身法老练，看不出破绽",
+      "他的刀法朴实无华，却处处藏机"
+    ],
+    "attackDescs": [
+      "刀光横出，稳而有力",
+      "踏步近身，侧劈而来",
+      "沉腰蓄势，重刀直砸",
+      "以虚为实，回刀反击"
+    ],
     "winNarrative": "王铁慢慢收刀，拍了拍你的肩膀：「孺子可教。」三十年走镖的人用这四个字认可你，分量不轻。",
     "loseNarrative": "王铁收刀，摇了摇头：「还差点火候。」语气里没有嘲讽，只是实话——反而让你更想继续练。",
-    "winEffects": { "strength": 2, "constitution": 2 },
-    "loseEffects": { "strength": 1 },
+    "winEffects": {
+      "strength": 2,
+      "constitution": 2
+    },
+    "loseEffects": {
+      "strength": 1
+    },
     "skills": [
       {
         "id": "old_master_cut",
@@ -507,18 +803,41 @@
     "description": "燕赤行按刀而立，目光如刀。这场切磋，他不会手下留情——但你知道，这是他在认真对待你。",
     "comprehension": 14,
     "innerForce": 10,
-    "attack": 28, "defense": 20, "hp": 110,
-    "attackScale": 0, "defenseScale": 0, "hpScale": 0,
+    "attack": 28,
+    "defense": 20,
+    "hp": 110,
+    "attackScale": 0,
+    "defenseScale": 0,
+    "hpScale": 0,
     "intentReadMsgs": {
-      "heavy": ["燕赤行重心下沉，刀意骤然收束——<b>重击将至</b>", "他眼神一沉，刀势蓄满——<b>重击将至</b>"],
-      "swift": ["燕赤行脚步错动，要抢占先机——<b>快攻将至</b>", "他身形忽然轻盈，疾攻意图已显——<b>快攻将至</b>"]
+      "heavy": [
+        "燕赤行重心下沉，刀意骤然收束——<b>重击将至</b>",
+        "他眼神一沉，刀势蓄满——<b>重击将至</b>"
+      ],
+      "swift": [
+        "燕赤行脚步错动，要抢占先机——<b>快攻将至</b>",
+        "他身形忽然轻盈，疾攻意图已显——<b>快攻将至</b>"
+      ]
     },
-    "intentUnreadMsgs": ["燕赤行的刀意沉敛如渊，看不出规律", "他走位沉稳，意图难以捉摸"],
-    "attackDescs": ["刀光一闪，快而精准", "沉步压进，横刀扫来", "虚晃一招，刀锋直指要害", "踏地借力，急斩而下"],
+    "intentUnreadMsgs": [
+      "燕赤行的刀意沉敛如渊，看不出规律",
+      "他走位沉稳，意图难以捉摸"
+    ],
+    "attackDescs": [
+      "刀光一闪，快而精准",
+      "沉步压进，横刀扫来",
+      "虚晃一招，刀锋直指要害",
+      "踏地借力，急斩而下"
+    ],
     "winNarrative": "燕赤行收刀，看了你片刻，低声道：「还可以。」从他嘴里说出来，这三个字分量不轻。",
     "loseNarrative": "燕赤行收刀：「有进步，但还不够。」他转身走了几步，顿住：「再练。」",
-    "winEffects": { "agility": 2, "strength": 1 },
-    "loseEffects": { "agility": 1 }
+    "winEffects": {
+      "agility": 2,
+      "strength": 1
+    },
+    "loseEffects": {
+      "agility": 1
+    }
   },
   {
     "id": "tianmo_agent",
@@ -526,17 +845,38 @@
     "description": "天魔安插各处的眼线，任务是刺探情报——并杀灭任何可能威胁天魔的人。",
     "comprehension": 16,
     "innerForce": 16,
-    "attack": 30, "defense": 22, "hp": 130,
-    "attackScale": 5, "defenseScale": 3, "hpScale": 0.14,
+    "attack": 30,
+    "defense": 22,
+    "hp": 130,
+    "attackScale": 5,
+    "defenseScale": 3,
+    "hpScale": 0.14,
     "intentReadMsgs": {
-      "heavy": ["细作魔气骤聚，重击蓄势——<b>重击将至</b>", "对方刀身渗出黑气，重击将至——<b>重击将至</b>"],
-      "swift": ["细作步伐连闪，快攻将至——<b>快攻将至</b>", "对方残影浮现，疾攻蓄势——<b>快攻将至</b>"]
+      "heavy": [
+        "细作魔气骤聚，重击蓄势——<b>重击将至</b>",
+        "对方刀身渗出黑气，重击将至——<b>重击将至</b>"
+      ],
+      "swift": [
+        "细作步伐连闪，快攻将至——<b>快攻将至</b>",
+        "对方残影浮现，疾攻蓄势——<b>快攻将至</b>"
+      ]
     },
-    "intentUnreadMsgs": ["细作行迹诡秘，意图难以捉摸", "对方以魔气遮蔽气机，看不出破绽"],
-    "attackDescs": ["黑气凝刃，无声袭来", "快步连切，刀光凌厉", "虚晃误导，刺向破绽", "借魔气加速，抢先出手"],
+    "intentUnreadMsgs": [
+      "细作行迹诡秘，意图难以捉摸",
+      "对方以魔气遮蔽气机，看不出破绽"
+    ],
+    "attackDescs": [
+      "黑气凝刃，无声袭来",
+      "快步连切，刀光凌厉",
+      "虚晃误导，刺向破绽",
+      "借魔气加速，抢先出手"
+    ],
     "winNarrative": "细作倒地，临死前低语了一句你听不懂的话。你站在原地，感受到一阵寒意：天魔的触手，已经延伸到了这里。",
     "loseNarrative": "细作将你击倒，冷漠地看了你一眼转身离去——他大概认为你威胁不足。你带伤撤退，知道下次必须更充分。",
-    "winEffects": { "innerForce": 2, "comprehension": 1 },
+    "winEffects": {
+      "innerForce": 2,
+      "comprehension": 1
+    },
     "loseEffects": {},
     "skills": [
       {
@@ -554,17 +894,38 @@
     "description": "那个卖掉整个门派的人。见到你们，他没有逃，也没有认错——他觉得自己有理由，一直都是。",
     "comprehension": 14,
     "innerForce": 8,
-    "attack": 24, "defense": 18, "hp": 105,
-    "attackScale": 0, "defenseScale": 0, "hpScale": 0,
+    "attack": 24,
+    "defense": 18,
+    "hp": 105,
+    "attackScale": 0,
+    "defenseScale": 0,
+    "hpScale": 0,
     "intentReadMsgs": {
-      "heavy": ["他咬牙蓄力，恨意化作重击——<b>重击将至</b>", "对方动作僵硬，但蛮力十足——<b>重击将至</b>"],
-      "swift": ["他脚步踌躇，却选择了快攻——<b>快攻将至</b>", "对方想抢占先机，快刀蓄势——<b>快攻将至</b>"]
+      "heavy": [
+        "他咬牙蓄力，恨意化作重击——<b>重击将至</b>",
+        "对方动作僵硬，但蛮力十足——<b>重击将至</b>"
+      ],
+      "swift": [
+        "他脚步踌躇，却选择了快攻——<b>快攻将至</b>",
+        "对方想抢占先机，快刀蓄势——<b>快攻将至</b>"
+      ]
     },
-    "intentUnreadMsgs": ["此人心乱如麻，动作难以预判", "他的眼神里有太多情绪，看不出出招规律"],
-    "attackDescs": ["怒吼着冲上来，出手狠辣", "仗着旧门招法，抢先一步", "借势近身，以力制胜", "凶性发作，不计后果猛攻"],
+    "intentUnreadMsgs": [
+      "此人心乱如麻，动作难以预判",
+      "他的眼神里有太多情绪，看不出出招规律"
+    ],
+    "attackDescs": [
+      "怒吼着冲上来，出手狠辣",
+      "仗着旧门招法，抢先一步",
+      "借势近身，以力制胜",
+      "凶性发作，不计后果猛攻"
+    ],
     "winNarrative": "他跌倒在地，抬眼看向燕赤行——那目光里有恐惧、不甘，还有某种说不清楚的东西。燕赤行看着他，手没有动。沉默良久，燕赤行转身：「走。」那一刻，你知道那段旧事真的结束了。",
     "loseNarrative": "他把你和燕赤行都逼退了，一言不发地离去——但那道始终未愈的伤，又深了几分。",
-    "winEffects": { "reputation": 2, "comprehension": 1 },
+    "winEffects": {
+      "reputation": 2,
+      "comprehension": 1
+    },
     "loseEffects": {}
   },
   {
@@ -573,13 +934,26 @@
     "description": "传说中的魔道宗师，武功通天，邪气滔天，是这个时代最大的祸乱之源",
     "comprehension": 50,
     "innerForce": 65,
-    "attack": 88, "defense": 80, "hp": 520,
-    "attackScale": 0, "defenseScale": 0, "hpScale": 0,
+    "attack": 88,
+    "defense": 80,
+    "hp": 520,
+    "attackScale": 0,
+    "defenseScale": 0,
+    "hpScale": 0,
     "intentReadMsgs": {
-      "heavy": ["天魔魔气骤然内敛，磅礴重击将至——<b>重击将至</b>", "天魔双掌缓缓合拢，魔劲深藏将发——<b>重击将至</b>"],
-      "swift": ["天魔身形骤然变快，迅雷之势将至——<b>快攻将至</b>", "魔气化流，天魔将疾攻而来——<b>快攻将至</b>"]
+      "heavy": [
+        "天魔魔气骤然内敛，磅礴重击将至——<b>重击将至</b>",
+        "天魔双掌缓缓合拢，魔劲深藏将发——<b>重击将至</b>"
+      ],
+      "swift": [
+        "天魔身形骤然变快，迅雷之势将至——<b>快攻将至</b>",
+        "魔气化流，天魔将疾攻而来——<b>快攻将至</b>"
+      ]
     },
-    "intentUnreadMsgs": ["天魔武功通天，意图根本无从判断", "天魔的气机深不可测，你完全无法预判"],
+    "intentUnreadMsgs": [
+      "天魔武功通天，意图根本无从判断",
+      "天魔的气机深不可测，你完全无法预判"
+    ],
     "attackDescs": [
       "魔掌推出，掌风如山",
       "魔气凝拳，重击而来",
@@ -616,8 +990,12 @@
     "description": "精通剑术的江湖剑客，剑法凌厉且章法分明",
     "comprehension": 22,
     "innerForce": 25,
-    "attack": 42, "defense": 32, "hp": 220,
-    "attackScale": 5, "defenseScale": 3, "hpScale": 0.16,
+    "attack": 42,
+    "defense": 32,
+    "hp": 220,
+    "attackScale": 5,
+    "defenseScale": 3,
+    "hpScale": 0.16,
     "attackDescs": [
       "横剑一抹，剑光如练",
       "踏步刺出，寒光直取要害",
@@ -625,14 +1003,29 @@
       "凌空跃起，一剑斜劈而下"
     ],
     "intentReadMsgs": {
-      "heavy": ["剑客沉肩蓄力，剑尖微颤——<b>重剑将至</b>", "对方气沉丹田，剑势凝聚——<b>重击将至</b>"],
-      "swift": ["剑客脚步连闪，剑花乱点——<b>快剑将至</b>", "对方身形忽动，连刺之势已成——<b>快攻将至</b>"]
+      "heavy": [
+        "剑客沉肩蓄力，剑尖微颤——<b>重剑将至</b>",
+        "对方气沉丹田，剑势凝聚——<b>重击将至</b>"
+      ],
+      "swift": [
+        "剑客脚步连闪，剑花乱点——<b>快剑将至</b>",
+        "对方身形忽动，连刺之势已成——<b>快攻将至</b>"
+      ]
     },
-    "intentUnreadMsgs": ["青衣剑客剑法精妙，虚实难辨", "对方剑意内敛，意图难以揣度"],
+    "intentUnreadMsgs": [
+      "青衣剑客剑法精妙，虚实难辨",
+      "对方剑意内敛，意图难以揣度"
+    ],
     "winNarrative": "青衣剑客收剑后退，抱拳道：「好剑法！你确实有资格继承那位前辈的衣钵。」",
     "loseNarrative": "青衣剑客剑法凌厉，你力战不敌。他收剑摇头：「还差些火候，再练练吧。」",
-    "winEffects": { "strength": 1, "agility": 1, "comprehension": 1 },
-    "loseEffects": { "comprehension": 1 },
+    "winEffects": {
+      "strength": 1,
+      "agility": 1,
+      "comprehension": 1
+    },
+    "loseEffects": {
+      "comprehension": 1
+    },
     "skills": [
       {
         "id": "triple_thrust",
@@ -649,8 +1042,12 @@
     "description": "自号铁面判官的恶人，铁拳配重刀，凶狠无情",
     "comprehension": 18,
     "innerForce": 15,
-    "attack": 36, "defense": 26, "hp": 180,
-    "attackScale": 5, "defenseScale": 3, "hpScale": 0.16,
+    "attack": 36,
+    "defense": 26,
+    "hp": 180,
+    "attackScale": 5,
+    "defenseScale": 3,
+    "hpScale": 0.16,
     "attackDescs": [
       "重刀横扫，刀势沉猛",
       "铁拳跟刀，双击并至",
@@ -658,13 +1055,25 @@
       "怒目圆睁，重刀直劈"
     ],
     "intentReadMsgs": {
-      "heavy": ["铁面判官刀势一沉，蓄势已满——<b>重劈将至</b>", "对方双脚扎地，重刀高举——<b>重击将至</b>"],
-      "swift": ["铁面判官忽然加速，刀光乱闪——<b>快攻将至</b>", "对方铁拳先行，刀随其后——<b>连击将至</b>"]
+      "heavy": [
+        "铁面判官刀势一沉，蓄势已满——<b>重劈将至</b>",
+        "对方双脚扎地，重刀高举——<b>重击将至</b>"
+      ],
+      "swift": [
+        "铁面判官忽然加速，刀光乱闪——<b>快攻将至</b>",
+        "对方铁拳先行，刀随其后——<b>连击将至</b>"
+      ]
     },
-    "intentUnreadMsgs": ["铁面判官气势凶悍，招路难以预判", "此人刀拳并用，虚实莫测"],
+    "intentUnreadMsgs": [
+      "铁面判官气势凶悍，招路难以预判",
+      "此人刀拳并用，虚实莫测"
+    ],
     "winNarrative": "铁面判官重刀脱手，跪倒在地。镇上百姓涌出，欢呼雀跃——恶霸终于被除了！",
     "loseNarrative": "铁面判官武艺超群，你苦战不敌，被迫撤退。镇民失望的目光刺痛了你的心——下次，一定要更强。",
-    "winEffects": { "reputation": 3, "strength": 1 },
+    "winEffects": {
+      "reputation": 3,
+      "strength": 1
+    },
     "loseEffects": {},
     "skills": [
       {
@@ -682,5 +1091,51 @@
         "hpThreshold": 0.3
       }
     ]
+  },
+  {
+    "id": "elder_true_form",
+    "name": "沈玄清·真身",
+    "attack": 220,
+    "defense": 130,
+    "hp": 4000,
+    "hpScale": 0,
+    "attackScale": 0,
+    "defenseScale": 0,
+    "innerForce": 100,
+    "comprehension": 70,
+    "isTrueFinalBoss": true,
+    "attackDescs": [
+      "以千年积蓄的内力压制",
+      "气机扭曲，攻势无迹",
+      "掌力如山，稳而不动"
+    ],
+    "skills": [
+      {
+        "id": "century_palm",
+        "name": "百年真掌",
+        "telegraph": "老者双掌缓缓合拢，周遭气流骤然凝固……",
+        "damageMult": 2.2,
+        "hpThreshold": 0.85,
+        "momentumCost": 3
+      },
+      {
+        "id": "world_reversal",
+        "name": "逆世回光",
+        "telegraph": "一股古老而压迫性的气息从老者身上涌现，那是轮回本身的力量在运转……",
+        "damageMult": 3.5,
+        "hpThreshold": 0.5,
+        "momentumCost": 4
+      },
+      {
+        "id": "cycle_prison",
+        "name": "轮回锁链",
+        "telegraph": "老者双眼闭合，无形的束缚从四面八方涌来——那是他积蓄九百年的最深执念……",
+        "damageMult": 5.0,
+        "hpThreshold": 0.25,
+        "momentumCost": 5
+      }
+    ],
+    "winNarrative": "老者最终倒下，双手放开。\n\n他望着你，表情不是失败者的绝望——而是一种复杂的释然，像是放下了一件搬了九百年的重物。\n\n「你赢了，」他说，声音很轻，「这个结果……也许比我计划的，要好得多。」\n\n「不是因为你击败了我，」他闭上眼，「而是因为——你是第一个真正做出选择的人。不是被安排的，不是被设计的。是你自己的。」\n\n双鱼玉佩的碎片在他手中化为光点，散入天地。轮回的枷锁，就此断裂。",
+    "loseNarrative": "那九百年积蓄的力量将你压倒。\n\n老者站在你面前，叹了口气：「你已经是我见过最接近的人了。」\n\n「再来一次吧，」他说，「这一次，你比上一次更近了。」\n\n这一世，就到这里了。"
   }
 ]
