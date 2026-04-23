@@ -57,7 +57,7 @@ Rules:
 
 - Always run `npm test` after code changes to verify tests pass
 - Update `PROGRESS.md` and `README.md` when features change
-- **Never `git commit` or `git push` without explicit instruction from the user.** Make all code and file changes, then stop and wait to be told to commit/push.
+- After completing code/content changes, commit automatically (no need to ask). **Never `git push` without explicit instruction from the user.**
 
 1. Think Before Coding
 Don't assume. Don't hide confusion. Surface tradeoffs.
