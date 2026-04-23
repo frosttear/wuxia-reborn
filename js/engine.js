@@ -347,6 +347,32 @@ const Engine = {
         const allChoices = (step.choices || []).map(c =>
             ({ ...c, locked: c.requirements ? !this.checkConditions(c.requirements) : false })
         );
+        // Past-life memory: if this bond was completed in a previous life, inject a special choice
+        // that grants all non-combat options' bonuses combined
+        const char = this.state.char;
+        if ((char.inheritedBonds || {})[npcId] >= level) {
+            const nonCombatChoices = (step.choices || []).filter(c => !(c.effects && c.effects.combat));
+            if (nonCombatChoices.length > 0) {
+                const merged = { attributes: {}, npcAffinity: {}, flags: {} };
+                for (const c of nonCombatChoices) {
+                    const ef = c.effects || {};
+                    for (const [k, v] of Object.entries(ef.attributes || {})) merged.attributes[k] = (merged.attributes[k] || 0) + v;
+                    for (const [k, v] of Object.entries(ef.npcAffinity || {})) merged.npcAffinity[k] = (merged.npcAffinity[k] || 0) + v;
+                    Object.assign(merged.flags, ef.flags || {});
+                }
+                const npcName = npc ? npc.name : npcId;
+                allChoices.unshift({
+                    id: 'memory_echo',
+                    text: `【前世记忆】这一切，你曾经历过……前世的记忆如画卷展开，所有可能的选择都浮现心间。`,
+                    memoryEcho: true,
+                    locked: false,
+                    effects: {
+                        ...merged,
+                        narrative: `前世与${npcName}共同走过这一刻的每一种可能，此刻化为心底深处的领悟。记忆中的每一个选择，都成为了这一世的馈赠。`
+                    }
+                });
+            }
+        }
         const availableChoices = allChoices.filter(c => !c.locked);
         this.state.pendingChoice = {
             event: displayEvent,
@@ -830,6 +856,16 @@ const Engine = {
         this.state.combatState = null;
 
         const { char } = this.state;
+        // Dynamic scaling for 诸世最强之影: based on peak stats across all past lives
+        if (enemy.id === 'shadow_strongest') {
+            const peak = char.peakCombatStats || { atk: 0, def: 0, hp: 0 };
+            enemy = {
+                ...enemy,
+                attack:  Math.max(enemy.attack,  Math.round((peak.atk || 50) * 1.8)),
+                defense: Math.max(enemy.defense, Math.round((peak.def || 30) * 1.7)),
+                hp:      Math.max(enemy.hp,      Math.round((peak.hp  || 500) * 1.4)),
+            };
+        }
         const job = this.getJob(char.job);
         const cs = Combat.initState(char, enemy, job);
         cs.postNarrative = postNarrative || '';
@@ -1236,6 +1272,17 @@ const Engine = {
         // Mark hermit run: lived with no deep bonds (all bond levels < 3)
         const maxBondLevel = Math.max(0, ...Object.values(char.bondLevels || {}).map(Number));
         if (maxBondLevel < 3) char.flags.mark_hermit = true;
+        // Update peak combat stats for this life
+        const _deathJob = this.getJob(char.job);
+        const _lifeAtk = Character.getAttackPower(char, _deathJob);
+        const _lifeDef = Character.getDefensePower(char, _deathJob);
+        const _lifeHp  = Character.getHPMax(char, _deathJob);
+        const _prev = char.peakCombatStats || { atk: 0, def: 0, hp: 0 };
+        char.peakCombatStats = {
+            atk: Math.max(_prev.atk, _lifeAtk),
+            def: Math.max(_prev.def, _lifeDef),
+            hp:  Math.max(_prev.hp,  _lifeHp)
+        };
         this.state.gamePhase = 'rebirth';
         this.stopAuto();
         this.saveGame(); // persist rebirth state so it survives page refresh
@@ -1243,6 +1290,19 @@ const Engine = {
         const availableTalents = Rebirth.getAvailableTalents(char);
         const summary = Rebirth.getSummaryText(char, this.state.jobs, this.state.bonds, this.state.npcs);
         UI.showRebirthScreen(summary, availableTalents, cause);
+    },
+
+    triggerFinalBossNow() {
+        const { char } = this.state;
+        if (!char || this.state.gamePhase !== 'idle') return;
+        if (!char.flags.zhushi_chain_done) return;
+        char.ageMonths = Math.max(char.ageMonths, 240);
+        char.flags.boss_triggered = true;
+        const bossEvent = this.state.events.find(e => e.id === 'tianmo_appears');
+        if (bossEvent) {
+            UI.addLog('【诸世共鸣】你感到所有世界线的意志汇聚于一处，时间已不重要——决战，此刻开始。', 'unlock');
+            this.triggerEvent(bossEvent);
+        }
     },
 
     triggerVictory(isTrueEnding) {

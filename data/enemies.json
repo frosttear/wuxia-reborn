@@ -84,8 +84,7 @@
         "id": "vicious_slash",
         "name": "狠劲一刀",
         "telegraph": "悍匪双眼赤红，双手猛握刀柄，蓄力大喝：「受死！」⚠ 下回合重击即至，建议【防御】！",
-        "damageMult": 2.2,
-        "hpThreshold": 0.55
+        "damageMult": 2.2
       }
     ]
   },
@@ -133,8 +132,7 @@
         "id": "tiger_pounce",
         "name": "虎扑",
         "telegraph": "猛虎低吼，后腿用力蹬地，摆出虎扑之势——⚠ 蓄势将扑，务必【防御】！",
-        "damageMult": 2.5,
-        "hpThreshold": 0.6
+        "damageMult": 2.5
       }
     ]
   },
@@ -185,8 +183,7 @@
         "id": "combo_strike",
         "name": "连环击",
         "telegraph": "对方深吸一口气，脚步连踏，连环击之势已成！⚠ 连招即至，建议【防御】！",
-        "damageMult": 1.9,
-        "hpThreshold": 0.5
+        "damageMult": 1.9
       }
     ]
   },
@@ -234,8 +231,7 @@
         "id": "iron_fist",
         "name": "铁拳",
         "telegraph": "赵霸天大喝一声，铁拳震得空气嗡鸣，全力蓄势！⚠ 此招极猛，务必【防御】！",
-        "damageMult": 2.4,
-        "hpThreshold": 0.6
+        "damageMult": 2.4
       },
       {
         "id": "berserk_blow",
@@ -285,9 +281,8 @@
         "id": "slash_desperate",
         "name": "刀光斜劈",
         "telegraph": "头目双手握刀，猛地起势，借势斜劈——⚠ 刀势凌厉，务必【格挡】！",
-        "damageMult": 2.0,
-        "momentumCost": 3,
-        "hpThreshold": 0.6
+        "damageMult": 2,
+        "momentumCost": 3
       }
     ],
     "winEffects": {
@@ -341,8 +336,7 @@
         "id": "sword_intent_wave",
         "name": "剑意横空",
         "telegraph": "剑魂周身剑意骤然扩散，空气中浮现无数透明剑痕……⚠ 【剑意横空】即将席卷，务必【防御】！",
-        "damageMult": 2.0,
-        "hpThreshold": 0.8,
+        "damageMult": 2,
         "momentumCost": 3
       },
       {
@@ -409,8 +403,7 @@
         "id": "demon_slash",
         "name": "魔气一刀",
         "telegraph": "刺客双目泛起黑光，魔气在刀身骤然凝聚！⚠ 重击将至，务必【防御】！",
-        "damageMult": 2.3,
-        "hpThreshold": 0.55
+        "damageMult": 2.3
       },
       {
         "id": "phantom_strike",
@@ -467,8 +460,7 @@
         "id": "soul_drain",
         "name": "炼魂刀",
         "telegraph": "堂主刀身泛起紫黑色光芒，炼魂之力开始运转！⚠ 此招能削弱内力，务必【防御】！",
-        "damageMult": 2.5,
-        "hpThreshold": 0.6
+        "damageMult": 2.5
       },
       {
         "id": "dark_array",
@@ -527,8 +519,7 @@
         "id": "frost_blade_burst",
         "name": "霜华剑气",
         "telegraph": "凌雪忽然停下攻势，步伐变得飘忽不定，剑尖聚起蒙蒙寒光……⚠ 【霜华剑气】正在蓄力！务必【防御】！",
-        "damageMult": 2.8,
-        "hpThreshold": 0.65
+        "damageMult": 2.8
       },
       {
         "id": "ice_domain",
@@ -585,8 +576,7 @@
         "id": "void_sword",
         "name": "虚实一线",
         "telegraph": "无名剑客眼神骤然深邃，气机收束于一点——⚠ 无法判断虚实，下回合须【破招】！",
-        "damageMult": 2.0,
-        "hpThreshold": 0.45
+        "damageMult": 2
       }
     ]
   },
@@ -627,8 +617,7 @@
         "name": "流云剑法",
         "telegraph": "云舒凝神敛气，剑势悄然充盈——⚠ 此招剑意连绵，务必【格挡】！",
         "damageMult": 2.2,
-        "momentumCost": 3,
-        "hpThreshold": 0.5
+        "momentumCost": 3
       }
     ],
     "winNarrative": "李云舒收剑，愣了一瞬，随即爽快笑道：「好，你真的进步了！」她把剑插回剑鞘，看着你的眼神里，带着真诚的赞许。",
@@ -679,8 +668,7 @@
         "name": "凌云剑意",
         "telegraph": "云舒深吸一口气，剑意猛然凝聚——这是她自创的招式，气势远胜从前！⚠ 务必【格挡】！",
         "damageMult": 2.6,
-        "momentumCost": 3,
-        "hpThreshold": 0.5
+        "momentumCost": 3
       }
     ],
     "winNarrative": "她看着你，笑了——这次的笑里没有惊讶，只有满足。「就知道你能接住，」她轻声说，把剑插回鞘，「我没猜错人。」",
@@ -768,8 +756,7 @@
         "name": "横行霸道",
         "telegraph": "头目大喝一声，猛然突进，来势汹汹——⚠ 力大势沉，务必【防御】！",
         "damageMult": 2.2,
-        "momentumCost": 3,
-        "hpThreshold": 0.6
+        "momentumCost": 3
       },
       {
         "id": "desperate_rampage",
@@ -831,8 +818,7 @@
         "id": "triple_assault",
         "name": "三重围攻",
         "telegraph": "黑衣人互换眼色，同时收势——⚠ 【三重围攻】即将发动！建议【防御】！",
-        "damageMult": 2.0,
-        "hpThreshold": 0.5
+        "damageMult": 2
       }
     ]
   },
@@ -882,8 +868,7 @@
         "id": "old_master_cut",
         "name": "老镖师一刀",
         "telegraph": "王铁深吸一口气，刀势凝而不发，架子如山——⚠ 蓄势重击将至，务必【防御】！",
-        "damageMult": 2.0,
-        "hpThreshold": 0.5
+        "damageMult": 2
       }
     ]
   },
@@ -925,8 +910,7 @@
         "name": "穿云斩",
         "telegraph": "燕赤行刀意骤然聚敛，出招在即——⚠ 刀势极猛，务必【格挡】！",
         "damageMult": 2.4,
-        "momentumCost": 3,
-        "hpThreshold": 0.5
+        "momentumCost": 3
       }
     ],
     "winNarrative": "燕赤行收刀，看了你片刻，低声道：「还可以。」从他嘴里说出来，这三个字分量不轻。",
@@ -983,8 +967,7 @@
         "id": "shadow_blade",
         "name": "暗影刃",
         "telegraph": "细作魔气骤然收束于刀尖，黑光乍现！⚠ 重击将至，务必【防御】！",
-        "damageMult": 2.1,
-        "hpThreshold": 0.55
+        "damageMult": 2.1
       }
     ]
   },
@@ -1026,8 +1009,7 @@
         "name": "偷天换日",
         "telegraph": "他趁换招间隙悄然变招，以旧门秘技偷袭——⚠ 小心突袭，务必【格挡】！",
         "damageMult": 1.8,
-        "momentumCost": 3,
-        "hpThreshold": 0.6
+        "momentumCost": 3
       },
       {
         "id": "desperate_surge",
@@ -1089,7 +1071,6 @@
         "name": "魔吼",
         "telegraph": "天魔仰天长啸，魔气冲天，四周空间扭曲震颤！⚠ 下回合将受巨大冲击，务必【防御】！",
         "damageMult": 2.5,
-        "hpThreshold": 0.65,
         "momentumCost": 3
       },
       {
@@ -1149,8 +1130,7 @@
         "id": "triple_thrust",
         "name": "三连刺",
         "telegraph": "剑客深吸一气，剑尖连颤三下，三连刺之势已成！⚠ 连招即至，建议【防御】！",
-        "damageMult": 2.5,
-        "hpThreshold": 0.5
+        "damageMult": 2.5
       }
     ]
   },
@@ -1198,8 +1178,7 @@
         "id": "iron_chop",
         "name": "铁判斩",
         "telegraph": "铁面判官大喝「受死！」，重刀高高举起——⚠ 全力劈斩即至，务必【防御】！",
-        "damageMult": 2.3,
-        "hpThreshold": 0.55
+        "damageMult": 2.3
       },
       {
         "id": "fist_blade_combo",
@@ -1233,7 +1212,6 @@
         "name": "百年真掌",
         "telegraph": "老者双掌缓缓合拢，周遭气流骤然凝固……",
         "damageMult": 2.2,
-        "hpThreshold": 0.85,
         "momentumCost": 3
       },
       {
@@ -1248,7 +1226,7 @@
         "id": "cycle_prison",
         "name": "轮回锁链",
         "telegraph": "老者双眼闭合，无形的束缚从四面八方涌来——那是他积蓄九百年的最深执念……",
-        "damageMult": 5.0,
+        "damageMult": 5,
         "hpThreshold": 0.25,
         "momentumCost": 5
       }
@@ -1280,13 +1258,14 @@
         "name": "武道极意",
         "telegraph": "那道影子气势骤然收敛，武道之力凝到极点——⚠ 【武道极意】将至，务必【防御】！",
         "damageMult": 2.2,
-        "hpThreshold": 0.5,
         "momentumCost": 3
       }
     ],
     "winNarrative": "那道影子的拳势渐渐散开。\n\n在它消散之前，它看着你——不是败者的眼神，是一种奇异的认可。\n\n它将手中凝聚的武道之力，推向了你。你感到一股力量沉入丹田，与你自己的力量混合在一起。",
     "loseNarrative": "武者之影击败了你。\n\n它站在你面前，没有话语——只是等待你重新站起来。",
-    "winFlags": { "mark_warrior_power": true },
+    "winFlags": {
+      "mark_warrior_power": true
+    },
     "winEffects": {},
     "loseEffects": {}
   },
@@ -1310,7 +1289,9 @@
     ],
     "winNarrative": "孤道之影停下了。\n\n它望着你，似乎在问：你为什么没有走我的路？\n\n你没有答案——但你知道，那不是问句，是感慨。它将孤独中锻出的那部分力量，给了你。",
     "loseNarrative": "孤道之影击败了你。孤独的极致，是一种难以撼动的力量。",
-    "winFlags": { "mark_hermit_power": true },
+    "winFlags": {
+      "mark_hermit_power": true
+    },
     "winEffects": {},
     "loseEffects": {}
   },
@@ -1334,7 +1315,9 @@
     ],
     "winNarrative": "那道持有无相剑意的影子，在你击败它的那一刻，笑了一下。\n\n它说——或者说，那缕剑意说：「很好。你不是因为能看穿我才赢的。是因为，即使被看穿，你依然做出了正确的选择。」\n\n无相剑意的一部分，永远留在了你身上。",
     "loseNarrative": "无相之影感知了你所有的动作。被另一个更懂得人心的自己击败，算是一种奇异的体验。",
-    "winFlags": { "mark_wuxiang_power": true },
+    "winFlags": {
+      "mark_wuxiang_power": true
+    },
     "winEffects": {},
     "loseEffects": {}
   },
@@ -1358,7 +1341,9 @@
     ],
     "winNarrative": "轮回之影散开，化作点点光芒。\n\n那是前世前世前世的自己——每一世都在这道影子里留下了一点什么。击败它，不是击败他们，而是承接了他们。",
     "loseNarrative": "轮回积累的重量，超过了你现在所能承受的。",
-    "winFlags": { "mark_rebirth_power": true },
+    "winFlags": {
+      "mark_rebirth_power": true
+    },
     "winEffects": {},
     "loseEffects": {}
   },
@@ -1382,7 +1367,9 @@
     ],
     "winNarrative": "知缘之影消散。\n\n散去之前，它轻声说了几个名字——王铁、李云舒、沈玄清、燕赤行、苏青、凌雪。\n\n每一个名字说出来，你心里都有一个画面。那是他们各自的结局，是你用一世时间见证的缘分。",
     "loseNarrative": "那些知晓所有后缘的力量，超出了你现在的境界。",
-    "winFlags": { "mark_afterstory_power": true },
+    "winFlags": {
+      "mark_afterstory_power": true
+    },
     "winEffects": {},
     "loseEffects": {}
   },
@@ -1410,7 +1397,6 @@
         "name": "诸世合击",
         "telegraph": "那道汇聚了所有自己的影子气势骤然涌现，无数世界线的意志化为一击——⚠ 务必【防御】！",
         "damageMult": 2.5,
-        "hpThreshold": 0.6,
         "momentumCost": 3
       }
     ],

@@ -47,7 +47,8 @@ const Character = {
             eventLog: [],
             passives: [],         // [{ id, name, desc, ... }] unlocked this life
             visitCounts: {},      // { npcId: { year, count } } casual visit limiter
-            chainProgress: {}     // { chainId: stepIdx | 'done' }
+            chainProgress: {},    // { chainId: stepIdx | 'done' }
+            peakCombatStats: { atk: 0, def: 0, hp: 0 }
         };
     },
 

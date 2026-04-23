@@ -97,6 +97,7 @@ const UI = {
         this.chainPanel = document.getElementById('chainPanel');
         this.logBuffer = [];
         this._preloadAvatars();
+        if (typeof Gallery !== 'undefined') Gallery.init();
     },
 
     _preloadAvatars() {
@@ -585,6 +586,7 @@ const UI = {
     },
 
     addIllustration(id) {
+        if (typeof Gallery !== 'undefined') Gallery.unlockIllustration(id);
         const wrap = document.createElement('div');
         wrap.className = 'log-illustration';
         const img = document.createElement('img');
@@ -997,6 +999,16 @@ const UI = {
             this.chainBtn.disabled = busy;
         }
 
+        // Show/hide final boss shortcut when 诸世之我 chain is complete
+        const finalBossBtn = document.getElementById('finalBossBtn');
+        if (finalBossBtn) {
+            const char = state.char;
+            const chainDone = char && char.flags && char.flags.zhushi_chain_done;
+            const bossNotYetFired = char && !(char.flags && char.flags.boss_triggered);
+            finalBossBtn.style.display = (chainDone && bossNotYetFired && !busy) ? '' : 'none';
+            finalBossBtn.disabled = busy;
+        }
+
         // Disable test combat button when busy
         const testCombatBtn = document.getElementById('testCombatBtn');
         if (testCombatBtn) testCombatBtn.disabled = busy;
@@ -1119,6 +1131,7 @@ const UI = {
     },
 
     showRebirthScreen(summary, availableTalents, cause) {
+        if (typeof Gallery !== 'undefined') Gallery.unlockIllustration('rebirth');
         this.choicesEl.innerHTML = '';
         this.nextBtn.disabled = true;
 

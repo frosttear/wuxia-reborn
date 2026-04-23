@@ -260,6 +260,9 @@ const Rebirth = {
             });
         }
 
+        // Carry peak combat stats forward
+        newChar.peakCombatStats = { ...(char.peakCombatStats || { atk: 0, def: 0, hp: 0 }) };
+
         // Inherit bond levels (世界线记忆)
         newChar.inheritedBonds = Object.assign({}, char.bondLevels);
 
@@ -272,14 +275,8 @@ const Rebirth = {
             }
         }
 
-        // Apply starting affinity bonuses from inherited bonds
-        for (const npcId in newChar.inheritedBonds) {
-            const level = newChar.inheritedBonds[npcId];
-            const bonus = this.BOND_AFFINITY_BONUS[level] || 0;
-            if (bonus > 0) {
-                NPCSystem.applyAffinityChanges(newChar, { [npcId]: bonus });
-            }
-        }
+        // NPC affinity is NOT inherited — NPCs don't remember previous lives.
+        // The 前世记忆 bond choice gives bonuses instead when replaying bond events.
 
         // 既视感: directly unlock bond levels up to 3 for all inherited NPCs
         if (newChar.legacyTalents.includes('worldline_echo')) {
