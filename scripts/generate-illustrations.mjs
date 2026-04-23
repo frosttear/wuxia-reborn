@@ -198,17 +198,16 @@ async function submitJob(prompt) {
       prompt: fullPrompt,
       params: {
         sampler_name: "k_euler_a",
-        cfg_scale: 2,
+        cfg_scale: 7,
         steps: 30,
         width: 1216,
         height: 832,
         karras: true,
         hires_fix: false,
-        clip_skip: 1,
+        clip_skip: 2,
         n: 1,
-        loras: [{ name: "TurboMix", model: 1, clip: 1 }]
       },
-      models: ["AlbedoBase XL (SDXL)"],
+      models: ["Nova Anime XL"],
       slow_workers: true,
       trusted_workers: false
     })
