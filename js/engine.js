@@ -320,6 +320,7 @@ const Engine = {
             meet_yan_chixing: 'yan-chixing-meet',
             meet_su_qing:     'su-qing-meet',
             meet_lingxue:     'ling-xue-meet',
+            li_after_1:       'li-yunshu-afterstory',
         };
         if (_illustrationMap[event.id]) UI.addIllustration(_illustrationMap[event.id]);
 
@@ -811,7 +812,7 @@ const Engine = {
         UI.addLog(`✦ 事件系列【${chain.name}】全部完成！`, 'unlock');
         const CHAIN_ILLUSTRATIONS = {
             wuxiang_sword:        'wuxiang-unlock',
-            li_yunshu_afterstory: 'li-yunshu-afterstory',
+            li_yunshu_afterstory: 'li-yunshu-afterstory-ending',
             su_qing_afterstory:   'su-qing-afterstory',
             lingxue_afterstory:   'ling-xue-afterstory',
             elder_afterstory:     'mysterious-elder-afterstory',

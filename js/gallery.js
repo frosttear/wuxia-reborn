@@ -58,15 +58,24 @@ const GALLERY_DATA = [
     { id: 'ling-xue-afterstory',         name: '凌雪·追杀令',         hint: '天魔门追杀令至，她看了一眼，平静开口：来了', category: 'bonds' },
     // 羁绊情缘 — 神秘老者
     { id: 'mysterious-elder-afterstory', name: '神秘老者·微尘之踪',   hint: '老者取出一枚旧铜簪，讲述消失二十年的微尘',   category: 'bonds' },
+    // 人物立绘 — src overrides default illustrations/ path; alwaysUnlocked skips lock gate
+    { id: 'portrait-player',          name: '主角',       hint: '踏入江湖的无名剑客',         category: 'portraits', src: 'assets/characters/player.png',          alwaysUnlocked: true },
+    { id: 'portrait-wang-tie',        name: '王铁',       hint: '三十年走镖的老镖师',         category: 'portraits', src: 'assets/characters/wang-tie.png',        alwaysUnlocked: true },
+    { id: 'portrait-li-yunshu',       name: '李云舒',     hint: '梅影剑传人，游侠女剑客',     category: 'portraits', src: 'assets/characters/li-yunshu.png',       alwaysUnlocked: true },
+    { id: 'portrait-yan-chixing',     name: '燕赤行',     hint: '含光门唯一幸存者，疤脸剑客', category: 'portraits', src: 'assets/characters/yan-chixing.png',     alwaysUnlocked: true },
+    { id: 'portrait-su-qing',         name: '苏青',       hint: '游方郎中，以身试毒的弟子',   category: 'portraits', src: 'assets/characters/su-qing.png',         alwaysUnlocked: true },
+    { id: 'portrait-ling-xue',        name: '凌雪',       hint: '天魔门首席弟子，白衣剑客',   category: 'portraits', src: 'assets/characters/ling-xue.png',        alwaysUnlocked: true },
+    { id: 'portrait-mysterious-elder', name: '神秘老者',  hint: '自称设计者，来历成谜',       category: 'portraits', src: 'assets/characters/mysterious-elder.png', alwaysUnlocked: true },
 ];
 
 const CATEGORY_LABELS = {
-    scenes:  '江湖奇遇',
-    martial: '武道传承',
-    bosses:  '传说瞬间',
-    bonds:   '羁绊情缘',
+    scenes:   '江湖奇遇',
+    martial:  '武道传承',
+    bosses:   '传说瞬间',
+    bonds:    '羁绊情缘',
+    portraits: '人物立绘',
 };
-const CATEGORY_ORDER = ['scenes', 'martial', 'bosses', 'bonds'];
+const CATEGORY_ORDER = ['scenes', 'martial', 'bosses', 'bonds', 'portraits'];
 
 const Gallery = {
     _activeTab: 'scenes',
@@ -179,7 +188,7 @@ const Gallery = {
         this._tabsEl.innerHTML = '';
         for (const cat of CATEGORY_ORDER) {
             const items = GALLERY_DATA.filter(d => d.category === cat);
-            const unlockedCount = items.filter(d => unlocked.includes(d.id)).length;
+            const unlockedCount = items.filter(d => d.alwaysUnlocked || unlocked.includes(d.id)).length;
             const btn = document.createElement('button');
             btn.className = 'gallery-tab' + (cat === this._activeTab ? ' active' : '');
             btn.dataset.cat = cat;
@@ -206,7 +215,7 @@ const Gallery = {
         this._grid.classList.remove('has-pinned');
 
         items.forEach((item, i) => {
-            const isUnlocked = unlocked.includes(item.id);
+            const isUnlocked = item.alwaysUnlocked || unlocked.includes(item.id);
             const card = document.createElement('div');
             card.className = 'gallery-card' + (isUnlocked ? '' : ' locked');
 
@@ -216,7 +225,8 @@ const Gallery = {
 
             const img = document.createElement('img');
             img.alt = item.name;
-            loadProgressiveImg(img, `assets/illustrations/${item.id}.jpg`, 'assets/illustrations/placeholder.svg');
+            const hqSrc = item.src || `assets/illustrations/${item.id}.jpg`;
+            loadProgressiveImg(img, hqSrc, 'assets/illustrations/placeholder.svg');
             inner.appendChild(img);
 
             if (!isUnlocked) {
@@ -302,7 +312,8 @@ const Gallery = {
         const id = this._lightboxItems[this._lightboxIdx];
         const meta = GALLERY_DATA.find(d => d.id === id) || { name: id, hint: '', category: 'scenes' };
         const lbImg = document.getElementById('galleryLbImg');
-        loadProgressiveImg(lbImg, `assets/illustrations/${id}.jpg`, 'assets/illustrations/placeholder.svg');
+        const hqSrc = meta.src || `assets/illustrations/${id}.jpg`;
+        loadProgressiveImg(lbImg, hqSrc, 'assets/illustrations/placeholder.svg');
         document.getElementById('galleryLbName').textContent = meta.name;
         document.getElementById('galleryLbCategory').textContent = CATEGORY_LABELS[meta.category] || '';
         document.getElementById('galleryLbHint').textContent = meta.hint;
