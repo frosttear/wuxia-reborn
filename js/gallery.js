@@ -23,8 +23,8 @@ const GALLERY_DATA = [
     { id: 'wang-tie-bond-3',             name: '王铁·最后一课',       hint: '老镖师将三十年活命心法倾囊相授',           category: 'bonds'   },
     { id: 'wang-tie-bond-4',             name: '王铁·刀碑',           hint: '城郊荒坡，他在旧弟兄的木桩墓碑前倾诉往事', category: 'bonds'   },
     { id: 'wang-tie-ending',             name: '王铁·最后的镖路',     hint: '与王铁羁绊圆满',                           category: 'bonds'   },
-    { id: 'wang-tie-afterstory',         name: '王铁·最后的镖路·启程', hint: '他取出珍藏三十年的遗物，踏上一段未竟的路',  category: 'bonds'   },
-    { id: 'wang-tie-afterstory-ending',  name: '王铁·最后的镖路·归途', hint: '他将旧镖牌放入你掌心，眼神平静如从未有过执念', category: 'bonds' },
+    { id: 'wang-tie-afterstory',         name: '王铁·遗愿·追踪',      hint: '他去世后，你独自潜伏于黑鹰寨外，摸清赵霸天的行踪', category: 'bonds' },
+    { id: 'wang-tie-afterstory-ending',  name: '王铁·遗愿·告慰英灵',  hint: '赵霸天倒下后，你独自来到王铁坟前，将他最爱的烧刀子洒入土中', category: 'bonds' },
     // 羁绊情缘 — 李云舒
     { id: 'li-yunshu-meet',              name: '李云舒·城外巧遇',     hint: '城外路上，她被流氓骚扰却毫无惧色',         category: 'bonds'   },
     { id: 'li-yunshu-bond-1',            name: '李云舒·梅园问剑',     hint: '梅园对剑，她演示亡母梅影剑的传承剑法',     category: 'bonds'   },

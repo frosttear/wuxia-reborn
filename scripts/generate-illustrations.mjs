@@ -127,13 +127,13 @@ const ILLUSTRATIONS = [
   },
   {
     id: "wang-tie-afterstory",
-    name: "王铁 — 后日谈·启程",
-    prompt: `Wuxia journey scene on a northern mountain road in early morning mist. ${CHAR.wangTie} walks ahead, one hand carefully cradling a small jade pendant against his chest — a dead master's keepsake carried for thirty years, now finally being returned. ${CHAR.player} walks at his side, their pace matched. The road winds ahead into misty mountain passes. Wang Tie's posture is deliberate and purposeful, as if completing the last step of a thirty-year obligation. Pale morning light, dew on the roadside grass, the mountain range ahead veiled in cloud. Wide cinematic composition, Chinese ink painting aesthetic, cool morning blue and pale gold tones, quiet purposeful atmosphere, anime-inspired semi-realistic art, high quality detailed scene.`,
+    name: "王铁 — 后日谈·追踪赵霸天",
+    prompt: `Determined wuxia scene outside a fortified bandit stronghold (黑鹰寨) at dusk. ${CHAR.player} crouches in shadow on a ridge overlooking the lit torches of the fortress below, scouting the layout — alone, resolute, the kind of stillness of someone who has made up their mind. A worn iron escort badge rests against his chest beneath his robe. The stronghold sprawls on the hillside, guards visible at the gate, torches casting hard orange light on stone walls. Dark forest behind him, valley below. Wide cinematic composition, Chinese ink painting aesthetic, cold dusk blue and harsh torchlight tones, quietly resolved and dangerous atmosphere, anime-inspired semi-realistic art, high quality detailed scene.`,
   },
   {
     id: "wang-tie-afterstory-ending",
-    name: "王铁 — 后日谈·归途",
-    prompt: `Intimate and elegiac wuxia scene inside a small inn room at night. ${CHAR.wangTie} lies on a simple wooden bed, his face grey and still — old wounds finally claiming him. One weathered hand is extended toward ${CHAR.player} kneeling at his bedside, a worn wooden escort token resting in his open palm, being passed on. His expression is completely at peace — the look of a man who has completed everything he was meant to do. A single oil lamp on the table, warm and dim, the room otherwise still and quiet. Wide cinematic composition, Chinese ink painting aesthetic, warm dim amber and deep shadow tones, deeply moving and peaceful atmosphere, anime-inspired semi-realistic art, high quality detailed scene.`,
+    name: "王铁 — 后日谈·告慰英灵",
+    prompt: `Quiet wuxia closure scene at a grave on a hillside under a full moon, late night. ${CHAR.player} kneels alone before Wang Tie's grave marker, slowly pouring a bottle of 烧刀子 (sorghum spirits) into the earth at the base of the stone — the old escort's favourite drink. His head is bowed, one hand resting lightly on the grave. The hill is quiet, wind moving through dry grass, moonlight on the stone. The promise has been kept. A sense of grief completed, the weight of an obligation finally released. Wide cinematic composition, Chinese ink painting aesthetic, cold silver moonlight and deep shadow tones, elegiac and quietly fulfilled atmosphere, anime-inspired semi-realistic art, high quality detailed scene.`,
   },
 
   // ── 李云舒 / Li Yunshu ──

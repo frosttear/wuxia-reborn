@@ -1,6 +1,15 @@
 # 轮回江湖 — 开发进度
 
-## 当前版本：v0.21.35
+## 当前版本：v0.21.36
+
+---
+
+### v0.21.36（2026-04-24）
+
+- 补全所有 NPC 后日谈链式插画触发：`chainStepIllustrations` 新增五条（苏青、凌雪、神秘老者、燕赤行、王铁第一步）
+- `CHAIN_ILLUSTRATIONS` 链条完成插画全部改为指向 `afterstory-ending` 版本；新增王铁 `wang_revenge` 链条完成触发
+- 修正王铁后日谈插画提示词：实际剧情为追踪赵霸天（`afterstory`）及告慰英灵（`afterstory-ending`），非玉佩归还
+- 更新对应图鉴描述
 
 ---
 

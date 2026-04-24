@@ -783,7 +783,12 @@ const Engine = {
         this.state.gamePhase = 'choosing';
         UI.showEvent(displayEvent, allChoices, this.state);
         const chainStepIllustrations = {
-            li_after_1: 'li-yunshu-afterstory',
+            li_after_1:    'li-yunshu-afterstory',
+            su_after_1:    'su-qing-afterstory',
+            lx_after_1:    'ling-xue-afterstory',
+            elder_after_1: 'mysterious-elder-afterstory',
+            yan_after_1:   'yan-chixing-afterstory',
+            wang_revenge_1:'wang-tie-afterstory',
         };
         if (chainStepIllustrations[step.id]) UI.addIllustration(chainStepIllustrations[step.id]);
         UI.updateControls(this.state);
@@ -816,10 +821,11 @@ const Engine = {
         const CHAIN_ILLUSTRATIONS = {
             wuxiang_sword:        'wuxiang-unlock',
             li_yunshu_afterstory: 'li-yunshu-afterstory-ending',
-            su_qing_afterstory:   'su-qing-afterstory',
-            lingxue_afterstory:   'ling-xue-afterstory',
-            elder_afterstory:     'mysterious-elder-afterstory',
-            yan_afterstory:       'yan-chixing-afterstory',
+            su_qing_afterstory:   'su-qing-afterstory-ending',
+            lingxue_afterstory:   'ling-xue-afterstory-ending',
+            elder_afterstory:     'mysterious-elder-afterstory-ending',
+            yan_afterstory:       'yan-chixing-afterstory-ending',
+            wang_revenge:         'wang-tie-afterstory-ending',
         };
         if (CHAIN_ILLUSTRATIONS[chain.id]) UI.addIllustration(CHAIN_ILLUSTRATIONS[chain.id]);
         if (reward.narrative) UI.addLog(reward.narrative, 'result');
