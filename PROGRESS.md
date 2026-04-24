@@ -1,6 +1,13 @@
 # 轮回江湖 — 开发进度
 
-## 当前版本：v0.21.55
+## 当前版本：v0.21.56
+
+---
+
+### v0.21.56（2026-04-24）
+
+- 重新压缩神秘老人全套插画（meet、bond-1~4、ending、afterstory、afterstory-ending）及立绘 JPEG
+- 新增 elder-true-form 插画压缩（HQ + LQ）
 
 ---
 
