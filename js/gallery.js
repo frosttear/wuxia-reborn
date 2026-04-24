@@ -22,7 +22,7 @@ const GALLERY_DATA = [
     { id: 'wang-tie-bond-2',             name: '王铁·两肋插刀',       hint: '夜道追镖，二人背靠背对抗盗匪',             category: 'bonds'   },
     { id: 'wang-tie-bond-3',             name: '王铁·最后一课',       hint: '老镖师将三十年活命心法倾囊相授',           category: 'bonds'   },
     { id: 'wang-tie-bond-4',             name: '王铁·刀碑',           hint: '城郊荒坡，他在旧弟兄的木桩墓碑前倾诉往事', category: 'bonds'   },
-    { id: 'wang-tie-ending',             name: '王铁·最后的镖路',     hint: '与王铁羁绊圆满',                           category: 'bonds'   },
+    { id: 'wang-tie-ending',             name: '王铁·最后的镖路',     hint: '雪丘上跪别，他将铁牌轻放在最后一座墓碑旁，头颅无声低垂。', category: 'bonds' },
     { id: 'wang-tie-afterstory',         name: '王铁·遗愿·追踪',      hint: '他去世后，你独自潜伏于黑鹰寨外，摸清赵霸天的行踪', category: 'bonds' },
     { id: 'wang-tie-afterstory-ending',  name: '王铁·遗愿·告慰英灵',  hint: '赵霸天倒下后，你独自来到王铁坟前，将他最爱的烧刀子洒入土中', category: 'bonds' },
     // 羁绊情缘 — 李云舒
@@ -40,7 +40,7 @@ const GALLERY_DATA = [
     { id: 'yan-chixing-bond-2',          name: '燕赤行·铁幕之夜',     hint: '夜巷遭伏，他左臂负伤，你赶到共击刺客',     category: 'bonds'   },
     { id: 'yan-chixing-bond-3',          name: '燕赤行·疤痕之下',     hint: '河边深夜，他第一次讲述含光门被灭的往事',   category: 'bonds'   },
     { id: 'yan-chixing-bond-4',          name: '燕赤行·旧仇归来',     hint: '仇人季沧海现身城南，多年夙愿终将了结',     category: 'bonds'   },
-    { id: 'yan-chixing-ending',          name: '燕赤行·无名同行',     hint: '与燕赤行羁绊圆满',                         category: 'bonds'   },
+    { id: 'yan-chixing-ending',          name: '燕赤行·无名同行',     hint: '夜道同行，他走在前半步，暗处的风雪扑来，他侧身为你挡。', category: 'bonds' },
     { id: 'yan-chixing-afterstory',      name: '燕赤行·含光遗灯·归山', hint: '重返含光山废墟，为旧弟兄们寻回刻在墙上的名字', category: 'bonds' },
     { id: 'yan-chixing-afterstory-ending', name: '燕赤行·含光遗灯·立碑', hint: '他跪在亲手刻就的碑前，这是他第一次流泪',   category: 'bonds' },
     // 羁绊情缘 — 苏青
@@ -49,7 +49,7 @@ const GALLERY_DATA = [
     { id: 'su-qing-bond-2',              name: '苏青·青心草',         hint: '悬崖峭壁，她执意为病童采集青心草',         category: 'bonds'   },
     { id: 'su-qing-bond-3',              name: '苏青·别离之药',       hint: '她收拾药箱准备远行寻师，临走留下一瓶解毒药', category: 'bonds' },
     { id: 'su-qing-bond-4',              name: '苏青·师门寻踪',       hint: '师父被扣押于山寨，营救行动迫在眉睫',       category: 'bonds'   },
-    { id: 'su-qing-ending',              name: '苏青·针灸传心',       hint: '与苏青羁绊圆满',                           category: 'bonds'   },
+    { id: 'su-qing-ending',              name: '苏青·针灸传心',       hint: '她背对着门口，肩膀轻轻颤着——她的父亲向你深深弯腰。', category: 'bonds' },
     { id: 'su-qing-afterstory',          name: '苏青·济世堂往事·秘方', hint: '师父透露手中藏有天魔解毒药方——是救人之药，还是终结之剑', category: 'bonds' },
     { id: 'su-qing-afterstory-ending',   name: '苏青·济世堂往事·重开', hint: '重新挂起的招牌下，她站在门口，望着落日',    category: 'bonds'   },
     // 羁绊情缘 — 凌雪
@@ -67,9 +67,9 @@ const GALLERY_DATA = [
     { id: 'mysterious-elder-bond-2',     name: '神秘老者·内功指引',    hint: '他说：武道无捷径，走远了才是本事',            category: 'bonds'   },
     { id: 'mysterious-elder-bond-3',     name: '神秘老者·真名',        hint: '他摊开掌心，星形烙印说出了他的来历',          category: 'bonds'   },
     { id: 'mysterious-elder-bond-4',     name: '神秘老者·天魔本源',    hint: '刺客围困，他手持茶杯坐定，向你讲述弟子变魔的根源', category: 'bonds' },
+    { id: 'mysterious-elder-ending',      name: '神秘老者·一线天命',   hint: '崖顶清晨，玉佩悬浮于二人之间——他终于放开了压了九百年的东西。', category: 'bonds' },
     { id: 'mysterious-elder-afterstory', name: '神秘老者·定渊遗剑·铜簪', hint: '老者取出一枚旧铜簪，讲述消失二十年的微尘',  category: 'bonds' },
     { id: 'mysterious-elder-afterstory-ending', name: '神秘老者·定渊遗剑·重逢', hint: '他颤抖的双手将旧铜簪重新别入女儿发间，二十年的分别就此落幕', category: 'bonds' },
-    { id: 'mysterious-elder-ending',      name: '神秘老者·一线天命',   hint: '与神秘老者羁绊圆满',                           category: 'bonds'   },
     // 人物立绘 — src overrides default illustrations/ path; alwaysUnlocked skips lock gate
     { id: 'portrait-player',          name: '主角',       hint: '踏入江湖的无名剑客',         category: 'portraits', src: 'assets/characters/player.jpg',          alwaysUnlocked: true },
     { id: 'portrait-wang-tie',         name: '王铁',       hint: '走江湖数十年的老侠客，刀法刚猛，心怀义气。',                           category: 'portraits', src: 'assets/characters/wang-tie.jpg'        },

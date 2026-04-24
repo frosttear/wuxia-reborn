@@ -1,6 +1,13 @@
 # 轮回江湖 — 开发进度
 
-## 当前版本：v0.21.59
+## 当前版本：v0.21.60
+
+---
+
+### v0.21.60（2026-04-24）
+
+- 图鉴羁绊结局提示文：王铁、燕赤行、苏青、神秘老者 ending 改为场景描述
+- 神秘老者 ending 调整至 afterstory 之前（meet→bond-1~4→ending→afterstory→afterstory-ending）
 
 ---
 
