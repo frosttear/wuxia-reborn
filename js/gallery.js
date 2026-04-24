@@ -85,8 +85,9 @@ const CATEGORY_LABELS = {
     bosses:   '传说瞬间',
     bonds:    '羁绊情缘',
     portraits: '人物立绘',
+    replay:   '剧情回想',
 };
-const CATEGORY_ORDER = ['scenes', 'bosses', 'bonds', 'portraits'];
+const CATEGORY_ORDER = ['scenes', 'bosses', 'bonds', 'portraits', 'replay'];
 
 const Gallery = {
     _activeTab: 'scenes',
@@ -107,6 +108,10 @@ const Gallery = {
         this._lightbox = document.getElementById('galleryLightbox');
         this._grid     = document.getElementById('galleryGrid');
         this._tabsEl   = document.getElementById('galleryTabs');
+        this._replayPanel = document.getElementById('galleryReplayPanel');
+        this._replayTitle = document.getElementById('galleryReplayTitle');
+        this._replayLog   = document.getElementById('galleryReplayLog');
+        document.getElementById('galleryReplayBack').onclick = () => this._closeReplay();
         this._contents = [
             document.getElementById('galleryLbContent0'),
             document.getElementById('galleryLbContent1'),
@@ -241,8 +246,17 @@ const Gallery = {
             const btn = document.createElement('button');
             btn.className = 'gallery-tab' + (cat === this._activeTab ? ' active' : '');
             btn.dataset.cat = cat;
-            btn.innerHTML = CATEGORY_LABELS[cat] +
-                `<span class="gallery-tab-badge">${unlockedCount}/${items.length}</span>`;
+            if (cat === 'replay') {
+                const char = (typeof Engine !== 'undefined') && Engine.state && Engine.state.char;
+                const bl = (char && char.bondLevels) || {};
+                const cp = (char && char.chainProgress) || {};
+                const n = Object.values(bl).reduce((s, v) => s + (Number(v) || 0), 0)
+                        + Object.values(cp).filter(v => v === 'done').length;
+                btn.innerHTML = CATEGORY_LABELS[cat] + (n > 0 ? `<span class="gallery-tab-badge">${n}</span>` : '');
+            } else {
+                btn.innerHTML = CATEGORY_LABELS[cat] +
+                    `<span class="gallery-tab-badge">${unlockedCount}/${items.length}</span>`;
+            }
             btn.onclick = () => this.switchTab(cat);
             this._tabsEl.appendChild(btn);
         }
@@ -254,7 +268,13 @@ const Gallery = {
         for (const btn of this._tabsEl.querySelectorAll('.gallery-tab')) {
             btn.classList.toggle('active', btn.dataset.cat === category);
         }
-        this._renderGrid(category);
+        this._replayPanel.style.display = 'none';
+        if (category === 'replay') {
+            this._renderReplayList();
+        } else {
+            this._grid.style.display = '';
+            this._renderGrid(category);
+        }
     },
 
     _renderGrid(category) {
@@ -330,6 +350,152 @@ const Gallery = {
             // Staggered entrance
             setTimeout(() => card.classList.add('entered'), i * 55);
         });
+    },
+
+    _renderReplayList() {
+        this._grid.style.display = '';
+        this._grid.innerHTML = '';
+
+        const char = (typeof Engine !== 'undefined') && Engine.state && Engine.state.char;
+        const bondLevels    = (char && char.bondLevels)    || {};
+        const chainProgress = (char && char.chainProgress) || {};
+        const chains        = ((typeof Engine !== 'undefined') && Engine.state && Engine.state.chains) || [];
+
+        const CHAPTER = ['一', '二', '三', '四', '五'];
+        const ul = document.createElement('ul');
+        ul.className = 'gallery-replay-list';
+
+        // ── Bond chapters (NPC order from GALLERY_DATA) ──
+        const seenNpcs = new Set();
+        const npcOrder = [];
+        for (const d of GALLERY_DATA) {
+            if (d.category !== 'bonds') continue;
+            const m = d.id.match(/^([a-z-]+)-bond-\d+$/);
+            if (!m) continue;
+            const kebab = m[1];
+            if (!seenNpcs.has(kebab)) { seenNpcs.add(kebab); npcOrder.push(kebab); }
+        }
+
+        let hasBonds = false;
+        for (const kebab of npcOrder) {
+            const snakeId = kebab.replace(/-/g, '_');
+            const maxLevel = Number(bondLevels[snakeId] || 0);
+            if (maxLevel < 1) continue;
+            if (!hasBonds) {
+                const hdr = document.createElement('li');
+                hdr.className = 'gallery-replay-section-header';
+                hdr.textContent = '羁绊情缘';
+                ul.appendChild(hdr);
+                hasBonds = true;
+            }
+            const portrait = GALLERY_DATA.find(d => d.id === 'portrait-' + kebab);
+            const displayName = portrait ? portrait.name : kebab;
+            for (let lvl = 1; lvl <= maxLevel; lvl++) {
+                const li = document.createElement('li');
+                li.textContent = `${displayName} · 第${CHAPTER[lvl - 1] || lvl}章`;
+                li.onclick = () => this._openReplay('bond', snakeId, lvl, li.textContent);
+                ul.appendChild(li);
+            }
+        }
+
+        // ── Completed chains ──
+        const doneChains = chains.filter(c => chainProgress[c.id] === 'done');
+        if (doneChains.length > 0) {
+            const hdr = document.createElement('li');
+            hdr.className = 'gallery-replay-section-header';
+            hdr.textContent = '支线传说';
+            ul.appendChild(hdr);
+            for (const chain of doneChains) {
+                const li = document.createElement('li');
+                li.textContent = chain.name;
+                li.onclick = () => this._openReplay('chain', chain.id, null, chain.name);
+                ul.appendChild(li);
+            }
+        }
+
+        if (!hasBonds && doneChains.length === 0) {
+            const empty = document.createElement('li');
+            empty.className = 'gallery-replay-section-header';
+            empty.textContent = '暂无可回想的剧情';
+            ul.appendChild(empty);
+        }
+
+        this._grid.appendChild(ul);
+    },
+
+    _openReplay(type, id, level, title) {
+        this._grid.style.display = 'none';
+        this._replayTitle.textContent = title || '';
+        this._replayLog.innerHTML = '';
+        this._replayPanel.style.display = 'flex';
+        this._runReplay(type, id, level);
+    },
+
+    _runReplay(type, id, level) {
+        const bonds  = ((typeof Engine !== 'undefined') && Engine.state && Engine.state.bonds)  || {};
+        const chains = ((typeof Engine !== 'undefined') && Engine.state && Engine.state.chains) || [];
+
+        let steps = [];
+        let completionNarrative = null;
+
+        if (type === 'bond') {
+            const levelArr = bonds[id] || [];
+            const levelData = levelArr.find(b => b.level === level);
+            steps = (levelData && levelData.steps) || [];
+        } else {
+            const chain = chains.find(c => c.id === id);
+            steps = (chain && chain.steps) || [];
+            if (chain && chain.completionReward && chain.completionReward.narrative) {
+                completionNarrative = chain.completionReward.narrative;
+            }
+        }
+
+        // Build ordered list of {text, cls} items to stream
+        const items = [];
+        items.push({ text: '── 剧情回想 ──', cls: 'sep' });
+
+        for (const step of steps) {
+            const choices = step.choices || [];
+            const combatChoices = choices.filter(c => c.effects && c.effects.combat);
+            // Skip step if ALL choices are combat (pure combat gate, no story text worth showing)
+            if (choices.length > 0 && combatChoices.length === choices.length) continue;
+
+            if (step.text) items.push({ text: step.text, cls: 'narrative' });
+
+            const nonCombat = choices.filter(c => !(c.effects && c.effects.combat));
+            for (const choice of nonCombat) {
+                items.push({ text: choice.text, cls: 'choice' });
+                const narr = choice.effects && choice.effects.narrative;
+                if (narr) items.push({ text: narr, cls: 'narrative' });
+            }
+        }
+
+        if (completionNarrative) items.push({ text: completionNarrative, cls: 'narrative' });
+        items.push({ text: '── 回想结束 ──', cls: 'sep' });
+
+        // Stream items into log with 300 ms gap
+        const log = this._replayLog;
+        const stream = (i) => {
+            if (i >= items.length) return;
+            const { text, cls } = items[i];
+            const p = document.createElement('p');
+            if (cls === 'choice') {
+                p.className = 'log-replay-choice';
+            } else if (cls === 'sep') {
+                p.style.cssText = 'color:#555;text-align:center;margin:10px 0;';
+            }
+            p.textContent = text;
+            log.appendChild(p);
+            log.scrollTop = log.scrollHeight;
+            setTimeout(() => stream(i + 1), 300);
+        };
+        stream(0);
+    },
+
+    _closeReplay() {
+        this._replayPanel.style.display = 'none';
+        this._replayLog.innerHTML = '';
+        this._renderReplayList();
     },
 
     openLightbox(id, category) {
