@@ -1,6 +1,14 @@
 # 轮回江湖 — 开发进度
 
-## 当前版本：v0.21.28
+## 当前版本：v0.21.29
+
+---
+
+### v0.21.29（2026-04-24）
+
+- 插画文件夹重组：`originals/` → `origins/`，作为原始 PNG 的统一输入目录；主目录仅保留压缩后的 JPEG 和 low/ 缩略图
+- 压缩并提交三张新插画：`li-yunshu-afterstory`、`li-yunshu-afterstory-ending`、`li-yunshu-bond-4`（修正文件名中缺失的连字符）
+- 更新 `optimize-illustrations.mjs`：从 `origins/` 读取 PNG，不再需要备份步骤
 
 ---
 

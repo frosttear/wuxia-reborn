@@ -74,19 +74,27 @@ node scripts/generate-illustrations.mjs wang-tie-meet
 
 ## Illustration Compression
 
-All illustrations must be stored as JPEG (not PNG). The game code references `assets/illustrations/<id>.jpg`. After adding or updating any PNG illustration, run compression before committing.
+All illustrations are stored as JPEG. The game code references `assets/illustrations/<id>.jpg`.
+
+**Folder layout:**
+```
+assets/illustrations/origins/   ← put raw PNG files here (source of truth)
+assets/illustrations/<id>.jpg   ← compressed HQ output (committed)
+assets/illustrations/low/<id>.jpg ← LQ thumbnail output (committed)
+```
+
+**Workflow:** drop the PNG into `origins/`, then compress:
 
 ```bash
-# Compress all PNGs in assets/illustrations/ (batch)
+# Compress all PNGs in origins/ (batch — safe to re-run, overwrites output)
 node scripts/optimize-illustrations.mjs
 
-# Compress a single illustration by id
+# Compress a single illustration by id (PNG must be in origins/)
 node --input-type=module --eval "
 import sharp from 'sharp';
-import { stat, copyFile } from 'fs/promises';
+import { stat } from 'fs/promises';
 const base = 'REPLACE_WITH_ID';
-const src = \`assets/illustrations/\${base}.png\`;
-await copyFile(src, \`assets/illustrations/originals/\${base}.png\`);
+const src = \`assets/illustrations/origins/\${base}.png\`;
 await sharp(src).jpeg({ quality: 85, mozjpeg: true }).toFile(\`assets/illustrations/\${base}.jpg\`);
 await sharp(src).resize({ width: 600, withoutEnlargement: true }).jpeg({ quality: 20, mozjpeg: true }).toFile(\`assets/illustrations/low/\${base}.jpg\`);
 const s = async f => Math.round((await stat(f)).size/1024)+'KB';
@@ -96,8 +104,7 @@ console.log(base+': '+await s(src)+' → HQ '+await s(\`assets/illustrations/\${
 
 - HQ JPEG: quality 85, mozjpeg — typically 50–280 KB (vs 100 KB–2.5 MB for PNG)
 - LQ thumbnail: 600 px wide, quality 20 — 3–15 KB, used as instant placeholder
-- Originals backed up to `assets/illustrations/originals/`
-- Commit: HQ `.jpg`, `low/` thumbnail, and updated `originals/` PNG
+- Commit: `origins/<id>.png`, HQ `.jpg`, and `low/<id>.jpg`
 
 ## Workflow
 
