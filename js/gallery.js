@@ -31,6 +31,7 @@ const GALLERY_DATA = [
     { id: 'li-yunshu-bond-4',            name: '李云舒·异地之邀',     hint: '秋水剑宗来函相邀三年，她在去留之间两难',   category: 'bonds'   },
     { id: 'li-yunshu-ending',            name: '李云舒·一剑长歌',     hint: '与李云舒羁绊圆满',                         category: 'bonds'   },
     { id: 'li-yunshu-afterstory',        name: '李云舒·旧案浮现',     hint: '整理她留下的旧物，发现亡母遗信，旧案重见天日', category: 'bonds' },
+    { id: 'li-yunshu-afterstory-ending', name: '李云舒·母亲的墓前',   hint: '旧案了结后，二人并肩立于李若兰墓前，无声告别', category: 'bonds' },
     // 羁绊情缘 — 燕赤行
     { id: 'yan-chixing-meet',            name: '燕赤行·刀疤剑客',     hint: '演武场边，疤脸冷面男子直接向你发问',       category: 'bonds'   },
     { id: 'yan-chixing-bond-1',          name: '燕赤行·刀下问剑',     hint: '以剑相试，接受疤脸剑客的考验',             category: 'bonds'   },
