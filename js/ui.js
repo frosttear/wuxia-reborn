@@ -165,24 +165,31 @@ const UI = {
         preload('assets/characters/low/player.jpg');
 
         // NPC LQ portraits immediately (small files, visible on game screen)
-        ['li-yunshu', 'wang-tie', 'mysterious-elder', 'yan-chixing', 'ling-xue', 'su-qing']
-            .forEach(id => preload(`assets/characters/low/${id}.jpg`));
+        const npcPortraitIds = (typeof GALLERY_DATA !== 'undefined')
+            ? GALLERY_DATA.filter(d => d.category === 'portraits' && d.id !== 'portrait-player')
+                          .map(d => d.id.replace('portrait-', '').replace(/_/g, '-'))
+            : ['li-yunshu', 'wang-tie', 'mysterious-elder', 'yan-chixing', 'ling-xue', 'su-qing'];
+        npcPortraitIds.forEach(id => preload(`assets/characters/low/${id}.jpg`));
 
         // NPC HQ portraits deferred so they don't compete with critical resources
         setTimeout(() => {
-            ['li-yunshu', 'wang-tie', 'mysterious-elder', 'yan-chixing', 'ling-xue', 'su-qing']
-                .forEach(id => preload(`assets/characters/${id}.jpg`));
+            npcPortraitIds.forEach(id => preload(`assets/characters/${id}.jpg`));
         }, 3000);
 
-        // Prefetch: unlocked first (user may open gallery), then locked — both groups size-desc
+        // All illustration LQ at 5s (~7KB each, safe to load all 60+)
         setTimeout(() => {
-            const all = ['wuxiang-unlock', 'tianmo-and-jianhun', 'rebirth',
-                         'ling-xue-ending', 'li-yunshu-ending', 'wang-tie-ending',
-                         'yan-chixing-ending', 'su-qing-ending', 'mysterious-elder-ending',
-                         'sword-soul-win', 'sword-soul-lose', 'tianmo-win', 'tianmo-lose'];
+            if (typeof GALLERY_DATA === 'undefined') return;
+            GALLERY_DATA.filter(d => d.category !== 'portraits')
+                        .forEach(d => preload(`assets/illustrations/low/${d.id}.jpg`));
+        }, 5000);
+
+        // All illustration HQ at 8s: unlocked first, then locked
+        setTimeout(() => {
+            if (typeof GALLERY_DATA === 'undefined') return;
+            const illIds = GALLERY_DATA.filter(d => d.category !== 'portraits').map(d => d.id);
             const unlocked = (typeof Gallery !== 'undefined') ? Gallery._getUnlocked() : [];
-            [...all.filter(id => unlocked.includes(id)),
-             ...all.filter(id => !unlocked.includes(id))]
+            [...illIds.filter(id => unlocked.includes(id)),
+             ...illIds.filter(id => !unlocked.includes(id))]
                 .forEach(id => preload(`assets/illustrations/${id}.jpg`));
         }, 8000);
     },
