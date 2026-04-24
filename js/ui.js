@@ -1,32 +1,27 @@
 // ui.js - UI rendering and DOM management
 
-// Both probes start immediately. LQ (3-11 KB) nearly always beats HQ, so the
-// dim placeholder appears at once. When HQ arrives, swap and restore opacity.
+// Progressive loading: show LQ thumbnail immediately, swap to HQ when ready.
+// Placeholder shown only if LQ itself fails (image truly missing).
 // fallbackSrc: shown on total failure; null hides the element.
 function loadProgressiveImg(img, hqSrc, fallbackSrc) {
     const lowSrc = hqSrc.replace(/(assets\/[^/]+\/)([^/]+)\.\w+$/, '$1low/$2.jpg');
-    const onError = fallbackSrc
-        ? () => { img.src = fallbackSrc; img.classList.remove('img-lq'); img.onerror = null; }
-        : () => { img.style.display = 'none'; };
 
-    // Clear stale image without pre-loading placeholder — placeholder only shown on actual error
-    img.removeAttribute('src');
-    img.classList.remove('img-lq');
-
-    let hqSettled = false;
+    // Show LQ immediately while HQ loads in the background
+    img.classList.add('img-lq');
+    img.onerror = () => {
+        img.onerror = null;
+        if (fallbackSrc) { img.src = fallbackSrc; img.classList.remove('img-lq'); }
+        else img.style.display = 'none';
+    };
+    img.src = lowSrc;
 
     const hqProbe = new Image();
     hqProbe.onload = () => {
-        hqSettled = true;
         img.src = hqSrc;
         img.classList.remove('img-lq');
+        img.onerror = null;
     };
-    hqProbe.onerror = () => { hqSettled = true; onError(); };
     hqProbe.src = hqSrc;
-
-    const lqProbe = new Image();
-    lqProbe.onload = () => { if (!hqSettled) { img.src = lowSrc; img.classList.add('img-lq'); } };
-    lqProbe.src = lowSrc;
 }
 
 const ATTR_NAMES = {
