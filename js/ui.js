@@ -158,7 +158,7 @@ const UI = {
         // NPC HQ portraits deferred so they don't compete with critical resources
         setTimeout(() => {
             ['li-yunshu', 'wang-tie', 'mysterious-elder', 'yan-chixing', 'ling-xue', 'su-qing']
-                .forEach(id => preload(`assets/characters/${id}.png`));
+                .forEach(id => preload(`assets/characters/${id}.jpg`));
         }, 3000);
 
         setTimeout(() => {
@@ -338,9 +338,9 @@ const UI = {
                 `<span class="bond-dot ${i < bondLevel ? 'bond-dot-filled' : ''}">◆</span>`
             ).join('');
             const avatarFile = npc.id.replace(/_/g, '-');
-            const avatarHqSrc = `assets/characters/${avatarFile}.png`;
+            const avatarHqSrc = `assets/characters/${avatarFile}.jpg`;
             div.innerHTML = `
-                <img class="npc-avatar" data-prog="${avatarHqSrc}" alt="${npc.name}" decoding="async" onclick="UI.showAvatarLightbox(this.dataset.prog,'${npc.id}')">
+                <img class="npc-avatar" data-prog="${avatarHqSrc}" alt="${npc.name}" decoding="async" onclick="Gallery.openLightbox('portrait-${npc.id.replace(/_/g, '-')}','portraits')">
                 <div class="npc-info">
                     <div class="npc-header">
                         <span class="npc-name">${npc.name}</span>
@@ -1143,9 +1143,9 @@ const UI = {
                     : `<span class="visit-remain visit-remain-out">今年已达上限</span>`;
             }
             const avatarFile = v.npcId.replace(/_/g, '-');
-            const visitHqSrc = `assets/characters/${avatarFile}.png`;
+            const visitHqSrc = `assets/characters/${avatarFile}.jpg`;
             return `<button class="${cls}" onclick="Engine.visitNPC('${v.npcId}'); UI.visitPanel.style.display='none'">
-                <img class="visit-npc-avatar" data-prog="${visitHqSrc}" alt="${v.npc.name}" decoding="async" onclick="event.stopPropagation();UI.showAvatarLightbox(this.dataset.prog,'${v.npcId}')">
+                <img class="visit-npc-avatar" data-prog="${visitHqSrc}" alt="${v.npc.name}" decoding="async" onclick="event.stopPropagation();Gallery.openLightbox('portrait-${avatarFile}','portraits')">
                 <div class="visit-npc-detail">
                     <span class="visit-npc-name">${v.npc.name}</span>
                     <span class="visit-npc-info">${infoText}</span>
