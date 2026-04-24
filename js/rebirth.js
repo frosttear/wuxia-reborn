@@ -263,6 +263,9 @@ const Rebirth = {
         // Carry peak combat stats forward
         newChar.peakCombatStats = { ...(char.peakCombatStats || { atk: 0, def: 0, hp: 0 }) };
 
+        // Gallery unlocks persist across all lives
+        newChar.unlockedIllustrations = [...(char.unlockedIllustrations || [])];
+
         // Inherit bond levels (世界线记忆)
         newChar.inheritedBonds = Object.assign({}, char.bondLevels);
 
