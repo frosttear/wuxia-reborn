@@ -314,7 +314,7 @@ const Engine = {
             rainy_road: 'journey-dawn',
             old_swordsman: 'journey-dawn',
             deja_vu_road: 'past-life-dream',
-            elder_true_form_appears: 'mysterious-elder-ending',
+            elder_true_form_appears: 'elder-true-form',
             meet_wang_tie:    'wang-tie-meet',
             meet_li_yunshu:   'li-yunshu-meet',
             meet_yan_chixing: 'yan-chixing-meet',
@@ -1508,7 +1508,7 @@ const Engine = {
                 if (lvl >= 5) push(h + '-ending');
             }
             if ((char.rebirthCount || 0) > 0) push('rebirth');
-            if (f.elder_true_form_seen || f.zhushi_chain_done) push('mysterious-elder-ending');
+            if (f.elder_true_form_seen || f.zhushi_chain_done) push('elder-true-form');
             if (f.li_afterstory_done)    push('li-yunshu-afterstory');
             if (f.su_afterstory_done)    push('su-qing-afterstory');
             if (f.lx_afterstory_done)    push('ling-xue-afterstory');

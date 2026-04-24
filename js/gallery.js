@@ -10,7 +10,7 @@ const GALLERY_DATA = [
     // 武道传承
     { id: 'rebirth',                      name: '世界线回溯',           hint: '完成一世旅途，踏入轮回之门',               category: 'martial' },
     { id: 'wuxiang-unlock',               name: '无相剑意',             hint: '完成「无相剑意」任务链',                   category: 'martial' },
-    { id: 'mysterious-elder-ending',      name: '神秘老者·真相',       hint: '与神秘老者羁绊圆满，揭开设计者之谜',       category: 'bonds'   },
+    { id: 'elder-true-form',              name: '设计者显形',           hint: '首次面对轮回的设计者——沈玄清的真实目的浮出水面', category: 'martial' },
     // 传说瞬间
     { id: 'sword-soul-win',               name: '斩破剑魂',             hint: '击败千年剑意——剑魂',                     category: 'bosses'  },
     { id: 'sword-soul-lose',              name: '败于剑意',             hint: '在与剑魂的对决中落败',                     category: 'bosses'  },
@@ -69,6 +69,7 @@ const GALLERY_DATA = [
     { id: 'mysterious-elder-bond-4',     name: '神秘老者·天魔本源',    hint: '刺客围困，他手持茶杯坐定，向你讲述弟子变魔的根源', category: 'bonds' },
     { id: 'mysterious-elder-afterstory', name: '神秘老者·定渊遗剑·铜簪', hint: '老者取出一枚旧铜簪，讲述消失二十年的微尘',  category: 'bonds' },
     { id: 'mysterious-elder-afterstory-ending', name: '神秘老者·定渊遗剑·重逢', hint: '他颤抖的双手将旧铜簪重新别入女儿发间，二十年的分别就此落幕', category: 'bonds' },
+    { id: 'mysterious-elder-ending',      name: '神秘老者·一线天命',   hint: '与神秘老者羁绊圆满',                           category: 'bonds'   },
     // 人物立绘 — src overrides default illustrations/ path; alwaysUnlocked skips lock gate
     { id: 'portrait-player',          name: '主角',       hint: '踏入江湖的无名剑客',         category: 'portraits', src: 'assets/characters/player.jpg',          alwaysUnlocked: true },
     { id: 'portrait-wang-tie',         name: '王铁',       hint: '与王铁相遇后解锁',           category: 'portraits', src: 'assets/characters/wang-tie.jpg'        },
