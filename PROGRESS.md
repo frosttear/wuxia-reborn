@@ -1,6 +1,14 @@
 # 轮回江湖 — 开发进度
 
-## 当前版本：v0.21.61
+## 当前版本：v0.21.62
+
+---
+
+### v0.21.62（2026-04-24）
+
+- 重新压缩 mysterious-elder-ending 插画（新提示词版本，黄昏庭院传承场景）
+- 重写 truth_shards 链 shard_5_confrontation：老者面对五块碎片保持沉默与回避，不再直接告白九百年计划；真相揭示保留给 elder_true_form_appears
+- 修正 truth_shards chain desc、completionReward 叙事、zhushi_zhi_wo chain desc，移除提前剧透的「九百年棋局」措辞
 
 ---
 
