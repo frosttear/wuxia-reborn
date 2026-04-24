@@ -53,6 +53,52 @@ Rules:
 - Newest version at the top, oldest at the bottom
 - `## 🐛 已知问题` section stays at the very bottom
 
+## Illustration Generation
+
+Illustrations are AI-generated via the AI Horde API using `scripts/generate-illustrations.mjs`.
+
+**When to run:** Whenever new gallery entries are added to `js/gallery.js` (new `id` fields in `GALLERY_DATA`), add matching entries with prompts to the `ILLUSTRATIONS` array in the script, then run it.
+
+```bash
+# Generate all missing illustrations (skips existing files automatically)
+node scripts/generate-illustrations.mjs
+
+# Regenerate a specific illustration by id
+node scripts/generate-illustrations.mjs wang-tie-meet
+```
+
+- Output goes to `assets/illustrations/<id>.png`
+- The script polls until each job completes — run in background for large batches
+- Keep prompt style consistent: wuxia, cinematic, Chinese ink painting aesthetic, anime-inspired semi-realistic, midnight blue robed swordsman as protagonist
+- After generation completes, compress before committing (see below)
+
+## Illustration Compression
+
+All illustrations must be stored as JPEG (not PNG). The game code references `assets/illustrations/<id>.jpg`. After adding or updating any PNG illustration, run compression before committing.
+
+```bash
+# Compress all PNGs in assets/illustrations/ (batch)
+node scripts/optimize-illustrations.mjs
+
+# Compress a single illustration by id
+node --input-type=module --eval "
+import sharp from 'sharp';
+import { stat, copyFile } from 'fs/promises';
+const base = 'REPLACE_WITH_ID';
+const src = \`assets/illustrations/\${base}.png\`;
+await copyFile(src, \`assets/illustrations/originals/\${base}.png\`);
+await sharp(src).jpeg({ quality: 85, mozjpeg: true }).toFile(\`assets/illustrations/\${base}.jpg\`);
+await sharp(src).resize({ width: 600, withoutEnlargement: true }).jpeg({ quality: 20, mozjpeg: true }).toFile(\`assets/illustrations/low/\${base}.jpg\`);
+const s = async f => Math.round((await stat(f)).size/1024)+'KB';
+console.log(base+': '+await s(src)+' → HQ '+await s(\`assets/illustrations/\${base}.jpg\`)+', LQ '+await s(\`assets/illustrations/low/\${base}.jpg\`));
+"
+```
+
+- HQ JPEG: quality 85, mozjpeg — typically 50–280 KB (vs 100 KB–2.5 MB for PNG)
+- LQ thumbnail: 600 px wide, quality 20 — 3–15 KB, used as instant placeholder
+- Originals backed up to `assets/illustrations/originals/`
+- Commit: HQ `.jpg`, `low/` thumbnail, and updated `originals/` PNG
+
 ## Workflow
 
 - Always run `npm test` after code changes to verify tests pass
