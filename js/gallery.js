@@ -111,6 +111,7 @@ const Gallery = {
         this._replayPanel = document.getElementById('galleryReplayPanel');
         this._replayTitle = document.getElementById('galleryReplayTitle');
         this._replayLog   = document.getElementById('galleryReplayLog');
+        this._lbStage     = document.getElementById('galleryLbStage');
         document.getElementById('galleryReplayBack').onclick = () => this._closeReplay();
         this._contents = [
             document.getElementById('galleryLbContent0'),
@@ -483,8 +484,18 @@ const Gallery = {
         if (completionNarrative) items.push({ text: completionNarrative, cls: 'narrative' });
         items.push({ text: '── 回想结束 ──', cls: 'sep' });
 
-        // Stream items into log with 300 ms gap
+        // Stream items into log with typewriter effect
         const log = this._replayLog;
+        const typewrite = (el, text, done) => {
+            let j = 0;
+            const tick = () => {
+                el.textContent = text.slice(0, ++j);
+                log.scrollTop = log.scrollHeight;
+                if (j < text.length) setTimeout(tick, 28);
+                else setTimeout(done, 180);
+            };
+            tick();
+        };
         const stream = (i) => {
             if (i >= items.length) return;
             const { text, cls, illId } = items[i];
@@ -495,19 +506,17 @@ const Gallery = {
                 loadProgressiveImg(img, `assets/illustrations/${illId}.jpg`, null);
                 log.appendChild(img);
                 log.scrollTop = log.scrollHeight;
-                setTimeout(() => stream(i + 1), 300);
+                setTimeout(() => stream(i + 1), 400);
                 return;
             }
             const p = document.createElement('p');
             if (cls === 'choice') {
                 p.className = 'log-replay-choice';
             } else if (cls === 'sep') {
-                p.style.cssText = 'color:#555;text-align:center;margin:10px 0;';
+                p.style.cssText = 'color:var(--muted);text-align:center;margin:8px 0;';
             }
-            p.textContent = text;
             log.appendChild(p);
-            log.scrollTop = log.scrollHeight;
-            setTimeout(() => stream(i + 1), 300);
+            typewrite(p, text, () => stream(i + 1));
         };
         stream(0);
     },
@@ -574,7 +583,7 @@ const Gallery = {
     },
 
     _initFlanks() {
-        const dist = (this._slotCenter && this._slotCenter.offsetWidth) || 500;
+        const dist = (this._lbStage && this._lbStage.offsetWidth) || (this._slotCenter && this._slotCenter.offsetWidth) || 500;
         const prevIdx = this._findNextUnlockedFrom(this._lightboxIdx, -1);
         const nextIdx = this._findNextUnlockedFrom(this._lightboxIdx,  1);
         // Assign the two non-center elements to left/right
@@ -627,7 +636,7 @@ const Gallery = {
         const goRight = delta > 0;
         const entering = goRight ? this._slotRight : this._slotLeft;
         const exiting  = this._slotCenter;
-        const dist = exiting.offsetWidth || 500;
+        const dist = (this._lbStage && this._lbStage.offsetWidth) || exiting.offsetWidth || 500;
 
         // Entering must always render on top regardless of DOM order
         entering.style.zIndex = '2';

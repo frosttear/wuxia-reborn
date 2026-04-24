@@ -84,6 +84,32 @@ A solitary Chinese swordswoman in ancient wuxia setting, early 20s, beautiful bu
 
 ---
 
+## 7. Tianmo (天魔) — 魔道宗师
+
+**Filename:** `tianmo.png`
+
+**Character:** The Demon King — a supreme grandmaster of demonic martial arts who has walked the jianghu for decades. Imposing and coldly composed, he has lived through countless world-lines and always waits for the protagonist. His body carries a chronic toxin from decades of practicing the darkest inner arts, yet he remains utterly formidable. Speaks in measured, unhurried sentences — a man who has already seen this scene play out before. No monstrous features; his horror lies in the stillness of someone who considers himself inevitable.
+
+**Prompt:**
+```
+A tall imposing Chinese demonic martial arts grandmaster in ancient wuxia setting, 50-55 years old, long black hair streaked with dark purple worn loose down his back, sharp angular face with high prominent cheekbones, narrow cold eyes the colour of deep ink that carry the weight of having seen everything before, faint dark veins visible at his temples from decades of forbidden inner arts, strong lean build, wearing layered dark grey-black robes with subtle demonic serpent patterns on the wide sleeves and collar edged in deep crimson, hands clasped behind his back in the posture of absolute confidence, standing at the edge of a cliff at dusk with roiling dark clouds behind him and faint wisps of black inner energy coiling at his feet, cool purple-grey and deep crimson tones, Chinese ink painting aesthetic, portrait composition from waist up, anime-inspired semi-realistic style, detailed face, high quality
+```
+
+---
+
+## 8. Sword Spirit (剑魂) — 千年剑意
+
+**Filename:** `sword-spirit.png`
+
+**Character:** A thousand-year-old autonomous consciousness formed when an ancient sword cultivator poured their entire lifetime of sword intent before death, creating the Soul-Devouring Scripture. Has no face, no features — only an overwhelming pure sword qi condensed into a blurry humanoid silhouette. Older than memory, colder than steel. Has consumed countless cultivators' essence across a millennium. Manifests from a shattered jade pendant as a presence that predates the jianghu itself.
+
+**Prompt:**
+```
+A spectral ancient Chinese sword spirit in wuxia setting, a translucent humanoid silhouette with no face and no features, the entire form composed of layered overlapping sword intents rendered as faint luminous silver-white energy lines forming a vaguely human shape, the interior of the form filled with intersecting ghostly blade trajectories from a thousand years of absorbed sword arts, hair-like tendrils of silver sword light flow upward as if weightless, sharp glinting points of cold light where eyes would be, the figure hovering slightly above the ground surrounded by fragments of a shattered pale green jade pendant (玉牌) floating in the air, translucent sword-light emanations radiating outward, icy silver and deep void tones with cold blue-white light, otherworldly and oppressive atmosphere conveying immense age and accumulated killing intent, Chinese ink painting aesthetic, portrait composition from waist up, anime-inspired semi-realistic style, high quality
+```
+
+---
+
 ## 6. Su Qing (苏青) — 游方医者
 
 **Filename:** `su-qing.png`

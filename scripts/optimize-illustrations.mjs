@@ -38,9 +38,9 @@ for (const file of files) {
         .jpeg({ quality: 20, mozjpeg: true })
         .toFile(lowJpg);
 
-    // Thumbnail: max 100px wide, quality 10 — shown first while LQ/HQ load
+    // Thumbnail: fixed 100x133 crop (3:4), quality 10 — shown first while LQ/HQ load
     await sharp(srcPng)
-        .resize({ width: 100, withoutEnlargement: true })
+        .resize({ width: 100, height: 133, fit: 'cover' })
         .jpeg({ quality: 10, mozjpeg: true })
         .toFile(thumbJpg);
 

@@ -769,7 +769,7 @@ const Engine = {
         const displayEvent = {
             id: step.id,
             title: `【${chain.name}】${step.title}`,
-            type: '线索',
+            type: '任务',
             text: step.text
         };
         const allChoices = (step.choices || []).map(c => ({
@@ -811,7 +811,7 @@ const Engine = {
             this.completeChain(chain);
         } else {
             char.chainProgress[chainId] = nextStep;
-            UI.addLog(`📜 【${chain.name}】进度更新——下一节「${chain.steps[nextStep].title}」可在【线索】中继续。`, 'unlock');
+            UI.addLog(`📜 【${chain.name}】进度更新——下一节「${chain.steps[nextStep].title}」可在【任务】中继续。`, 'unlock');
         }
     },
 

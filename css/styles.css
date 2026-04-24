@@ -472,7 +472,7 @@ button:disabled { opacity: 0.4; cursor: not-allowed; }
 .chain-lock-reasons { display: flex; flex-direction: column; gap: 2px; margin-top: 2px; }
 .chain-lock-reason { font-size: 0.68rem; color: rgba(200,175,90,0.85); }
 .chain-enemy-stats { font-size: 0.7rem; color: rgba(220,120,90,0.9); margin-top: 3px; }
-.type-线索 { background: rgba(100,160,220,0.18); color: rgba(140,190,240,0.9); }
+.type-任务 { background: rgba(100,160,220,0.18); color: rgba(140,190,240,0.9); }
 
 /* ─── Combat Overlay ─── */
 .combat-overlay {
@@ -992,10 +992,10 @@ button:disabled { opacity: 0.4; cursor: not-allowed; }
 .gallery-replay-back { align-self: flex-start; margin-bottom: 10px; background: none; border: 1px solid rgba(255,255,255,0.2); color: #aaa; padding: 4px 14px; cursor: pointer; border-radius: 4px; font-size: 0.88em; }
 .gallery-replay-back:hover { border-color: rgba(255,255,255,0.5); color: #fff; }
 .gallery-replay-title { font-size: 0.85em; color: #888; margin-bottom: 10px; text-align: center; letter-spacing: 0.05em; }
-.gallery-replay-log { flex: 1; overflow-y: auto; font-size: 0.92em; line-height: 1.8; }
-.gallery-replay-log p { margin: 6px 0; color: #ccc; }
+.gallery-replay-log { flex: 1; overflow-y: auto; font-size: 0.85rem; line-height: 1.65; display: flex; flex-direction: column; gap: 6px; padding-bottom: 12px; }
+.gallery-replay-log p { margin: 0; color: var(--text); }
 .gallery-replay-illustration { width: 100%; max-width: 480px; border-radius: 6px; display: block; margin: 12px auto 16px; border: 1px solid var(--border); }
-.log-replay-choice { color: #555 !important; font-style: italic; padding-left: 1em; }
+.log-replay-choice { color: var(--muted) !important; font-style: italic; padding-left: 1em; }
 .log-replay-choice::before { content: "▷ "; }
 
 @media (max-width: 768px) {
