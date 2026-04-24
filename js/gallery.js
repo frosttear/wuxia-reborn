@@ -563,7 +563,7 @@ const Gallery = {
         const id = this._lightboxItems[idx];
         const meta = GALLERY_DATA.find(d => d.id === id) || { name: id, hint: '', category: 'scenes' };
         const hqSrc = meta.src || `assets/illustrations/${id}.jpg`;
-        loadProgressiveImg(el.querySelector('.gallery-lb-img'), hqSrc, 'assets/illustrations/placeholder.svg');
+        loadProgressiveImg(el.querySelector('.gallery-lb-img'), hqSrc, 'assets/illustrations/placeholder.svg', { skipThumb: true });
         el.querySelector('.gallery-lb-name').textContent = meta.name;
         el.querySelector('.gallery-lb-category').textContent = CATEGORY_LABELS[meta.category] || '';
         el.querySelector('.gallery-lb-hint').textContent = meta.hint;

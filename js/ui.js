@@ -1,9 +1,10 @@
 // ui.js - UI rendering and DOM management
 
-// Three-tier progressive loading: thumbnail (~1KB) → LQ (~10KB) → HQ (~200KB).
+// Three-tier progressive loading: thumbnail → LQ → HQ.
 // LQ and HQ probed simultaneously; whichever arrives first wins its tier.
+// skipThumb: skip thumbnail stage (use in lightbox — thumbnail crop may differ from HQ aspect ratio).
 // fallbackSrc: shown on total failure; null hides the element.
-function loadProgressiveImg(img, hqSrc, fallbackSrc) {
+function loadProgressiveImg(img, hqSrc, fallbackSrc, { skipThumb = false } = {}) {
     const thumbSrc = hqSrc.replace(/(assets\/[^/]+\/)([^/]+)\.\w+$/, '$1thumbnail/$2.jpg');
     const lowSrc   = hqSrc.replace(/(assets\/[^/]+\/)([^/]+)\.\w+$/, '$1low/$2.jpg');
     // Cancel any in-flight probes so a reused element never shows a stale image
@@ -16,15 +17,20 @@ function loadProgressiveImg(img, hqSrc, fallbackSrc) {
         if (fallbackSrc) { img.src = fallbackSrc; img.classList.remove('img-lq'); }
         else img.style.display = 'none';
     };
-    // Stage 1: show thumbnail immediately (tiny, loads even on 2G)
-    img.src = thumbSrc;
+    // Stage 1: thumbnail — skip in lightbox to avoid aspect-ratio mismatch flash
+    if (!skipThumb) img.src = thumbSrc;
+    // Swap src only after probe is decoded to avoid blank-frame flash
+    const swap = (probe, src, done) => {
+        const apply = () => { img.src = src; if (done) { img.classList.remove('img-lq'); } img.onerror = null; };
+        (probe.decode ? probe.decode().catch(() => {}) : Promise.resolve()).then(apply);
+    };
     // Stage 2: probe LQ — upgrade from thumbnail as soon as it arrives
     const lqProbe = new Image();
     img._lqProbe = lqProbe;
     lqProbe.onload = () => {
         if (img._lqProbe !== lqProbe) return;
         img._lqProbe = null;
-        if (!img._hqDone) { img.src = lowSrc; img.onerror = null; }
+        if (!img._hqDone) swap(lqProbe, lowSrc, false);
     };
     lqProbe.src = lowSrc;
     // Stage 3: probe HQ in parallel — upgrade whenever it arrives
@@ -34,9 +40,7 @@ function loadProgressiveImg(img, hqSrc, fallbackSrc) {
         if (img._hqProbe !== hqProbe) return;
         img._hqProbe = null;
         img._hqDone = true;
-        img.src = hqSrc;
-        img.classList.remove('img-lq');
-        img.onerror = null;
+        swap(hqProbe, hqSrc, true);
     };
     hqProbe.src = hqSrc;
 }
