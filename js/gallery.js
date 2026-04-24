@@ -69,7 +69,7 @@ const GALLERY_DATA = [
     { id: 'mysterious-elder-afterstory', name: '神秘老者·定渊遗剑·铜簪', hint: '老者取出一枚旧铜簪，讲述消失二十年的微尘',  category: 'bonds' },
     { id: 'mysterious-elder-afterstory-ending', name: '神秘老者·定渊遗剑·重逢', hint: '他颤抖的双手将旧铜簪重新别入女儿发间，二十年的分别就此落幕', category: 'bonds' },
     // 人物立绘 — src overrides default illustrations/ path; alwaysUnlocked skips lock gate
-    { id: 'portrait-player',          name: '主角',       hint: '踏入江湖的无名剑客',         category: 'portraits', src: 'assets/characters/player.png',          alwaysUnlocked: true },
+    { id: 'portrait-player',          name: '主角',       hint: '踏入江湖的无名剑客',         category: 'portraits', src: 'assets/characters/player.jpg',          alwaysUnlocked: true },
     { id: 'portrait-wang-tie',        name: '王铁',       hint: '三十年走镖的老镖师',         category: 'portraits', src: 'assets/characters/wang-tie.jpg',        alwaysUnlocked: true },
     { id: 'portrait-li-yunshu',       name: '李云舒',     hint: '梅影剑传人，游侠女剑客',     category: 'portraits', src: 'assets/characters/li-yunshu.jpg',       alwaysUnlocked: true },
     { id: 'portrait-yan-chixing',     name: '燕赤行',     hint: '含光门唯一幸存者，疤脸剑客', category: 'portraits', src: 'assets/characters/yan-chixing.jpg',     alwaysUnlocked: true },

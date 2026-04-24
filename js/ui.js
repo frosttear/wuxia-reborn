@@ -37,7 +37,7 @@ const UI = {
     showPlayerLightbox() {
         const lb = document.getElementById('avatarLightbox');
         const ver = document.querySelector('link[rel=stylesheet]')?.href.match(/v=([^&"]+)/)?.[1];
-        const playerSrc = `assets/characters/player.png${ver ? '?v=' + ver : ''}`;
+        const playerSrc = `assets/characters/player.jpg${ver ? '?v=' + ver : ''}`;
         loadProgressiveImg(document.getElementById('avatarLightboxImg'), playerSrc, null);
 
         const { char, jobs } = Engine.state;
@@ -143,7 +143,7 @@ const UI = {
 
         // Player portrait: versioned URL bypasses all caches when version bumps
         const ver = document.querySelector('link[rel=stylesheet]')?.href.match(/v=([^&"]+)/)?.[1];
-        const playerSrc = `assets/characters/player.png${ver ? '?v=' + ver : ''}`;
+        const playerSrc = `assets/characters/player.jpg${ver ? '?v=' + ver : ''}`;
         const playerEl = document.querySelector('.player-avatar');
         if (playerEl) {
             playerEl.src = playerSrc;

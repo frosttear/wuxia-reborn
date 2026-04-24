@@ -1,6 +1,13 @@
 # 轮回江湖 — 开发进度
 
-## 当前版本：v0.21.39
+## 当前版本：v0.21.40
+
+---
+
+### v0.21.40（2026-04-24）
+
+- 压缩主角立绘至 JPEG（player.jpg）
+- 消除代码中所有 .png 引用（ui.js 两处 player、gallery.js portrait-player），全部改为 .jpg
 
 ---
 
