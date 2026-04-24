@@ -183,6 +183,22 @@ const Gallery = {
         return (char && char.unlockedIllustrations) || [];
     },
 
+    _unlockCondition(item) {
+        const id = item.id;
+        const npcName = npcId => {
+            const portrait = GALLERY_DATA.find(d => d.id === 'portrait-' + npcId);
+            return portrait ? portrait.name : npcId;
+        };
+        let m;
+        if ((m = id.match(/^portrait-(.+)$/)))            return `与${npcName(m[1])}相遇后解锁`;
+        if ((m = id.match(/^(.+)-meet$/)))               return `与${npcName(m[1])}初遇后解锁`;
+        if ((m = id.match(/^(.+)-afterstory-ending$/)))  return `完成${npcName(m[1])}后日谈后解锁`;
+        if ((m = id.match(/^(.+)-afterstory$/)))         return `开启${npcName(m[1])}后日谈后解锁`;
+        if ((m = id.match(/^(.+)-ending$/)))             return `${npcName(m[1])}羁绊圆满后解锁`;
+        if ((m = id.match(/^(.+)-bond-(\d+)$/)))         return `达成${npcName(m[1])}第${m[2]}章羁绊后解锁`;
+        return item.hint;
+    },
+
     _isUnlocked(d, unlocked) {
         if (d.alwaysUnlocked) return true;
         if (unlocked.includes(d.id)) return true;
@@ -259,7 +275,7 @@ const Gallery = {
 
                 const hint = document.createElement('div');
                 hint.className = 'gallery-card-hint';
-                hint.textContent = item.hint;
+                hint.textContent = this._unlockCondition(item);
                 inner.appendChild(hint);
 
                 card.onclick = () => {
