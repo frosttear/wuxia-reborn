@@ -8,9 +8,9 @@ const GALLERY_DATA = [
     { id: 'temple-visit',                 name: '庙中拜神',             hint: '于古刹中敬香，感悟天地之道',               category: 'scenes'  },
     { id: 'past-life-dream',              name: '前世梦境',             hint: '梦境与现实交织，往世记忆浮现',             category: 'scenes'  },
     // 武道传承
-    { id: 'rebirth',                      name: '世界线回溯',           hint: '完成一世旅途，踏入轮回之门',               category: 'martial' },
-    { id: 'wuxiang-unlock',               name: '无相剑意',             hint: '完成「无相剑意」任务链',                   category: 'martial' },
-    { id: 'elder-true-form',              name: '设计者显形',           hint: '首次面对轮回的设计者——沈玄清的真实目的浮出水面', category: 'martial', secret: true },
+    { id: 'rebirth',                      name: '世界线回溯',           hint: '完成一世旅途，踏入轮回之门',               category: 'bosses' },
+    { id: 'wuxiang-unlock',               name: '无相剑意',             hint: '完成「无相剑意」任务链',                   category: 'bosses' },
+    { id: 'elder-true-form',              name: '设计者显形',           hint: '首次面对轮回的设计者——沈玄清的真实目的浮出水面', category: 'bosses', secret: true },
     // 传说瞬间
     { id: 'sword-soul-win',               name: '斩破剑魂',             hint: '击败千年剑意——剑魂',                     category: 'bosses'  },
     { id: 'sword-soul-lose',              name: '败于剑意',             hint: '在与剑魂的对决中落败',                     category: 'bosses'  },
@@ -82,12 +82,11 @@ const GALLERY_DATA = [
 
 const CATEGORY_LABELS = {
     scenes:   '江湖奇遇',
-    martial:  '武道传承',
     bosses:   '传说瞬间',
     bonds:    '羁绊情缘',
     portraits: '人物立绘',
 };
-const CATEGORY_ORDER = ['scenes', 'martial', 'bosses', 'bonds', 'portraits'];
+const CATEGORY_ORDER = ['scenes', 'bosses', 'bonds', 'portraits'];
 
 const Gallery = {
     _activeTab: 'scenes',
