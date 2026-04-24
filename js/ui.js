@@ -125,6 +125,13 @@ const UI = {
         this.logBuffer = [];
         this._preloadAvatars();
         if (typeof Gallery !== 'undefined') Gallery.init();
+
+        // Prevent pinch-to-zoom everywhere except the gallery lightbox
+        document.addEventListener('touchstart', e => {
+            if (e.touches.length > 1 && !e.target.closest('#galleryLightbox')) {
+                e.preventDefault();
+            }
+        }, { passive: false });
     },
 
     _preloadAvatars() {
