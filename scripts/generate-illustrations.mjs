@@ -306,6 +306,16 @@ const ILLUSTRATIONS = [
 
   // ── 神秘老者 / Mysterious Elder ──
   {
+    id: "mysterious-elder-bond-1",
+    name: "神秘老者 — 第一章",
+    prompt: `Wuxia first-encounter scene in a busy teahouse corner made strangely quiet. A very old white-haired sage sits alone at a corner table with a tea cup, his presence creating a small island of stillness amid the surrounding noise. He turns his palm upward across the table, showing ${CHAR.player} a star-shaped burn scar on his palm — ancient, deep, and unlike any wound from ordinary practice. His expression is calm and unreadable, the faintest trace of a smile on his lips as if confirming something long expected. The teahouse crowd blurs in the warm background. Wide cinematic composition, Chinese ink painting aesthetic, warm amber lantern light and deep shadow tones, atmosphere of quiet mystery and hidden depth, anime-inspired semi-realistic art, high quality detailed scene.`,
+  },
+  {
+    id: "mysterious-elder-bond-2",
+    name: "神秘老者 — 第二章",
+    prompt: `Intimate wuxia cultivation guidance scene in a sparse mountain clearing at dusk. A very old white-haired sage (沈玄清) kneels beside ${CHAR.player}, one aged hand resting lightly on the player's back — guiding inner force along disrupted meridians with extreme precision and care. The elder's expression is concentrated and grave, the weight of his decades of experience visible in the steadiness of his hands. The clearing is simple: bare ground, a few stones, the last light of evening fading through sparse pines. Wide cinematic composition, Chinese ink painting aesthetic, cool dusk grey and fading amber tones, atmosphere of painstaking mentorship and quiet trust, anime-inspired semi-realistic art, high quality detailed scene.`,
+  },
+  {
     id: "mysterious-elder-ending",
     name: "神秘老者 — 一线天命",
     prompt: "Serene wuxia scene at the break of dawn, a young Chinese male swordsman and a very old white-haired sage (沈玄清) sitting together on a cliff edge facing the rising sun, a softly glowing shattered jade pendant floating between them, both figures silent and at peace after a long night of trials, the vast misty mountains below, first light touching the clouds turning them gold, the jade pendant radiating a faint warm light as if something ancient has finally accepted its fate, wide cinematic composition, Chinese ink painting aesthetic with pale dawn gold and deep indigo tones, transcendent serene atmosphere, anime-inspired semi-realistic art, high quality detailed scene"
