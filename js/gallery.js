@@ -278,10 +278,16 @@ const Gallery = {
         if (this._lightboxIdx < 0) this._lightboxIdx = 0;
         this._renderLightbox();
         this._lightbox.classList.add('active');
+        // Allow pinch-zoom inside lightbox (some browsers respect maximum-scale)
+        const meta = document.querySelector('meta[name="viewport"]');
+        if (meta) meta.content = 'width=device-width, initial-scale=1.0, maximum-scale=5.0';
     },
 
     closeLightbox() {
         if (this._lightbox) this._lightbox.classList.remove('active');
+        // Snap viewport zoom back to 1.0 by constraining maximum-scale
+        const meta = document.querySelector('meta[name="viewport"]');
+        if (meta) meta.content = 'width=device-width, initial-scale=1.0, maximum-scale=1.0';
     },
 
     navigateLightbox(delta) {
