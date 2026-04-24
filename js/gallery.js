@@ -274,8 +274,12 @@ const Gallery = {
 
             const img = document.createElement('img');
             img.alt = item.name;
-            const hqSrc = item.src || `assets/illustrations/${item.id}.jpg`;
-            loadProgressiveImg(img, hqSrc, 'assets/illustrations/placeholder.svg');
+            if (isUnlocked) {
+                const hqSrc = item.src || `assets/illustrations/${item.id}.jpg`;
+                loadProgressiveImg(img, hqSrc, 'assets/illustrations/placeholder.svg');
+            } else {
+                img.src = 'assets/illustrations/placeholder.svg';
+            }
             inner.appendChild(img);
 
             if (!isUnlocked) {

@@ -302,11 +302,9 @@ const Rebirth = {
 
     // Get a summary text for the rebirth screen
     getSummaryText(char, jobs, bonds, npcs) {
-        const years = Character.getAgeYears(char);
         const jobData = jobs && jobs.find(j => j.id === char.job);
         const jobName = jobData ? jobData.name : char.job;
         const lines = [
-            `你在这条世界线上活了 ${years} 岁，走完了这一世的旅程。`,
             `最终职业：${jobName}`,
             `力量 ${char.attributes.strength} | 敏捷 ${char.attributes.agility} | 体质 ${char.attributes.constitution}`,
             `内力 ${char.attributes.innerForce} | 悟性 ${char.attributes.comprehension} | 声望 ${char.attributes.reputation}`

@@ -1350,10 +1350,28 @@ const Engine = {
                 }, 2500);
                 return;
             }
-            // Normal hidden boss true ending
+            // 剑魂 defeated but 无相剑意 not mastered — designer forces another cycle
             this.state.gamePhase = 'victory';
             this.stopAuto();
-            UI.showVictoryScreen(char, this.state.jobs, this.state.bonds, this.state.npcs);
+            this.saveGame();
+            UI.addLog('────────────────────', 'system');
+            UI.addLog('剑意化为飞灰，玉牌归于沉寂。江湖再无腥风血雨。', 'win');
+            UI.addLog('消息传遍四方，百姓称颂，江湖称奇。你站在山巅，望着这片久违的宁静，心想——这一世，或许算是圆满了。', 'system');
+            UI.updateControls(this.state);
+            setTimeout(() => {
+                UI.addLog('────────────────────', 'system');
+                UI.addLog('就在这片宁静之中，胸口的双鱼玉牌忽然震动。', 'system');
+                UI.addLog('那道门——轮回之门——再次打开了。', 'system');
+                UI.addLog('你愕然转身。虚空中，一位老者的轮廓缓缓成形，眉目依稀熟悉，神情却比任何时候都要沉重。', 'system');
+                UI.addLog('「你杀了剑魂，」他说，声音平静，「但剑魂守护的那道门，你并未推开。」', 'system');
+                UI.addLog('「无相剑意。那是这枚玉牌最后封存的东西——不是剑法，而是一种领悟。」他顿了顿，「只有亲历者，才能将它传承下去。而你……错过了它。」', 'system');
+                UI.addLog('「只要这道剑意还未传承，轮回便不会终止。」他的眼神里没有歉意，「这不是我的意志，是这个世界运行的法则。」', 'system');
+                UI.addLog('你想开口，却发现喉咙无法发声。白光从玉牌中涌出，漫过双眼，将这片山河一点一点淹没。', 'lose');
+                UI.addLog('「再去一次吧。」他的声音从渐渐遥远的虚空传来，「这次，找到那道门。」', 'system');
+                setTimeout(() => {
+                    this.triggerDeath('wuxiang_incomplete');
+                }, 3500);
+            }, 3500);
             return;
         }
 
