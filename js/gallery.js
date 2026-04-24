@@ -58,7 +58,7 @@ const GALLERY_DATA = [
     { id: 'ling-xue-bond-2',             name: '凌雪·夜雨论道',       hint: '夜雨中，她首次流露出对「唯强者方能改变」的疑惑', category: 'bonds' },
     { id: 'ling-xue-bond-3',             name: '凌雪·白雪留痕',       hint: '她主动找来，第一次开口指点你练剑',         category: 'bonds'   },
     { id: 'ling-xue-bond-4',             name: '凌雪·刃下真言',       hint: '她以天魔门首席弟子身份来见，随即选择叛出', category: 'bonds'   },
-    { id: 'ling-xue-ending',             name: '凌雪·凌霜剑域',       hint: '与凌雪羁绊圆满',                           category: 'bonds'   },
+    { id: 'ling-xue-ending',             name: '凌雪·凌霜剑域',       hint: '冻原风雪中，两把剑并肩而立——不需要回头，也知道彼此不会退。', category: 'bonds' },
     { id: 'ling-xue-afterstory',         name: '凌雪·凌霜化雪·追杀',  hint: '天魔门追杀令至，她看了一眼，平静开口：来了', category: 'bonds' },
     { id: 'ling-xue-afterstory-ending',  name: '凌雪·凌霜化雪·自由',  hint: '追杀令碎成漫天白纸，随风而散——从今天起，我只是凌雪', category: 'bonds' },
     // 羁绊情缘 — 神秘老者
