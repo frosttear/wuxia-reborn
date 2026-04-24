@@ -1,6 +1,25 @@
 # 轮回江湖 — 开发进度
 
-## 当前版本：v0.21.70
+## 当前版本：v0.21.72
+
+---
+
+### v0.21.72（2026-04-25）
+
+**三级渐进式图片加载**
+- 新增 thumbnail 层（100px, quality 10, ~0.5KB）：图片显示立即加载缩略图，LQ 和 HQ 同步并行探测，谁先到谁先显示
+- `loadProgressiveImg` 升级为三阶段：thumbnail → LQ → HQ，`_hqDone` 标志防止 HQ 加载完成后 LQ 覆盖
+- `optimize-illustrations.mjs` 新增 thumbnail 输出，同步生成全部 60 张插画及 7 张立绘缩略图
+- 更新 CLAUDE.md 记录三层目录结构及单张压缩命令
+
+---
+
+### v0.21.71（2026-04-25）
+
+**插画与 UI**
+- 剧情回想中自动在叙事文本前插入对应章节插图（羁绊章节取 `{npc}-bond-{level}.jpg`）
+- 轮回界面插图放大（max-width 480→680px）
+- 燕赤行全套插画（meet/bond×4/ending/afterstory/afterstory-ending）及立绘压缩入库
 
 ---
 

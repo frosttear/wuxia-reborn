@@ -1,24 +1,39 @@
 // ui.js - UI rendering and DOM management
 
-// Progressive loading: show LQ thumbnail immediately, swap to HQ when ready.
-// Placeholder shown only if LQ itself fails (image truly missing).
+// Three-tier progressive loading: thumbnail (~1KB) → LQ (~10KB) → HQ (~200KB).
+// LQ and HQ probed simultaneously; whichever arrives first wins its tier.
 // fallbackSrc: shown on total failure; null hides the element.
 function loadProgressiveImg(img, hqSrc, fallbackSrc) {
-    const lowSrc = hqSrc.replace(/(assets\/[^/]+\/)([^/]+)\.\w+$/, '$1low/$2.jpg');
-    // Cancel any in-flight HQ probe so a reused element never shows a stale image
+    const thumbSrc = hqSrc.replace(/(assets\/[^/]+\/)([^/]+)\.\w+$/, '$1thumbnail/$2.jpg');
+    const lowSrc   = hqSrc.replace(/(assets\/[^/]+\/)([^/]+)\.\w+$/, '$1low/$2.jpg');
+    // Cancel any in-flight probes so a reused element never shows a stale image
     if (img._hqProbe) { img._hqProbe.onload = null; img._hqProbe = null; }
+    if (img._lqProbe) { img._lqProbe.onload = null; img._lqProbe = null; }
+    img._hqDone = false;
     img.classList.add('img-lq');
     img.onerror = () => {
         img.onerror = null;
         if (fallbackSrc) { img.src = fallbackSrc; img.classList.remove('img-lq'); }
         else img.style.display = 'none';
     };
-    img.src = lowSrc;
+    // Stage 1: show thumbnail immediately (tiny, loads even on 2G)
+    img.src = thumbSrc;
+    // Stage 2: probe LQ — upgrade from thumbnail as soon as it arrives
+    const lqProbe = new Image();
+    img._lqProbe = lqProbe;
+    lqProbe.onload = () => {
+        if (img._lqProbe !== lqProbe) return;
+        img._lqProbe = null;
+        if (!img._hqDone) { img.src = lowSrc; img.onerror = null; }
+    };
+    lqProbe.src = lowSrc;
+    // Stage 3: probe HQ in parallel — upgrade whenever it arrives
     const hqProbe = new Image();
     img._hqProbe = hqProbe;
     hqProbe.onload = () => {
-        if (img._hqProbe !== hqProbe) return; // stale probe — a newer call took over
+        if (img._hqProbe !== hqProbe) return;
         img._hqProbe = null;
+        img._hqDone = true;
         img.src = hqSrc;
         img.classList.remove('img-lq');
         img.onerror = null;

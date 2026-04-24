@@ -450,9 +450,19 @@ const Gallery = {
             }
         }
 
+        // Derive illustration ID: bonds follow predictable pattern; chains check GALLERY_DATA
+        let illId = null;
+        if (type === 'bond') {
+            illId = id.replace(/_/g, '-') + '-bond-' + level;
+        } else {
+            const kebab = id.replace(/_/g, '-');
+            if (GALLERY_DATA.find(d => d.id === kebab)) illId = kebab;
+        }
+
         // Build ordered list of {text, cls} items to stream
         const items = [];
         items.push({ text: '── 剧情回想 ──', cls: 'sep' });
+        if (illId) items.push({ cls: 'illustration', illId });
 
         for (const step of steps) {
             const choices = step.choices || [];
@@ -477,7 +487,17 @@ const Gallery = {
         const log = this._replayLog;
         const stream = (i) => {
             if (i >= items.length) return;
-            const { text, cls } = items[i];
+            const { text, cls, illId } = items[i];
+            if (cls === 'illustration') {
+                const img = document.createElement('img');
+                img.className = 'gallery-replay-illustration';
+                img.alt = '';
+                loadProgressiveImg(img, `assets/illustrations/${illId}.jpg`, null);
+                log.appendChild(img);
+                log.scrollTop = log.scrollHeight;
+                setTimeout(() => stream(i + 1), 300);
+                return;
+            }
             const p = document.createElement('p');
             if (cls === 'choice') {
                 p.className = 'log-replay-choice';

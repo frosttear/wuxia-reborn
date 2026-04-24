@@ -76,17 +76,22 @@ node scripts/generate-illustrations.mjs wang-tie-meet
 
 All illustrations are stored as JPEG. The game code references `assets/illustrations/<id>.jpg`.
 
-**Folder layout:**
+**Folder layout (three-tier progressive loading):**
 ```
-assets/illustrations/origins/   ← put raw PNG files here (source of truth)
-assets/illustrations/<id>.jpg   ← compressed HQ output (committed)
-assets/illustrations/low/<id>.jpg ← LQ thumbnail output (committed)
+assets/illustrations/origins/<id>.png        ← raw PNG source of truth
+assets/illustrations/<id>.jpg                ← HQ output (quality 85)
+assets/illustrations/low/<id>.jpg            ← LQ output (600px, quality 20)
+assets/illustrations/thumbnail/<id>.jpg      ← thumbnail (~100px, quality 10, ~0.5KB)
 ```
+
+Loading order: thumbnail → low → HQ (LQ and HQ probed simultaneously; fastest wins).
+
+Same three-tier layout applies to character portraits under `assets/characters/`.
 
 **Workflow:** drop the PNG into `origins/`, then compress:
 
 ```bash
-# Compress all PNGs in origins/ (batch — safe to re-run, overwrites output)
+# Compress all PNGs in origins/ — outputs all three tiers (safe to re-run)
 node scripts/optimize-illustrations.mjs
 
 # Compress a single illustration by id (PNG must be in origins/)
@@ -97,14 +102,16 @@ const base = 'REPLACE_WITH_ID';
 const src = \`assets/illustrations/origins/\${base}.png\`;
 await sharp(src).jpeg({ quality: 85, mozjpeg: true }).toFile(\`assets/illustrations/\${base}.jpg\`);
 await sharp(src).resize({ width: 600, withoutEnlargement: true }).jpeg({ quality: 20, mozjpeg: true }).toFile(\`assets/illustrations/low/\${base}.jpg\`);
+await sharp(src).resize({ width: 100, withoutEnlargement: true }).jpeg({ quality: 10, mozjpeg: true }).toFile(\`assets/illustrations/thumbnail/\${base}.jpg\`);
 const s = async f => Math.round((await stat(f)).size/1024)+'KB';
-console.log(base+': '+await s(src)+' → HQ '+await s(\`assets/illustrations/\${base}.jpg\`)+', LQ '+await s(\`assets/illustrations/low/\${base}.jpg\`));
+console.log(base+': HQ '+await s(\`assets/illustrations/\${base}.jpg\`)+', LQ '+await s(\`assets/illustrations/low/\${base}.jpg\`)+', thumb '+await s(\`assets/illustrations/thumbnail/\${base}.jpg\`));
 "
 ```
 
-- HQ JPEG: quality 85, mozjpeg — typically 50–280 KB (vs 100 KB–2.5 MB for PNG)
-- LQ thumbnail: 600 px wide, quality 20 — 3–15 KB, used as instant placeholder
-- Commit: `origins/<id>.png`, HQ `.jpg`, and `low/<id>.jpg`
+- HQ JPEG: quality 85, mozjpeg — typically 50–280 KB
+- LQ: 600 px wide, quality 20 — 3–15 KB
+- Thumbnail: 100 px wide, quality 10 — ~0.5 KB, shown instantly while LQ/HQ load
+- Commit: `origins/<id>.png`, HQ `.jpg`, `low/<id>.jpg`, and `thumbnail/<id>.jpg`
 
 ## Workflow
 
