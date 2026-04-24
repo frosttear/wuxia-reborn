@@ -5,8 +5,8 @@
 // fallbackSrc: shown on total failure; null hides the element.
 function loadProgressiveImg(img, hqSrc, fallbackSrc) {
     const lowSrc = hqSrc.replace(/(assets\/[^/]+\/)([^/]+)\.\w+$/, '$1low/$2.jpg');
-
-    // Show LQ immediately while HQ loads in the background
+    // Cancel any in-flight HQ probe so a reused element never shows a stale image
+    if (img._hqProbe) { img._hqProbe.onload = null; img._hqProbe = null; }
     img.classList.add('img-lq');
     img.onerror = () => {
         img.onerror = null;
@@ -14,9 +14,11 @@ function loadProgressiveImg(img, hqSrc, fallbackSrc) {
         else img.style.display = 'none';
     };
     img.src = lowSrc;
-
     const hqProbe = new Image();
+    img._hqProbe = hqProbe;
     hqProbe.onload = () => {
+        if (img._hqProbe !== hqProbe) return; // stale probe — a newer call took over
+        img._hqProbe = null;
         img.src = hqSrc;
         img.classList.remove('img-lq');
         img.onerror = null;

@@ -108,8 +108,8 @@ const Gallery = {
                 if (this._overlay  && this._overlay.classList.contains('active'))  this.close();
             }
             if (this._lightbox && this._lightbox.classList.contains('active')) {
-                if (e.key === 'ArrowLeft')  this.navigateLightbox(-1);
-                if (e.key === 'ArrowRight') this.navigateLightbox(1);
+                if (e.key === 'ArrowLeft')  this.navigateLightboxAnimated(-1);
+                if (e.key === 'ArrowRight') this.navigateLightboxAnimated(1);
             }
         });
 
@@ -320,31 +320,59 @@ const Gallery = {
 
     openLightbox(id, category) {
         const cat = category || this._activeTab;
-        const unlocked = this._getUnlocked();
+        // Include all items so navigation order reflects the full gallery sequence;
+        // locked items are skipped automatically during navigation.
         this._lightboxItems = GALLERY_DATA
-            .filter(d => d.category === cat && this._isUnlocked(d, unlocked))
+            .filter(d => d.category === cat)
             .map(d => d.id);
         this._lightboxIdx = this._lightboxItems.indexOf(id);
         if (this._lightboxIdx < 0) return;
         this._renderLightbox();
         this._lightbox.classList.add('active');
-        // Allow pinch-zoom inside lightbox (some browsers respect maximum-scale)
         const meta = document.querySelector('meta[name="viewport"]');
         if (meta) meta.content = 'width=device-width, initial-scale=1.0, maximum-scale=5.0';
     },
 
     closeLightbox() {
         if (this._lightbox) this._lightbox.classList.remove('active');
-        // Snap viewport zoom back to 1.0 by constraining maximum-scale
         const meta = document.querySelector('meta[name="viewport"]');
         if (meta) meta.content = 'width=device-width, initial-scale=1.0, maximum-scale=1.0';
     },
 
+    _findNextUnlocked(delta) {
+        const unlocked = this._getUnlocked();
+        let i = this._lightboxIdx + delta;
+        while (i >= 0 && i < this._lightboxItems.length) {
+            const d = GALLERY_DATA.find(x => x.id === this._lightboxItems[i]);
+            if (d && this._isUnlocked(d, unlocked)) return i;
+            i += delta;
+        }
+        return -1;
+    },
+
     navigateLightbox(delta) {
-        const next = this._lightboxIdx + delta;
-        if (next < 0 || next >= this._lightboxItems.length) return;
+        const next = this._findNextUnlocked(delta);
+        if (next < 0) return;
         this._lightboxIdx = next;
         this._renderLightbox();
+    },
+
+    navigateLightboxAnimated(delta) {
+        if (this._findNextUnlocked(delta) < 0) return;
+        const lbContent = this._lightbox && this._lightbox.querySelector('.gallery-lb-content');
+        if (!lbContent) { this.navigateLightbox(delta); return; }
+        const exitX = delta > 0 ? -window.innerWidth : window.innerWidth;
+        lbContent.style.transition = 'transform 0.22s ease';
+        lbContent.style.transform = `translateX(${exitX}px)`;
+        setTimeout(() => {
+            this.navigateLightbox(delta);
+            lbContent.style.transition = 'none';
+            lbContent.style.transform = `translateX(${-exitX}px)`;
+            requestAnimationFrame(() => requestAnimationFrame(() => {
+                lbContent.style.transition = 'transform 0.22s ease';
+                lbContent.style.transform = '';
+            }));
+        }, 220);
     },
 
     _renderLightbox() {
@@ -359,8 +387,8 @@ const Gallery = {
 
         const prev = document.getElementById('galleryLbPrev');
         const next = document.getElementById('galleryLbNext');
-        if (prev) prev.disabled = this._lightboxIdx === 0;
-        if (next) next.disabled = this._lightboxIdx === this._lightboxItems.length - 1;
+        if (prev) prev.disabled = this._findNextUnlocked(-1) < 0;
+        if (next) next.disabled = this._findNextUnlocked(1) < 0;
     },
 };
 
