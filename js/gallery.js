@@ -72,12 +72,12 @@ const GALLERY_DATA = [
     { id: 'mysterious-elder-ending',      name: '神秘老者·一线天命',   hint: '与神秘老者羁绊圆满',                           category: 'bonds'   },
     // 人物立绘 — src overrides default illustrations/ path; alwaysUnlocked skips lock gate
     { id: 'portrait-player',          name: '主角',       hint: '踏入江湖的无名剑客',         category: 'portraits', src: 'assets/characters/player.jpg',          alwaysUnlocked: true },
-    { id: 'portrait-wang-tie',         name: '王铁',       hint: '与王铁相遇后解锁',           category: 'portraits', src: 'assets/characters/wang-tie.jpg'        },
-    { id: 'portrait-li-yunshu',        name: '李云舒',     hint: '与李云舒相遇后解锁',         category: 'portraits', src: 'assets/characters/li-yunshu.jpg'       },
-    { id: 'portrait-yan-chixing',      name: '燕赤行',     hint: '与燕赤行相遇后解锁',         category: 'portraits', src: 'assets/characters/yan-chixing.jpg'     },
-    { id: 'portrait-su-qing',          name: '苏青',       hint: '与苏青相遇后解锁',           category: 'portraits', src: 'assets/characters/su-qing.jpg'         },
-    { id: 'portrait-ling-xue',         name: '凌雪',       hint: '与凌雪相遇后解锁',           category: 'portraits', src: 'assets/characters/ling-xue.jpg'        },
-    { id: 'portrait-mysterious-elder', name: '神秘老者',   hint: '与神秘老者相遇后解锁',       category: 'portraits', src: 'assets/characters/mysterious-elder.jpg'},
+    { id: 'portrait-wang-tie',         name: '王铁',       hint: '走江湖数十年的老侠客，刀法刚猛，心怀义气。',                           category: 'portraits', src: 'assets/characters/wang-tie.jpg'        },
+    { id: 'portrait-li-yunshu',        name: '李云舒',     hint: '性情明烈的年轻女侠，亡母的梅影剑法由她一人传承。',                       category: 'portraits', src: 'assets/characters/li-yunshu.jpg'       },
+    { id: 'portrait-yan-chixing',      name: '燕赤行',     hint: '左颊一道深疤，冷眼看江湖，刀光里藏着不轻易示人的过去。',               category: 'portraits', src: 'assets/characters/yan-chixing.jpg'     },
+    { id: 'portrait-su-qing',          name: '苏青',       hint: '背着药箱走山路的女医者，眼神温柔，眉间总带着一丝淡淡的忧愁。',         category: 'portraits', src: 'assets/characters/su-qing.jpg'         },
+    { id: 'portrait-ling-xue',         name: '凌雪',       hint: '白衣剑客，出手如霜，来历成谜——她从不多说，也从不久留。',               category: 'portraits', src: 'assets/characters/ling-xue.jpg'        },
+    { id: 'portrait-mysterious-elder', name: '神秘老者',   hint: '年岁极深却脊背笔直，眼神平静得像早已看见了结局。',                     category: 'portraits', src: 'assets/characters/mysterious-elder.jpg'},
 ];
 
 const CATEGORY_LABELS = {
