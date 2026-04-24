@@ -1,6 +1,15 @@
 # 轮回江湖 — 开发进度
 
-## 当前版本：v0.22.0
+## 当前版本：v0.22.1
+
+---
+
+### v0.22.1（2026-04-25）
+
+**图鉴与资源**
+- 新增「天魔与剑魂」插画（`tianmo-and-jianhun`）：击败天魔、剑魂浮现时自动解锁，同步加入复古路径（`migrateChar` 检查 `hidden_boss_triggered`）
+- 更新 `tianmo-win` / `tianmo-lose` 为手绘版 PNG 来源，重新压缩全三层
+- 三张新插画均生成 HQ / LQ / thumbnail
 
 ---
 

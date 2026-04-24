@@ -12,6 +12,7 @@ const GALLERY_DATA = [
     { id: 'wuxiang-unlock',               name: '无相剑意',             hint: '完成「无相剑意」任务链',                   category: 'bosses' },
     { id: 'elder-true-form',              name: '设计者显形',           hint: '首次面对轮回的设计者——沈玄清的真实目的浮出水面', category: 'bosses', secret: true },
     // 传说瞬间
+    { id: 'tianmo-and-jianhun',           name: '天魔与剑魂',           hint: '击败天魔后，玉牌碎裂——更古老的存在从碎片中浮现', category: 'bosses' },
     { id: 'sword-soul-win',               name: '斩破剑魂',             hint: '击败千年剑意——剑魂',                     category: 'bosses'  },
     { id: 'sword-soul-lose',              name: '败于剑意',             hint: '在与剑魂的对决中落败',                     category: 'bosses'  },
     { id: 'tianmo-win',                   name: '天魔陨落',             hint: '击败天魔，完成二十岁的宿命',               category: 'bosses'  },

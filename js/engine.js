@@ -1378,6 +1378,7 @@ const Engine = {
         // Defeated 天魔 — always trigger hidden boss (剑魂)
         if (!char.flags.hidden_boss_triggered) {
             char.flags.hidden_boss_triggered = true;
+            if (typeof Gallery !== 'undefined') Gallery.unlockIllustration('tianmo-and-jianhun');
             this.state.gamePhase = 'victory';   // block player actions during transition
             UI.updateControls(this.state);
             UI.addLog('天魔轰然倒下。江湖归于平静，风也停了。', 'win');
@@ -1526,6 +1527,7 @@ const Engine = {
                 if (lvl >= 5) push(h + '-ending');
             }
             if ((char.rebirthCount || 0) > 0) push('rebirth');
+            if (f.hidden_boss_triggered) push('tianmo-and-jianhun');
             if (f.elder_true_form_seen || f.zhushi_chain_done) push('elder-true-form');
             if (f.li_afterstory_done)    push('li-yunshu-afterstory');
             if (f.su_afterstory_done)    push('su-qing-afterstory');
