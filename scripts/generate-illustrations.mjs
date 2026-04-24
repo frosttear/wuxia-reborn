@@ -313,7 +313,7 @@ const ILLUSTRATIONS = [
   {
     id: "mysterious-elder-bond-1",
     name: "神秘老者 — 第一章",
-    prompt: `Wuxia first-encounter scene in a busy teahouse corner made strangely quiet. A very old white-haired sage sits alone at a corner table with a tea cup, his presence creating a small island of stillness amid the surrounding noise. He turns his palm upward across the table, showing ${CHAR.player} a star-shaped burn scar on his palm — ancient, deep, and unlike any wound from ordinary practice. His expression is calm and unreadable, the faintest trace of a smile on his lips as if confirming something long expected. The teahouse crowd blurs in the warm background. Wide cinematic composition, Chinese ink painting aesthetic, warm amber lantern light and deep shadow tones, atmosphere of quiet mystery and hidden depth, anime-inspired semi-realistic art, high quality detailed scene.`,
+    prompt: `Wuxia teahouse scene in a busy corner made strangely quiet. A very old white-haired sage sits at a corner table with a tea cup, his presence carving a small island of stillness from the surrounding noise. He turns his palm upward across the table, showing ${CHAR.player} a star-shaped burn scar — ancient, deep, unlike any wound from ordinary practice. His expression is calm and unreadable, the faintest trace of a smile on his lips. The teahouse crowd blurs in the warm background. Wide cinematic composition, Chinese ink painting aesthetic, warm amber lantern light and deep shadow tones, atmosphere of quiet mystery and hidden depth, anime-inspired semi-realistic art, high quality detailed scene.`,
   },
   {
     id: "mysterious-elder-bond-2",
