@@ -13,7 +13,7 @@ if (fs.existsSync(envPath)) {
   }
 }
 
-const OUTPUT_DIR = path.join(__dirname, "..", "assets", "characters");
+const OUTPUT_DIR = path.join(__dirname, "..", "assets", "characters", "origins");
 const API_URL = "https://aihorde.net/api/v2";
 const API_KEY = process.env.AIHORDE_API_KEY || "0000000000";
 if (API_KEY === "0000000000") {
