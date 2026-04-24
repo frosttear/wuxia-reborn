@@ -67,7 +67,7 @@ const GALLERY_DATA = [
     { id: 'mysterious-elder-bond-2',     name: '神秘老者·内功指引',    hint: '他说：武道无捷径，走远了才是本事',            category: 'bonds'   },
     { id: 'mysterious-elder-bond-3',     name: '神秘老者·真名',        hint: '他摊开掌心，星形烙印说出了他的来历',          category: 'bonds'   },
     { id: 'mysterious-elder-bond-4',     name: '神秘老者·天魔本源',    hint: '刺客围困，他手持茶杯坐定，向你讲述弟子变魔的根源', category: 'bonds' },
-    { id: 'mysterious-elder-ending',      name: '神秘老者·一线天命',   hint: '崖顶清晨，玉佩悬浮于二人之间——他终于放开了压了九百年的东西。', category: 'bonds' },
+    { id: 'mysterious-elder-ending',      name: '神秘老者·一线天命',   hint: '黄昏庭院，他摊开掌心——那是毕生修为最后的余温，他说：因为你让我相信，总有人能做到。', category: 'bonds' },
     { id: 'mysterious-elder-afterstory', name: '神秘老者·定渊遗剑·铜簪', hint: '老者取出一枚旧铜簪，讲述消失二十年的微尘',  category: 'bonds' },
     { id: 'mysterious-elder-afterstory-ending', name: '神秘老者·定渊遗剑·重逢', hint: '他颤抖的双手将旧铜簪重新别入女儿发间，二十年的分别就此落幕', category: 'bonds' },
     // 人物立绘 — src overrides default illustrations/ path; alwaysUnlocked skips lock gate
