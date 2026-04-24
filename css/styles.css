@@ -936,7 +936,11 @@ button:disabled { opacity: 0.4; cursor: not-allowed; }
     position: relative; display: flex;
     align-items: center; max-width: min(1100px, 98vw); max-height: 96vh;
 }
+.gallery-lb-stage {
+    display: grid; overflow: hidden; width: 100%;
+}
 .gallery-lb-content {
+    grid-row: 1; grid-column: 1;
     display: flex; flex-direction: column; align-items: center;
     max-height: 96vh; overflow: hidden;
 }

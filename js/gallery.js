@@ -96,12 +96,23 @@ const Gallery = {
     _lightbox: null,
     _grid: null,
     _tabsEl: null,
+    _contents: [],      // [content0, content1, content2]
+    _slotLeft: null,    // pre-loaded prev panel
+    _slotCenter: null,  // visible panel
+    _slotRight: null,   // pre-loaded next panel
+    _animating: false,
 
     init() {
         this._overlay  = document.getElementById('galleryOverlay');
         this._lightbox = document.getElementById('galleryLightbox');
         this._grid     = document.getElementById('galleryGrid');
         this._tabsEl   = document.getElementById('galleryTabs');
+        this._contents = [
+            document.getElementById('galleryLbContent0'),
+            document.getElementById('galleryLbContent1'),
+            document.getElementById('galleryLbContent2'),
+        ];
+
         document.addEventListener('keydown', e => {
             if (e.key === 'Escape') {
                 if (this._lightbox && this._lightbox.classList.contains('active')) { this.closeLightbox(); return; }
@@ -115,26 +126,28 @@ const Gallery = {
 
         let _touchStartX = 0;
         let _swiping = false;
-        const lbContent = this._lightbox.querySelector('.gallery-lb-content');
+        let _touchEl = null;
 
         const _cancelSwipe = () => {
             if (!_swiping) return;
             _swiping = false;
-            if (lbContent) { lbContent.style.transition = 'transform 0.15s ease'; lbContent.style.transform = ''; }
+            if (_touchEl) { _touchEl.style.transition = 'transform 0.15s ease'; _touchEl.style.transform = ''; }
         };
 
         this._lightbox.addEventListener('touchstart', e => {
+            if (this._animating) return;
             if (e.touches.length > 1) { _cancelSwipe(); return; }
             _touchStartX = e.touches[0].clientX;
             _swiping = true;
-            if (lbContent) lbContent.style.transition = 'none';
+            _touchEl = this._slotCenter;
+            if (_touchEl) _touchEl.style.transition = 'none';
         }, { passive: true });
 
         this._lightbox.addEventListener('touchmove', e => {
-            if (!_swiping || !lbContent || !this._lightbox.classList.contains('active')) return;
+            if (!_swiping || !_touchEl || !this._lightbox.classList.contains('active')) return;
             if (e.touches.length > 1) { _cancelSwipe(); return; }
             const dx = e.touches[0].clientX - _touchStartX;
-            lbContent.style.transform = `translateX(${dx}px)`;
+            _touchEl.style.transform = `translateX(${dx}px)`;
         }, { passive: true });
 
         this._lightbox.addEventListener('touchend', e => {
@@ -144,26 +157,23 @@ const Gallery = {
             if (Math.abs(dx) > 50) {
                 const goNext = dx < 0;
                 const exitX = goNext ? -window.innerWidth : window.innerWidth;
-                if (lbContent) {
-                    lbContent.style.transition = 'transform 0.22s ease';
-                    lbContent.style.transform = `translateX(${exitX}px)`;
+                if (_touchEl) {
+                    _touchEl.style.transition = 'transform 0.22s ease';
+                    _touchEl.style.transform = `translateX(${exitX}px)`;
                 }
                 setTimeout(() => {
-                    this.navigateLightbox(goNext ? 1 : -1);
-                    if (lbContent) {
-                        lbContent.style.transition = 'none';
-                        lbContent.style.transform = `translateX(${-exitX}px)`;
-                        requestAnimationFrame(() => requestAnimationFrame(() => {
-                            lbContent.style.transition = 'transform 0.22s ease';
-                            lbContent.style.transform = '';
-                        }));
+                    this._navigateRaw(goNext ? 1 : -1);
+                    if (_touchEl) {
+                        _touchEl.style.transition = 'none';
+                        _touchEl.style.transform = `translateX(${-exitX}px)`;
+                        void _touchEl.offsetWidth;
+                        _touchEl.style.transition = 'transform 0.22s ease';
+                        _touchEl.style.transform = '';
+                        _touchEl.addEventListener('transitionend', () => this._initFlanks(), { once: true });
                     }
                 }, 220);
             } else {
-                if (lbContent) {
-                    lbContent.style.transition = 'transform 0.22s ease';
-                    lbContent.style.transform = '';
-                }
+                if (_touchEl) { _touchEl.style.transition = 'transform 0.22s ease'; _touchEl.style.transform = ''; }
             }
         }, { passive: true });
     },
@@ -320,28 +330,82 @@ const Gallery = {
 
     openLightbox(id, category) {
         const cat = category || this._activeTab;
-        // Include all items so navigation order reflects the full gallery sequence;
-        // locked items are skipped automatically during navigation.
-        this._lightboxItems = GALLERY_DATA
-            .filter(d => d.category === cat)
-            .map(d => d.id);
+        this._lightboxItems = GALLERY_DATA.filter(d => d.category === cat).map(d => d.id);
         this._lightboxIdx = this._lightboxItems.indexOf(id);
         if (this._lightboxIdx < 0) return;
-        this._renderLightbox();
+        this._animating = false;
+        // Park all slots far off-screen before showing so they don't flash
+        for (const c of this._contents) {
+            c.style.transition = 'none';
+            c.style.transform  = 'translate3d(-9999px, 0, 0)';
+            c.style.zIndex     = '';
+        }
         this._lightbox.classList.add('active');
-        const meta = document.querySelector('meta[name="viewport"]');
-        if (meta) meta.content = 'width=device-width, initial-scale=1.0, maximum-scale=5.0';
+        void this._contents[0].offsetWidth; // flush: lightbox is now rendered, offsetWidth is real
+        this._initSlots();
+        const vp = document.querySelector('meta[name="viewport"]');
+        if (vp) vp.content = 'width=device-width, initial-scale=1.0, maximum-scale=5.0';
     },
 
     closeLightbox() {
         if (this._lightbox) this._lightbox.classList.remove('active');
-        const meta = document.querySelector('meta[name="viewport"]');
-        if (meta) meta.content = 'width=device-width, initial-scale=1.0, maximum-scale=1.0';
+        this._animating = false;
+        const vp = document.querySelector('meta[name="viewport"]');
+        if (vp) vp.content = 'width=device-width, initial-scale=1.0, maximum-scale=1.0';
     },
 
-    _findNextUnlocked(delta) {
+    // ── Slot helpers ────────────────────────────────────────────────────────
+
+    _fillSlot(el, idx) {
+        if (!el) return;
+        if (idx < 0) { el.style.visibility = 'hidden'; return; }
+        el.style.visibility = '';
+        const id = this._lightboxItems[idx];
+        const meta = GALLERY_DATA.find(d => d.id === id) || { name: id, hint: '', category: 'scenes' };
+        const hqSrc = meta.src || `assets/illustrations/${id}.jpg`;
+        loadProgressiveImg(el.querySelector('.gallery-lb-img'), hqSrc, 'assets/illustrations/placeholder.svg');
+        el.querySelector('.gallery-lb-name').textContent = meta.name;
+        el.querySelector('.gallery-lb-category').textContent = CATEGORY_LABELS[meta.category] || '';
+        el.querySelector('.gallery-lb-hint').textContent = meta.hint;
+    },
+
+    _placeSlot(el, x) {
+        if (!el) return;
+        el.style.transition = 'none';
+        el.style.transform = x === 0 ? 'none' : `translate3d(${x}px, 0, 0)`;
+    },
+
+    _initSlots() {
+        // Assign: content0=left, content1=center, content2=right
+        [this._slotLeft, this._slotCenter, this._slotRight] = this._contents;
+        this._fillSlot(this._slotCenter, this._lightboxIdx);
+        this._placeSlot(this._slotCenter, 0);
+        this._initFlanks();
+    },
+
+    _initFlanks() {
+        const dist = (this._slotCenter && this._slotCenter.offsetWidth) || 500;
+        const prevIdx = this._findNextUnlockedFrom(this._lightboxIdx, -1);
+        const nextIdx = this._findNextUnlockedFrom(this._lightboxIdx,  1);
+        // Assign the two non-center elements to left/right
+        const others = this._contents.filter(c => c !== this._slotCenter);
+        this._slotLeft  = others[0];
+        this._slotRight = others[1];
+        this._fillSlot(this._slotLeft,  prevIdx);
+        this._fillSlot(this._slotRight, nextIdx);
+        this._placeSlot(this._slotLeft,  prevIdx >= 0 ? -dist : -9999);
+        this._placeSlot(this._slotRight, nextIdx >= 0 ?  dist :  9999);
+        const prev = document.getElementById('galleryLbPrev');
+        const next = document.getElementById('galleryLbNext');
+        if (prev) prev.disabled = prevIdx < 0;
+        if (next) next.disabled = nextIdx < 0;
+    },
+
+    // ── Navigation ──────────────────────────────────────────────────────────
+
+    _findNextUnlockedFrom(fromIdx, delta) {
         const unlocked = this._getUnlocked();
-        let i = this._lightboxIdx + delta;
+        let i = fromIdx + delta;
         while (i >= 0 && i < this._lightboxItems.length) {
             const d = GALLERY_DATA.find(x => x.id === this._lightboxItems[i]);
             if (d && this._isUnlocked(d, unlocked)) return i;
@@ -350,46 +414,58 @@ const Gallery = {
         return -1;
     },
 
-    navigateLightbox(delta) {
+    _findNextUnlocked(delta) {
+        return this._findNextUnlockedFrom(this._lightboxIdx, delta);
+    },
+
+    // Raw navigate used by touch code — fills center slot, defers flank setup
+    _navigateRaw(delta) {
         const next = this._findNextUnlocked(delta);
         if (next < 0) return;
         this._lightboxIdx = next;
-        this._renderLightbox();
+        this._fillSlot(this._slotCenter, next);
+        this._placeSlot(this._slotCenter, 0);
     },
 
+    // Animated navigate for keyboard / buttons — simultaneous two-panel slide
     navigateLightboxAnimated(delta) {
-        if (this._findNextUnlocked(delta) < 0) return;
-        const lbContent = this._lightbox && this._lightbox.querySelector('.gallery-lb-content');
-        if (!lbContent) { this.navigateLightbox(delta); return; }
-        const exitX = delta > 0 ? -window.innerWidth : window.innerWidth;
-        lbContent.style.transition = 'transform 0.22s ease';
-        lbContent.style.transform = `translateX(${exitX}px)`;
-        setTimeout(() => {
-            this.navigateLightbox(delta);
-            lbContent.style.transition = 'none';
-            lbContent.style.transform = `translateX(${-exitX}px)`;
-            requestAnimationFrame(() => requestAnimationFrame(() => {
-                lbContent.style.transition = 'transform 0.22s ease';
-                lbContent.style.transform = '';
-            }));
-        }, 220);
+        if (this._animating) return;
+        const nextIdx = this._findNextUnlocked(delta);
+        if (nextIdx < 0) return;
+        this._animating = true;
+
+        const goRight = delta > 0;
+        const entering = goRight ? this._slotRight : this._slotLeft;
+        const exiting  = this._slotCenter;
+        const dist = exiting.offsetWidth || 500;
+
+        // Entering must always render on top regardless of DOM order
+        entering.style.zIndex = '2';
+        exiting.style.zIndex  = '1';
+
+        void exiting.offsetWidth; // flush
+        const ease = 'transform 0.28s cubic-bezier(0.4, 0, 0.2, 1)';
+        exiting.style.willChange  = 'transform';
+        entering.style.willChange = 'transform';
+        exiting.style.transition  = ease;
+        exiting.style.transform   = `translate3d(${goRight ? -dist : dist}px, 0, 0)`;
+        entering.style.transition = ease;
+        entering.style.transform  = 'translate3d(0, 0, 0)';
+
+        entering.addEventListener('transitionend', () => {
+            exiting.style.willChange = '';
+            entering.style.willChange = '';
+            entering.style.zIndex = '';
+            exiting.style.zIndex  = '';
+            this._lightboxIdx = nextIdx;
+            this._slotCenter  = entering;
+            this._initFlanks();
+            this._animating = false;
+        }, { once: true });
     },
 
-    _renderLightbox() {
-        const id = this._lightboxItems[this._lightboxIdx];
-        const meta = GALLERY_DATA.find(d => d.id === id) || { name: id, hint: '', category: 'scenes' };
-        const lbImg = document.getElementById('galleryLbImg');
-        const hqSrc = meta.src || `assets/illustrations/${id}.jpg`;
-        loadProgressiveImg(lbImg, hqSrc, 'assets/illustrations/placeholder.svg');
-        document.getElementById('galleryLbName').textContent = meta.name;
-        document.getElementById('galleryLbCategory').textContent = CATEGORY_LABELS[meta.category] || '';
-        document.getElementById('galleryLbHint').textContent = meta.hint;
-
-        const prev = document.getElementById('galleryLbPrev');
-        const next = document.getElementById('galleryLbNext');
-        if (prev) prev.disabled = this._findNextUnlocked(-1) < 0;
-        if (next) next.disabled = this._findNextUnlocked(1) < 0;
-    },
+    // Keep navigateLightbox as alias used by older touch path (no-op now, raw is used)
+    navigateLightbox(delta) { this._navigateRaw(delta); },
 };
 
 if (typeof module !== 'undefined') module.exports = { Gallery };
