@@ -9,6 +9,9 @@ function loadProgressiveImg(img, hqSrc, fallbackSrc) {
         ? () => { img.src = fallbackSrc; img.classList.remove('img-lq'); img.onerror = null; }
         : () => { img.style.display = 'none'; };
 
+    // Clear stale content immediately so old image doesn't persist while probes load
+    if (fallbackSrc) { img.src = fallbackSrc; img.classList.remove('img-lq'); }
+
     let hqSettled = false;
 
     const hqProbe = new Image();
