@@ -320,7 +320,6 @@ const Engine = {
             meet_yan_chixing: 'yan-chixing-meet',
             meet_su_qing:     'su-qing-meet',
             meet_lingxue:     'ling-xue-meet',
-            li_after_1:       'li-yunshu-afterstory',
         };
         if (_illustrationMap[event.id]) UI.addIllustration(_illustrationMap[event.id]);
 
@@ -783,6 +782,10 @@ const Engine = {
         };
         this.state.gamePhase = 'choosing';
         UI.showEvent(displayEvent, allChoices, this.state);
+        const chainStepIllustrations = {
+            li_after_1: 'li-yunshu-afterstory',
+        };
+        if (chainStepIllustrations[step.id]) UI.addIllustration(chainStepIllustrations[step.id]);
         UI.updateControls(this.state);
     },
 
