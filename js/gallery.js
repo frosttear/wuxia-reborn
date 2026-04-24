@@ -96,7 +96,14 @@ const Gallery = {
         let _swiping = false;
         const lbContent = this._lightbox.querySelector('.gallery-lb-content');
 
+        const _cancelSwipe = () => {
+            if (!_swiping) return;
+            _swiping = false;
+            if (lbContent) { lbContent.style.transition = 'transform 0.15s ease'; lbContent.style.transform = ''; }
+        };
+
         this._lightbox.addEventListener('touchstart', e => {
+            if (e.touches.length > 1) { _cancelSwipe(); return; }
             _touchStartX = e.touches[0].clientX;
             _swiping = true;
             if (lbContent) lbContent.style.transition = 'none';
@@ -104,6 +111,7 @@ const Gallery = {
 
         this._lightbox.addEventListener('touchmove', e => {
             if (!_swiping || !lbContent || !this._lightbox.classList.contains('active')) return;
+            if (e.touches.length > 1) { _cancelSwipe(); return; }
             const dx = e.touches[0].clientX - _touchStartX;
             lbContent.style.transform = `translateX(${dx}px)`;
         }, { passive: true });
