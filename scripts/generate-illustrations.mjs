@@ -306,6 +306,11 @@ const ILLUSTRATIONS = [
 
   // ── 神秘老者 / Mysterious Elder ──
   {
+    id: "mysterious-elder-meet",
+    name: "神秘老者 — 初遇",
+    prompt: `Wuxia first-encounter scene on a dark windy night in an open practice ground. ${CHAR.player} stands mid-stance, training alone, when a very old white-haired sage materializes from the darkness without sound — as if he stepped out of the night itself. He regards the player with an expression of quiet, ancient recognition, as if confirming something long expected rather than meeting a stranger. His white robes drift slightly in the wind, his posture unhurried and deeply still. The setting is bare: moonless sky, the faint outline of distant trees, cold ground. Wide cinematic composition, Chinese ink painting aesthetic, deep midnight black and cold silver wind tones, atmosphere of inexplicable recognition and concealed weight, anime-inspired semi-realistic art, high quality detailed scene.`,
+  },
+  {
     id: "mysterious-elder-bond-1",
     name: "神秘老者 — 第一章",
     prompt: `Wuxia first-encounter scene in a busy teahouse corner made strangely quiet. A very old white-haired sage sits alone at a corner table with a tea cup, his presence creating a small island of stillness amid the surrounding noise. He turns his palm upward across the table, showing ${CHAR.player} a star-shaped burn scar on his palm — ancient, deep, and unlike any wound from ordinary practice. His expression is calm and unreadable, the faintest trace of a smile on his lips as if confirming something long expected. The teahouse crowd blurs in the warm background. Wide cinematic composition, Chinese ink painting aesthetic, warm amber lantern light and deep shadow tones, atmosphere of quiet mystery and hidden depth, anime-inspired semi-realistic art, high quality detailed scene.`,

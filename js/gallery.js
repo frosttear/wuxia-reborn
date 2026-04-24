@@ -62,6 +62,7 @@ const GALLERY_DATA = [
     { id: 'ling-xue-afterstory',         name: '凌雪·凌霜化雪·追杀',  hint: '天魔门追杀令至，她看了一眼，平静开口：来了', category: 'bonds' },
     { id: 'ling-xue-afterstory-ending',  name: '凌雪·凌霜化雪·自由',  hint: '追杀令碎成漫天白纸，随风而散——从今天起，我只是凌雪', category: 'bonds' },
     // 羁绊情缘 — 神秘老者
+    { id: 'mysterious-elder-meet',       name: '神秘老者·月夜现身',    hint: '月黑风高，练功时一位白发老人从黑暗中走来，问：你可知自己肩负着什么？', category: 'bonds' },
     { id: 'mysterious-elder-bond-1',     name: '神秘老者·茶馆问道',    hint: '茶馆一隅，他翻开掌心，星形烙印——那不是普通习武的代价', category: 'bonds' },
     { id: 'mysterious-elder-bond-2',     name: '神秘老者·内功指引',    hint: '他说：武道无捷径，走远了才是本事',            category: 'bonds'   },
     { id: 'mysterious-elder-bond-3',     name: '神秘老者·真名',        hint: '他摊开掌心，星形烙印说出了他的来历',          category: 'bonds'   },
