@@ -1537,6 +1537,9 @@
           "title": "铁哥的旧事",
           "unlockConditions": {
             "minRebirth": 2,
+            "flags": {
+              "lost_to_final_boss": true
+            },
             "bondLevels": {
               "wang_tie": 5
             }
