@@ -319,7 +319,8 @@ const Engine = {
             meet_li_yunshu:   'li-yunshu-meet',
             meet_yan_chixing: 'yan-chixing-meet',
             meet_su_qing:     'su-qing-meet',
-            meet_lingxue:     'ling-xue-meet',
+            meet_lingxue:          'ling-xue-meet',
+            meet_mysterious_elder: 'mysterious-elder-meet',
         };
         if (_illustrationMap[event.id]) UI.addIllustration(_illustrationMap[event.id]);
 
