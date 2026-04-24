@@ -174,11 +174,12 @@ const UI = {
                 .forEach(id => preload(`assets/characters/${id}.jpg`));
         }, 3000);
 
+        // Prefetch large illustrations first (400KB → 200KB), small ones load fast on demand
         setTimeout(() => {
-            ['li-yunshu-ending', 'wang-tie-ending', 'mysterious-elder-ending',
-             'yan-chixing-ending', 'su-qing-ending', 'ling-xue-ending',
-             'sword-soul-win', 'sword-soul-lose', 'tianmo-win', 'tianmo-lose',
-             'rebirth', 'wuxiang-unlock']
+            ['wuxiang-unlock', 'tianmo-and-jianhun', 'rebirth',
+             'ling-xue-ending', 'li-yunshu-ending', 'wang-tie-ending',
+             'yan-chixing-ending', 'su-qing-ending', 'mysterious-elder-ending',
+             'sword-soul-win', 'sword-soul-lose', 'tianmo-win', 'tianmo-lose']
                 .forEach(id => preload(`assets/illustrations/${id}.jpg`));
         }, 8000);
     },
