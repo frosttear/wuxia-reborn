@@ -71,12 +71,12 @@ const GALLERY_DATA = [
     { id: 'mysterious-elder-afterstory-ending', name: '神秘老者·定渊遗剑·重逢', hint: '他颤抖的双手将旧铜簪重新别入女儿发间，二十年的分别就此落幕', category: 'bonds' },
     // 人物立绘 — src overrides default illustrations/ path; alwaysUnlocked skips lock gate
     { id: 'portrait-player',          name: '主角',       hint: '踏入江湖的无名剑客',         category: 'portraits', src: 'assets/characters/player.jpg',          alwaysUnlocked: true },
-    { id: 'portrait-wang-tie',        name: '王铁',       hint: '三十年走镖的老镖师',         category: 'portraits', src: 'assets/characters/wang-tie.jpg',        alwaysUnlocked: true },
-    { id: 'portrait-li-yunshu',       name: '李云舒',     hint: '梅影剑传人，游侠女剑客',     category: 'portraits', src: 'assets/characters/li-yunshu.jpg',       alwaysUnlocked: true },
-    { id: 'portrait-yan-chixing',     name: '燕赤行',     hint: '含光门唯一幸存者，疤脸剑客', category: 'portraits', src: 'assets/characters/yan-chixing.jpg',     alwaysUnlocked: true },
-    { id: 'portrait-su-qing',         name: '苏青',       hint: '游方郎中，以身试毒的弟子',   category: 'portraits', src: 'assets/characters/su-qing.jpg',         alwaysUnlocked: true },
-    { id: 'portrait-ling-xue',        name: '凌雪',       hint: '天魔门首席弟子，白衣剑客',   category: 'portraits', src: 'assets/characters/ling-xue.jpg',        alwaysUnlocked: true },
-    { id: 'portrait-mysterious-elder', name: '神秘老者',  hint: '自称设计者，来历成谜',       category: 'portraits', src: 'assets/characters/mysterious-elder.jpg', alwaysUnlocked: true },
+    { id: 'portrait-wang-tie',         name: '王铁',       hint: '与王铁相遇后解锁',           category: 'portraits', src: 'assets/characters/wang-tie.jpg'        },
+    { id: 'portrait-li-yunshu',        name: '李云舒',     hint: '与李云舒相遇后解锁',         category: 'portraits', src: 'assets/characters/li-yunshu.jpg'       },
+    { id: 'portrait-yan-chixing',      name: '燕赤行',     hint: '与燕赤行相遇后解锁',         category: 'portraits', src: 'assets/characters/yan-chixing.jpg'     },
+    { id: 'portrait-su-qing',          name: '苏青',       hint: '与苏青相遇后解锁',           category: 'portraits', src: 'assets/characters/su-qing.jpg'         },
+    { id: 'portrait-ling-xue',         name: '凌雪',       hint: '与凌雪相遇后解锁',           category: 'portraits', src: 'assets/characters/ling-xue.jpg'        },
+    { id: 'portrait-mysterious-elder', name: '神秘老者',   hint: '与神秘老者相遇后解锁',       category: 'portraits', src: 'assets/characters/mysterious-elder.jpg'},
 ];
 
 const CATEGORY_LABELS = {
@@ -183,6 +183,17 @@ const Gallery = {
         return (char && char.unlockedIllustrations) || [];
     },
 
+    _isUnlocked(d, unlocked) {
+        if (d.alwaysUnlocked) return true;
+        if (unlocked.includes(d.id)) return true;
+        if (d.category === 'portraits' && d.id.startsWith('portrait-')) {
+            const npcId = d.id.replace('portrait-', '').replace(/-/g, '_');
+            const npcs = (typeof Engine !== 'undefined') && Engine.state && Engine.state.npcs;
+            return !!(npcs && npcs.some(n => n.id === npcId));
+        }
+        return false;
+    },
+
     open() {
         if (!this._overlay) return;
         this._overlay.classList.add('active');
@@ -199,7 +210,7 @@ const Gallery = {
         this._tabsEl.innerHTML = '';
         for (const cat of CATEGORY_ORDER) {
             const items = GALLERY_DATA.filter(d => d.category === cat);
-            const unlockedCount = items.filter(d => d.alwaysUnlocked || unlocked.includes(d.id)).length;
+            const unlockedCount = items.filter(d => this._isUnlocked(d, unlocked)).length;
             const btn = document.createElement('button');
             btn.className = 'gallery-tab' + (cat === this._activeTab ? ' active' : '');
             btn.dataset.cat = cat;
@@ -226,7 +237,7 @@ const Gallery = {
         this._grid.classList.remove('has-pinned');
 
         items.forEach((item, i) => {
-            const isUnlocked = item.alwaysUnlocked || unlocked.includes(item.id);
+            const isUnlocked = this._isUnlocked(item, unlocked);
             const card = document.createElement('div');
             card.className = 'gallery-card' + (isUnlocked ? '' : ' locked');
 
@@ -294,10 +305,10 @@ const Gallery = {
         const cat = category || this._activeTab;
         const unlocked = this._getUnlocked();
         this._lightboxItems = GALLERY_DATA
-            .filter(d => d.category === cat && (d.alwaysUnlocked || unlocked.includes(d.id)))
+            .filter(d => d.category === cat && this._isUnlocked(d, unlocked))
             .map(d => d.id);
         this._lightboxIdx = this._lightboxItems.indexOf(id);
-        if (this._lightboxIdx < 0) this._lightboxIdx = 0;
+        if (this._lightboxIdx < 0) return;
         this._renderLightbox();
         this._lightbox.classList.add('active');
         // Allow pinch-zoom inside lightbox (some browsers respect maximum-scale)
