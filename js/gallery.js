@@ -449,10 +449,14 @@ const Gallery = {
         this._replayTitle.textContent = title || '';
         this._replayLog.innerHTML = '';
         this._replayPanel.style.display = 'flex';
-        this._runReplay(type, id, level);
+        this._replayImmediate = false;
+        this._replaySeq = (this._replaySeq || 0) + 1;
+        const token = this._replaySeq;
+        this._replayLog.onclick = () => { this._replayImmediate = true; };
+        this._runReplay(type, id, level, token);
     },
 
-    _runReplay(type, id, level) {
+    _runReplay(type, id, level, token) {
         const bonds  = ((typeof Engine !== 'undefined') && Engine.state && Engine.state.bonds)  || {};
         const chains = ((typeof Engine !== 'undefined') && Engine.state && Engine.state.chains) || [];
 
@@ -474,7 +478,10 @@ const Gallery = {
         // Derive illustration ID: bonds follow predictable pattern; chains check GALLERY_DATA
         let illId = null;
         if (type === 'bond') {
-            illId = id.replace(/_/g, '-') + '-bond-' + level;
+            const maxLevel = (bonds[id] || []).length;
+            illId = level >= maxLevel
+                ? id.replace(/_/g, '-') + '-ending'
+                : id.replace(/_/g, '-') + '-bond-' + level;
         } else {
             const kebab = id.replace(/_/g, '-');
             if (GALLERY_DATA.find(d => d.id === kebab)) illId = kebab;
@@ -504,19 +511,30 @@ const Gallery = {
         if (completionNarrative) items.push({ text: completionNarrative, cls: 'narrative' });
         items.push({ text: '── 回想结束 ──', cls: 'sep' });
 
-        // Stream items into log with typewriter effect
+        // Stream items into log with typewriter effect; clicking log skips current section to instant
         const log = this._replayLog;
         const typewrite = (el, text, done) => {
             let j = 0;
+            let finished = false;
             const tick = () => {
+                if (finished || token !== this._replaySeq) return;
+                if (this._replayImmediate) {
+                    finished = true;
+                    this._replayImmediate = false;
+                    el.textContent = text;
+                    log.scrollTop = log.scrollHeight;
+                    done();
+                    return;
+                }
                 el.textContent = text.slice(0, ++j);
                 log.scrollTop = log.scrollHeight;
                 if (j < text.length) setTimeout(tick, 28);
-                else setTimeout(done, 180);
+                else { finished = true; setTimeout(done, 180); }
             };
             tick();
         };
         const stream = (i) => {
+            if (token !== this._replaySeq) return;
             if (i >= items.length) return;
             const { text, cls, illId } = items[i];
             if (cls === 'illustration') {
@@ -542,6 +560,7 @@ const Gallery = {
     },
 
     _closeReplay() {
+        this._replaySeq = (this._replaySeq || 0) + 1; // cancel any running stream
         this._replayPanel.style.display = 'none';
         this._replayLog.innerHTML = '';
         this._renderReplayList();
