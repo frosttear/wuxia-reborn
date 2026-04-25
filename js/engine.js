@@ -308,13 +308,6 @@ const Engine = {
         UI.showEvent(event, allChoices, this.state);
 
         const _illustrationMap = {
-            ancient_grotto: 'ancient-grotto',
-            winter_seclusion: 'winter-seclusion',
-            temple_offering: 'temple-visit',
-            past_life_dream: 'past-life-dream',
-            rainy_road: 'journey-dawn',
-            old_swordsman: 'journey-dawn',
-            deja_vu_road: 'past-life-dream',
             elder_true_form_appears: 'elder-true-form',
             meet_wang_tie:    'wang-tie-meet',
             meet_li_yunshu:   'li-yunshu-meet',
@@ -1116,7 +1109,6 @@ const Engine = {
             if (enemy.isTrueFinalBoss) {
                 char.flags.true_final_boss_beaten = true;
                 UI.addLog(enemy.winNarrative, 'win');
-                UI.addIllustration('journey-dawn');
                 UI.showCombatReturnBtn('won', () => {
                     UI.hideCombatOverlay();
                     this.triggerTrueVictory();

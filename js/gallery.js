@@ -1,12 +1,6 @@
 // gallery.js — Illustration gallery with unlock tracking
 
 const GALLERY_DATA = [
-    // 江湖奇遇
-    { id: 'journey-dawn',                 name: '黎明远行',             hint: '踏入江湖，在某段旅途中邂逅',               category: 'scenes'  },
-    { id: 'ancient-grotto',               name: '古洞天地',             hint: '偶入一处古洞，感受上古遗迹的气息',         category: 'scenes'  },
-    { id: 'winter-seclusion',             name: '寒冬闭关',             hint: '于漫天风雪中独自苦修',                     category: 'scenes'  },
-    { id: 'temple-visit',                 name: '庙中拜神',             hint: '于古刹中敬香，感悟天地之道',               category: 'scenes'  },
-    { id: 'past-life-dream',              name: '前世梦境',             hint: '梦境与现实交织，往世记忆浮现',             category: 'scenes'  },
     // 武道传承
     { id: 'rebirth',                      name: '世界线回溯',           hint: '完成一世旅途，踏入轮回之门',               category: 'bosses' },
     { id: 'wuxiang-unlock',               name: '无相剑意',             hint: '完成「无相剑意」任务链',                   category: 'bosses' },
@@ -84,16 +78,15 @@ const GALLERY_DATA = [
 ];
 
 const CATEGORY_LABELS = {
-    scenes:   '江湖奇遇',
     bosses:   '传说瞬间',
     bonds:    '羁绊情缘',
     portraits: '人物立绘',
     replay:   '剧情回想',
 };
-const CATEGORY_ORDER = ['scenes', 'bosses', 'bonds', 'portraits', 'replay'];
+const CATEGORY_ORDER = ['bosses', 'bonds', 'portraits', 'replay'];
 
 const Gallery = {
-    _activeTab: 'scenes',
+    _activeTab: 'bosses',
     _lightboxItems: [],
     _lightboxIdx: 0,
     _overlay: null,
@@ -599,7 +592,7 @@ const Gallery = {
         if (idx < 0) { el.style.visibility = 'hidden'; return; }
         el.style.visibility = '';
         const id = this._lightboxItems[idx];
-        const meta = GALLERY_DATA.find(d => d.id === id) || { name: id, hint: '', category: 'scenes' };
+        const meta = GALLERY_DATA.find(d => d.id === id) || { name: id, hint: '', category: 'bosses' };
         const hqSrc = meta.src || `assets/illustrations/${id}.jpg`;
         loadProgressiveImg(el.querySelector('.gallery-lb-img'), hqSrc, 'assets/illustrations/placeholder.svg', { skipThumb: true });
         el.querySelector('.gallery-lb-name').textContent = meta.name;

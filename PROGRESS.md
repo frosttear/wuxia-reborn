@@ -1,6 +1,16 @@
 # 轮回江湖 — 开发进度
 
-## 当前版本：v0.22.8
+## 当前版本：v0.22.9
+
+---
+
+### v0.22.9（2026-04-25）
+
+**移除「江湖奇遇」图鉴分类**
+- 删除全部5张江湖奇遇插画及 origins/PNG 源文件（journey-dawn、ancient-grotto、winter-seclusion、temple-visit、past-life-dream），共15个文件
+- 从 GALLERY_DATA、CATEGORY_LABELS、CATEGORY_ORDER 中移除 scenes 分类
+- engine.js：清除 `_illustrationMap` 中的奇遇映射条目，移除真终boss胜利时调用的 journey-dawn 插画
+- 图鉴默认标签页改为「传说瞬间」
 
 ---
 
