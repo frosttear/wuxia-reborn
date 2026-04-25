@@ -69,6 +69,7 @@ const Engine = {
         if (ageYears >= 20) {
             if (!char.flags.boss_triggered) {
                 char.flags.boss_triggered = true;
+                if (typeof Gallery !== 'undefined') Gallery.unlockIllustration('portrait-tianmo');
                 const bossEvent = this.state.events.find(e => e.id === 'tianmo_appears');
                 if (bossEvent) { this.triggerEvent(bossEvent); return true; }
             }
@@ -1325,6 +1326,7 @@ const Engine = {
         if (!char.flags.zhushi_chain_done) return;
         char.ageMonths = Math.max(char.ageMonths, 240);
         char.flags.boss_triggered = true;
+        if (typeof Gallery !== 'undefined') Gallery.unlockIllustration('portrait-tianmo');
         const bossEvent = this.state.events.find(e => e.id === 'tianmo_appears');
         if (bossEvent) {
             UI.addLog('【诸世共鸣】你感到所有世界线的意志汇聚于一处，时间已不重要——决战，此刻开始。', 'unlock');
@@ -1378,7 +1380,10 @@ const Engine = {
         // Defeated 天魔 — always trigger hidden boss (剑魂)
         if (!char.flags.hidden_boss_triggered) {
             char.flags.hidden_boss_triggered = true;
-            if (typeof Gallery !== 'undefined') Gallery.unlockIllustration('tianmo-and-jianhun');
+            if (typeof Gallery !== 'undefined') {
+                Gallery.unlockIllustration('tianmo-and-jianhun');
+                Gallery.unlockIllustration('portrait-jianhun');
+            }
             this.state.gamePhase = 'victory';   // block player actions during transition
             UI.updateControls(this.state);
             UI.addLog('天魔轰然倒下。江湖归于平静，风也停了。', 'win');
@@ -1511,6 +1516,8 @@ const Engine = {
         if (!char.chainProgress) char.chainProgress = {};
         if (!char.bondRetryStep) char.bondRetryStep = {};
         if (!char.unlockedIllustrations) char.unlockedIllustrations = [];
+        if (!char.lifetimeBondLevels) char.lifetimeBondLevels = {};
+        if (!char.lifetimeChainsDone) char.lifetimeChainsDone = [];
         // Retroactive illustration unlock — always run so new gallery entries are unlocked for old saves
         {
             const f = char.flags || {};
@@ -1527,7 +1534,8 @@ const Engine = {
                 if (lvl >= 5) push(h + '-ending');
             }
             if ((char.rebirthCount || 0) > 0) push('rebirth');
-            if (f.hidden_boss_triggered) push('tianmo-and-jianhun');
+            if (f.boss_triggered)        push('portrait-tianmo');
+            if (f.hidden_boss_triggered) { push('tianmo-and-jianhun'); push('portrait-jianhun'); }
             if (f.elder_true_form_seen || f.zhushi_chain_done) push('elder-true-form');
             if (f.li_afterstory_done)    push('li-yunshu-afterstory');
             if (f.su_afterstory_done)    push('su-qing-afterstory');

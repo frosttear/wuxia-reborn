@@ -79,6 +79,8 @@ const GALLERY_DATA = [
     { id: 'portrait-su-qing',          name: '苏青',       hint: '背着药箱走山路的女医者，眼神温柔，眉间总带着一丝淡淡的忧愁。',         category: 'portraits', src: 'assets/characters/su-qing.jpg'         },
     { id: 'portrait-ling-xue',         name: '凌雪',       hint: '白衣剑客，出手如霜，来历成谜——她从不多说，也从不久留。',               category: 'portraits', src: 'assets/characters/ling-xue.jpg'        },
     { id: 'portrait-mysterious-elder', name: '神秘老者',   hint: '年岁极深却脊背笔直，眼神平静得像早已看见了结局。',                     category: 'portraits', src: 'assets/characters/mysterious-elder.jpg'},
+    { id: 'portrait-tianmo',           name: '天魔',       hint: '击败天魔后解锁。魔道宗师，武功通天——他说，每一世，他都在等你。',         category: 'portraits', src: 'assets/characters/tianmo.jpg'          },
+    { id: 'portrait-jianhun',          name: '剑魂',       hint: '击败剑魂后解锁。千年剑意化形，没有面容，没有五官，只有一道纯粹的压迫。', category: 'portraits', src: 'assets/characters/jianhun.jpg'         },
 ];
 
 const CATEGORY_LABELS = {
@@ -250,10 +252,15 @@ const Gallery = {
             btn.dataset.cat = cat;
             if (cat === 'replay') {
                 const char = (typeof Engine !== 'undefined') && Engine.state && Engine.state.char;
-                const bl = (char && char.bondLevels) || {};
-                const cp = (char && char.chainProgress) || {};
-                const n = Object.values(bl).reduce((s, v) => s + (Number(v) || 0), 0)
-                        + Object.values(cp).filter(v => v === 'done').length;
+                const bl  = (char && char.bondLevels)         || {};
+                const lbl = (char && char.lifetimeBondLevels) || {};
+                const cp  = (char && char.chainProgress)      || {};
+                const lcd = (char && char.lifetimeChainsDone) || [];
+                // Merge current + lifetime for badge count
+                const mergedBl = { ...lbl };
+                for (const [id, lvl] of Object.entries(bl)) mergedBl[id] = Math.max(mergedBl[id] || 0, Number(lvl) || 0);
+                const allDoneChains = new Set([...lcd, ...Object.keys(cp).filter(k => cp[k] === 'done')]);
+                const n = Object.values(mergedBl).reduce((s, v) => s + (Number(v) || 0), 0) + allDoneChains.size;
                 btn.innerHTML = CATEGORY_LABELS[cat] + (n > 0 ? `<span class="gallery-tab-badge">${n}</span>` : '');
             } else {
                 btn.innerHTML = CATEGORY_LABELS[cat] +
@@ -359,9 +366,21 @@ const Gallery = {
         this._grid.innerHTML = '';
 
         const char = (typeof Engine !== 'undefined') && Engine.state && Engine.state.char;
-        const bondLevels    = (char && char.bondLevels)    || {};
-        const chainProgress = (char && char.chainProgress) || {};
-        const chains        = ((typeof Engine !== 'undefined') && Engine.state && Engine.state.chains) || [];
+        const bondLevels         = (char && char.bondLevels)         || {};
+        const lifetimeBondLevels = (char && char.lifetimeBondLevels) || {};
+        const chainProgress      = (char && char.chainProgress)      || {};
+        const lifetimeChainsDone = (char && char.lifetimeChainsDone) || [];
+        const chains             = ((typeof Engine !== 'undefined') && Engine.state && Engine.state.chains) || [];
+
+        // Merge current life with lifetime accumulator
+        const mergedBondLevels = { ...lifetimeBondLevels };
+        for (const [id, lvl] of Object.entries(bondLevels)) {
+            mergedBondLevels[id] = Math.max(mergedBondLevels[id] || 0, Number(lvl) || 0);
+        }
+        const allDoneChainIds = new Set([
+            ...lifetimeChainsDone,
+            ...Object.keys(chainProgress).filter(k => chainProgress[k] === 'done')
+        ]);
 
         const CHAPTER = ['一', '二', '三', '四', '五'];
         const ul = document.createElement('ul');
@@ -381,7 +400,7 @@ const Gallery = {
         let hasBonds = false;
         for (const kebab of npcOrder) {
             const snakeId = kebab.replace(/-/g, '_');
-            const maxLevel = Number(bondLevels[snakeId] || 0);
+            const maxLevel = Number(mergedBondLevels[snakeId] || 0);
             if (maxLevel < 1) continue;
             if (!hasBonds) {
                 const hdr = document.createElement('li');
@@ -400,8 +419,8 @@ const Gallery = {
             }
         }
 
-        // ── Completed chains ──
-        const doneChains = chains.filter(c => chainProgress[c.id] === 'done');
+        // ── Completed chains (current + lifetime) ──
+        const doneChains = chains.filter(c => allDoneChainIds.has(c.id));
         if (doneChains.length > 0) {
             const hdr = document.createElement('li');
             hdr.className = 'gallery-replay-section-header';

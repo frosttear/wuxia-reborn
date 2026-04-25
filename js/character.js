@@ -48,7 +48,9 @@ const Character = {
             passives: [],         // [{ id, name, desc, ... }] unlocked this life
             visitCounts: {},      // { npcId: { year, count } } casual visit limiter
             chainProgress: {},    // { chainId: stepIdx | 'done' }
-            peakCombatStats: { atk: 0, def: 0, hp: 0 }
+            peakCombatStats: { atk: 0, def: 0, hp: 0 },
+            lifetimeBondLevels: {},  // { npcId: maxLevel } — persists across rebirths
+            lifetimeChainsDone: []   // [ chainId ] — persists across rebirths
         };
     },
 

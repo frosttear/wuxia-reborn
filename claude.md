@@ -81,7 +81,7 @@ All illustrations are stored as JPEG. The game code references `assets/illustrat
 assets/illustrations/origins/<id>.png        ← raw PNG source of truth
 assets/illustrations/<id>.jpg                ← HQ output (quality 85)
 assets/illustrations/low/<id>.jpg            ← LQ output (600px, quality 20)
-assets/illustrations/thumbnail/<id>.jpg      ← thumbnail (~100px, quality 10, ~0.5KB)
+assets/illustrations/thumbnail/<id>.jpg      ← thumbnail (300px wide, proportional, quality 40, ~5KB)
 ```
 
 Loading order: thumbnail → low → HQ (LQ and HQ probed simultaneously; fastest wins).
@@ -102,7 +102,7 @@ const base = 'REPLACE_WITH_ID';
 const src = \`assets/illustrations/origins/\${base}.png\`;
 await sharp(src).jpeg({ quality: 85, mozjpeg: true }).toFile(\`assets/illustrations/\${base}.jpg\`);
 await sharp(src).resize({ width: 600, withoutEnlargement: true }).jpeg({ quality: 20, mozjpeg: true }).toFile(\`assets/illustrations/low/\${base}.jpg\`);
-await sharp(src).resize({ width: 100, withoutEnlargement: true }).jpeg({ quality: 10, mozjpeg: true }).toFile(\`assets/illustrations/thumbnail/\${base}.jpg\`);
+await sharp(src).resize({ width: 300 }).jpeg({ quality: 40, mozjpeg: true }).toFile(\`assets/illustrations/thumbnail/\${base}.jpg\`);
 const s = async f => Math.round((await stat(f)).size/1024)+'KB';
 console.log(base+': HQ '+await s(\`assets/illustrations/\${base}.jpg\`)+', LQ '+await s(\`assets/illustrations/low/\${base}.jpg\`)+', thumb '+await s(\`assets/illustrations/thumbnail/\${base}.jpg\`));
 "
@@ -110,7 +110,7 @@ console.log(base+': HQ '+await s(\`assets/illustrations/\${base}.jpg\`)+', LQ '+
 
 - HQ JPEG: quality 85, mozjpeg — typically 50–280 KB
 - LQ: 600 px wide, quality 20 — 3–15 KB
-- Thumbnail: 100 px wide, quality 10 — ~0.5 KB, shown instantly while LQ/HQ load
+- Thumbnail: 300×400 crop (3:4), quality 40 — ~10 KB, shown instantly while LQ/HQ load
 - Commit: `origins/<id>.png`, HQ `.jpg`, `low/<id>.jpg`, and `thumbnail/<id>.jpg`
 
 ## Workflow

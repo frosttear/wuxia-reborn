@@ -266,6 +266,18 @@ const Rebirth = {
         // Gallery unlocks persist across all lives
         newChar.unlockedIllustrations = [...(char.unlockedIllustrations || [])];
 
+        // Lifetime replay: merge current life's progress into the accumulated record
+        const mergedBonds = { ...(char.lifetimeBondLevels || {}) };
+        for (const [id, lvl] of Object.entries(char.bondLevels || {})) {
+            mergedBonds[id] = Math.max(mergedBonds[id] || 0, Number(lvl) || 0);
+        }
+        newChar.lifetimeBondLevels = mergedBonds;
+        const mergedChains = [...new Set([
+            ...(char.lifetimeChainsDone || []),
+            ...Object.entries(char.chainProgress || {}).filter(([, v]) => v === 'done').map(([k]) => k)
+        ])];
+        newChar.lifetimeChainsDone = mergedChains;
+
         // Inherit bond levels (世界线记忆)
         newChar.inheritedBonds = Object.assign({}, char.bondLevels);
 

@@ -38,9 +38,10 @@ for (const file of files) {
         .jpeg({ quality: 20, mozjpeg: true })
         .toFile(lowJpg);
 
-    // Thumbnail: fixed 300x400 crop (3:4), quality 40 — shown first while LQ/HQ load (~10KB)
+    // Thumbnail: 300px wide, proportional height — same aspect ratio as source so
+    // CSS object-fit:cover shows the same crop as LQ/HQ (no positional shift on upgrade)
     await sharp(srcPng)
-        .resize({ width: 300, height: 400, fit: 'cover' })
+        .resize({ width: 300 })
         .jpeg({ quality: 40, mozjpeg: true })
         .toFile(thumbJpg);
 
