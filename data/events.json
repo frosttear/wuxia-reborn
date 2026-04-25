@@ -1948,7 +1948,7 @@
     "conditions": {
       "flags": {
         "_is_birthday": true,
-        "met_wang_tie": true
+        "meet_scene_wang_tie": true
       }
     },
     "choices": [
@@ -1990,7 +1990,7 @@
     "conditions": {
       "flags": {
         "_is_birthday": true,
-        "met_li_yunshu": true
+        "meet_scene_li_yunshu": true
       }
     },
     "choices": [
@@ -2032,7 +2032,7 @@
     "conditions": {
       "flags": {
         "_is_birthday": true,
-        "met_mysterious_elder": true
+        "meet_scene_mysterious_elder": true
       }
     },
     "choices": [

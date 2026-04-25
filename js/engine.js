@@ -519,6 +519,10 @@ const Engine = {
             }
         }
         if (effects.flags) {
+            // When a met_<npcId> flag is set via an event effect, mark the meet scene as played this life
+            for (const [k, v] of Object.entries(effects.flags)) {
+                if (k.startsWith('met_') && v === true) char.flags['meet_scene_' + k.slice(4)] = true;
+            }
             Object.assign(char.flags, effects.flags);
         }
         if (typeof effects.hp === 'number') {
@@ -554,6 +558,20 @@ const Engine = {
         if (!npcBonds) return;
 
         const npc = this.state.npcs.find(n => n.id === npcId);
+
+        // Inherited bond: trigger meet event on first visit this life (before any bond events)
+        const inheritedLevel = (char.inheritedBonds || {})[npcId] || 0;
+        if (inheritedLevel > 0 && !char.flags['meet_scene_' + npcId] && !(char.bondLevels[npcId] || 0)) {
+            const job = this.getJob(char.job);
+            char.ageMonths++;
+            Character.monthlyHPRegen(char, job);
+            if (this._checkBirthdayAndBoss()) return;
+            UI.renderCharacter(char, this.state.jobs);
+            const meetEvent = this.state.events.find(e =>
+                e.id === 'meet_' + npcId || e.id === 'meet_' + npcId.replace(/_/g, ''));
+            if (meetEvent) { this.triggerEvent(meetEvent); return; }
+        }
+
         const currentLevel = char.bondLevels[npcId] || 0;
         const bondEvent = npcBonds.find(b => b.level === currentLevel + 1);
         const affinity = NPCSystem.getAffinity(char, npcId);
@@ -584,8 +602,10 @@ const Engine = {
         UI.renderCharacter(char, this.state.jobs);
 
         if (bondReady) {
-            const inherited = char.inheritedBonds[npcId];
-            const prefix = inherited && inherited >= bondEvent.level
+            const lifeTimeLevel = Math.max(
+                (char.lifetimeBondLevels || {})[npcId] || 0,
+                (char.inheritedBonds || {})[npcId] || 0);
+            const prefix = lifeTimeLevel >= bondEvent.level
                 ? `「世界线记忆」你隐约记得，在另一条时间线上与${npc.name}曾有过这一段故事……\n\n`
                 : '';
             if (bondEvent.steps && bondEvent.steps.length > 0) {
@@ -1178,6 +1198,7 @@ const Engine = {
                 return;
             }
             if (enemy.isFinalBoss) {
+                char.flags.boss_lost = true;
                 UI.addIllustration('tianmo-lose');
                 UI.showCombatReturnBtn('lost', () => {
                     UI.hideCombatOverlay();
@@ -1518,6 +1539,13 @@ const Engine = {
         if (!char.unlockedIllustrations) char.unlockedIllustrations = [];
         if (!char.lifetimeBondLevels) char.lifetimeBondLevels = {};
         if (!char.lifetimeChainsDone) char.lifetimeChainsDone = [];
+        // For first-life saves, backfill meet_scene flags from met_ flags
+        if ((char.rebirthCount || 0) === 0) {
+            for (const nid of ['wang_tie', 'li_yunshu', 'mysterious_elder', 'yan_chixing', 'su_qing', 'ling_xue']) {
+                if (char.flags['met_' + nid] && !char.flags['meet_scene_' + nid])
+                    char.flags['meet_scene_' + nid] = true;
+            }
+        }
         // Retroactive illustration unlock — always run so new gallery entries are unlocked for old saves
         {
             const f = char.flags || {};
@@ -1535,7 +1563,8 @@ const Engine = {
             }
             if ((char.rebirthCount || 0) > 0) push('rebirth');
             if (f.boss_triggered)        push('portrait-tianmo');
-            if (f.hidden_boss_triggered) { push('tianmo-and-jianhun'); push('portrait-jianhun'); }
+            if (f.hidden_boss_triggered) { push('tianmo-and-jianhun'); push('portrait-jianhun'); push('tianmo-win'); }
+            if (f.boss_lost)             push('tianmo-lose');
             if (f.elder_true_form_seen || f.zhushi_chain_done) push('elder-true-form');
             if (f.li_afterstory_done)    push('li-yunshu-afterstory');
             if (f.su_afterstory_done)    push('su-qing-afterstory');

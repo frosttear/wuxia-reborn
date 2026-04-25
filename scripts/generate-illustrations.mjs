@@ -36,33 +36,6 @@ const CHAR = {
 };
 
 const ILLUSTRATIONS = [
-  // ── 江湖奇遇 / Environment ──
-  {
-    id: "journey-dawn",
-    name: "黎明出行",
-    prompt: "Serene wuxia travel scene, a lone young Chinese male swordsman in a midnight blue robe walking along a misty mountain path at dawn, the first golden light breaking over distant peaks, pine trees silhouetted against a pale lavender sky, his figure small against the vast landscape conveying freedom and possibility, a simple bundled pack on his back, wide cinematic landscape composition, Chinese ink painting aesthetic with soft gold and blue-grey tones, peaceful contemplative atmosphere, anime-inspired semi-realistic art, high quality detailed scene"
-  },
-  {
-    id: "ancient-grotto",
-    name: "古洞秘境",
-    prompt: "Mysterious wuxia discovery scene, a young Chinese male swordsman in a midnight blue robe standing at the entrance of an ancient cave system, bioluminescent moss and ancient carved sword patterns glowing softly on the stone walls, rays of light filtering through a crack in the ceiling illuminating floating dust motes, the warrior holding a torch looking at carved martial diagrams on the cave walls with awe, wide cinematic composition, Chinese ink painting aesthetic with deep teal and gold tones, mysterious ancient atmosphere, anime-inspired semi-realistic art, high quality detailed scene"
-  },
-  {
-    id: "winter-seclusion",
-    name: "寒冬闭关",
-    prompt: "Intense wuxia cultivation scene, a young Chinese male swordsman in a midnight blue robe sitting in deep meditation in the lotus position in the middle of a heavy snowstorm on a mountain peak, snow falling all around him but melting before it touches him due to inner energy radiating faintly as a warm golden aura, ice forming on nearby rocks while he remains still and focused, predawn darkness pierced only by the inner light of his cultivation, wide cinematic composition, Chinese ink painting aesthetic with cold white and deep blue tones with inner warmth gold, intense solitary atmosphere, anime-inspired semi-realistic art, high quality detailed scene"
-  },
-  {
-    id: "temple-visit",
-    name: "古庙祈福",
-    prompt: "Peaceful wuxia scene, a young Chinese male swordsman in a midnight blue robe standing before a weathered ancient Buddhist temple entrance, incense smoke curling upward in the still air, stone lion guardians on either side of the steps worn smooth by centuries of visitors, golden light filtering through the temple doors onto the stone courtyard, the warrior offering a respectful bow, autumn maple leaves drifting past in red and gold, wide cinematic composition, Chinese ink painting aesthetic with warm amber and red tones, serene and reverent atmosphere, anime-inspired semi-realistic art, high quality detailed scene"
-  },
-  {
-    id: "past-life-dream",
-    name: "前世梦回",
-    prompt: "Haunting wuxia dreamscape, a young Chinese male swordsman in a midnight blue robe standing in a ghostly battlefield of his past lives, translucent echoes of his former selves visible around him as faint luminous silhouettes in different poses and different clothes from different eras, some victorious some fallen, fragments of memory swirling like luminous petals in a dark void, the warrior looking at his own hands as if seeing the weight of every past life, wide cinematic composition, deep indigo and ghost-white tones with faint gold memory-threads, melancholic and transcendent atmosphere, anime-inspired semi-realistic art, high quality detailed scene"
-  },
-
   // ── 武道传承 / Martial Arts ──
   {
     id: "rebirth",
@@ -242,17 +215,17 @@ const ILLUSTRATIONS = [
   {
     id: "su-qing-bond-3",
     name: "苏青 — 第三章",
-    prompt: `Wuxia parting scene in a simple medicine room at dusk. ${CHAR.suQing} stands at a low wooden table carefully packing dried herbs and small vials into her large wooden medicine chest — each item placed with the reverence of a person preparing for a long journey. Her expression is calm and decided, though a heaviness sits in her posture. ${CHAR.player} stands in the doorway, watching her pack. Warm amber light from a low lamp, medicinal herb bundles hanging from the rafters, the quiet of a moment between speaking and leaving. Wide cinematic composition, Chinese ink painting aesthetic, warm amber and deep green shadow tones, bittersweet and quietly determined atmosphere, anime-inspired semi-realistic art, high quality detailed scene.`,
+    prompt: `Wuxia parting scene in a simple medicine room at dusk. ${CHAR.suQing} stands at a low wooden table with her large wooden medicine chest half-packed, dried herbs and small vials on the table — she has paused in her packing and turned her head back over her shoulder to look at ${CHAR.player} standing in the doorway, her gaze calm but carrying the weight of a departure already decided. Their eyes meet in the warm amber lamplight. Medicinal herb bundles hanging from the rafters, the quiet of a moment that does not need words. Wide cinematic composition, Chinese ink painting aesthetic, warm amber and deep green shadow tones, bittersweet and quietly determined atmosphere, anime-inspired semi-realistic art, high quality detailed scene.`,
   },
   {
     id: "su-qing-bond-4",
     name: "苏青 — 第四章",
-    prompt: `Wuxia reunion scene inside a dim wooden hut in the wilderness, just cleared of its bandit captors. ${CHAR.suQing} has rushed forward to embrace her elderly white-haired master — emaciated, his robes worn thin, but alive — her shoulders shaking with tears for the first time. Her steady composure has broken entirely, face buried against his shoulder. The master's eyes are closed, his hands coming up slowly to hold her. ${CHAR.player} stands in the hut doorway, sword lowered, watching in silence. Dim filtered light, hay on the floor, the quiet aftermath of rescue. Wide cinematic composition, Chinese ink painting aesthetic, warm dim earth and pale daylight tones, deeply emotional and gentle atmosphere, anime-inspired semi-realistic art, high quality detailed scene.`,
+    prompt: `Wuxia rescue scene inside a dim wooden hut in the wilderness, just cleared of its bandit captors. ${CHAR.suQing} has rushed forward to embrace her elderly white-haired master — emaciated, his robes worn thin, but alive — her shoulders shaking with tears for the first time. Her steady composure has broken entirely, face buried against his shoulder. The master's eyes are closed, his hands coming up slowly to hold her. ${CHAR.player} has stepped to one side near the hut wall, sword sheathed, deliberately giving them space — the quiet action of someone who knows this moment belongs to them alone. Dim filtered light, hay on the floor, the quiet aftermath of rescue. Wide cinematic composition, Chinese ink painting aesthetic, warm dim earth and pale daylight tones, deeply emotional and gentle atmosphere, anime-inspired semi-realistic art, high quality detailed scene.`,
   },
   {
     id: "su-qing-ending",
     name: "苏青 — 针灸传心",
-    prompt: "Tender wuxia scene, in a simple countryside medicine hall, a gentle young woman healer (苏青) in muted green is standing with her back turned and shoulders slightly trembling in suppressed emotion, her father an elderly doctor bowing in gratitude to a young swordsman in the doorway, the swordsman witnessing this quiet family reunion, dried herbs hanging from the rafters, warm candlelight inside, late afternoon sun coming through the window, a sense of things finally found after long searching, wide cinematic composition, Chinese ink painting aesthetic with warm green and amber earth tones, gentle emotional atmosphere, anime-inspired semi-realistic art, high quality detailed scene"
+    prompt: `Tender wuxia scene in a simple countryside medicine hall at dusk. ${CHAR.suQing} stands inside with her back turned, shoulders slightly trembling in suppressed emotion — the first time her composure has truly broken. ${CHAR.player} stands facing her elderly white-haired master (a distinguished old doctor with kind weathered eyes), hands clasped in a deep respectful bow (作揖) toward the old man — an expression of gratitude and reverence. The master's eyes are warm and a little damp, accepting the gesture. Dried herbs hanging from the rafters, warm candlelight inside, a medicine chest nearby, late afternoon sun through the window. A sense of things finally found after long searching. Wide cinematic composition, Chinese ink painting aesthetic, warm green and amber earth tones, gentle emotional atmosphere, anime-inspired semi-realistic art, high quality detailed scene.`,
   },
   {
     id: "su-qing-afterstory",
