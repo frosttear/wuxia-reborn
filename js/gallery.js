@@ -489,7 +489,6 @@ const Gallery = {
         // Build ordered list of {text, cls} items to stream
         const items = [];
         items.push({ text: '── 剧情回想 ──', cls: 'sep' });
-        if (illId) items.push({ cls: 'illustration', illId });
 
         for (const step of steps) {
             const choices = step.choices || [];
@@ -508,6 +507,8 @@ const Gallery = {
         }
 
         if (completionNarrative) items.push({ text: completionNarrative, cls: 'narrative' });
+        // Illustration appears after all text so the reader finishes the story first
+        if (illId) items.push({ cls: 'illustration', illId });
         items.push({ text: '── 回想结束 ──', cls: 'sep' });
 
         // Stream items into log with typewriter effect; clicking log skips current section to instant
@@ -554,7 +555,7 @@ const Gallery = {
             if (cls === 'choice') {
                 p.className = 'log-replay-choice';
             } else if (cls === 'sep') {
-                p.style.cssText = 'color:var(--muted);text-align:center;margin:8px 0;';
+                p.className = 'log-replay-sep';
             }
             log.appendChild(p);
             typewrite(p, text, () => stream(i + 1));
