@@ -604,26 +604,28 @@ const Gallery = {
         const id = this._lightboxItems[idx];
         const meta = GALLERY_DATA.find(d => d.id === id) || { name: id, hint: '', category: 'bosses' };
         const hqSrc = meta.src || `assets/illustrations/${id}.jpg`;
-        loadProgressiveImg(el.querySelector('.gallery-lb-img'), hqSrc, 'assets/illustrations/placeholder.svg', { skipThumb: true });
+        const img = el.querySelector('.gallery-lb-img');
+        img.onerror = null;  // prevent stale handler from firing when src is cleared
+        img.src = '';  // clear stale image before progressive load starts
+        loadProgressiveImg(img, hqSrc, 'assets/illustrations/placeholder.svg', { skipThumb: true });
         el.querySelector('.gallery-lb-name').textContent = meta.name;
         el.querySelector('.gallery-lb-category').textContent = CATEGORY_LABELS[meta.category] || '';
         el.querySelector('.gallery-lb-hint').textContent = meta.hint;
     },
 
-    _placeSlot(el, x) {
+    // visible=true only for the center slot; flanks are always hidden
+    _placeSlot(el, x, visible = false) {
         if (!el) return;
         el.style.transition = 'none';
-        el.style.transform = x === 0 ? 'none' : `translate3d(${x}px, 0, 0)`;
-        // Flanks are invisible; only the center and an animating-in slot are shown.
-        // This prevents will-change compositor layers from escaping overflow:hidden.
-        el.style.visibility = x === 0 ? 'visible' : 'hidden';
+        el.style.transform = visible ? 'none' : `translate3d(${x}px, 0, 0)`;
+        el.style.visibility = visible ? 'visible' : 'hidden';
     },
 
     _initSlots() {
         // Assign: content0=left, content1=center, content2=right
         [this._slotLeft, this._slotCenter, this._slotRight] = this._contents;
         this._fillSlot(this._slotCenter, this._lightboxIdx);
-        this._placeSlot(this._slotCenter, 0);
+        this._placeSlot(this._slotCenter, 0, true);
         this._initFlanks();
     },
 
@@ -640,8 +642,8 @@ const Gallery = {
         this._slotRight = others[1];
         this._fillSlot(this._slotLeft,  prevIdx);
         this._fillSlot(this._slotRight, nextIdx);
-        this._placeSlot(this._slotLeft,  prevIdx >= 0 ? -dist : -9999);
-        this._placeSlot(this._slotRight, nextIdx >= 0 ?  dist :  9999);
+        this._placeSlot(this._slotLeft,  prevIdx >= 0 ? -dist : -9999, false);
+        this._placeSlot(this._slotRight, nextIdx >= 0 ?  dist :  9999, false);
         const prev = document.getElementById('galleryLbPrev');
         const next = document.getElementById('galleryLbNext');
         if (prev) prev.disabled = prevIdx < 0;
@@ -671,8 +673,7 @@ const Gallery = {
         if (next < 0) return;
         this._lightboxIdx = next;
         this._fillSlot(this._slotCenter, next);
-        this._placeSlot(this._slotCenter, 0);
-        this._slotCenter.style.visibility = 'visible';
+        this._placeSlot(this._slotCenter, 0, true);
     },
 
     // Animated navigate for keyboard / buttons — simultaneous two-panel slide
@@ -707,6 +708,10 @@ const Gallery = {
             entering.style.willChange = '';
             entering.style.zIndex = '';
             exiting.style.zIndex  = '';
+            // Canonicalize entering slot to transform:none (not translate3d(0,0,0))
+            // so subsequent _placeSlot calls start from a clean baseline.
+            entering.style.transition = 'none';
+            entering.style.transform  = 'none';
             this._lightboxIdx = nextIdx;
             this._slotCenter  = entering;
             // Defer _initFlanks by one rAF so the browser demotes will-change layers

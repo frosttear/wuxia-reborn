@@ -7,13 +7,14 @@
 function loadProgressiveImg(img, hqSrc, fallbackSrc, { skipThumb = false } = {}) {
     const thumbSrc = hqSrc.replace(/(assets\/[^/]+\/)([^/]+)\.\w+$/, '$1thumbnail/$2.jpg');
     const lowSrc   = hqSrc.replace(/(assets\/[^/]+\/)([^/]+)\.\w+$/, '$1low/$2.jpg');
-    // Cancel any in-flight probes so a reused element never shows a stale image
-    if (img._hqProbe) { img._hqProbe.onload = null; img._hqProbe = null; }
+    // Always cancel LQ probe (intermediate quality, never worth completing for a stale request)
     if (img._lqProbe) { img._lqProbe.onload = null; img._lqProbe = null; }
+    // Cancel HQ probe only when switching to a different image; same-src probes complete uninterrupted
+    // so a slow mobile download isn't restarted each time the user swipes back to the same image.
+    if (img._hqProbe && img._hqSrc !== hqSrc) { img._hqProbe.onload = null; img._hqProbe = null; }
+    img._hqSrc  = hqSrc;
     img._hqDone = false;
     img.classList.add('img-lq');
-    // Generation counter: if _fillSlot fires again before decode() resolves,
-    // the stale apply() is a no-op and won't overwrite the newer image.
     img._loadGen = (img._loadGen || 0) + 1;
     const gen = img._loadGen;
     img.onerror = () => {
@@ -24,15 +25,23 @@ function loadProgressiveImg(img, hqSrc, fallbackSrc, { skipThumb = false } = {})
     };
     // Stage 1: thumbnail — skip in lightbox to avoid aspect-ratio mismatch flash
     if (!skipThumb) img.src = thumbSrc;
-    // Swap src only after probe is decoded to avoid blank-frame flash
-    const swap = (probe, src, done) => {
-        const apply = () => {
-            if (img._loadGen !== gen) return; // superseded by a newer loadProgressiveImg call
+    // LQ swap: guarded by generation counter (LQ is transient; discard if superseded)
+    const swapLq = (probe, src) => {
+        (probe.decode ? probe.decode().catch(() => {}) : Promise.resolve()).then(() => {
+            if (img._loadGen !== gen) return;
             img.src = src;
-            if (done) img.classList.remove('img-lq');
             img.onerror = null;
-        };
-        (probe.decode ? probe.decode().catch(() => {}) : Promise.resolve()).then(apply);
+        });
+    };
+    // HQ swap: guarded by _hqSrc match so a long-running download applied after a re-navigate
+    // still lands correctly even if _loadGen has changed.
+    const swapHq = (probe, src) => {
+        (probe.decode ? probe.decode().catch(() => {}) : Promise.resolve()).then(() => {
+            if (img._hqSrc !== src) return;
+            img.src = src;
+            img.classList.remove('img-lq');
+            img.onerror = null;
+        });
     };
     // Stage 2: probe LQ — upgrade from thumbnail as soon as it arrives
     const lqProbe = new Image();
@@ -40,19 +49,29 @@ function loadProgressiveImg(img, hqSrc, fallbackSrc, { skipThumb = false } = {})
     lqProbe.onload = () => {
         if (img._lqProbe !== lqProbe) return;
         img._lqProbe = null;
-        if (!img._hqDone) swap(lqProbe, lowSrc, false);
+        if (!img._hqDone) swapLq(lqProbe, lowSrc);
     };
     lqProbe.src = lowSrc;
-    // Stage 3: probe HQ in parallel — upgrade whenever it arrives
-    const hqProbe = new Image();
-    img._hqProbe = hqProbe;
-    hqProbe.onload = () => {
-        if (img._hqProbe !== hqProbe) return;
-        img._hqProbe = null;
-        img._hqDone = true;
-        swap(hqProbe, hqSrc, true);
-    };
-    hqProbe.src = hqSrc;
+    // Stage 3: HQ — reuse an in-flight same-src probe to avoid restarting a partial download
+    if (img._hqProbe) {
+        const existingProbe = img._hqProbe;
+        existingProbe.onload = () => {
+            if (img._hqSrc !== hqSrc) return;
+            img._hqProbe = null;
+            img._hqDone = true;
+            swapHq(existingProbe, hqSrc);
+        };
+    } else {
+        const hqProbe = new Image();
+        img._hqProbe = hqProbe;
+        hqProbe.onload = () => {
+            if (img._hqSrc !== hqSrc) return;
+            img._hqProbe = null;
+            img._hqDone = true;
+            swapHq(hqProbe, hqSrc);
+        };
+        hqProbe.src = hqSrc;
+    }
 }
 
 const ATTR_NAMES = {
