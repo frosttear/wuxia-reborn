@@ -4,6 +4,7 @@
   "private": true,
   "scripts": {
     "test": "jest --testPathPattern=tests/",
+    "serve": "node scripts/test-server.mjs",
     "prepare": "husky"
   },
   "jest": {
