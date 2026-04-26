@@ -20,6 +20,7 @@ const GALLERY_DATA = [
     { id: 'wang-tie-ending',             name: '王铁·最后的镖路',     hint: '雪丘上跪别，他将铁牌轻放在最后一座墓碑旁，头颅无声低垂。', category: 'bonds' },
     { id: 'wang-tie-afterstory',         name: '王铁·遗愿·追踪',      hint: '他去世后，你独自潜伏于黑鹰寨外，摸清赵霸天的行踪', category: 'bonds' },
     { id: 'wang-tie-afterstory-ending',  name: '王铁·遗愿·告慰英灵',  hint: '赵霸天倒下后，你独自来到王铁坟前，将他最爱的烧刀子洒入土中', category: 'bonds' },
+    { id: 'wang-tie-true-ending',        name: '王铁·刀路犹存',        hint: '旧镖局院子前，有人在练那一套三十年走镖走出来的刀法',           category: 'bonds', secret: true },
     // 羁绊情缘 — 李云舒
     { id: 'li-yunshu-meet',              name: '李云舒·城外巧遇',     hint: '城外路上，她被流氓骚扰却毫无惧色',         category: 'bonds'   },
     { id: 'li-yunshu-bond-1',            name: '李云舒·梅园问剑',     hint: '梅园对剑，她演示亡母梅影剑的传承剑法',     category: 'bonds'   },
@@ -29,6 +30,7 @@ const GALLERY_DATA = [
     { id: 'li-yunshu-ending',            name: '李云舒·一剑长歌',     hint: '风过时，剑鸣如歌——那是属于两个人的长歌。', category: 'bonds' },
     { id: 'li-yunshu-afterstory',        name: '李云舒·旧案浮现',     hint: '整理她留下的旧物，发现亡母遗信，旧案重见天日', category: 'bonds' },
     { id: 'li-yunshu-afterstory-ending', name: '李云舒·母亲的墓前',   hint: '旧案了结后，二人并肩立于李若兰墓前，无声告别', category: 'bonds' },
+    { id: 'li-yunshu-true-ending',       name: '李云舒·此后同行',      hint: '高台上，她将旧信收进怀里，二人同望远山——第一次，时间是自己的了', category: 'bonds', secret: true },
     // 羁绊情缘 — 燕赤行
     { id: 'yan-chixing-meet',            name: '燕赤行·刀疤剑客',     hint: '演武场边，疤脸冷面男子直接向你发问',       category: 'bonds'   },
     { id: 'yan-chixing-bond-1',          name: '燕赤行·刀下问剑',     hint: '以剑相试，接受疤脸剑客的考验',             category: 'bonds'   },
@@ -38,6 +40,7 @@ const GALLERY_DATA = [
     { id: 'yan-chixing-ending',          name: '燕赤行·无名同行',     hint: '夜道同行，他走在前半步，暗处的风雪扑来，他侧身为你挡。', category: 'bonds' },
     { id: 'yan-chixing-afterstory',      name: '燕赤行·含光遗灯·归山', hint: '重返含光山废墟，为旧弟兄们寻回刻在墙上的名字', category: 'bonds' },
     { id: 'yan-chixing-afterstory-ending', name: '燕赤行·含光遗灯·立碑', hint: '他跪在亲手刻就的碑前，这是他第一次流泪',   category: 'bonds' },
+    { id: 'yan-chixing-true-ending',       name: '燕赤行·了却前尘',      hint: '山路上轻装而行，他第一次没有什么放不下的',                     category: 'bonds', secret: true },
     // 羁绊情缘 — 苏青
     { id: 'su-qing-meet',                name: '苏青·顺手之事',       hint: '镇口巧遇，她正蹲身为孩子包扎伤口',         category: 'bonds'   },
     { id: 'su-qing-bond-1',              name: '苏青·山道偶遇',       hint: '她为你疗伤，讲述失踪五年、以身试毒的师父', category: 'bonds'   },
@@ -47,6 +50,7 @@ const GALLERY_DATA = [
     { id: 'su-qing-ending',              name: '苏青·针灸传心',       hint: '她背对着门口，肩膀轻轻颤着——她的父亲向你深深弯腰。', category: 'bonds' },
     { id: 'su-qing-afterstory',          name: '苏青·济世堂往事·秘方', hint: '师父透露手中藏有天魔解毒药方——是救人之药，还是终结之剑', category: 'bonds' },
     { id: 'su-qing-afterstory-ending',   name: '苏青·济世堂往事·重开', hint: '重新挂起的招牌下，她站在门口，望着落日',    category: 'bonds'   },
+    { id: 'su-qing-true-ending',         name: '苏青·问脉道别',         hint: '济世堂里，她把了最后一次脉，叮嘱了一句：以后不用再重来了',      category: 'bonds', secret: true },
     // 羁绊情缘 — 凌雪
     { id: 'ling-xue-meet',               name: '凌雪·运气不错',       hint: '山道遭袭，白衣剑客凌空三剑救下你',         category: 'bonds'   },
     { id: 'ling-xue-bond-1',             name: '凌雪·雪中之刃',       hint: '茶馆遭袭，与她背靠背并肩击退刺客',         category: 'bonds'   },
@@ -56,6 +60,7 @@ const GALLERY_DATA = [
     { id: 'ling-xue-ending',             name: '凌雪·凌霜剑域',       hint: '冻原风雪中，两把剑并肩而立——不需要回头，也知道彼此不会退。', category: 'bonds' },
     { id: 'ling-xue-afterstory',         name: '凌雪·凌霜化雪·追杀',  hint: '天魔门追杀令至，她看了一眼，平静开口：来了', category: 'bonds' },
     { id: 'ling-xue-afterstory-ending',  name: '凌雪·凌霜化雪·自由',  hint: '追杀令碎成漫天白纸，随风而散——从今天起，我只是凌雪', category: 'bonds' },
+    { id: 'ling-xue-true-ending',        name: '凌雪·各走天涯',         hint: '山路拐角，她回头看了一眼，然后转身走进了薄雾里',               category: 'bonds', secret: true },
     // 羁绊情缘 — 神秘老者
     { id: 'mysterious-elder-meet',       name: '神秘老者·月夜现身',    hint: '月黑风高，练功时一位白发老人从黑暗中走来，问：你可知自己肩负着什么？', category: 'bonds' },
     { id: 'mysterious-elder-bond-1',     name: '神秘老者·茶馆问道',    hint: '茶馆一隅，他翻开掌心，星形烙印——那不是普通习武的代价', category: 'bonds' },
@@ -65,6 +70,7 @@ const GALLERY_DATA = [
     { id: 'mysterious-elder-ending',      name: '神秘老者·一线天命',   hint: '黄昏庭院，他摊开掌心——那是毕生修为最后的余温，他说：因为你让我相信，总有人能做到。', category: 'bonds' },
     { id: 'mysterious-elder-afterstory', name: '神秘老者·定渊遗剑·铜簪', hint: '老者取出一枚旧铜簪，讲述消失二十年的微尘',  category: 'bonds' },
     { id: 'mysterious-elder-afterstory-ending', name: '神秘老者·定渊遗剑·重逢', hint: '他颤抖的双手将旧铜簪重新别入女儿发间，二十年的分别就此落幕', category: 'bonds' },
+    { id: 'mysterious-elder-true-ending', name: '神秘老者·长夜将晓',    hint: '九百年的枷锁散尽，沈微尘站在门口，第一次叫了一声：爹',         category: 'bonds', secret: true },
     // 人物立绘 — src overrides default illustrations/ path; alwaysUnlocked skips lock gate
     { id: 'portrait-player',          name: '主角',       hint: '踏入江湖的无名剑客',         category: 'portraits', src: 'assets/characters/player.jpg',          alwaysUnlocked: true },
     { id: 'portrait-wang-tie',         name: '王铁',       hint: '走江湖数十年的老侠客，刀法刚猛，心怀义气。',                           category: 'portraits', src: 'assets/characters/wang-tie.jpg'        },
