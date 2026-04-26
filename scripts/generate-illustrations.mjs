@@ -111,6 +111,11 @@ const ILLUSTRATIONS = [
     name: "王铁 — 后日谈·告慰英灵",
     prompt: `Quiet wuxia closure scene at a grave on a hillside under a full moon, late night. ${CHAR.player} kneels alone before Wang Tie's grave marker, slowly pouring a bottle of 烧刀子 (sorghum spirits) into the earth at the base of the stone — the old escort's favourite drink. His head is bowed, one hand resting lightly on the grave. The hill is quiet, wind moving through dry grass, moonlight on the stone. The promise has been kept. A sense of grief completed, the weight of an obligation finally released. Wide cinematic composition, Chinese ink painting aesthetic, cold silver moonlight and deep shadow tones, elegiac and quietly fulfilled atmosphere, anime-inspired semi-realistic art, high quality detailed scene.`,
   },
+  {
+    id: "wang-tie-true-ending",
+    name: "王铁 — 刀路犹存",
+    prompt: `Quiet nostalgic wuxia scene at an old escort company courtyard. ${CHAR.player} stands motionless at a weathered wooden gate, one hand resting on the door frame, watching through the half-open entrance without stepping in. Inside the sunlit courtyard, a young Chinese man in roughspun escort clothes (early twenties, focused expression) practices knife techniques — wide grounded stance, practical unhurried footwork, the blade settling exactly at his side at the end of each sequence: the same heavy-footed straightforward style of a veteran escort, passed on without ceremony. A gnarled old tree casts long afternoon shadows across the dust-covered ground. A worn wooden name board still hangs above the gate, characters faded. The protagonist does not enter — he watches from the threshold, still. Warm golden late-afternoon light, long shadows, dust motes in the air. Wide cinematic composition, Chinese ink painting aesthetic, warm amber and deep shadow tones, quiet bittersweet atmosphere of a legacy continuing unseen, anime-inspired semi-realistic art, high quality detailed scene.`,
+  },
 
   // ── 李云舒 / Li Yunshu ──
   {
@@ -152,6 +157,11 @@ const ILLUSTRATIONS = [
     id: "li-yunshu-afterstory-ending",
     name: "李云舒 — 后日谈·母亲的墓前",
     prompt: `Wuxia scene of quiet closure, outdoors at dawn. ${CHAR.liYunshu} and ${CHAR.player} stand side by side before a simple stone grave marker — 李若兰's grave — set on a gentle hillside with overgrown grass and a single plum tree in early bloom. ${CHAR.liYunshu} has placed fresh flowers at the base of the stone; her hands are folded now, head bowed slightly, expression carrying grief that has finally found its shape after years without answers. ${CHAR.player} stands a half-step behind her, close enough to be felt. Neither speaks. The sky is pale gold and grey at the horizon, the first light of morning just beginning. A sense of things finally laid to rest — not without sorrow, but without unfinished weight. Wide cinematic composition, Chinese ink painting aesthetic, pale dawn gold and cool grey tones, elegiac and quietly peaceful atmosphere, anime-inspired semi-realistic art, high quality detailed scene.`,
+  },
+  {
+    id: "li-yunshu-true-ending",
+    name: "李云舒 — 此后同行",
+    prompt: `Hopeful forward-looking wuxia scene on a high stone terrace overlooking distant mountains. ${CHAR.player} and ${CHAR.liYunshu} stand shoulder to shoulder at the edge of the terrace, both turned toward the horizon where mountains recede into pale haze. She holds a folded letter against her chest with both hands — not clutching, just holding, the way you hold something once it no longer weighs anything. Neither looks at the other; both look forward. Scattered plum blossom petals drift past on a light breeze. Late afternoon sun casting long amber light across the stone. The mood is unguarded and quietly full of possibility — the first moment neither of them is carrying something that has to be done. Wide cinematic composition, Chinese ink painting aesthetic, warm golden amber light with soft mountain haze, gentle hopeful atmosphere of two people facing the same direction for the first time, anime-inspired semi-realistic art, high quality detailed scene.`,
   },
 
   // ── 燕赤行 / Yan Chixing ──
@@ -195,6 +205,11 @@ const ILLUSTRATIONS = [
     name: "燕赤行 — 后日谈·立碑",
     prompt: `Wuxia scene of final release at a mountain gate at dusk. ${CHAR.yanChixing} kneels alone before a newly carved stone monument at the Hanlight Sect's mountain entrance — all thirty-two names inscribed in clean strokes, the sect token buried at its base. For the first time, tears run silently down his scarred face. His hands rest flat on the stone, grounding himself in this moment. The sky behind the gate fades gold and deep violet, the mountain in long shadow. ${CHAR.player} stands a few paces back, leaving him this private grief. Wide cinematic composition, Chinese ink painting aesthetic, fading gold dusk and deep shadow tones, cathartic and quietly triumphant atmosphere, anime-inspired semi-realistic art, high quality detailed scene.`,
   },
+  {
+    id: "yan-chixing-true-ending",
+    name: "燕赤行 — 了却前尘",
+    prompt: `Light free wuxia scene on a mountain road between passes. ${CHAR.yanChixing} stands with unguarded ease on the open mountain road — weight easy on one foot, arms loose, the habitual tension absent from his scarred face for once, looking genuinely unburdened rather than deliberately controlled. He speaks to ${CHAR.player} beside him, face slightly turned, expression more open than usual. Behind them the sky is wide and pale blue with high drifting clouds and receding mountain silhouettes. No enemies, no obligations, no destination decided yet — just two people at a crossroads choosing how to move. Wide cinematic composition, Chinese ink painting aesthetic, pale open sky and mountain landscape with clear high altitude light, light free atmosphere of people who have just set down something very heavy, anime-inspired semi-realistic art, high quality detailed scene.`,
+  },
 
   // ── 苏青 / Su Qing ──
   {
@@ -237,6 +252,11 @@ const ILLUSTRATIONS = [
     name: "苏青 — 后日谈·重开",
     prompt: `Warm wuxia scene at the threshold of a newly reopened medicine hall at sunset. ${CHAR.suQing} stands in the doorway under her master's old wooden sign — freshly rehung, the characters for 济世堂 legible above her — with a small quiet smile at the last of the day's light. Inside, ${CHAR.player} sits at a low table with a bowl of steaming congee, the warmth of the room visible behind her. The medicine hall is simple but whole: dried herbs in order, lamplight just starting to glow in the window, the first day's patients seen. Wide cinematic composition, Chinese ink painting aesthetic, warm amber sunset and soft green interior tones, gentle fulfilled atmosphere, anime-inspired semi-realistic art, high quality detailed scene.`,
   },
+  {
+    id: "su-qing-true-ending",
+    name: "苏青 — 问脉道别",
+    prompt: `Warm intimate wuxia farewell scene inside a modest medical clinic. ${CHAR.suQing} sits close to ${CHAR.player}, her fingers pressed gently but professionally against his inner wrist in a physician's pulse-reading hold, eyes focused downward — diagnosing, as she always does, yet this is also unmistakably a goodbye. Warm paper-window light fills the clinic interior: bundles of dried herbs hanging from dark wooden rafters, ceramic medicine jars on shelves, a half-finished medicine packet on the low wooden table beside her. Her expression is composed and warm — she has given what she can give, and she knows it is enough. ${CHAR.player} is still, watching her. Wide cinematic composition, Chinese ink painting aesthetic, warm amber and sage-green interior light filtered through rice paper windows, quiet purposeful atmosphere of a person exactly where she belongs, anime-inspired semi-realistic art, high quality detailed scene.`,
+  },
 
   // ── 凌雪 / Ling Xue ──
   {
@@ -278,6 +298,11 @@ const ILLUSTRATIONS = [
     id: "ling-xue-afterstory-ending",
     name: "凌雪 — 后日谈·自由",
     prompt: `Wuxia scene of final liberation on an open plain under a wide sky. ${CHAR.lingXue} stands with her hands extended, the torn pieces of a sect assassination order scattering from her fingers in the wind — white paper catching the light as they drift and tumble like real snow across the grey plain. She watches them go, her expression carrying something she has never worn before: relief, lightness, the first breath of a person who has finally stopped being what she was made to be. ${CHAR.player} stands beside her, sword sheathed. No enemies behind them. The plain is wide and the sky is pale and the future is open. Wide cinematic composition, Chinese ink painting aesthetic, pale grey open sky and cold white paper-snow tones, liberated and quietly radiant atmosphere, anime-inspired semi-realistic art, high quality detailed scene.`,
+  },
+  {
+    id: "ling-xue-true-ending",
+    name: "凌雪 — 各走天涯",
+    prompt: `Clean decisive wuxia parting scene on a mountain road in winter. ${CHAR.lingXue} walks away along a frost-edged mountain road heading toward a misty pass, white robes and silver trim catching grey winter light. She has turned her head back over her shoulder — not with longing, but with a composed certain expression: a mutual understanding acknowledged, nothing left unresolved. In the background ${CHAR.player} is a small stationary figure in midnight blue at the start of the road, watching her go without moving to follow. Bare winter trees frame both sides of the path, light frost on the fallen leaves, the road curving away into mist. Wide cinematic composition, Chinese ink painting aesthetic, cool grey-white winter light with silver and deep ink tones, clean bittersweet atmosphere of two people parting exactly as equals, anime-inspired semi-realistic art, high quality detailed scene.`,
   },
 
   // ── 神秘老者 / Mysterious Elder ──
@@ -326,37 +351,10 @@ const ILLUSTRATIONS = [
     name: "神秘老者 — 后日谈·重逢",
     prompt: `Deeply moving wuxia reunion scene in a moonlit garden pavilion. ${CHAR.mysteriousElder} kneels before his daughter (沈微尘) — a quiet woman in plain robes who has inherited his stillness. With trembling hands he carefully pins a small copper hairpin back into her hair. Neither speaks. His head is bowed; for the first time his spine is not perfectly straight — the weight of twenty years briefly visible. The jade piece at his waist glows faintly in the silver moonlight, the only light that is not from the moon. ${CHAR.player} stands in the shadows as a silent witness. A single plum tree in early bloom nearby. Wide cinematic composition, Chinese ink painting aesthetic, cold silver moonlight and deep garden shadow with the faint jade piece glow, profoundly moving and quietly final atmosphere, anime-inspired semi-realistic art, high quality detailed scene.`,
   },
-
-  // ── 真结局 NPC 后日谈 / True Ending Epilogues ──
-  {
-    id: "wang-tie-true-ending",
-    name: "王铁 — 刀路犹存",
-    prompt: `Quiet nostalgic wuxia scene at an old escort company courtyard. ${CHAR.player} stands motionless at a weathered wooden gate, one hand resting on the door frame, watching through the half-open entrance without stepping in. Inside the sunlit courtyard, a young Chinese man in roughspun escort clothes (early twenties, focused expression) practices knife techniques — wide grounded stance, practical unhurried footwork, the blade settling exactly at his side at the end of each sequence: the same heavy-footed straightforward style of a veteran escort, passed on without ceremony. A gnarled old tree casts long afternoon shadows across the dust-covered ground. A worn wooden name board still hangs above the gate, characters faded. The protagonist does not enter — he watches from the threshold, still. Warm golden late-afternoon light, long shadows, dust motes in the air. Wide cinematic composition, Chinese ink painting aesthetic, warm amber and deep shadow tones, quiet bittersweet atmosphere of a legacy continuing unseen, anime-inspired semi-realistic art, high quality detailed scene.`,
-  },
-  {
-    id: "li-yunshu-true-ending",
-    name: "李云舒 — 此后同行",
-    prompt: `Hopeful forward-looking wuxia scene on a high stone terrace overlooking distant mountains. ${CHAR.player} and ${CHAR.liYunshu} stand shoulder to shoulder at the edge of the terrace, both turned toward the horizon where mountains recede into pale haze. She holds a folded letter against her chest with both hands — not clutching, just holding, the way you hold something once it no longer weighs anything. Neither looks at the other; both look forward. Scattered plum blossom petals drift past on a light breeze. Late afternoon sun casting long amber light across the stone. The mood is unguarded and quietly full of possibility — the first moment neither of them is carrying something that has to be done. Wide cinematic composition, Chinese ink painting aesthetic, warm golden amber light with soft mountain haze, gentle hopeful atmosphere of two people facing the same direction for the first time, anime-inspired semi-realistic art, high quality detailed scene.`,
-  },
   {
     id: "mysterious-elder-true-ending",
     name: "神秘老者 — 长夜将晓",
     prompt: `Deeply moving wuxia scene of quiet redemption at dawn. An elderly white-haired Chinese sage (沈玄清) — diminished: his spine no longer holds its unnatural straightness, the jade piece is gone from his waist, the posture that of an old man finally allowed to be old — sits alone in a sparse room on a low wooden chair, hands resting quietly on his knees, looking at nothing. A single extinguished candle on a low table beside him. Pale grey-gold dawn light coming through a single paper window. At the doorway, a woman in plain medicinal robes (沈微尘, quietly-faced, dark hair simply pinned, plain clothes) stands with one hand on the door frame, backlit by dawn, her expression between resolution and something very old and very tender — she is about to speak one word. ${CHAR.player} is barely visible as a dark silhouette in the corridor behind her. Wide cinematic composition, Chinese ink painting aesthetic, pale grey-gold dawn light and deep corridor shadow, sparse room, profound quiet atmosphere of a very long night finally ending, anime-inspired semi-realistic art, high quality detailed scene.`,
-  },
-  {
-    id: "yan-chixing-true-ending",
-    name: "燕赤行 — 了却前尘",
-    prompt: `Light free wuxia scene on a mountain road between passes. ${CHAR.yanChixing} stands with unguarded ease on the open mountain road — weight easy on one foot, arms loose, the habitual tension absent from his scarred face for once, looking genuinely unburdened rather than deliberately controlled. He speaks to ${CHAR.player} beside him, face slightly turned, expression more open than usual. Behind them the sky is wide and pale blue with high drifting clouds and receding mountain silhouettes. No enemies, no obligations, no destination decided yet — just two people at a crossroads choosing how to move. Wide cinematic composition, Chinese ink painting aesthetic, pale open sky and mountain landscape with clear high altitude light, light free atmosphere of people who have just set down something very heavy, anime-inspired semi-realistic art, high quality detailed scene.`,
-  },
-  {
-    id: "ling-xue-true-ending",
-    name: "凌雪 — 各走天涯",
-    prompt: `Clean decisive wuxia parting scene on a mountain road in winter. ${CHAR.lingXue} walks away along a frost-edged mountain road heading toward a misty pass, white robes and silver trim catching grey winter light. She has turned her head back over her shoulder — not with longing, but with a composed certain expression: a mutual understanding acknowledged, nothing left unresolved. In the background ${CHAR.player} is a small stationary figure in midnight blue at the start of the road, watching her go without moving to follow. Bare winter trees frame both sides of the path, light frost on the fallen leaves, the road curving away into mist. Wide cinematic composition, Chinese ink painting aesthetic, cool grey-white winter light with silver and deep ink tones, clean bittersweet atmosphere of two people parting exactly as equals, anime-inspired semi-realistic art, high quality detailed scene.`,
-  },
-  {
-    id: "su-qing-true-ending",
-    name: "苏青 — 问脉道别",
-    prompt: `Warm intimate wuxia farewell scene inside a modest medical clinic. ${CHAR.suQing} sits close to ${CHAR.player}, her fingers pressed gently but professionally against his inner wrist in a physician's pulse-reading hold, eyes focused downward — diagnosing, as she always does, yet this is also unmistakably a goodbye. Warm paper-window light fills the clinic interior: bundles of dried herbs hanging from dark wooden rafters, ceramic medicine jars on shelves, a half-finished medicine packet on the low wooden table beside her. Her expression is composed and warm — she has given what she can give, and she knows it is enough. ${CHAR.player} is still, watching her. Wide cinematic composition, Chinese ink painting aesthetic, warm amber and sage-green interior light filtered through rice paper windows, quiet purposeful atmosphere of a person exactly where she belongs, anime-inspired semi-realistic art, high quality detailed scene.`,
   },
 ];
 
