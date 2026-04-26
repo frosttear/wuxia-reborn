@@ -174,9 +174,42 @@ body {
 .log-info     { color: var(--muted); font-size: 0.78rem; padding: 2px 6px; }
 .log-choice   { color: var(--accent2); font-size: 0.83rem; padding: 2px 6px; border-left: 2px solid var(--accent2); margin-left: 4px; }
 .log-combat-info { color: #aaa; font-size: 0.75rem; font-style: italic; padding: 2px 6px; }
-.log-credits      { color: rgba(201,168,76,0.55); font-size: 0.8rem; text-align: center; padding: 2px 0; letter-spacing: 0.06em; }
-.log-credits-final { color: var(--accent2); font-size: 1.05rem; text-align: center; padding: 8px 0 4px; letter-spacing: 0.2em; animation: creditsFinalIn 1.8s ease forwards; opacity: 0; }
-@keyframes creditsFinalIn { 0% { opacity: 0; transform: translateY(16px); } 60% { opacity: 1; } 100% { opacity: 1; transform: none; } }
+/* Click-to-continue prompt (true ending NPC transitions) */
+.log-click-continue {
+    text-align: center; color: rgba(201,168,76,0.6); font-size: 0.85rem;
+    letter-spacing: 0.12em; cursor: pointer; padding: 14px 0; user-select: none;
+    animation: clickContinuePulse 1.4s ease-in-out infinite;
+}
+@keyframes clickContinuePulse { 0%, 100% { opacity: 0.35; } 50% { opacity: 1; } }
+
+/* Scrolling movie credits overlay */
+.credits-scroll-overlay {
+    position: fixed; inset: 0; background: rgba(0,0,0,0.93);
+    z-index: 9000; overflow: hidden; cursor: pointer;
+}
+.credits-scroll-inner {
+    position: absolute; left: 50%; transform: translateX(-50%) translateY(100vh);
+    width: min(480px, 90vw); text-align: center; padding-bottom: 60vh;
+}
+.credits-scroll-inner.rolling {
+    animation: creditsRoll var(--credits-duration, 30s) linear forwards;
+}
+@keyframes creditsRoll {
+    from { transform: translateX(-50%) translateY(100vh); }
+    to   { transform: translateX(-50%) translateY(-300vh); }
+}
+.credits-fin {
+    font-size: 3.5rem; font-family: 'Noto Serif SC', 'Songti SC', 'SimSun', 'STSong', serif;
+    color: var(--accent2, #e2b96f); letter-spacing: 0.3em;
+    margin-bottom: 5rem; padding-top: 2rem;
+}
+.credits-scroll-line { margin: 0; }
+.credits-scroll-role {
+    color: rgba(201,168,76,0.5); font-size: 0.78rem; letter-spacing: 0.12em;
+    margin-top: 1.8em; margin-bottom: 0.15em;
+}
+.credits-scroll-name { color: #e0d8c8; font-size: 1rem; }
+.credits-scroll-final { color: var(--accent2, #e2b96f); font-size: 1.3rem; margin-top: 3em; }
 .log-error    { color: var(--red); font-size: 0.78rem; padding: 2px 6px; }
 
 /* Choices panel */

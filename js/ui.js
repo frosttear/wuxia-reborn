@@ -711,6 +711,74 @@ const UI = {
         if (this.logBuffer.length > 30) this.logBuffer.shift();
     },
 
+    addLogTypewriter(text, cls) {
+        return new Promise(resolve => {
+            const div = document.createElement('div');
+            div.className = `log-entry log-${cls}`;
+            this.logEl.appendChild(div);
+            this.logEl.scrollTop = this.logEl.scrollHeight;
+            this.notifyEventTab();
+            this.logBuffer.push({ text, type: cls });
+            if (this.logBuffer.length > 30) this.logBuffer.shift();
+            let i = 0;
+            const step = () => {
+                i = Math.min(i + 1, text.length);
+                div.innerHTML = text.slice(0, i).replace(/\n/g, '<br>');
+                this.logEl.scrollTop = this.logEl.scrollHeight;
+                if (i < text.length) setTimeout(step, 20);
+                else resolve();
+            };
+            step();
+        });
+    },
+
+    waitForClick(msg = '▾ 点击继续') {
+        return new Promise(resolve => {
+            const el = document.createElement('div');
+            el.className = 'log-click-continue';
+            el.textContent = msg;
+            this.logEl.appendChild(el);
+            this.logEl.scrollTop = this.logEl.scrollHeight;
+            el.addEventListener('click', () => { el.remove(); resolve(); }, { once: true });
+        });
+    },
+
+    showScrollingCredits(items) {
+        return new Promise(resolve => {
+            const overlay = document.createElement('div');
+            overlay.className = 'credits-scroll-overlay';
+            const inner = document.createElement('div');
+            inner.className = 'credits-scroll-inner';
+
+            const finEl = document.createElement('div');
+            finEl.className = 'credits-fin';
+            finEl.textContent = 'Fin';
+            inner.appendChild(finEl);
+
+            for (const { text, cls } of items) {
+                const p = document.createElement('p');
+                p.className = `credits-scroll-line credits-scroll-${cls}`;
+                p.textContent = text;
+                inner.appendChild(p);
+            }
+
+            overlay.appendChild(inner);
+            document.body.appendChild(overlay);
+
+            requestAnimationFrame(() => {
+                const viewH = overlay.clientHeight;
+                const contentH = inner.scrollHeight;
+                const duration = Math.max(20, Math.round((viewH + contentH) / 70));
+                inner.style.setProperty('--credits-duration', `${duration}s`);
+                inner.classList.add('rolling');
+            });
+
+            const done = () => { if (document.body.contains(overlay)) { overlay.remove(); resolve(); } };
+            overlay.addEventListener('click', done, { once: true });
+            inner.addEventListener('animationend', () => setTimeout(done, 500), { once: true });
+        });
+    },
+
     getLogBuffer() { return this.logBuffer; },
 
     restoreLog(entries) {

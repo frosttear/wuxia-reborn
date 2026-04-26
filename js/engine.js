@@ -1435,22 +1435,30 @@ const Engine = {
         }, 3500);
     },
 
-    triggerTrueVictory() {
+    async triggerTrueVictory() {
         this.state.gamePhase = 'victory';
         this.stopAuto();
         const { char } = this.state;
         char.flags = char.flags || {};
         char.flags.true_ending_done = true;
 
-        UI.addLog('────────────────────', 'system');
-        UI.addLog('那双掌握轮回九百年的手，就此散为微尘。', 'win');
-        UI.addLog('双鱼玉佩的碎片化为光点，在风中渐渐消散——那条无形的锁链，就此断裂。', 'system');
-        UI.addLog('你第一次感到，这个世界上没有任何人在注视你、等待你、安排你。', 'system');
-        UI.addLog('只有你自己，和这片天地。', 'system');
-        UI.addLog('这一世，是你的。', 'win');
+        const sleep = ms => new Promise(r => setTimeout(r, ms));
 
-        const LINE_MS = 600;
-        const NPC_GAP = 1800;
+        const openingLines = [
+            { text: '────────────────────', cls: 'system' },
+            { text: '那双掌握轮回九百年的手，就此散为微尘。', cls: 'win' },
+            { text: '双鱼玉佩的碎片化为光点，在风中渐渐消散——那条无形的锁链，就此断裂。', cls: 'system' },
+            { text: '你第一次感到，这个世界上没有任何人在注视你、等待你、安排你。', cls: 'system' },
+            { text: '只有你自己，和这片天地。', cls: 'system' },
+            { text: '这一世，是你的。', cls: 'win' },
+        ];
+
+        await sleep(800);
+        for (const { text, cls } of openingLines) {
+            await UI.addLogTypewriter(text, cls);
+            await sleep(300);
+        }
+        await sleep(600);
 
         const epilogues = [
             {
@@ -1523,39 +1531,40 @@ const Engine = {
             },
         ];
 
-        let delay = 2000;
-        epilogues.forEach(({ illId, lines }) => {
-            lines.forEach(({ text, cls }) => {
-                setTimeout(() => UI.addLog(text, cls), delay);
-                delay += LINE_MS;
-            });
-            // Illustration appears after the last line and unlocks the gallery entry
-            setTimeout(() => UI.addIllustration(illId), delay);
-            delay += NPC_GAP;
-        });
+        for (const { illId, lines } of epilogues) {
+            for (const { text, cls } of lines) {
+                await UI.addLogTypewriter(text, cls);
+                await sleep(300);
+            }
+            await sleep(300);
+            UI.addIllustration(illId);
+            await sleep(600);
+            await UI.waitForClick();
+            await sleep(400);
+        }
 
-        setTimeout(() => UI.addLog('────────────────────', 'system'), delay);
-        delay += LINE_MS;
-        setTimeout(() => UI.addLog('每个人都有自己的去处，每段缘分都有它应有的落点。', 'system'), delay);
-        delay += LINE_MS;
-        setTimeout(() => UI.addLog('而你，终于可以放下了。', 'win'), delay);
-        delay += LINE_MS * 3;
+        const closingLines = [
+            { text: '────────────────────', cls: 'system' },
+            { text: '每个人都有自己的去处，每段缘分都有它应有的落点。', cls: 'system' },
+            { text: '而你，终于可以放下了。', cls: 'win' },
+        ];
+        for (const { text, cls } of closingLines) {
+            await UI.addLogTypewriter(text, cls);
+            await sleep(300);
+        }
+        await sleep(800);
 
-        // Credits
-        setTimeout(() => UI.addLog('── 制作致谢 ──', 'credits'), delay);
-        delay += LINE_MS;
-        setTimeout(() => UI.addLog('策划 · 文案 · 美术监制　　FrostTear（刘振兴）', 'credits'), delay);
-        delay += LINE_MS;
-        setTimeout(() => UI.addLog('AI 插画生成　　ChatGPT Image 2', 'credits'), delay);
-        delay += LINE_MS;
-        setTimeout(() => UI.addLog('特别感谢积极测试的朋友和家人　　孔局 · 鸡毛 · 天何 · 儿子牛牛 · 妻子 Ayumi', 'credits'), delay);
-        delay += LINE_MS * 2;
-        setTimeout(() => UI.addLog('感谢游玩的你', 'credits-final'), delay);
-        delay += 2400;
+        await UI.showScrollingCredits([
+            { text: '策划 · 文案 · 美术监制', cls: 'role' },
+            { text: 'FrostTear（刘振兴）', cls: 'name' },
+            { text: 'AI 插画生成', cls: 'role' },
+            { text: 'ChatGPT Image 2', cls: 'name' },
+            { text: '特别感谢积极测试的朋友和家人', cls: 'role' },
+            { text: '孔局 · 鸡毛 · 天何 · 儿子牛牛 · 妻子 Ayumi', cls: 'name' },
+            { text: '感谢游玩的你', cls: 'final' },
+        ]);
 
-        setTimeout(() => {
-            UI.showVictoryScreen(char, this.state.jobs, this.state.bonds, this.state.npcs);
-        }, delay + 1000);
+        UI.showVictoryScreen(char, this.state.jobs, this.state.bonds, this.state.npcs);
     },
 
     KILL_THRESHOLDS: [
