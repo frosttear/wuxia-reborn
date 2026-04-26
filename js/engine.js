@@ -1473,29 +1473,6 @@ const Engine = {
                 ],
             },
             {
-                illId: 'li-yunshu-true-ending',
-                lines: [
-                    { text: '【李云舒 · 此后同行】', cls: 'system' },
-                    { text: '李云舒把那封旧信折好，重新收进怀里。关于她母亲的事——梅林旧宅、那封压在剑谱里的信、旧案的来龙去脉——你已经一一告诉她了。', cls: 'epilogue' },
-                    { text: '她听的时候没有说话，只是捏着那封信，手指慢慢收紧，又慢慢松开。', cls: 'epilogue' },
-                    { text: '沉默了很久之后，她抬起头：「所以，接下来去哪？」', cls: 'epilogue-dialogue' },
-                    { text: '「还没想好。」你说。', cls: 'epilogue' },
-                    { text: '「那就一起想。」她站起来，拍了拍衣袖，「反正现在，你哪儿都不用去了——第一次，时间是你自己的了。」', cls: 'epilogue-win' },
-                ],
-            },
-            {
-                illId: 'mysterious-elder-true-ending',
-                lines: [
-                    { text: '【神秘老者 · 长夜将晓】', cls: 'system' },
-                    { text: '轮回锁断的那一刻，盘踞在他识海里九百年的东西，随之烟消云散。', cls: 'epilogue' },
-                    { text: '你在一间简陋的客房里找到他——脊背已不再挺直，气息也浅，眼神里没有了那种洞察一切的透彻，只剩下一个极度疲倦的老人。', cls: 'epilogue' },
-                    { text: '他没有辩解，也没有解释。只是看着你，开口说：「老夫欠你的，比你以为的多得多。」', cls: 'epilogue-dialogue' },
-                    { text: '你没有答话。这件事的是非曲直，你已经在走完的那条路上想清楚了——有些问题，不需要当面摊开。', cls: 'epilogue' },
-                    { text: '沈微尘是自己找来的。她听见门开的声音，在门口站了很久，才轻声叫了一声：「爹。」', cls: 'epilogue' },
-                    { text: '那一声，让他眼里有什么东西——像是熄了很久的火，重新有了一点温度。', cls: 'epilogue-win' },
-                ],
-            },
-            {
                 illId: 'yan-chixing-true-ending',
                 lines: [
                     { text: '【燕赤行 · 了却前尘】', cls: 'system' },
@@ -1527,6 +1504,29 @@ const Engine = {
                     { text: '「你这是……」你刚开口，她已经转身拿起了下一张药方，「以后不用再重来了。」她顿了一下，「好好过。」', cls: 'epilogue-dialogue' },
                     { text: '她说得很轻，像是在叮嘱，也像是在道别。门口还有人在等，她一转身就走进去了。', cls: 'epilogue' },
                     { text: '你站在门口看了一会儿。她在里面已经忙开了，专注，有条不紊，就该在那里的样子。', cls: 'epilogue-win' },
+                ],
+            },
+            {
+                illId: 'mysterious-elder-true-ending',
+                lines: [
+                    { text: '【神秘老者 · 长夜将晓】', cls: 'system' },
+                    { text: '轮回锁断的那一刻，盘踞在他识海里九百年的东西，随之烟消云散。', cls: 'epilogue' },
+                    { text: '你在一间简陋的客房里找到他——脊背已不再挺直，气息也浅，眼神里没有了那种洞察一切的透彻，只剩下一个极度疲倦的老人。', cls: 'epilogue' },
+                    { text: '他没有辩解，也没有解释。只是看着你，开口说：「老夫欠你的，比你以为的多得多。」', cls: 'epilogue-dialogue' },
+                    { text: '你没有答话。这件事的是非曲直，你已经在走完的那条路上想清楚了——有些问题，不需要当面摊开。', cls: 'epilogue' },
+                    { text: '沈微尘是自己找来的。她听见门开的声音，在门口站了很久，才轻声叫了一声：「爹。」', cls: 'epilogue' },
+                    { text: '那一声，让他眼里有什么东西——像是熄了很久的火，重新有了一点温度。', cls: 'epilogue-win' },
+                ],
+            },
+            {
+                illId: 'li-yunshu-true-ending',
+                lines: [
+                    { text: '【李云舒 · 此后同行】', cls: 'system' },
+                    { text: '李云舒把那封旧信折好，重新收进怀里。关于她母亲的事——梅林旧宅、那封压在剑谱里的信、旧案的来龙去脉——你已经一一告诉她了。', cls: 'epilogue' },
+                    { text: '她听的时候没有说话，只是捏着那封信，手指慢慢收紧，又慢慢松开。', cls: 'epilogue' },
+                    { text: '沉默了很久之后，她抬起头：「所以，接下来去哪？」', cls: 'epilogue-dialogue' },
+                    { text: '「还没想好。」你说。', cls: 'epilogue' },
+                    { text: '「那就一起想。」她站起来，拍了拍衣袖，「反正现在，你哪儿都不用去了——第一次，时间是你自己的了。」', cls: 'epilogue-win' },
                 ],
             },
         ];
@@ -1564,7 +1564,7 @@ const Engine = {
             { text: 'ChatGPT Image 2', cls: 'name' },
             { text: '特别感谢', cls: 'section' },
             { text: '积极测试的朋友们', cls: 'role' },
-            { text: '孔局 · 鸡毛 · 天何 · BB · 小猪', cls: 'name' },
+            { text: '孔局 · 鸡毛 · 天何 · BB · 小猪 · 大皮', cls: 'name' },
             { text: '家人们', cls: 'role' },
             { text: '牛牛（可爱的儿子）', cls: 'name' },
             { text: 'Ayumi（亲爱的老婆）', cls: 'name' },
