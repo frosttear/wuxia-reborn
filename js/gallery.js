@@ -506,6 +506,10 @@ const Gallery = {
 
         // Stream items into log with typewriter effect; clicking log skips current section to instant
         const log = this._replayLog;
+        // Scroll so el's bottom is fully visible inside log (avoids flex padding-bottom bug)
+        const scrollTo = (el) => {
+            log.scrollTop = el.offsetTop + el.offsetHeight - log.clientHeight + 16;
+        };
         const typewrite = (el, text, done) => {
             let j = 0;
             let finished = false;
@@ -515,12 +519,12 @@ const Gallery = {
                     finished = true;
                     this._replayImmediate = false;
                     el.textContent = text;
-                    log.scrollTop = log.scrollHeight;
+                    scrollTo(el);
                     done();
                     return;
                 }
                 el.textContent = text.slice(0, ++j);
-                log.scrollTop = log.scrollHeight;
+                scrollTo(el);
                 if (j < text.length) setTimeout(tick, 28);
                 else { finished = true; setTimeout(done, 180); }
             };
@@ -536,7 +540,7 @@ const Gallery = {
                 img.alt = '';
                 loadProgressiveImg(img, `assets/illustrations/${illId}.jpg`, null);
                 log.appendChild(img);
-                log.scrollTop = log.scrollHeight;
+                scrollTo(img);
                 setTimeout(() => stream(i + 1), 400);
                 return;
             }
