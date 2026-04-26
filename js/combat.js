@@ -107,7 +107,7 @@ const Combat = {
     // ── Enemy AI: choose heavy or swift ─────────────────────────────────────
     _enemyChooseAction(cs) {
         const hpPct = cs.enemyHp / cs.enemyMaxHp;
-        return Math.random() < (hpPct < 0.35 ? 0.65 : 0.45) ? 'heavy' : 'swift';
+        return Math.random() < (hpPct < 0.35 ? 0.55 : 0.45) ? 'heavy' : 'swift';
     },
 
     // ── Inner-force combat bonus (relative advantage) ──────────────────────
