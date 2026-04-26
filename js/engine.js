@@ -1446,11 +1446,11 @@ const Engine = {
 
         const openingLines = [
             { text: '────────────────────', cls: 'system' },
-            { text: '那双掌握轮回九百年的手，就此散为微尘。', cls: 'win' },
-            { text: '双鱼玉佩的碎片化为光点，在风中渐渐消散——那条无形的锁链，就此断裂。', cls: 'system' },
-            { text: '你第一次感到，这个世界上没有任何人在注视你、等待你、安排你。', cls: 'system' },
-            { text: '只有你自己，和这片天地。', cls: 'system' },
-            { text: '这一世，是你的。', cls: 'win' },
+            { text: '那双掌握轮回九百年的手，就此散为微尘。', cls: 'epilogue-win' },
+            { text: '双鱼玉佩的碎片化为光点，在风中渐渐消散——那条无形的锁链，就此断裂。', cls: 'epilogue' },
+            { text: '你第一次感到，这个世界上没有任何人在注视你、等待你、安排你。', cls: 'epilogue' },
+            { text: '只有你自己，和这片天地。', cls: 'epilogue' },
+            { text: '这一世，是你的。', cls: 'epilogue-win' },
         ];
 
         await sleep(800);
@@ -1466,67 +1466,67 @@ const Engine = {
                 lines: [
                     { text: '── 同行者们的此后 ──', cls: 'system' },
                     { text: '【王铁 · 刀路犹存】', cls: 'system' },
-                    { text: '路过镇口的时候，你在旧镖局的院子前停了一下。', cls: 'system' },
-                    { text: '里面有个年轻人，正在练刀。大开大合的架子，走位踏实，收势时刀刃贴身——你认出来了，那是王铁的路数，一招一式都是走了三十年镖路的人教出来的。', cls: 'system' },
-                    { text: '他没有开宗立派，没有留下字号，墓碑也只是一块木桩。但他的刀法，有人记，有人练，有人还在走那条路。', cls: 'win' },
-                    { text: '你没有进去。门口站了一会儿，转身继续走。有些事，知道就够了。', cls: 'system' },
+                    { text: '路过镇口的时候，你在旧镖局的院子前停了一下。', cls: 'epilogue' },
+                    { text: '里面有个年轻人，正在练刀。大开大合的架子，走位踏实，收势时刀刃贴身——你认出来了，那是王铁的路数，一招一式都是走了三十年镖路的人教出来的。', cls: 'epilogue' },
+                    { text: '他没有开宗立派，没有留下字号，墓碑也只是一块木桩。但他的刀法，有人记，有人练，有人还在走那条路。', cls: 'epilogue-win' },
+                    { text: '你没有进去。门口站了一会儿，转身继续走。有些事，知道就够了。', cls: 'epilogue' },
                 ],
             },
             {
                 illId: 'li-yunshu-true-ending',
                 lines: [
                     { text: '【李云舒 · 此后同行】', cls: 'system' },
-                    { text: '李云舒把那封旧信折好，重新收进怀里。关于她母亲的事——梅林旧宅、那封压在剑谱里的信、旧案的来龙去脉——你已经一一告诉她了。', cls: 'system' },
-                    { text: '她听的时候没有说话，只是捏着那封信，手指慢慢收紧，又慢慢松开。', cls: 'system' },
-                    { text: '沉默了很久之后，她抬起头：「所以，接下来去哪？」', cls: 'result' },
-                    { text: '「还没想好。」你说。', cls: 'system' },
-                    { text: '「那就一起想。」她站起来，拍了拍衣袖，「反正现在，你哪儿都不用去了——第一次，时间是你自己的了。」', cls: 'win' },
+                    { text: '李云舒把那封旧信折好，重新收进怀里。关于她母亲的事——梅林旧宅、那封压在剑谱里的信、旧案的来龙去脉——你已经一一告诉她了。', cls: 'epilogue' },
+                    { text: '她听的时候没有说话，只是捏着那封信，手指慢慢收紧，又慢慢松开。', cls: 'epilogue' },
+                    { text: '沉默了很久之后，她抬起头：「所以，接下来去哪？」', cls: 'epilogue-dialogue' },
+                    { text: '「还没想好。」你说。', cls: 'epilogue' },
+                    { text: '「那就一起想。」她站起来，拍了拍衣袖，「反正现在，你哪儿都不用去了——第一次，时间是你自己的了。」', cls: 'epilogue-win' },
                 ],
             },
             {
                 illId: 'mysterious-elder-true-ending',
                 lines: [
                     { text: '【神秘老者 · 长夜将晓】', cls: 'system' },
-                    { text: '轮回锁断的那一刻，盘踞在他识海里九百年的东西，随之烟消云散。', cls: 'system' },
-                    { text: '你在一间简陋的客房里找到他——脊背已不再挺直，气息也浅，眼神里没有了那种洞察一切的透彻，只剩下一个极度疲倦的老人。', cls: 'system' },
-                    { text: '他没有辩解，也没有解释。只是看着你，开口说：「老夫欠你的，比你以为的多得多。」', cls: 'result' },
-                    { text: '你没有答话。这件事的是非曲直，你已经在走完的那条路上想清楚了——有些问题，不需要当面摊开。', cls: 'system' },
-                    { text: '沈微尘是自己找来的。她听见门开的声音，在门口站了很久，才轻声叫了一声：「爹。」', cls: 'system' },
-                    { text: '那一声，让他眼里有什么东西——像是熄了很久的火，重新有了一点温度。', cls: 'win' },
+                    { text: '轮回锁断的那一刻，盘踞在他识海里九百年的东西，随之烟消云散。', cls: 'epilogue' },
+                    { text: '你在一间简陋的客房里找到他——脊背已不再挺直，气息也浅，眼神里没有了那种洞察一切的透彻，只剩下一个极度疲倦的老人。', cls: 'epilogue' },
+                    { text: '他没有辩解，也没有解释。只是看着你，开口说：「老夫欠你的，比你以为的多得多。」', cls: 'epilogue-dialogue' },
+                    { text: '你没有答话。这件事的是非曲直，你已经在走完的那条路上想清楚了——有些问题，不需要当面摊开。', cls: 'epilogue' },
+                    { text: '沈微尘是自己找来的。她听见门开的声音，在门口站了很久，才轻声叫了一声：「爹。」', cls: 'epilogue' },
+                    { text: '那一声，让他眼里有什么东西——像是熄了很久的火，重新有了一点温度。', cls: 'epilogue-win' },
                 ],
             },
             {
                 illId: 'yan-chixing-true-ending',
                 lines: [
                     { text: '【燕赤行 · 了却前尘】', cls: 'system' },
-                    { text: '含光山上的碑立好之后，燕赤行下了山，此后再没回去过。他说那是含光门的事，不是他的事——他的事，已经了了。', cls: 'system' },
-                    { text: '他又回到了那种来去无踪的日子，只不过这次走起来不一样——身上没有悬着的东西，步子比以前轻。', cls: 'system' },
-                    { text: '「想好去哪了吗？」他有一天忽然问你，语气跟在问今天吃什么差不多。', cls: 'result' },
-                    { text: '「还没有。」', cls: 'system' },
-                    { text: '「那就慢慢走。」他把刀往背上一负，扫了一眼远处的山，「江湖这么大，没有非去不可的地方，也没有非走不了的路。」', cls: 'result' },
+                    { text: '含光山上的碑立好之后，燕赤行下了山，此后再没回去过。他说那是含光门的事，不是他的事——他的事，已经了了。', cls: 'epilogue' },
+                    { text: '他又回到了那种来去无踪的日子，只不过这次走起来不一样——身上没有悬着的东西，步子比以前轻。', cls: 'epilogue' },
+                    { text: '「想好去哪了吗？」他有一天忽然问你，语气跟在问今天吃什么差不多。', cls: 'epilogue-dialogue' },
+                    { text: '「还没有。」', cls: 'epilogue' },
+                    { text: '「那就慢慢走。」他把刀往背上一负，扫了一眼远处的山，「江湖这么大，没有非去不可的地方，也没有非走不了的路。」', cls: 'epilogue-dialogue' },
                 ],
             },
             {
                 illId: 'ling-xue-true-ending',
                 lines: [
                     { text: '【凌雪 · 各走天涯】', cls: 'system' },
-                    { text: '凌雪和白渊的事了了之后，她在镇上又住了几天，把一些零散的东西处理干净，然后收拾包袱，准备上路。', cls: 'system' },
-                    { text: '你去送她，她只是摆了摆手：「不用送。这条路，我走得惯的。」', cls: 'system' },
-                    { text: '走出十来步，她忽然停下来，侧过身：「你的事，办完了？」', cls: 'result' },
-                    { text: '「办完了。」', cls: 'system' },
-                    { text: '「那就好。」她转回身，没再看你，「各走各的路。有缘再见。」', cls: 'system' },
-                    { text: '她的背影走进拐角，消失了。干净利落，一如她一向的作风。', cls: 'win' },
+                    { text: '凌雪和白渊的事了了之后，她在镇上又住了几天，把一些零散的东西处理干净，然后收拾包袱，准备上路。', cls: 'epilogue' },
+                    { text: '你去送她，她只是摆了摆手：「不用送。这条路，我走得惯的。」', cls: 'epilogue-dialogue' },
+                    { text: '走出十来步，她忽然停下来，侧过身：「你的事，办完了？」', cls: 'epilogue-dialogue' },
+                    { text: '「办完了。」', cls: 'epilogue' },
+                    { text: '「那就好。」她转回身，没再看你，「各走各的路。有缘再见。」', cls: 'epilogue-dialogue' },
+                    { text: '她的背影走进拐角，消失了。干净利落，一如她一向的作风。', cls: 'epilogue-win' },
                 ],
             },
             {
                 illId: 'su-qing-true-ending',
                 lines: [
                     { text: '【苏青 · 问脉道别】', cls: 'system' },
-                    { text: '济世堂重开后的生意比苏青预想的忙。你去找她的时候，她正在给人包扎手臂，头都没抬，只说了一句：「等一下。」', cls: 'system' },
-                    { text: '等那人走了，她才过来，不由分说地捏住你的手腕，把了把脉，皱眉看了看，点头：「稳了，比以前好多了。气息也顺。」', cls: 'system' },
-                    { text: '「你这是……」你刚开口，她已经转身拿起了下一张药方，「以后不用再重来了。」她顿了一下，「好好过。」', cls: 'result' },
-                    { text: '她说得很轻，像是在叮嘱，也像是在道别。门口还有人在等，她一转身就走进去了。', cls: 'system' },
-                    { text: '你站在门口看了一会儿。她在里面已经忙开了，专注，有条不紊，就该在那里的样子。', cls: 'win' },
+                    { text: '济世堂重开后的生意比苏青预想的忙。你去找她的时候，她正在给人包扎手臂，头都没抬，只说了一句：「等一下。」', cls: 'epilogue' },
+                    { text: '等那人走了，她才过来，不由分说地捏住你的手腕，把了把脉，皱眉看了看，点头：「稳了，比以前好多了。气息也顺。」', cls: 'epilogue-dialogue' },
+                    { text: '「你这是……」你刚开口，她已经转身拿起了下一张药方，「以后不用再重来了。」她顿了一下，「好好过。」', cls: 'epilogue-dialogue' },
+                    { text: '她说得很轻，像是在叮嘱，也像是在道别。门口还有人在等，她一转身就走进去了。', cls: 'epilogue' },
+                    { text: '你站在门口看了一会儿。她在里面已经忙开了，专注，有条不紊，就该在那里的样子。', cls: 'epilogue-win' },
                 ],
             },
         ];
@@ -1537,7 +1537,7 @@ const Engine = {
                 await sleep(300);
             }
             await sleep(300);
-            UI.addIllustration(illId);
+            UI.addEpilogueIllustration(illId);
             await sleep(600);
             await UI.waitForClick();
             await sleep(400);
@@ -1545,8 +1545,8 @@ const Engine = {
 
         const closingLines = [
             { text: '────────────────────', cls: 'system' },
-            { text: '每个人都有自己的去处，每段缘分都有它应有的落点。', cls: 'system' },
-            { text: '而你，终于可以放下了。', cls: 'win' },
+            { text: '每个人都有自己的去处，每段缘分都有它应有的落点。', cls: 'epilogue' },
+            { text: '而你，终于可以放下了。', cls: 'epilogue-win' },
         ];
         for (const { text, cls } of closingLines) {
             await UI.addLogTypewriter(text, cls);
@@ -1555,13 +1555,20 @@ const Engine = {
         await sleep(800);
 
         await UI.showScrollingCredits([
-            { text: '策划 · 文案 · 美术监制', cls: 'role' },
             { text: 'FrostTear（刘振兴）', cls: 'name' },
+            { text: '策划', cls: 'role' },
+            { text: '文案', cls: 'role' },
+            { text: '测试', cls: 'role' },
             { text: 'AI 插画生成', cls: 'role' },
             { text: 'ChatGPT Image 2', cls: 'name' },
-            { text: '特别感谢积极测试的朋友和家人', cls: 'role' },
-            { text: '孔局 · 鸡毛 · 天何 · 儿子牛牛 · 妻子 Ayumi', cls: 'name' },
-            { text: '感谢游玩的你', cls: 'final' },
+            { text: '特别感谢', cls: 'section' },
+            { text: '积极测试的朋友们', cls: 'role' },
+            { text: '孔局 · 鸡毛 · 天何 · BB · 小猪', cls: 'name' },
+            { text: '儿子　牛牛', cls: 'name' },
+            { text: '妻子　Ayumi', cls: 'name' },
+            { text: '', cls: 'spacer' },
+            { text: '以及', cls: 'role' },
+            { text: '游玩的你', cls: 'final' },
         ]);
 
         UI.showVictoryScreen(char, this.state.jobs, this.state.bonds, this.state.npcs);

@@ -174,6 +174,13 @@ body {
 .log-info     { color: var(--muted); font-size: 0.78rem; padding: 2px 6px; }
 .log-choice   { color: var(--accent2); font-size: 0.83rem; padding: 2px 6px; border-left: 2px solid var(--accent2); margin-left: 4px; }
 .log-combat-info { color: #aaa; font-size: 0.75rem; font-style: italic; padding: 2px 6px; }
+/* True ending epilogue log entries */
+.log-epilogue          { color: #c4b896; font-size: 0.95rem; line-height: 1.85; padding: 2px 0; text-indent: 2em; }
+.log-epilogue-win      { color: #9edd9e; font-size: 0.95rem; line-height: 1.85; padding: 2px 0; text-indent: 2em; }
+.log-epilogue-dialogue { color: var(--accent2); font-size: 0.95rem; line-height: 1.85; padding: 2px 0; font-style: italic; text-indent: 1em; }
+.log-epilogue-illustration { text-align: center; padding: 12px 0; }
+.log-epilogue-illustration .event-illustration { max-width: 100%; }
+
 /* Click-to-continue prompt (true ending NPC transitions) */
 .log-click-continue {
     text-align: center; color: rgba(201,168,76,0.6); font-size: 0.85rem;
@@ -206,10 +213,15 @@ body {
 .credits-scroll-line { margin: 0; }
 .credits-scroll-role {
     color: rgba(201,168,76,0.5); font-size: 0.78rem; letter-spacing: 0.12em;
-    margin-top: 1.8em; margin-bottom: 0.15em;
+    margin-top: 0.6em; margin-bottom: 0;
 }
-.credits-scroll-name { color: #e0d8c8; font-size: 1rem; }
-.credits-scroll-final { color: var(--accent2, #e2b96f); font-size: 1.3rem; margin-top: 3em; }
+.credits-scroll-name { color: #e0d8c8; font-size: 1rem; margin-top: 0.1em; }
+.credits-scroll-section {
+    color: var(--accent, #c9a84c); font-size: 0.85rem; letter-spacing: 0.15em;
+    margin-top: 2.5em; margin-bottom: 0.3em;
+}
+.credits-scroll-spacer { display: block; height: 4em; }
+.credits-scroll-final { color: var(--accent2, #e2b96f); font-size: 1.3rem; margin-top: 0.4em; }
 .log-error    { color: var(--red); font-size: 0.78rem; padding: 2px 6px; }
 
 /* Choices panel */

@@ -711,6 +711,22 @@ const UI = {
         if (this.logBuffer.length > 30) this.logBuffer.shift();
     },
 
+    addEpilogueIllustration(id) {
+        if (typeof Gallery !== 'undefined') Gallery.unlockIllustration(id);
+        const wrap = document.createElement('div');
+        wrap.className = 'log-illustration log-epilogue-illustration';
+        const img = document.createElement('img');
+        img.src = `assets/illustrations/${id}.jpg`;
+        img.className = 'event-illustration';
+        img.decoding = 'async';
+        img.onerror = () => { img.src = 'assets/illustrations/placeholder.svg'; img.onerror = null; };
+        wrap.appendChild(img);
+        this.logEl.appendChild(wrap);
+        this.logEl.scrollTop = this.logEl.scrollHeight;
+        this.logBuffer.push({ type: 'illustration', id });
+        if (this.logBuffer.length > 30) this.logBuffer.shift();
+    },
+
     addLogTypewriter(text, cls) {
         return new Promise(resolve => {
             const div = document.createElement('div');
