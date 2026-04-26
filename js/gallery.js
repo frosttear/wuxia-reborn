@@ -556,6 +556,8 @@ const Gallery = {
                 p.className = 'log-replay-choice';
             } else if (cls === 'sep') {
                 p.className = 'log-replay-sep';
+            } else {
+                p.className = 'log-replay-narrative';
             }
             log.appendChild(p);
             typewrite(p, text, () => stream(i + 1));

@@ -994,6 +994,7 @@ button:disabled { opacity: 0.4; cursor: not-allowed; }
 .gallery-replay-title { font-size: 0.85em; color: #888; margin-bottom: 10px; text-align: center; letter-spacing: 0.05em; }
 .gallery-replay-log { flex: 1; overflow-y: auto; font-size: 0.95rem; line-height: 1.9; display: flex; flex-direction: column; gap: 10px; padding-bottom: 24px; }
 .gallery-replay-log p { margin: 0; color: var(--text); }
+.log-replay-narrative { color: #c4b896 !important; text-indent: 2em; }
 .log-replay-sep { color: rgba(201,168,76,0.45) !important; text-align: center; font-size: 0.78em; letter-spacing: 0.18em; }
 .gallery-replay-illustration { width: 100%; max-width: 480px; border-radius: 8px; display: block; margin: 8px auto 4px; border: 1px solid var(--border); animation: replayIllIn 0.5s ease; }
 @keyframes replayIllIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: none; } }
