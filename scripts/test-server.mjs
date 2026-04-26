@@ -127,7 +127,9 @@ const server = http.createServer((req, res) => {
         let html;
         try { html = fs.readFileSync(path.join(ROOT, 'index.html'), 'utf8'); }
         catch { res.writeHead(500); res.end('index.html not found'); return; }
-        const injected = html.replace('</body>', TRUE_ENDING_DEBUG + '\n</body>');
+        const injected = html
+            .replace('<head>', '<head>\n<base href="/">')
+            .replace('</body>', TRUE_ENDING_DEBUG + '\n</body>');
         const buf = Buffer.from(injected, 'utf8');
         res.writeHead(200, { 'Content-Type': 'text/html; charset=utf-8', 'Content-Length': buf.length, 'Cache-Control': 'no-store' });
         res.end(buf);
