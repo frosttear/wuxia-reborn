@@ -1396,53 +1396,26 @@ const UI = {
         };
     },
 
-    showVictoryScreen(char, jobs, bonds, npcs) {
-        // True ending — defeated the hidden boss
+    showVictoryScreen(char) {
         const modal = document.createElement('div');
-        modal.className = 'modal-overlay';
-
-        // Career summary
-        const job = jobs && jobs.find(j => j.id === char.job);
-        const jobName = job ? job.name : char.job;
-        const attrs = char.attributes;
-        const statLine = `力量 ${attrs.strength} · 敏捷 ${attrs.agility} · 体质 ${attrs.constitution} · 内力 ${attrs.innerForce} · 悟性 ${attrs.comprehension} · 声望 ${attrs.reputation}`;
-
-        let bondsHtml = '';
-        if (bonds && npcs) {
-            for (const npcId in char.bondLevels) {
-                const lv = char.bondLevels[npcId];
-                if (lv > 0) {
-                    const npc = npcs.find(n => n.id === npcId);
-                    const total = bonds[npcId] ? bonds[npcId].length : '?';
-                    bondsHtml += `<li>${npc ? npc.name : npcId}（第 ${lv}/${total} 章）</li>`;
-                }
-            }
-        }
-
-        let talentsHtml = '';
-        for (const tid of (char.legacyTalents || [])) {
-            const t = (typeof TALENTS !== 'undefined' ? TALENTS : []).find(x => x.id === tid);
-            talentsHtml += `<li>${t ? t.name : tid}</li>`;
-        }
+        modal.className = 'modal-overlay victory-end-overlay';
 
         modal.innerHTML = `
-            <div class="modal-box">
-                <h2 style="color:#f4c430;font-size:1.4em">✦ 大结局 · 天下归一 ✦</h2>
-                <p style="color:#c9a84c;margin:6px 0 14px">天魔已倒，剑魂亦散。那枚玉牌最终化为流光，没入你的眉心。</p>
-                <p>老者在另一个地方，或许微微一笑。</p>
-                <p style="margin-bottom:16px">【${char.name}】的传奇，从此刻起，永远流传于世。</p>
-                <hr style="border-color:#444;margin:12px 0">
-                <h3 style="color:#aaa;font-size:0.95em;margin-bottom:8px">── 生涯总结 ──</h3>
-                <p>历经 <b>${char.rebirthCount}</b> 次世界线回溯（${char.rebirthCount + 1}周目），终于走完了最后一世。</p>
-                <p>最终职业：<b>${jobName}</b> · 享年 <b>${Character.getAgeYears(char)}</b> 岁</p>
-                <p style="font-size:0.88em;color:#aaa;margin:6px 0">${statLine}</p>
-                ${bondsHtml ? `<p style="margin-top:10px;color:#aaa;font-size:0.9em">羁绊：</p><ul style="color:#ccc;font-size:0.88em;margin:4px 0 10px 16px">${bondsHtml}</ul>` : ''}
-                ${talentsHtml ? `<p style="color:#aaa;font-size:0.9em">传承天赋：</p><ul style="color:#c9a84c;font-size:0.88em;margin:4px 0 10px 16px">${talentsHtml}</ul>` : ''}
-                <hr style="border-color:#444;margin:12px 0">
-                <button id="victoryNGPlusBtn" class="btn-confirm" style="margin-right:12px">传说难度·再战一世</button>
-                <button id="newGameBtn" class="btn-secondary">重新开始</button>
+            <div class="modal-box victory-end-box">
+                <h2 class="victory-end-title">✦ 天下归一 ✦</h2>
+                <p class="victory-end-sub">故事已到终章。<br>【${char.name}】的传奇，永远流传于世。</p>
+                <div class="victory-end-btns">
+                    <button id="victoryGalleryBtn" class="btn-confirm">查看图鉴</button>
+                    <button id="victoryNGPlusBtn" class="btn-secondary">传说难度·再战一世</button>
+                    <button id="newGameBtn" class="btn-secondary">重新开始</button>
+                </div>
             </div>`;
         document.body.appendChild(modal);
+
+        modal.querySelector('#victoryGalleryBtn').onclick = () => {
+            document.body.removeChild(modal);
+            if (typeof Gallery !== 'undefined') Gallery.open();
+        };
         modal.querySelector('#victoryNGPlusBtn').onclick = () => {
             document.body.removeChild(modal);
             const avail = Rebirth.getAvailableTalents(char);

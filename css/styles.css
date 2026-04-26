@@ -222,6 +222,15 @@ body {
     color: var(--accent2, #e2b96f); letter-spacing: 0.5em;
     margin-top: 3rem; padding-bottom: 2rem; font-weight: 300;
 }
+/* Post-credits victory options */
+.victory-end-overlay { display: flex; align-items: center; justify-content: center; }
+.victory-end-box { text-align: center; padding: 40px 32px; max-width: 420px; }
+.victory-end-title { color: #f4c430; font-size: 1.6em; letter-spacing: 0.2em; margin-bottom: 12px; }
+.victory-end-sub { color: var(--accent2, #e2b96f); font-size: 0.95rem; line-height: 1.9; margin-bottom: 28px; }
+.victory-end-btns { display: flex; flex-direction: column; gap: 10px; }
+.victory-end-btns .btn-confirm,
+.victory-end-btns .btn-secondary { width: 100%; }
+
 .log-error    { color: var(--red); font-size: 0.78rem; padding: 2px 6px; }
 
 /* Choices panel */

@@ -1576,7 +1576,7 @@ const Engine = {
             { text: 'Fin', cls: 'fin' },
         ]);
 
-        UI.showVictoryScreen(char, this.state.jobs, this.state.bonds, this.state.npcs);
+        UI.showVictoryScreen(char);
     },
 
     KILL_THRESHOLDS: [
