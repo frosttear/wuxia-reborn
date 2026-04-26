@@ -725,14 +725,12 @@ const UI = {
         if (this.logBuffer.length > 30) this.logBuffer.shift();
         const hqSrc = `assets/illustrations/${id}.jpg`;
         loadProgressiveImg(img, hqSrc, null);
-        // Resolve when thumbnail appears — thumbnail has no server delay so this is fast
+        // Resolve when HQ fully loaded (onerror resolves too so a missing image never blocks)
         return new Promise(resolve => {
-            const thumbSrc = hqSrc.replace(/(assets\/[^/]+\/)([^/]+)\.\w+$/, '$1thumbnail/$2.jpg');
             const probe = new Image();
             probe.onload = () => { this.logEl.scrollTop = this.logEl.scrollHeight; resolve(); };
             probe.onerror = resolve;
-            probe.src = thumbSrc;
-            setTimeout(resolve, 2000); // safety fallback if thumbnail missing
+            probe.src = hqSrc;
         });
     },
 
