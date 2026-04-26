@@ -934,7 +934,7 @@ button:disabled { opacity: 0.4; cursor: not-allowed; }
 
 .gallery-lb-box {
     position: relative; display: flex;
-    align-items: center; max-width: min(1100px, 98vw); max-height: 96vh;
+    align-items: center; width: min(1100px, 98vw); max-height: 96vh;
 }
 .gallery-lb-stage {
     display: grid; grid-template-columns: 100%; overflow: hidden; width: 100%;
@@ -945,7 +945,7 @@ button:disabled { opacity: 0.4; cursor: not-allowed; }
     max-height: 96vh; overflow: hidden; width: 100%;
 }
 .gallery-lb-img {
-    max-height: 78vh; width: min(900px, 90vw, 100%);
+    max-height: 78vh; min-height: 30vh; width: min(900px, 90vw, 100%);
     object-fit: contain; border-radius: 8px;
     box-shadow: 0 8px 56px rgba(0,0,0,0.8); display: block;
     transition: opacity 0.4s ease;

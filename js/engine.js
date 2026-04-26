@@ -211,12 +211,18 @@ const Engine = {
             if (['奇遇', '机缘'].includes(event.type))  weight += innerBonus;
             if (event.type === '交友') weight += repBonus;
 
-            // Multi-rebirth: boost unmet-NPC events so players encounter them sooner
+            // Multi-rebirth: boost unmet-NPC events so players encounter them sooner.
+            // Escalates over time so narratively-important NPCs surface reliably.
             const rebirthCount = char.rebirthCount || 0;
             if (rebirthCount > 0) {
                 const condFlags = (event.conditions || {}).flags || {};
                 const isUnmetNPC = Object.keys(condFlags).some(k => k.startsWith('met_') && condFlags[k] === false);
-                if (isUnmetNPC) weight += rebirthCount * 4;
+                if (isUnmetNPC) {
+                    const baseBoost = rebirthCount * 4;
+                    // +1 per 5 months elapsed this life (caps at +14 around age 250)
+                    const ageEscalation = Math.min(14, Math.floor((char.ageMonths - 180) / 5));
+                    weight += baseBoost + Math.max(0, ageEscalation);
+                }
             }
 
             // Slightly reduce weight for recently seen events

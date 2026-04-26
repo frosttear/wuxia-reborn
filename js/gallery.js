@@ -615,7 +615,10 @@ const Gallery = {
     },
 
     _initFlanks() {
-        const dist = (this._lbStage && this._lbStage.offsetWidth) || (this._slotCenter && this._slotCenter.offsetWidth) || 500;
+        const dist = (this._lbStage && this._lbStage.offsetWidth)
+            || (this._slotCenter && this._slotCenter.offsetWidth)
+            || Math.min(1100, window.innerWidth * 0.98)
+            || 500;
         const prevIdx = this._findNextUnlockedFrom(this._lightboxIdx, -1);
         const nextIdx = this._findNextUnlockedFrom(this._lightboxIdx,  1);
         // Assign the two non-center elements to left/right
