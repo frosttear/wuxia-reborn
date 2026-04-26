@@ -1537,8 +1537,7 @@ const Engine = {
                 await sleep(300);
             }
             await sleep(300);
-            UI.addEpilogueIllustration(illId);
-            await sleep(600);
+            await UI.addEpilogueIllustration(illId);
             await UI.waitForClick();
             await sleep(400);
         }
@@ -1555,20 +1554,26 @@ const Engine = {
         await sleep(800);
 
         await UI.showScrollingCredits([
-            { text: 'FrostTear（刘振兴）', cls: 'name' },
             { text: '策划', cls: 'role' },
+            { text: 'FrostTear（刘振兴）', cls: 'name' },
             { text: '文案', cls: 'role' },
+            { text: 'FrostTear（刘振兴）', cls: 'name' },
             { text: '测试', cls: 'role' },
+            { text: 'FrostTear（刘振兴）', cls: 'name' },
             { text: 'AI 插画生成', cls: 'role' },
             { text: 'ChatGPT Image 2', cls: 'name' },
             { text: '特别感谢', cls: 'section' },
             { text: '积极测试的朋友们', cls: 'role' },
             { text: '孔局 · 鸡毛 · 天何 · BB · 小猪', cls: 'name' },
-            { text: '儿子　牛牛', cls: 'name' },
-            { text: '妻子　Ayumi', cls: 'name' },
+            { text: '家人们', cls: 'role' },
+            { text: '牛牛（可爱的儿子）', cls: 'name' },
+            { text: 'Ayumi（亲爱的老婆）', cls: 'name' },
+            { text: '姐姐　刘芸', cls: 'name' },
             { text: '', cls: 'spacer' },
             { text: '以及', cls: 'role' },
             { text: '游玩的你', cls: 'final' },
+            { text: '', cls: 'spacer' },
+            { text: 'Fin', cls: 'fin' },
         ]);
 
         UI.showVictoryScreen(char, this.state.jobs, this.state.bonds, this.state.npcs);

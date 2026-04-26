@@ -716,15 +716,24 @@ const UI = {
         const wrap = document.createElement('div');
         wrap.className = 'log-illustration log-epilogue-illustration';
         const img = document.createElement('img');
-        img.src = `assets/illustrations/${id}.jpg`;
         img.className = 'event-illustration';
         img.decoding = 'async';
-        img.onerror = () => { img.src = 'assets/illustrations/placeholder.svg'; img.onerror = null; };
         wrap.appendChild(img);
         this.logEl.appendChild(wrap);
         this.logEl.scrollTop = this.logEl.scrollHeight;
         this.logBuffer.push({ type: 'illustration', id });
         if (this.logBuffer.length > 30) this.logBuffer.shift();
+        const hqSrc = `assets/illustrations/${id}.jpg`;
+        loadProgressiveImg(img, hqSrc, null);
+        // Resolve when thumbnail appears — thumbnail has no server delay so this is fast
+        return new Promise(resolve => {
+            const thumbSrc = hqSrc.replace(/(assets\/[^/]+\/)([^/]+)\.\w+$/, '$1thumbnail/$2.jpg');
+            const probe = new Image();
+            probe.onload = () => { this.logEl.scrollTop = this.logEl.scrollHeight; resolve(); };
+            probe.onerror = resolve;
+            probe.src = thumbSrc;
+            setTimeout(resolve, 2000); // safety fallback if thumbnail missing
+        });
     },
 
     addLogTypewriter(text, cls) {
@@ -765,11 +774,6 @@ const UI = {
             overlay.className = 'credits-scroll-overlay';
             const inner = document.createElement('div');
             inner.className = 'credits-scroll-inner';
-
-            const finEl = document.createElement('div');
-            finEl.className = 'credits-fin';
-            finEl.textContent = 'Fin';
-            inner.appendChild(finEl);
 
             for (const { text, cls } of items) {
                 const p = document.createElement('p');
