@@ -985,7 +985,7 @@ button:disabled { opacity: 0.4; cursor: not-allowed; }
 
 /* ── 剧情回想 tab ── */
 .gallery-replay-list { list-style: none; padding: 0; margin: 0; }
-.gallery-replay-list li { padding: 10px 16px; cursor: pointer; border-bottom: 1px solid rgba(255,255,255,0.08); color: #ccc; transition: background 0.15s; }
+.gallery-replay-list li { padding: 10px 16px; cursor: pointer; border-bottom: 1px solid rgba(255,255,255,0.08); color: #c4b896; font-size: 0.95rem; line-height: 1.9; transition: background 0.15s; }
 .gallery-replay-list li:hover { background: rgba(255,255,255,0.06); }
 .gallery-replay-section-header { padding: 6px 16px; font-size: 0.8em; color: #888; text-transform: uppercase; letter-spacing: 0.1em; cursor: default !important; }
 .gallery-replay-section-header:hover { background: none !important; }
