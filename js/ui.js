@@ -12,8 +12,13 @@ function loadProgressiveImg(img, hqSrc, fallbackSrc, { skipThumb = false } = {})
     if (img._lqProbe) { img._lqProbe.onload = null; img._lqProbe = null; }
     img._hqDone = false;
     img.classList.add('img-lq');
+    // Generation counter: if _fillSlot fires again before decode() resolves,
+    // the stale apply() is a no-op and won't overwrite the newer image.
+    img._loadGen = (img._loadGen || 0) + 1;
+    const gen = img._loadGen;
     img.onerror = () => {
         img.onerror = null;
+        if (img._loadGen !== gen) return;
         if (fallbackSrc) { img.src = fallbackSrc; img.classList.remove('img-lq'); }
         else img.style.display = 'none';
     };
@@ -21,7 +26,12 @@ function loadProgressiveImg(img, hqSrc, fallbackSrc, { skipThumb = false } = {})
     if (!skipThumb) img.src = thumbSrc;
     // Swap src only after probe is decoded to avoid blank-frame flash
     const swap = (probe, src, done) => {
-        const apply = () => { img.src = src; if (done) { img.classList.remove('img-lq'); } img.onerror = null; };
+        const apply = () => {
+            if (img._loadGen !== gen) return; // superseded by a newer loadProgressiveImg call
+            img.src = src;
+            if (done) img.classList.remove('img-lq');
+            img.onerror = null;
+        };
         (probe.decode ? probe.decode().catch(() => {}) : Promise.resolve()).then(apply);
     };
     // Stage 2: probe LQ — upgrade from thumbnail as soon as it arrives

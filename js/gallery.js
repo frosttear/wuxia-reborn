@@ -608,6 +608,9 @@ const Gallery = {
         if (!el) return;
         el.style.transition = 'none';
         el.style.transform = x === 0 ? 'none' : `translate3d(${x}px, 0, 0)`;
+        // Flanks are invisible; only the center and an animating-in slot are shown.
+        // This prevents will-change compositor layers from escaping overflow:hidden.
+        el.style.visibility = x === 0 ? 'visible' : 'hidden';
     },
 
     _initSlots() {
@@ -663,6 +666,7 @@ const Gallery = {
         this._lightboxIdx = next;
         this._fillSlot(this._slotCenter, next);
         this._placeSlot(this._slotCenter, 0);
+        this._slotCenter.style.visibility = 'visible';
     },
 
     // Animated navigate for keyboard / buttons — simultaneous two-panel slide
@@ -677,6 +681,8 @@ const Gallery = {
         const exiting  = this._slotCenter;
         const dist = (this._lbStage && this._lbStage.offsetWidth) || exiting.offsetWidth || 500;
 
+        // Reveal entering slot just before animating (flanks are hidden by default)
+        entering.style.visibility = 'visible';
         // Entering must always render on top regardless of DOM order
         entering.style.zIndex = '2';
         exiting.style.zIndex  = '1';
@@ -697,8 +703,12 @@ const Gallery = {
             exiting.style.zIndex  = '';
             this._lightboxIdx = nextIdx;
             this._slotCenter  = entering;
-            this._initFlanks();
-            this._animating = false;
+            // Defer _initFlanks by one rAF so the browser demotes will-change layers
+            // before we reposition the exiting slot, preventing compositor-layer flash.
+            requestAnimationFrame(() => {
+                this._initFlanks();
+                this._animating = false;
+            });
         }, { once: true });
     },
 
