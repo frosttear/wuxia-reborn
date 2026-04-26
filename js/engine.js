@@ -1568,7 +1568,7 @@ const Engine = {
             { text: '家人们', cls: 'role' },
             { text: '牛牛（可爱的儿子）', cls: 'name' },
             { text: 'Ayumi（亲爱的老婆）', cls: 'name' },
-            { text: '姐姐　刘芸', cls: 'name' },
+            { text: '刘芸（亲爱的姐姐）', cls: 'name' },
             { text: '', cls: 'spacer' },
             { text: '以及', cls: 'role' },
             { text: '游玩的你', cls: 'final' },
