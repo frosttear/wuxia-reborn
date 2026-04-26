@@ -218,8 +218,8 @@ const Engine = {
                 const condFlags = (event.conditions || {}).flags || {};
                 const isUnmetNPC = Object.keys(condFlags).some(k => k.startsWith('met_') && condFlags[k] === false);
                 if (isUnmetNPC) {
-                    // +1 per month elapsed this life — uncapped, guarantees late-game appearance
-                    weight += rebirthCount * 4 + Math.max(0, char.ageMonths - 180);
+                    // +4 per month elapsed this life — uncapped, guarantees late-game appearance
+                    weight += rebirthCount * 5 + 4 * Math.max(0, char.ageMonths - 180);
                 }
             }
 
