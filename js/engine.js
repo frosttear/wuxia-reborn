@@ -218,10 +218,8 @@ const Engine = {
                 const condFlags = (event.conditions || {}).flags || {};
                 const isUnmetNPC = Object.keys(condFlags).some(k => k.startsWith('met_') && condFlags[k] === false);
                 if (isUnmetNPC) {
-                    const baseBoost = rebirthCount * 4;
-                    // +1 per 5 months elapsed this life (caps at +14 around age 250)
-                    const ageEscalation = Math.min(14, Math.floor((char.ageMonths - 180) / 5));
-                    weight += baseBoost + Math.max(0, ageEscalation);
+                    // +1 per month elapsed this life — uncapped, guarantees late-game appearance
+                    weight += rebirthCount * 4 + Math.max(0, char.ageMonths - 180);
                 }
             }
 
