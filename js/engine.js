@@ -1439,13 +1439,86 @@ const Engine = {
         this.state.gamePhase = 'victory';
         this.stopAuto();
         const { char } = this.state;
+        char.flags = char.flags || {};
+        char.flags.true_ending_done = true;
+
         UI.addLog('────────────────────', 'system');
         UI.addLog('那双掌握轮回九百年的手，就此散为微尘。', 'win');
         UI.addLog('双鱼玉佩的碎片化为光点，在风中渐渐消散——那条无形的锁链，就此断裂。', 'system');
         UI.addLog('你第一次感到，这个世界上没有任何人在注视你、等待你、安排你。', 'system');
         UI.addLog('只有你自己，和这片天地。', 'system');
         UI.addLog('这一世，是你的。', 'win');
-        UI.showVictoryScreen(char, this.state.jobs, this.state.bonds, this.state.npcs);
+
+        const LINE_MS = 600;
+        const NPC_GAP = 1800;
+
+        const epilogues = [
+            [
+                { text: '── 旧日同行者的去处 ──', cls: 'system' },
+                { text: '【王铁】', cls: 'system' },
+                { text: '镇口的老槐树下，王铁独自坐着，面前摆着两碗酒。', cls: 'system' },
+                { text: '一碗已尽，一碗原封未动。', cls: 'system' },
+                { text: '「老弟，你总算走得干净。」他低声说，「这碗，算我替你喝了。」', cls: 'result' },
+                { text: '他仰头饮尽，风吹过空碗的口沿，呜呜作响，像一声极远的应答。', cls: 'system' },
+            ],
+            [
+                { text: '【李云舒】', cls: 'system' },
+                { text: '李云舒站在望江楼最高处，望着水天相接的远方，发了很久的呆。', cls: 'system' },
+                { text: '身旁的人问她在看什么，她摇了摇头：「一个人。他去了很远的地方。」', cls: 'result' },
+                { text: '「那你难过吗？」', cls: 'system' },
+                { text: '她想了想，微微笑起来：「难过。但那段时光是真的——这就够了。」', cls: 'win' },
+                { text: '她收回目光，提起行囊，继续向前走去。江湖还长，她自有她的路。', cls: 'system' },
+            ],
+            [
+                { text: '【神秘老者】', cls: 'system' },
+                { text: '无相剑的玉简在某个清晨悄然碎裂，化作一地白尘。', cls: 'system' },
+                { text: '老者在残片中枯坐许久，最后笑了笑，拂袖而去。', cls: 'system' },
+                { text: '「传承从不在竹简里。」他喃喃道，「它已经在那孩子手上了——带去了另一个地方。」', cls: 'result' },
+                { text: '无相剑法，就此由一个已不在此世之人守护。刀锋所指，永不迷途。', cls: 'system' },
+            ],
+            [
+                { text: '【燕赤行】', cls: 'system' },
+                { text: '燕赤行的房间空了。床铺叠得整整齐齐，桌上没有留字。', cls: 'system' },
+                { text: '只有窗棂上，有人用剑尖刻了两个字：「走了。」', cls: 'result' },
+                { text: '认识他的人都说，这就是他的风格——来得悄然，去得干净，从不拖泥带水。', cls: 'system' },
+                { text: '没人知道他去了哪里。也许他自己也不知道。但他从来都是这样。', cls: 'system' },
+            ],
+            [
+                { text: '【凌雪】', cls: 'system' },
+                { text: '第一场雪落下来的时候，凌雪一个人站在院中，看了很久。', cls: 'system' },
+                { text: '她曾以为自己会一直等。后来才明白，有些人的离去不需要等待，只需要记住。', cls: 'system' },
+                { text: '「好了，」她对自己说，「你也有你的路要走。」', cls: 'result' },
+                { text: '她深吸一口冷气，转身走回屋内，雪还在下。', cls: 'system' },
+            ],
+            [
+                { text: '【苏青】', cls: 'system' },
+                { text: '苏青在某个集市上听人提起那个名字，才意识到那个人早已不在了。', cls: 'system' },
+                { text: '她愣了一会儿，然后继续包扎面前病人的伤口，手没有抖。', cls: 'system' },
+                { text: '「你认识那个人吗？」病人问。', cls: 'system' },
+                { text: '「认识，」苏青答，「是个很好的人。」', cls: 'result' },
+                { text: '她没有再多说。有些友情，不需要别人懂。她继续行医，继续救人，继续向前。', cls: 'system' },
+            ],
+        ];
+
+        let delay = 2000;
+        epilogues.forEach(lines => {
+            lines.forEach(({ text, cls }) => {
+                setTimeout(() => UI.addLog(text, cls), delay);
+                delay += LINE_MS;
+            });
+            delay += NPC_GAP;
+        });
+
+        setTimeout(() => UI.addLog('────────────────────', 'system'), delay);
+        delay += LINE_MS;
+        setTimeout(() => UI.addLog('每个人都有自己的去处，每段缘分都有它应有的落点。', 'system'), delay);
+        delay += LINE_MS;
+        setTimeout(() => UI.addLog('而你，终于可以放下了。', 'win'), delay);
+        delay += LINE_MS;
+
+        setTimeout(() => {
+            UI.showVictoryScreen(char, this.state.jobs, this.state.bonds, this.state.npcs);
+        }, delay + 2000);
     },
 
     KILL_THRESHOLDS: [
