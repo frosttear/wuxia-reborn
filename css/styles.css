@@ -1027,7 +1027,7 @@ button:disabled { opacity: 0.4; cursor: not-allowed; }
     max-height: 96vh; overflow: hidden; width: 100%;
 }
 .gallery-lb-img {
-    max-height: 78vh; min-height: 30vh; width: min(900px, 90vw, 100%);
+    height: 70vh; width: min(900px, 90vw, 100%);
     object-fit: contain; border-radius: 8px;
     box-shadow: 0 8px 56px rgba(0,0,0,0.8); display: block;
     transition: opacity 0.4s ease;
@@ -1088,6 +1088,6 @@ button:disabled { opacity: 0.4; cursor: not-allowed; }
     .gallery-grid { grid-template-columns: repeat(auto-fill, minmax(120px, 1fr)); gap: 10px; padding: 12px; }
     .gallery-header { padding: 10px 12px; flex-wrap: wrap; gap: 8px; }
     .gallery-lb-nav { font-size: 2.4rem; padding: 10px; }
-    .gallery-lb-img { max-height: 52vh; width: min(92vw, 100%); }
+    .gallery-lb-img { height: 52vh; width: min(92vw, 100%); }
     .gallery-lb-name { font-size: 1rem; }
 }
