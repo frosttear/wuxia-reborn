@@ -777,22 +777,22 @@ const UI = {
         });
     },
 
-    epilogueSectionMark() {
-        return this.logEl.children.length;
-    },
-
-    slideOutEpilogueSection(fromIndex) {
+    slideOutEpilogueSection() {
         return new Promise(resolve => {
-            const els = Array.from(this.logEl.children).slice(fromIndex);
-            if (!els.length) { resolve(); return; }
-            const wrapper = document.createElement('div');
-            wrapper.className = 'log-epilogue-section-exit';
-            this.logEl.insertBefore(wrapper, els[0]);
-            els.forEach(el => wrapper.appendChild(el));
-            wrapper.addEventListener('animationend', () => {
-                wrapper.remove();
-                resolve();
-            }, { once: true });
+            // Permanent chapter separator — stays in DOM so scrolling up reveals old content
+            const sep = document.createElement('div');
+            sep.className = 'log-epilogue-chapter-sep';
+            this.logEl.appendChild(sep);
+
+            // Smooth-scroll so separator fills the viewport,
+            // pushing the current NPC section above the fold
+            this.logEl.scrollTo({
+                top: this.logEl.scrollHeight - this.logEl.clientHeight,
+                behavior: 'smooth',
+            });
+
+            // Resolve after scroll animation (~650 ms)
+            setTimeout(resolve, 650);
         });
     },
 
