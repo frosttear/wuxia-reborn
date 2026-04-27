@@ -744,12 +744,23 @@ const UI = {
             this.logBuffer.push({ text, type: cls });
             if (this.logBuffer.length > 30) this.logBuffer.shift();
             let i = 0;
+            let done = false;
+            const finish = () => {
+                if (done) return;
+                done = true;
+                this.logEl.removeEventListener('click', finish);
+                div.innerHTML = text.replace(/\n/g, '<br>');
+                this.logEl.scrollTop = this.logEl.scrollHeight;
+                resolve();
+            };
+            this.logEl.addEventListener('click', finish, { once: true });
             const step = () => {
+                if (done) return;
                 i = Math.min(i + 1, text.length);
                 div.innerHTML = text.slice(0, i).replace(/\n/g, '<br>');
                 this.logEl.scrollTop = this.logEl.scrollHeight;
                 if (i < text.length) setTimeout(step, 20);
-                else resolve();
+                else finish();
             };
             step();
         });
