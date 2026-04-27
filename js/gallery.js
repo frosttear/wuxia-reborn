@@ -450,11 +450,28 @@ const Gallery = {
         this._replayTitle.textContent = title || '';
         this._replayLog.innerHTML = '';
         this._replayPanel.style.display = 'flex';
-        this._replayImmediate = false;
         this._replaySeq = (this._replaySeq || 0) + 1;
         const token = this._replaySeq;
-        this._replayLog.onclick = () => { this._replayImmediate = true; };
+        this._replaySkip = null;
+        this._replayNext = null;
+        this._replayLog.onclick = () => {
+            if (this._replaySkip) { this._replaySkip(); }
+            else if (this._replayNext) { this._replayNext(); }
+        };
         this._runReplay(type, id, level, token);
+    },
+
+    _splitParagraphs(text, maxLen = 60) {
+        const parts = text.split(/(?<=[。！？])/);
+        const chunks = [];
+        let cur = '';
+        for (const p of parts) {
+            if (!p) continue;
+            if (cur.length > 0 && cur.length + p.length > maxLen) { chunks.push(cur); cur = p; }
+            else cur += p;
+        }
+        if (cur) chunks.push(cur);
+        return chunks.length > 1 ? chunks : [text];
     },
 
     _runReplay(type, id, level, token) {
@@ -498,50 +515,61 @@ const Gallery = {
             // Skip step if ALL choices are combat (pure combat gate, no story text worth showing)
             if (choices.length > 0 && combatChoices.length === choices.length) continue;
 
-            if (step.text) items.push({ text: step.text, cls: 'narrative' });
+            if (step.text) this._splitParagraphs(step.text).forEach(t => items.push({ text: t, cls: 'narrative' }));
 
             const nonCombat = choices.filter(c => !(c.effects && c.effects.combat));
             for (const choice of nonCombat) {
                 items.push({ text: choice.text, cls: 'choice' });
                 const narr = choice.effects && choice.effects.narrative;
-                if (narr) items.push({ text: narr, cls: 'narrative' });
+                if (narr) this._splitParagraphs(narr).forEach(t => items.push({ text: t, cls: 'narrative' }));
             }
         }
 
-        if (completionNarrative) items.push({ text: completionNarrative, cls: 'narrative' });
+        if (completionNarrative) this._splitParagraphs(completionNarrative).forEach(t => items.push({ text: t, cls: 'narrative' }));
         // Illustration appears after all text so the reader finishes the story first
         if (illId) items.push({ cls: 'illustration', illId });
         items.push({ text: '── 回想结束 ──', cls: 'sep' });
 
-        // Stream items into log with typewriter effect; clicking log skips current section to instant
+        // VN-style click-to-advance: typewrite each item, then pause until user clicks.
+        // Clicking during typewrite skips to instant; clicking while paused advances to next.
         const log = this._replayLog;
-        // Scroll so el's bottom is fully visible inside log (avoids flex padding-bottom bug)
         const scrollTo = (el) => {
             log.scrollTop = el.offsetTop + el.offsetHeight - log.clientHeight + 16;
         };
         const typewrite = (el, text, done) => {
             let j = 0;
-            let finished = false;
+            this._replaySkip = () => {
+                this._replaySkip = null;
+                el.textContent = text;
+                scrollTo(el);
+                done();
+            };
             const tick = () => {
-                if (finished || token !== this._replaySeq) return;
-                if (this._replayImmediate) {
-                    finished = true;
-                    this._replayImmediate = false;
-                    el.textContent = text;
-                    scrollTo(el);
-                    done();
-                    return;
-                }
+                if (token !== this._replaySeq) return;
                 el.textContent = text.slice(0, ++j);
                 scrollTo(el);
                 if (j < text.length) setTimeout(tick, 28);
-                else { finished = true; setTimeout(done, 180); }
+                else { this._replaySkip = null; done(); }
             };
             tick();
         };
+        const waitClick = (next) => {
+            if (token !== this._replaySeq) return;
+            const hint = document.createElement('p');
+            hint.className = 'gallery-replay-continue';
+            hint.textContent = '▼';
+            log.appendChild(hint);
+            scrollTo(hint);
+            this._replayNext = () => {
+                if (token !== this._replaySeq) return;
+                this._replayNext = null;
+                hint.remove();
+                next();
+            };
+        };
         const stream = (i) => {
             if (token !== this._replaySeq) return;
-            if (i >= items.length) return;
+            if (i >= items.length) { this._replayNext = null; return; }
             const { text, cls, illId } = items[i];
             if (cls === 'illustration') {
                 const img = document.createElement('img');
@@ -550,7 +578,7 @@ const Gallery = {
                 loadProgressiveImg(img, `assets/illustrations/${illId}.jpg`, null);
                 log.appendChild(img);
                 scrollTo(img);
-                setTimeout(() => stream(i + 1), 400);
+                waitClick(() => stream(i + 1));
                 return;
             }
             const p = document.createElement('p');
@@ -562,13 +590,15 @@ const Gallery = {
                 p.className = 'log-replay-narrative';
             }
             log.appendChild(p);
-            typewrite(p, text, () => stream(i + 1));
+            typewrite(p, text, () => waitClick(() => stream(i + 1)));
         };
         stream(0);
     },
 
     _closeReplay() {
-        this._replaySeq = (this._replaySeq || 0) + 1; // cancel any running stream
+        this._replaySeq = (this._replaySeq || 0) + 1;
+        this._replaySkip = null;
+        this._replayNext = null;
         this._replayPanel.style.display = 'none';
         this._replayLog.innerHTML = '';
         this._renderReplayList();

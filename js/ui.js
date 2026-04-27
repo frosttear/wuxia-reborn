@@ -977,7 +977,7 @@ const UI = {
         const returnBtn = document.getElementById('combatReturnBtn');
         if (returnBtn) { returnBtn.style.display = 'none'; returnBtn.onclick = null; }
         const previewBar = document.getElementById('combatPreviewBar');
-        if (previewBar) previewBar.style.display = 'none';
+        if (previewBar) previewBar.innerHTML = '';
         const bannerEl = document.getElementById('combatResult');
         if (bannerEl) { bannerEl.style.display = 'none'; bannerEl.textContent = ''; }
         this.setCombatActionsEnabled(true);
@@ -1141,7 +1141,7 @@ const UI = {
         document.querySelectorAll('#combatActions .combat-btn').forEach(b => b.classList.remove('selected'));
         this._restoreButtonLabels();
         const previewBar = document.getElementById('combatPreviewBar');
-        if (previewBar) previewBar.style.display = 'none';
+        if (previewBar) previewBar.innerHTML = '';
     },
 
     // ── Combat action selection & preview ──────────────────────────────────
@@ -1169,9 +1169,7 @@ const UI = {
         const sel = document.querySelector(`#combatActions ${btnMap[action]}`);
         if (sel) sel.classList.add('selected');
 
-        // Show preview bar
         const bar = document.getElementById('combatPreviewBar');
-        bar.style.display = '';
         const state = Engine.state;
         if (!state || !state.combatState) return;
         const { char, combatState: cs } = state;

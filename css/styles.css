@@ -1078,7 +1078,9 @@ button:disabled { opacity: 0.4; cursor: not-allowed; }
 .gallery-replay-log p { margin: 0; color: var(--text); }
 .log-replay-narrative { color: #c4b896 !important; text-indent: 2em; }
 .log-replay-sep { color: rgba(201,168,76,0.45) !important; text-align: center; font-size: 0.78em; letter-spacing: 0.18em; }
-.gallery-replay-illustration { width: 100%; max-width: 480px; border-radius: 8px; display: block; margin: 8px auto 4px; border: 1px solid var(--border); animation: replayIllIn 0.5s ease; }
+.gallery-replay-illustration { width: 100%; max-width: 720px; border-radius: 8px; display: block; margin: 8px auto 4px; border: 1px solid var(--border); animation: replayIllIn 0.5s ease; }
+.gallery-replay-continue { color: rgba(201,168,76,0.5) !important; text-align: center; font-size: 0.72em; letter-spacing: 0.1em; animation: replayContinueBlink 1.2s ease-in-out infinite; margin-top: -4px !important; }
+@keyframes replayContinueBlink { 0%,100% { opacity: 0.25; } 55% { opacity: 0.85; } }
 @keyframes replayIllIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: none; } }
 .log-replay-choice { color: rgba(201,168,76,0.6) !important; font-style: italic; padding-left: 1.2em; }
 .log-replay-choice::before { content: "▸ "; color: rgba(201,168,76,0.4); }
