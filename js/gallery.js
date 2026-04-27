@@ -597,7 +597,14 @@ const Gallery = {
         if (this._lightbox) this._lightbox.classList.remove('active');
         this._animating = false;
         const vp = document.querySelector('meta[name="viewport"]');
-        if (vp) vp.content = 'width=device-width, initial-scale=1.0, maximum-scale=1.0';
+        if (vp) {
+            // Force browser to snap back to scale 1 by locking scale momentarily,
+            // then restore normal scrollable viewport on the next frame.
+            vp.content = 'width=device-width, initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0, user-scalable=no';
+            requestAnimationFrame(() => {
+                vp.content = 'width=device-width, initial-scale=1.0, maximum-scale=1.0';
+            });
+        }
     },
 
     // ── Slot helpers ────────────────────────────────────────────────────────
