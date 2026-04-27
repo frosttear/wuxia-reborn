@@ -428,21 +428,28 @@ const Engine = {
                 this._showBondStep(bondStep.npcId, bondStep.steps, bondStep.stepIdx + 1, bondStep.level, '');
                 return;
             }
-            this._checkAndAutoPromote();
-            UI.renderAll(this.state);
-            this.saveGame();
-            return;
+            if (!effects.combat) {
+                this._checkAndAutoPromote();
+                UI.renderAll(this.state);
+                this.saveGame();
+                return;
+            }
+            // Has combat — fall through to combat block (side effects + narrative already applied above)
         }
 
         // Combat event → start turn-based combat
         if (effects.combat) {
             const enemy = this.getEnemy(effects.combat);
             if (enemy) {
-                const sideEffects = Object.assign({}, effects);
-                delete sideEffects.combat;
-                delete sideEffects.narrative;
-                delete sideEffects.attributes;
-                this.applyEffects(sideEffects);
+                // Only apply side effects and log narrative here if the attribute branch didn't already do it
+                if (!effects.attributes) {
+                    const sideEffects = Object.assign({}, effects);
+                    delete sideEffects.combat;
+                    delete sideEffects.narrative;
+                    delete sideEffects.attributes;
+                    this.applyEffects(sideEffects);
+                    if (effects.narrative) UI.addLog(effects.narrative, 'result');
+                }
                 if (chainStep) this.state.pendingChainStep = chainStep;
                 if (isNonFinalStep) {
                     this.state.pendingBondStep = {
@@ -458,8 +465,6 @@ const Engine = {
                         bondInfo: bondInfo
                     };
                 }
-                // Show narrative BEFORE combat starts (not after)
-                if (effects.narrative) UI.addLog(effects.narrative, 'result');
                 this.startCombat(enemy, '');
                 return;
             }
