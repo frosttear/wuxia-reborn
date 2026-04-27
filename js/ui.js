@@ -794,17 +794,36 @@ const UI = {
             overlay.appendChild(inner);
             document.body.appendChild(overlay);
 
-            requestAnimationFrame(() => {
+            let rafId = null;
+            let startTs = null;
+            let finished = false;
+
+            const done = () => {
+                if (finished) return;
+                finished = true;
+                if (rafId) cancelAnimationFrame(rafId);
+                overlay.remove();
+                resolve();
+            };
+            overlay.addEventListener('click', done, { once: true });
+
+            // Two rAF frames to ensure layout is fully settled before measuring
+            requestAnimationFrame(() => requestAnimationFrame(() => {
                 const viewH = overlay.clientHeight;
                 const contentH = inner.scrollHeight;
-                const duration = Math.max(20, Math.round((viewH + contentH) / 70));
-                inner.style.setProperty('--credits-duration', `${duration}s`);
-                inner.classList.add('rolling');
-            });
+                const durationMs = Math.max(20000, (viewH + contentH) / 70 * 1000);
 
-            const done = () => { if (document.body.contains(overlay)) { overlay.remove(); resolve(); } };
-            overlay.addEventListener('click', done, { once: true });
-            inner.addEventListener('animationend', () => setTimeout(done, 500), { once: true });
+                const tick = (ts) => {
+                    if (finished) return;
+                    if (!startTs) startTs = ts;
+                    const progress = (ts - startTs) / durationMs;
+                    if (progress >= 1) { done(); return; }
+                    const y = viewH - (viewH + contentH) * progress;
+                    inner.style.transform = `translateX(-50%) translateY(${y}px)`;
+                    rafId = requestAnimationFrame(tick);
+                };
+                rafId = requestAnimationFrame(tick);
+            }));
         });
     },
 
