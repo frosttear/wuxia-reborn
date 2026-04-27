@@ -720,7 +720,11 @@ const UI = {
         img.decoding = 'async';
         wrap.appendChild(img);
         this.logEl.appendChild(wrap);
-        this.logEl.scrollTop = this.logEl.scrollHeight;
+        const scrollWrap = () => {
+            const excess = wrap.getBoundingClientRect().bottom - this.logEl.getBoundingClientRect().bottom + 16;
+            if (excess > 0) this.logEl.scrollTop += excess;
+        };
+        scrollWrap();
         this.logBuffer.push({ type: 'illustration', id });
         if (this.logBuffer.length > 30) this.logBuffer.shift();
         const hqSrc = `assets/illustrations/${id}.jpg`;
@@ -728,7 +732,7 @@ const UI = {
         // Resolve when HQ fully loaded (onerror resolves too so a missing image never blocks)
         return new Promise(resolve => {
             const probe = new Image();
-            probe.onload = () => { this.logEl.scrollTop = this.logEl.scrollHeight; resolve(); };
+            probe.onload = () => { scrollWrap(); resolve(); };
             probe.onerror = resolve;
             probe.src = hqSrc;
         });
@@ -756,7 +760,8 @@ const UI = {
                 pinnedScroll = Math.max(0, divAbsTop - 78);
                 this.logEl.scrollTop = pinnedScroll;
             } else {
-                this.logEl.scrollTop = this.logEl.scrollHeight;
+                const excess = div.getBoundingClientRect().bottom - this.logEl.getBoundingClientRect().bottom + 16;
+                if (excess > 0) this.logEl.scrollTop += excess;
             }
 
             this.notifyEventTab();
@@ -764,8 +769,12 @@ const UI = {
             if (this.logBuffer.length > 30) this.logBuffer.shift();
 
             const scroll = () => {
-                if (pinnedScroll !== null) this.logEl.scrollTop = pinnedScroll;
-                else this.logEl.scrollTop = this.logEl.scrollHeight;
+                if (pinnedScroll !== null) {
+                    this.logEl.scrollTop = pinnedScroll;
+                } else {
+                    const excess = div.getBoundingClientRect().bottom - this.logEl.getBoundingClientRect().bottom + 16;
+                    if (excess > 0) this.logEl.scrollTop += excess;
+                }
             };
 
             let i = 0;
@@ -797,7 +806,8 @@ const UI = {
             el.className = 'log-click-continue';
             el.textContent = msg;
             this.logEl.appendChild(el);
-            this.logEl.scrollTop = this.logEl.scrollHeight;
+            const excess = el.getBoundingClientRect().bottom - this.logEl.getBoundingClientRect().bottom + 16;
+            if (excess > 0) this.logEl.scrollTop += excess;
             el.addEventListener('click', () => { el.remove(); resolve(); }, { once: true });
         });
     },
@@ -808,6 +818,9 @@ const UI = {
 
     slideOutEpilogueSection() {
         return new Promise(resolve => {
+            // Remove padding from previous section so the smooth scroll target is correct
+            this.setEpilogueMode(false);
+
             // Permanent separator — stays in DOM as chapter break when scrolling up
             const sep = document.createElement('div');
             sep.className = 'log-epilogue-chapter-sep';
@@ -828,7 +841,8 @@ const UI = {
             this._epilogueNextAtTop = true;
             this._epilogueSpacerEl  = spacer;
 
-            setTimeout(resolve, 650);
+            // Add padding-bottom AFTER the scroll animation so pinnedScroll is reachable
+            setTimeout(() => { this.setEpilogueMode(true); resolve(); }, 650);
         });
     },
 

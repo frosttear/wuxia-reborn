@@ -1,6 +1,12 @@
 # 轮回江湖 — 开发进度
 
-## 当前版本：v0.24.23
+## 当前版本：v0.24.24
+
+---
+
+### v0.24.24（2026-04-27）
+
+- 修复真结局文字逐字消失 bug：`epilogue-mode`（padding-bottom:100vh）不再全程开启，改为仅在 `slideOutEpilogueSection` 的过渡完成后短暂启用；所有 epilogue 路径的滚动改为元素相对定位（getBoundingClientRect diff），不再依赖 scrollHeight
 
 ---
 

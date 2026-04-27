@@ -1445,8 +1445,6 @@ const Engine = {
 
         const sleep = ms => new Promise(r => setTimeout(r, ms));
 
-        UI.setEpilogueMode(true);
-
         const openingLines = [
             { text: '────────────────────', cls: 'system' },
             { text: '那双掌握轮回九百年的手，就此散为微尘。', cls: 'epilogue-win' },
@@ -1571,8 +1569,6 @@ const Engine = {
             await sleep(300);
         }
         await sleep(800);
-
-        UI.setEpilogueMode(false);
 
         await UI.showScrollingCredits([
             { text: '策划', cls: 'role' },
