@@ -386,6 +386,7 @@ const Engine = {
         };
         this.state.gamePhase = 'choosing';
         UI.showEvent(displayEvent, allChoices, this.state);
+        UI.updateControls(this.state);
     },
 
     applyChoice(choiceIndex) {
@@ -627,6 +628,7 @@ const Engine = {
                 };
                 this.state.gamePhase = 'choosing';
                 UI.showEvent(displayEvent, allChoices, this.state);
+                UI.updateControls(this.state);
             }
         } else {
             // Casual visit: affinity boost — bigger if NPC is remembered from a past life
@@ -801,6 +803,7 @@ const Engine = {
         };
         this.state.gamePhase = 'choosing';
         UI.showEvent(displayEvent, allChoices, this.state);
+        UI.updateControls(this.state);
         const chainStepIllustrations = {
             li_after_1:    'li-yunshu-afterstory',
             su_after_1:    'su-qing-afterstory',
@@ -1113,7 +1116,6 @@ const Engine = {
             if (enemy.isTrueFinalBoss) {
                 char.flags.true_final_boss_beaten = true;
                 UI.addLog(enemy.winNarrative, 'win');
-                UI.addIllustration('designer-win');
                 UI.showCombatReturnBtn('won', () => {
                     UI.hideCombatOverlay();
                     this.triggerTrueVictory();
@@ -1356,42 +1358,16 @@ const Engine = {
         const { char } = this.state;
 
         if (isTrueEnding) {
-            // Always trigger true final boss after defeating 剑魂 in the true ending path
-            if (!char.flags.elder_true_form_triggered) {
-                char.flags.elder_true_form_triggered = true;
-                this.state.gamePhase = 'idle';
-                UI.updateControls(this.state);
-                UI.addLog('剑意化为飞灰，玉牌归于沉寂。', 'win');
-                UI.addLog('你以为，一切终于结束了……', 'system');
-                setTimeout(() => {
-                    this.state.gamePhase = 'idle';
-                    const elderEvent = this.state.events.find(e => e.id === 'elder_true_form_appears');
-                    if (elderEvent) this.triggerEvent(elderEvent);
-                }, 2500);
-                return;
-            }
-            // 剑魂 defeated but 无相剑意 not mastered — designer forces another cycle
-            this.state.gamePhase = 'victory';
-            this.stopAuto();
-            this.saveGame();
-            UI.addLog('────────────────────', 'system');
-            UI.addLog('剑意化为飞灰，玉牌归于沉寂。江湖再无腥风血雨。', 'win');
-            UI.addLog('消息传遍四方，百姓称颂，江湖称奇。你站在山巅，望着这片久违的宁静，心想——这一世，或许算是圆满了。', 'system');
+            // Defeating 剑魂 always leads directly to the true final boss (沈玄清)
+            this.state.gamePhase = 'idle';
             UI.updateControls(this.state);
+            UI.addLog('剑意化为飞灰，玉牌归于沉寂。', 'win');
+            UI.addLog('你以为，一切终于结束了……', 'system');
             setTimeout(() => {
-                UI.addLog('────────────────────', 'system');
-                UI.addLog('就在这片宁静之中，胸口的双鱼玉牌忽然震动。', 'system');
-                UI.addLog('那道门——轮回之门——再次打开了。', 'system');
-                UI.addLog('你愕然转身。虚空中，一位老者的轮廓缓缓成形，眉目依稀熟悉，神情却比任何时候都要沉重。', 'system');
-                UI.addLog('「你杀了剑魂，」他说，声音平静，「但剑魂守护的那道门，你并未推开。」', 'system');
-                UI.addLog('「无相剑意。那是这枚玉牌最后封存的东西——不是剑法，而是一种领悟。」他顿了顿，「只有亲历者，才能将它传承下去。而你……错过了它。」', 'system');
-                UI.addLog('「只要这道剑意还未传承，轮回便不会终止。」他的眼神里没有歉意，「这不是我的意志，是这个世界运行的法则。」', 'system');
-                UI.addLog('你想开口，却发现喉咙无法发声。白光从玉牌中涌出，漫过双眼，将这片山河一点一点淹没。', 'lose');
-                UI.addLog('「再去一次吧。」他的声音从渐渐遥远的虚空传来，「这次，找到那道门。」', 'system');
-                setTimeout(() => {
-                    this.triggerDeath('wuxiang_incomplete');
-                }, 3500);
-            }, 3500);
+                this.state.gamePhase = 'idle';
+                const elderEvent = this.state.events.find(e => e.id === 'elder_true_form_appears');
+                if (elderEvent) this.triggerEvent(elderEvent);
+            }, 2500);
             return;
         }
 
@@ -1459,7 +1435,11 @@ const Engine = {
             await UI.addLogTypewriter(text, cls);
             await sleep(300);
         }
-        await sleep(600);
+        await sleep(400);
+        UI.setEpilogueMode(true);
+        await UI.addEpilogueIllustration('designer-win');
+        await UI.waitForClick();
+        await sleep(400);
 
         const epilogues = [
             {
@@ -1570,31 +1550,49 @@ const Engine = {
             await sleep(300);
         }
         await sleep(800);
+        await UI.waitForClick();
 
-        await UI.showScrollingCredits([
-            { text: '策划', cls: 'role' },
-            { text: 'FrostTear（刘振兴）', cls: 'name' },
-            { text: '文案', cls: 'role' },
-            { text: 'FrostTear（刘振兴）', cls: 'name' },
-            { text: '测试', cls: 'role' },
-            { text: 'FrostTear（刘振兴）', cls: 'name' },
-            { text: 'AI 插画生成', cls: 'role' },
-            { text: 'ChatGPT Image 2', cls: 'name' },
-            { text: '特别感谢', cls: 'section' },
-            { text: '积极测试的朋友们', cls: 'role' },
-            { text: '孔局 · 鸡毛 · 天何 · BB · 小猪 · 大皮', cls: 'name' },
-            { text: '家人们', cls: 'role' },
-            { text: '牛牛（可爱的儿子）', cls: 'name' },
-            { text: 'Ayumi（亲爱的老婆）', cls: 'name' },
-            { text: '刘芸（亲爱的姐姐）', cls: 'name' },
-            { text: '', cls: 'spacer' },
-            { text: '以及', cls: 'role' },
-            { text: '游玩的你', cls: 'final' },
-            { text: '', cls: 'spacer' },
-            { text: 'Fin', cls: 'fin' },
-        ]);
+        await UI.showScrollingCredits(this.CREDITS_ITEMS);
 
         UI.showVictoryScreen(char);
+    },
+
+    CREDITS_ITEMS: [
+        { text: '策划', cls: 'role' },
+        { text: 'FrostTear', cls: 'name' },
+        { text: '开发', cls: 'role' },
+        { text: 'FrostTear', cls: 'name' },
+        { text: 'Claude Opus 4.6', cls: 'name' },
+        { text: '文案', cls: 'role' },
+        { text: 'FrostTear', cls: 'name' },
+        { text: 'Claude Opus 4.6', cls: 'name' },
+        { text: '开发测试', cls: 'role' },
+        { text: 'FrostTear', cls: 'name' },
+        { text: '插画生成', cls: 'role' },
+        { text: 'ChatGPT Image 2', cls: 'name' },
+        { text: '特别感谢', cls: 'section' },
+        { text: '积极测试的朋友们', cls: 'role' },
+        { text: '孔局', cls: 'name' },
+        { text: '鸡毛', cls: 'name' },
+        { text: '天何', cls: 'name' },
+        { text: 'BB', cls: 'name' },
+        { text: '小猪', cls: 'name' },
+        { text: '大皮', cls: 'name' },
+        { text: '大呆', cls: 'name' },
+        { text: '提供建议和帮助的家人们', cls: 'role' },
+        { text: '牛牛（可爱的儿子）', cls: 'name' },
+        { text: 'Ayumi（亲爱的老婆）', cls: 'name' },
+        { text: '姐姐（ChatGPT赞助者）', cls: 'name' },
+        { text: '安安安安遥（聪明的外甥）', cls: 'name' },
+        { text: '', cls: 'spacer' },
+        { text: '以及', cls: 'role' },
+        { text: '游玩的你', cls: 'final' },
+        { text: '', cls: 'spacer' },
+        { text: 'Fin', cls: 'fin' },
+    ],
+
+    playCredits() {
+        return UI.showScrollingCredits(this.CREDITS_ITEMS);
     },
 
     KILL_THRESHOLDS: [

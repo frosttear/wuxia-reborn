@@ -232,7 +232,7 @@ body {
     margin-top: 3em; margin-bottom: 0.4em;
 }
 .credits-scroll-spacer { display: block; height: 5em; }
-.credits-scroll-final { color: var(--accent2, #e2b96f); font-size: 1.5rem; margin-top: 0.4em; }
+.credits-scroll-final { color: var(--accent2, #e2b96f); font-size: 2.2rem; margin-top: 0.4em; }
 .credits-scroll-fin {
     display: block;
     font-size: 8rem;

@@ -55,7 +55,7 @@ Rules:
 
 ## Illustration Generation
 
-Illustrations are AI-generated via the AI Horde API using `scripts/generate-illustrations.mjs`.
+Illustrations are AI-generated via ChatGPT Image 2. Prompts are stored in `scripts/generate-illustrations.mjs` for reference (the script itself targets AI Horde and is no longer actively used for generation).
 
 **When to run:** Whenever new gallery entries are added to `js/gallery.js` (new `id` fields in `GALLERY_DATA`), add matching entries with prompts to the `ILLUSTRATIONS` array in the script, then run it.
 

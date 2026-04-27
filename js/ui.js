@@ -859,6 +859,7 @@ const UI = {
                 inner.appendChild(p);
             }
 
+            inner.style.transform = 'translateX(-50%) translateY(100vh)';
             overlay.appendChild(inner);
             document.body.appendChild(overlay);
 
@@ -881,12 +882,22 @@ const UI = {
                 const contentH = inner.scrollHeight;
                 const durationMs = Math.max(20000, (viewH + contentH) / 70 * 1000);
 
+                // Compute the y at which the Fin element is vertically centered
+                const finEl = inner.querySelector('.credits-scroll-fin');
+                const stopY = finEl
+                    ? viewH / 2 - finEl.offsetTop - finEl.offsetHeight / 2
+                    : null;
+
                 const tick = (ts) => {
                     if (finished) return;
                     if (!startTs) startTs = ts;
                     const progress = (ts - startTs) / durationMs;
                     if (progress >= 1) { done(); return; }
                     const y = viewH - (viewH + contentH) * progress;
+                    if (stopY !== null && y <= stopY) {
+                        inner.style.transform = `translateX(-50%) translateY(${stopY}px)`;
+                        return; // paused at center — click dismisses
+                    }
                     inner.style.transform = `translateX(-50%) translateY(${y}px)`;
                     rafId = requestAnimationFrame(tick);
                 };
@@ -1438,7 +1449,7 @@ const UI = {
             : cause === 'boss_aftermath' ? '击败天魔，但未能阻止更深处的恶意'
             : cause === 'wuxiang_incomplete' ? '剑魂已灭，剑意未传'
             : cause === 'page_reload' ? '世界线中断'
-            : cause === 'true_victory' ? '天下归一，传奇圆满'
+            : cause === 'true_victory' ? '轮回终焉，传奇圆满'
             : '力战身陨';
         const rebirthNarrative = cause === 'boss'
             ? '天魔最后一击将你轰飞，血气殆尽，意识正在消散……就在这一刻，胸口的家传双鱼玉佩骤然亮起。白光如潮水般涌出，时间开始倒流——周围的一切像被按下了回退键，剑痕愈合、血液倒流、天魔的身影渐渐模糊。你感到自己被拉回到了某个更早的时间节点。这不是来世，而是另一条世界线——你带着这一世的记忆，回到了一切尚未发生的起点。'
@@ -1503,7 +1514,7 @@ const UI = {
 
         modal.innerHTML = `
             <div class="modal-box victory-end-box">
-                <h2 class="victory-end-title">✦ 天下归一 ✦</h2>
+                <h2 class="victory-end-title">✦ 轮回终焉 ✦</h2>
                 <p class="victory-end-sub">故事已到终章。<br>【${char.name}】的传奇，永远流传于世。</p>
                 <div class="victory-end-btns">
                     <button id="victoryGalleryBtn" class="btn-confirm">查看图鉴</button>

@@ -113,6 +113,29 @@ const TRUE_ENDING_DEBUG = `
   };
 
   panel.appendChild(btn);
+
+  const creditsBtn = document.createElement('button');
+  creditsBtn.textContent = '▶ 播放片尾字幕';
+  creditsBtn.style.cssText = [
+    'background:#1a1a3a', 'border:1px solid #4a4a8a', 'color:#9d9ddb',
+    'padding:8px 16px', 'cursor:pointer', 'border-radius:6px',
+    'font-size:13px', 'letter-spacing:.05em', 'font-family:inherit'
+  ].join(';');
+
+  creditsBtn.onclick = function () {
+    if (typeof Engine === 'undefined' || typeof UI === 'undefined') {
+      alert('Engine / UI 尚未加载，请稍候再试。');
+      return;
+    }
+    creditsBtn.disabled = true;
+    creditsBtn.textContent = '▶ 播放中…';
+    Engine.playCredits().then(() => {
+      creditsBtn.disabled = false;
+      creditsBtn.textContent = '▶ 播放片尾字幕';
+    });
+  };
+
+  panel.appendChild(creditsBtn);
   document.body.appendChild(panel);
 })();
 </script>
