@@ -58,6 +58,8 @@ const Engine = {
         UI.addLog(`【${char.name}】的传奇，从此开始。`, 'system');
         UI.addLog(`生于${mName}，年集15岁，踏入江湖。二十岁生辰日，天魔如约而至。`, 'system');
         if (bBonus) UI.addLog(`✦ 【${bBonus.label}】生于${mName}，${bBonus.tagline}。`, 'unlock');
+        UI.addLog('五年，六十个月。天魔之约，无从逃避。\n\n江湖很大——有人在等你，有事在等你，有些路只走一次。在那一天到来之前，你能留下什么？', 'result');
+        UI.addLog('· 点击【出门探险】推进时间，经历江湖事件\n· 遇见人物后可【拜访】，加深羁绊、解锁故事\n· 有进行中的任务时【任务】按钮会出现\n· 右上角【图鉴】记录你遇见过的人与插图', 'info');
     },
 
     // Returns true if it handled a birthday/boss event (caller should return immediately).
