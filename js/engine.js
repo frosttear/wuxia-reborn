@@ -418,6 +418,8 @@ const Engine = {
             if (luckyTriggered) UI.addLog('✨ 幸运触发！属性收益翻倍！', 'unlock');
             const effectsCopy = Object.assign({}, effects);
             delete effectsCopy.attributes;
+            // For last-step bond combats, defer npcAffinity to post-victory so the player sees it as a reward
+            if (bondInfo && effects.combat && effectsCopy.npcAffinity) delete effectsCopy.npcAffinity;
             this.applyEffects(effectsCopy);
             const gainsStr = this.formatAttrGains(actualGains);
             const gainsTag = gainsStr ? `　<span class="attr-gains">⬆ ${gainsStr}</span>` : '';
@@ -447,6 +449,8 @@ const Engine = {
                     delete sideEffects.combat;
                     delete sideEffects.narrative;
                     delete sideEffects.attributes;
+                    // For last-step bond combats, defer npcAffinity to post-victory
+                    if (bondInfo && sideEffects.npcAffinity) delete sideEffects.npcAffinity;
                     this.applyEffects(sideEffects);
                     if (effects.narrative) UI.addLog(effects.narrative, 'result');
                 }
@@ -455,14 +459,15 @@ const Engine = {
                     this.state.pendingBondStep = {
                         npcId: bondStep.npcId, level: bondStep.level,
                         stepIdx: bondStep.stepIdx + 1, steps: bondStep.steps,
-                        bondInfo: null
+                        bondInfo: null, npcAffinity: null
                     };
                 } else if (bondInfo) {
-                    // Last bond step: defer completion to after combat victory
+                    // Last bond step: defer completion and affinity reward to after combat victory
                     this.state.pendingBondStep = {
                         npcId: bondStep.npcId, level: bondStep.level,
                         stepIdx: null, steps: bondStep.steps,
-                        bondInfo: bondInfo
+                        bondInfo: bondInfo,
+                        npcAffinity: effects.npcAffinity || null
                     };
                 }
                 this.startCombat(enemy, '');
@@ -1165,6 +1170,15 @@ const Engine = {
             // Deferred bond completion: last-step bond combats complete only on victory
             if (postBondStep && postBondStep.bondInfo) {
                 this._completeBond(postBondStep.bondInfo);
+                // Apply and display the affinity reward that was deferred from the choice's effects
+                if (postBondStep.npcAffinity) {
+                    const npc = this.state.npcs.find(n => n.id === postBondStep.npcId);
+                    const npcName = npc ? npc.name : postBondStep.npcId;
+                    for (const [npcId, amount] of Object.entries(postBondStep.npcAffinity)) {
+                        NPCSystem.changeAffinity(char, npcId, amount);
+                        UI.addLog(`💗 与【${npcName}】的情谊加深（好感 +${amount}）`, 'result');
+                    }
+                }
             }
             char.kills = (char.kills || 0) + 1;
             this.checkKillThreshold(char);
