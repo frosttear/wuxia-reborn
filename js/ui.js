@@ -739,10 +739,35 @@ const UI = {
             const div = document.createElement('div');
             div.className = `log-entry log-${cls}`;
             this.logEl.appendChild(div);
-            this.logEl.scrollTop = this.logEl.scrollHeight;
+
+            // Page-break: first line of a new epilogue section anchors to top of log
+            let pinnedScroll = null;
+            if (this._epilogueNextAtTop) {
+                this._epilogueNextAtTop = false;
+                if (this._epilogueSpacerEl) {
+                    this._epilogueSpacerEl.remove();
+                    this._epilogueSpacerEl = null;
+                }
+                // getBoundingClientRect() forces a synchronous layout after DOM change
+                const logRect = this.logEl.getBoundingClientRect();
+                const divRect = div.getBoundingClientRect();
+                const divAbsTop = this.logEl.scrollTop + (divRect.top - logRect.top);
+                // Position div below the top-fade zone (14px padding + 64px fade mask)
+                pinnedScroll = Math.max(0, divAbsTop - 78);
+                this.logEl.scrollTop = pinnedScroll;
+            } else {
+                this.logEl.scrollTop = this.logEl.scrollHeight;
+            }
+
             this.notifyEventTab();
             this.logBuffer.push({ text, type: cls });
             if (this.logBuffer.length > 30) this.logBuffer.shift();
+
+            const scroll = () => {
+                if (pinnedScroll !== null) this.logEl.scrollTop = pinnedScroll;
+                else this.logEl.scrollTop = this.logEl.scrollHeight;
+            };
+
             let i = 0;
             let done = false;
             const finish = () => {
@@ -750,7 +775,7 @@ const UI = {
                 done = true;
                 this.logEl.removeEventListener('click', finish);
                 div.innerHTML = text.replace(/\n/g, '<br>');
-                this.logEl.scrollTop = this.logEl.scrollHeight;
+                scroll();
                 resolve();
             };
             this.logEl.addEventListener('click', finish, { once: true });
@@ -758,7 +783,7 @@ const UI = {
                 if (done) return;
                 i = Math.min(i + 1, text.length);
                 div.innerHTML = text.slice(0, i).replace(/\n/g, '<br>');
-                this.logEl.scrollTop = this.logEl.scrollHeight;
+                scroll();
                 if (i < text.length) setTimeout(step, 20);
                 else finish();
             };
@@ -779,19 +804,26 @@ const UI = {
 
     slideOutEpilogueSection() {
         return new Promise(resolve => {
-            // Permanent chapter separator — stays in DOM so scrolling up reveals old content
+            // Permanent separator — stays in DOM as chapter break when scrolling up
             const sep = document.createElement('div');
             sep.className = 'log-epilogue-chapter-sep';
             this.logEl.appendChild(sep);
 
-            // Smooth-scroll so separator fills the viewport,
-            // pushing the current NPC section above the fold
+            // Temporary spacer creates scroll room so the smooth scroll can advance
+            const spacer = document.createElement('div');
+            spacer.style.cssText = `height:${this.logEl.clientHeight}px;flex-shrink:0`;
+            this.logEl.appendChild(spacer);
+
+            // Smooth-scroll to push old NPC section above the fold
             this.logEl.scrollTo({
                 top: this.logEl.scrollHeight - this.logEl.clientHeight,
                 behavior: 'smooth',
             });
 
-            // Resolve after scroll animation (~650 ms)
+            // Signal next addLogTypewriter to anchor its element at the top of the log
+            this._epilogueNextAtTop = true;
+            this._epilogueSpacerEl  = spacer;
+
             setTimeout(resolve, 650);
         });
     },
