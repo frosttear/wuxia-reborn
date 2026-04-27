@@ -252,6 +252,7 @@ const UI = {
         this.renderCharacter(char, jobs);
         this.renderRelationships(char, npcs);
         this.renderJobPanel(char, jobs);
+        this.renderCombatBonuses(state);
         this.updateControls(state);
     },
 
@@ -413,6 +414,37 @@ const UI = {
             div.title = npc.description;
             loadProgressiveImg(div.querySelector('.npc-avatar'), avatarHqSrc, null);
             el.appendChild(div);
+        }
+    },
+
+    renderCombatBonuses(state) {
+        const el = document.getElementById('combatBonuses');
+        if (!el) return;
+        el.innerHTML = '';
+        const { char } = state;
+        const items = [];
+
+        const bonds = state.bonds || {};
+        const bondIds = Object.keys(bonds);
+        if (bondIds.length > 0 && bondIds.every(id => ((char.bondLevels || {})[id] || 0) >= bonds[id].length)) {
+            items.push({ name: '羁绊之力', effect: '攻+60（对隐藏强敌）' });
+        }
+
+        const MARK_FLAGS = ['mark_warrior_power', 'mark_hermit_power', 'mark_wuxiang_power', 'mark_rebirth_power', 'mark_afterstory_power'];
+        if ((char.passives || []).some(p => p.rebirthPower)) {
+            const markCount = MARK_FLAGS.filter(m => (char.flags || {})[m]).length;
+            if (markCount > 0) {
+                items.push({ name: '轮回之力', effect: `攻+${markCount * 25} 防+${markCount * 20} 气血+${markCount * 300}（${markCount}枚印记）` });
+            }
+        }
+
+        if (items.length === 0) { el.style.display = 'none'; return; }
+        el.style.display = '';
+        for (const item of items) {
+            const span = document.createElement('span');
+            span.className = 'talent-tag combat-bonus-tag';
+            span.innerHTML = `<b>${item.name}</b>：${item.effect}`;
+            el.appendChild(span);
         }
     },
 

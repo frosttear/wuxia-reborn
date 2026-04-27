@@ -121,6 +121,8 @@ body {
 .talent-tag  { display: inline-block; background: rgba(201,168,76,0.15); border: 1px solid var(--border); border-radius: 4px; padding: 2px 8px; font-size: 0.72rem; color: var(--accent); margin: 2px; cursor: help; }
 .passive-tag { background: rgba(180,100,200,0.15); border-color: rgba(180,100,200,0.5); color: #c87fdf; cursor: default; font-size: 0.74rem; line-height: 1.5; }
 .passive-tag b { color: #d490ef; }
+.combat-bonus-tag { background: rgba(92,191,122,0.12); border-color: rgba(92,191,122,0.35); color: var(--green); cursor: default; font-size: 0.74rem; line-height: 1.5; }
+.combat-bonus-tag b { color: #7ddb9a; }
 .visit-remain { display: block; font-size: 0.68rem; color: var(--muted); margin-top: 2px; }
 .visit-remain-out { color: #888; opacity: 0.6; }
 
