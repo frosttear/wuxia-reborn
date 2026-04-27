@@ -406,22 +406,25 @@ const Combat = {
                     }
 
                     // Enemy skill telegraph: momentum-based, repeatable
-                    // Strongest available skill fires when enemy momentum ≥ its cost
+                    // Most expensive affordable skill fires; hpThreshold gates phase skills
+                    // (no hpThreshold = always available; explicit threshold = desperation phase only)
                     if (!combatOver && cs.enemy.skills && cs.enemy.skills.length > 0
                             && !cs.pendingSkill && cs.enemySkillCooldown === 0) {
                         const hpPct = cs.enemyHp / cs.enemyMaxHp;
                         const available = cs.enemy.skills
-                            .filter(s => hpPct <= (s.hpThreshold || 0.5))
-                            .sort((a, b) => ((a.momentumCost || 3) - (b.momentumCost || 3)) || ((a.hpThreshold || 0) - (b.hpThreshold || 0)));
+                            .filter(s => hpPct <= (s.hpThreshold ?? 1.0)
+                                      && cs.enemyMomentum >= (s.momentumCost || 3))
+                            .sort((a, b) => (b.momentumCost || 3) - (a.momentumCost || 3));
                         const nextSk = available[0];
-                        if (nextSk && cs.enemyMomentum >= (nextSk.momentumCost || 3)) {
+                        if (nextSk) {
                             cs.pendingSkill = nextSk;
                             cs.enemyMomentum -= (nextSk.momentumCost || 3);
                             lines.push(`<br><span style="color:#f4a261;font-weight:bold">⚠ ${nextSk.telegraph}</span>`);
                         }
                     }
-                    // Accumulate enemy momentum if cooldown done and no skill just telegraphed
-                    if (cs.enemySkillCooldown === 0 && !cs.pendingSkill) cs.enemyMomentum++;
+                    // Accumulate enemy momentum (capped per-enemy; default 5)
+                    if (cs.enemySkillCooldown === 0 && !cs.pendingSkill)
+                        cs.enemyMomentum = Math.min(cs.enemy.momentumMax ?? 5, cs.enemyMomentum + 1);
                 }
             }
         }
