@@ -1563,6 +1563,7 @@ const Engine = {
             { text: '────────────────────', cls: 'system' },
             { text: '每个人都有自己的去处，每段缘分都有它应有的落点。', cls: 'epilogue' },
             { text: '而你，终于可以放下了。', cls: 'epilogue-win' },
+            { text: '故事，至此终结。', cls: 'epilogue-ending' },
         ];
         for (const { text, cls } of closingLines) {
             await UI.addLogTypewriter(text, cls);

@@ -134,6 +134,10 @@
               "id": "fight_through",
               "text": "迎战！护住王铁，击败头目",
               "effects": {
+                "attributes": {
+                  "strength": 1,
+                  "reputation": 1
+                },
                 "combat": "escort_leader",
                 "narrative": "你与王铁并肩而战，血战之后货物终于夺了回来。回程路上，他用力拍了拍你的肩：「此恩，老汉记下了。只要你开口，这把老骨头豁出去都成。」"
               }
@@ -226,6 +230,10 @@
               "id": "spar_with_wang",
               "text": "应战！全力以赴，不辜负这份信任",
               "effects": {
+                "attributes": {
+                  "strength": 1,
+                  "constitution": 1
+                },
                 "combat": "wang_tie_sparring",
                 "narrative": "切磋之后，王铁缓缓收刀，手掌拍上你的肩：「去吧，好好活着——比什么都强。」他说，声音有些抖。那本册子，你仔细收进怀里，比任何宝贝都重。"
               }
@@ -318,6 +326,10 @@
               "id": "step_forward",
               "text": "走上前，护住王铁：「他的事，就是我的事。」",
               "effects": {
+                "attributes": {
+                  "constitution": 1,
+                  "reputation": 1
+                },
                 "combat": "skilled_bandit",
                 "narrative": "悍汉被击退，同伴落荒而逃。王铁望着你的背影，沉默了很久。天亮前，他说了一句话：「老汉这辈子，从来不轻易说谢字。」他停了停，「谢你。」"
               }
@@ -394,6 +406,10 @@
               "id": "clear_the_road",
               "text": "迎战！让王铁先走，你断后",
               "effects": {
+                "attributes": {
+                  "strength": 1,
+                  "constitution": 1
+                },
                 "combat": "skilled_bandit",
                 "narrative": "拦路者溃散。你们继续赶路。\n\n到了北边那个小镇，孙老猎户的家已经变成了一间破败的小院。门口坐着一个白发苍苍的老太太——是孙老猎户的儿媳。老猎户十年前已经过世了。\n\n王铁把玉佩递给老太太：「赵四海让我带来的。他说，他没有忘记。」\n\n老太太接过玉佩，手在抖：「赵……赵四海？公公生前一直念叨一个人……等了好多年。」\n\n王铁在门口站了很久。回来的路上，他把旧镖箱传给了你：「以后是你的了——带着它好好走。」"
               }
@@ -505,6 +521,10 @@
               "id": "spar_fight",
               "text": "拔剑迎战，全力以赴",
               "effects": {
+                "attributes": {
+                  "agility": 1,
+                  "comprehension": 1
+                },
                 "combat": "li_yunshu_sparring",
                 "npcAffinity": {
                   "li_yunshu": 10
@@ -579,6 +599,10 @@
               "id": "fight_bullies",
               "text": "直接动手，用拳头教他们做人",
               "effects": {
+                "attributes": {
+                  "strength": 1,
+                  "reputation": 1
+                },
                 "combat": "local_bully_gang",
                 "npcAffinity": {
                   "li_yunshu": 10
@@ -861,6 +885,11 @@
               "id": "final_spar",
               "text": "提剑相迎，以剑论证",
               "effects": {
+                "attributes": {
+                  "agility": 1,
+                  "comprehension": 1,
+                  "reputation": 1
+                },
                 "combat": "li_yunshu_sparring_returned",
                 "narrative": ""
               }
@@ -1030,6 +1059,9 @@
               "id": "accept_trial",
               "text": "迎战，以真实战况检验所学",
               "effects": {
+                "attributes": {
+                  "innerForce": 2
+                },
                 "combat": "jianghu_challenger",
                 "narrative": "老者在旁静静看完全程，不置一词。待对方离去，他才开口：「根基已稳。此后，这条路上，不必再怕了。」"
               }
@@ -1108,6 +1140,10 @@
               "id": "fight_agent",
               "text": "迎战！护住老者，击退细作",
               "effects": {
+                "attributes": {
+                  "strength": 1,
+                  "reputation": 1
+                },
                 "combat": "tianmo_agent",
                 "narrative": "细作倒地，残余的人悄无声息地退去。老者沉默了许久，从怀中取出一枚古朴的玉牌——牌面泛着淡淡的幽光，隐约有裂纹在其中游走，像是封印着什么活物。\n\n「这枚玉牌里封着一道剑意。」他说，语气比任何时候都慎重。\n\n「噬魂真经不是凭空出现的。它的创始者，是上古一位剑道绝顶的修者——此人穷尽一生追求武道极致，临死前将毕生剑意灌注入一柄无形之剑中，化为一道自主的意识——剑魂。」\n\n「噬魂真经，就是剑魂为了延续自身存在而创出的功法。它需要不断吸取活人的气血来维持自己的形体。陆无归在山上挖到的那卷古籍，正是剑魂有意留下的饵。」\n\n他看着玉牌：「当年我败给了陆无归，但真正让我心寒的不是他——是我意识到，那道剑魂一直在暗中操纵一切。我用了最后的力量把它引出来，跟它缠斗了三天三夜，最终没能斩灭它，只能将它封入这枚玉牌。」\n\n他把玉牌递给你：「它不会永远沉睡。等你足够强的时候，它会醒来，向你发起挑战。那才是……最后的一战。」"
               }
@@ -1204,6 +1240,10 @@
               "id": "fight_vanguard",
               "text": "迎战天魔先锋，守护老者",
               "effects": {
+                "attributes": {
+                  "strength": 1,
+                  "constitution": 1
+                },
                 "combat": "tianmo_vanguard",
                 "narrative": "先锋重创倒地，临死前用奇怪的语言说了什么。老者走过来，在你肩上放了一只手：「那些话，老夫听懂了。天魔在催促你——他怕你。」"
               }
@@ -1294,6 +1334,10 @@
               "id": "break_through",
               "text": "以意志迎战心魔，将其逐出经脉",
               "effects": {
+                "attributes": {
+                  "innerForce": 1,
+                  "comprehension": 1
+                },
                 "combat": "tianmo_agent",
                 "narrative": "剑魂的试探被你的意志击退，那股古老的剑意退回了玉牌深处。元气终于完整地融入你的经脉，如春水融冰。你感受到玉牌中传来一丝微弱的震动——不是攻击，更像是……认可。\n\n老者的面色苍白了一些，但他笑着：「它认可了你。这意味着，等到那一天，它不会偷袭——它会堂堂正正地向你挑战。」\n\n那个夜晚，你们就这样坐到天亮，什么都没有再说。"
               }
@@ -1387,6 +1431,10 @@
               "id": "full_effort",
               "text": "全力以赴，不留后手",
               "effects": {
+                "attributes": {
+                  "strength": 1,
+                  "agility": 1
+                },
                 "combat": "yan_chixing_sparring",
                 "narrative": "他收刀，看了你片刻：「还可以。」从他嘴里说出来，这三个字分量不轻。那之后，他对你多了几分真正的重视。"
               }
@@ -1464,6 +1512,10 @@
               "id": "fight_together",
               "text": "背靠背，各自对付一个方向",
               "effects": {
+                "attributes": {
+                  "agility": 1,
+                  "constitution": 1
+                },
                 "combat": "han_night_attackers",
                 "narrative": "尘埃落定，燕赤行沉默了很久，终于低声道：「欠你一个。」对他而言，这几个字，重比千金。"
               }
@@ -1566,6 +1618,10 @@
               "id": "fight_bounty_hunter",
               "text": "迎战！让对方知道这里不是他能来的地方",
               "effects": {
+                "attributes": {
+                  "strength": 1,
+                  "reputation": 1
+                },
                 "combat": "jianghu_challenger",
                 "narrative": "赏金猎人落败，灰溜溜地离去。燕赤行走到你身边，沉默了一会儿，低声说了两个字：「谢了。」那是他很少说的话。"
               }
@@ -1661,6 +1717,10 @@
               "id": "protect_han",
               "text": "拔刀护住燕赤行，挡在他前面",
               "effects": {
+                "attributes": {
+                  "constitution": 1,
+                  "reputation": 1
+                },
                 "combat": "han_nemesis",
                 "narrative": "季沧海倒地。他躺在那里，看着天，忽然笑了——一种疲惫到极点的笑。「好。你长大了。」他闭上眼，但还有气。燕赤行提着刀站在他面前，手没有动。沉默良久，他把刀收了回去。\n\n「走。」他对你说。\n\n走出巷口的时候，你回头看了一眼——季沧海还躺在那里，但已经在挣扎着坐起来。他没有追来。\n\n那一刻，那段旧事，也许真的结束了。也许没有。但燕赤行的脚步，比来时轻了。"
               }
@@ -1746,6 +1806,10 @@
               "id": "fight_together_final",
               "text": "迎战！两个人一起，把路打通",
               "effects": {
+                "attributes": {
+                  "strength": 1,
+                  "reputation": 2
+                },
                 "combat": "skilled_bandit",
                 "narrative": "独眼男人倒地，愤愤地丢下一句话：「你以为了结了就完了——天魔早就知道含光门还有人活着。你这种人，他要么收下，要么除掉。」\n\n燕赤行踹了他一脚，让他闭了嘴。然后收刀，喘着气，忽然笑了一下——你几乎没见过他笑。「师父说得对，」他说，「路上多一盏灯，就少一段黑。」\n\n没有什么仪式，没有什么豪言，两个人上了路。你们很少说话，但走在一起，有种奇异的踏实。后来他一言不发地站到了你前面——你知道，他这样做，是因为你当初站在了他身后。"
               }
@@ -1919,6 +1983,10 @@
               "id": "fight_deserters",
               "text": "挡在苏青身前，迎战溃兵",
               "effects": {
+                "attributes": {
+                  "constitution": 1,
+                  "reputation": 1
+                },
                 "combat": "escort_leader",
                 "npcAffinity": {
                   "su_qing": 10
@@ -2079,6 +2147,10 @@
               "id": "fight_iron_judge",
               "text": "迎战铁面判官，为苏青争取救人的时间",
               "effects": {
+                "attributes": {
+                  "strength": 1,
+                  "constitution": 1
+                },
                 "combat": "iron_judge",
                 "npcAffinity": {
                   "su_qing": 10
@@ -2226,6 +2298,10 @@
               "id": "fight_assassins",
               "text": "拔刀迎上：「今天不行。」",
               "effects": {
+                "attributes": {
+                  "agility": 1,
+                  "reputation": 1
+                },
                 "combat": "han_night_attackers",
                 "npcAffinity": {
                   "ling_xue": 10
@@ -2516,6 +2592,10 @@
               "id": "final_duel",
               "text": "提剑迎上，以剑论道",
               "effects": {
+                "attributes": {
+                  "agility": 2,
+                  "comprehension": 1
+                },
                 "combat": "lingxue_enemy",
                 "narrative": ""
               }
