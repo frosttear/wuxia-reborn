@@ -1351,6 +1351,7 @@ const UI = {
             : cause === 'boss_aftermath' ? '击败天魔，但未能阻止更深处的恶意'
             : cause === 'wuxiang_incomplete' ? '剑魂已灭，剑意未传'
             : cause === 'page_reload' ? '世界线中断'
+            : cause === 'true_victory' ? '天下归一，传奇圆满'
             : '力战身陨';
         const rebirthNarrative = cause === 'boss'
             ? '天魔最后一击将你轰飞，血气殆尽，意识正在消散……就在这一刻，胸口的家传双鱼玉佩骤然亮起。白光如潮水般涌出，时间开始倒流——周围的一切像被按下了回退键，剑痕愈合、血液倒流、天魔的身影渐渐模糊。你感到自己被拉回到了某个更早的时间节点。这不是来世，而是另一条世界线——你带着这一世的记忆，回到了一切尚未发生的起点。'
@@ -1360,6 +1361,8 @@ const UI = {
             ? '你击败了天魔，以为一切终于结束了。然而数年之后，天魔骸骨深处沉睡的更古老的恶意苏醒了——你未曾察觉那枚玉牌中封印的秘密。这一世的你已无力回天……胸口的双鱼玉佩再次亮起，白光涌出，时间开始倒流。也许在下一条世界线上，你能找到那个被忽视的线索。'
             : cause === 'wuxiang_incomplete'
             ? '你击败了剑魂，以为这一世已圆满。然而轮回之门再次打开——那位老者说，无相剑意尚未传承，世界的法则不允许轮回终止。胸口的双鱼玉牌涌出白光，将你的意识送回另一条世界线的起点。他的声音在虚空中回响：「这次，找到那道门。」'
+            : cause === 'true_victory'
+            ? '故事已然圆满，而你选择再次踏入轮回。双鱼玉佩在掌心轻轻一暖，白光如旧，却不再有迷茫与不甘——只有带着所有记忆，再走一遍这片江湖的从容。'
             : '你在江湖的厮杀中倒下，鲜血浸透衣衫。正当一切归于黑暗之际，胸口的双鱼玉佩忽然震动，柔和的白光将周围的时间冻结。血从地上回流、伤口缓缓合拢——然后，一切都在倒退。你并非死去，而是被送回了另一条世界线的起点，带着这一世的经历与记忆。';
         modal.innerHTML = `
             <div class="modal-box">
@@ -1417,7 +1420,7 @@ const UI = {
                 <p class="victory-end-sub">故事已到终章。<br>【${char.name}】的传奇，永远流传于世。</p>
                 <div class="victory-end-btns">
                     <button id="victoryGalleryBtn" class="btn-confirm">查看图鉴</button>
-                    <button id="victoryNGPlusBtn" class="btn-secondary">传说难度·再战一世</button>
+                    <button id="victoryNGPlusBtn" class="btn-secondary">带着记忆·再战一世</button>
                     <button id="newGameBtn" class="btn-secondary">重新开始</button>
                 </div>
             </div>`;
