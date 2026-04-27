@@ -859,7 +859,7 @@ const UI = {
                 inner.appendChild(p);
             }
 
-            inner.style.transform = 'translateX(-50%) translateY(100vh)';
+            inner.style.transform = 'translate3d(0, 100vh, 0)';
             overlay.appendChild(inner);
             document.body.appendChild(overlay);
 
@@ -895,10 +895,10 @@ const UI = {
                     if (progress >= 1) { done(); return; }
                     const y = viewH - (viewH + contentH) * progress;
                     if (stopY !== null && y <= stopY) {
-                        inner.style.transform = `translateX(-50%) translateY(${stopY}px)`;
+                        inner.style.transform = `translate3d(0, ${stopY}px, 0)`;
                         return; // paused at center — click dismisses
                     }
-                    inner.style.transform = `translateX(-50%) translateY(${y}px)`;
+                    inner.style.transform = `translate3d(0, ${y}px, 0)`;
                     rafId = requestAnimationFrame(tick);
                 };
                 rafId = requestAnimationFrame(tick);
