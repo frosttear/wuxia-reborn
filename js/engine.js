@@ -592,13 +592,6 @@ const Engine = {
             char.visitCounts[npcId] = vc;
         }
 
-        // Advance 1 month for the visit
-        const job = this.getJob(char.job);
-        char.ageMonths++;
-        Character.monthlyHPRegen(char, job);
-        if (this._checkBirthdayAndBoss()) return;
-        UI.renderCharacter(char, this.state.jobs);
-
         if (bondReady) {
             const lifeTimeLevel = Math.max(
                 (char.lifetimeBondLevels || {})[npcId] || 0,
@@ -631,7 +624,13 @@ const Engine = {
                 UI.updateControls(this.state);
             }
         } else {
-            // Casual visit: affinity boost — bigger if NPC is remembered from a past life
+            // Casual visit costs 1 month; bond events are free (affinity was built by visits)
+            const job = this.getJob(char.job);
+            char.ageMonths++;
+            Character.monthlyHPRegen(char, job);
+            if (this._checkBirthdayAndBoss()) return;
+            UI.renderCharacter(char, this.state.jobs);
+
             const inheritedLevel = (char.inheritedBonds || {})[npcId] || 0;
             const hasDeepBonds = (char.legacyTalents || []).includes('deep_bonds');
             const affinityGain = inheritedLevel >= 1 ? (hasDeepBonds ? 16 : 8) : 5;
