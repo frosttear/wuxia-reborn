@@ -959,14 +959,18 @@ const UI = {
     showCombatOverlay(state) {
         const { char, combatState: cs } = state;
         const job = state.jobs.find(j => j.id === char.job);
-        const atk = Character.getAttackPower(char, job);
-        const def = Character.getDefensePower(char, job);
+        const baseAtk = Character.getAttackPower(char, job);
+        const baseDef = Character.getDefensePower(char, job);
+        let atkBonus = 0, defBonus = 0;
+        if (cs.allBondsBonus) atkBonus += 60;
+        if (cs.rebirthPowerBonus) { atkBonus += cs.rebirthPowerBonus.atk; defBonus += cs.rebirthPowerBonus.def; }
+        const bonusFmt = (b) => b > 0 ? ` <span class="combat-stat-bonus">+${b}</span>` : '';
         const isHidden = (cs.enemy.isHiddenBoss || cs.enemy.isTrueFinalBoss) && state._isTestCombat;
         document.getElementById('combatEnemyName').textContent  = isHidden ? '????' : cs.enemy.name;
         const eqsText = cs.enemyQiShield > 0 ? `  盾 ${cs.enemyQiShield}` : '';
         document.getElementById('combatEnemyStats').textContent = `攻 ${cs.enemyEffAtk}  防 ${cs.enemyEffDef}${eqsText}`;
         document.getElementById('combatPlayerName').textContent = char.name;
-        document.getElementById('combatPlayerStats').textContent = `攻 ${atk}  防 ${def}`;
+        document.getElementById('combatPlayerStats').innerHTML = `攻 ${baseAtk}${bonusFmt(atkBonus)}  防 ${baseDef}${bonusFmt(defBonus)}`;
         document.getElementById('combatLog').innerHTML = '';
         document.getElementById('combatIntentHint').textContent = '';
         document.getElementById('combatSkillReady').style.display = 'none';
