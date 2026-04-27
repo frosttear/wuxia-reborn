@@ -1113,6 +1113,7 @@ const Engine = {
             if (enemy.isTrueFinalBoss) {
                 char.flags.true_final_boss_beaten = true;
                 UI.addLog(enemy.winNarrative, 'win');
+                UI.addIllustration('designer-win');
                 UI.showCombatReturnBtn('won', () => {
                     UI.hideCombatOverlay();
                     this.triggerTrueVictory();
@@ -1174,7 +1175,7 @@ const Engine = {
                 if (!char.flags.zhushi_chain_done) {
                     UI.addLog('【提示】击败那个老者需要更强的力量。下一轮回，在【任务】面板中寻找「诸世之我」——以所有世界线上的自己，来对抗他。', 'info');
                 }
-                UI.addIllustration('sword-soul-lose');
+                UI.addIllustration('designer-lose');
                 UI.showCombatReturnBtn('lost', () => {
                     UI.hideCombatOverlay();
                     this.triggerDeath('true_final_boss');
@@ -1444,6 +1445,8 @@ const Engine = {
 
         const sleep = ms => new Promise(r => setTimeout(r, ms));
 
+        UI.setEpilogueMode(true);
+
         const openingLines = [
             { text: '────────────────────', cls: 'system' },
             { text: '那双掌握轮回九百年的手，就此散为微尘。', cls: 'epilogue-win' },
@@ -1568,6 +1571,8 @@ const Engine = {
             await sleep(300);
         }
         await sleep(800);
+
+        UI.setEpilogueMode(false);
 
         await UI.showScrollingCredits([
             { text: '策划', cls: 'role' },
@@ -1706,8 +1711,10 @@ const Engine = {
             }
             if ((char.rebirthCount || 0) > 0) push('rebirth');
             if (f.boss_triggered)        push('portrait-tianmo');
-            if (f.hidden_boss_triggered) { push('tianmo-and-jianhun'); push('portrait-jianhun'); push('tianmo-win'); }
+            if (f.hidden_boss_triggered) { push('tianmo-and-jianhun'); push('portrait-jianhun'); push('tianmo-win'); push('sword-soul-win'); }
             if (f.boss_lost)             push('tianmo-lose');
+            if (f.true_final_boss_beaten) push('designer-win');
+            if (f.lost_to_final_boss)    push('designer-lose');
             if (f.elder_true_form_seen || f.zhushi_chain_done) push('elder-true-form');
             if (f.li_afterstory_done)    push('li-yunshu-afterstory');
             if (f.su_afterstory_done)    push('su-qing-afterstory');

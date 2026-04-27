@@ -7,10 +7,12 @@ const GALLERY_DATA = [
     { id: 'elder-true-form',              name: '设计者显形',           hint: '首次面对轮回的设计者——沈玄清的真实目的浮出水面', category: 'bosses', secret: true },
     // 传说瞬间
     { id: 'tianmo-and-jianhun',           name: '天魔与剑魂',           hint: '击败天魔后，玉牌碎裂——更古老的存在从碎片中浮现', category: 'bosses' },
-    { id: 'sword-soul-win',               name: '斩破剑魂',             hint: '击败千年剑意——剑魂',                     category: 'bosses'  },
-    { id: 'sword-soul-lose',              name: '败于剑意',             hint: '在与剑魂的对决中落败',                     category: 'bosses'  },
-    { id: 'tianmo-win',                   name: '天魔陨落',             hint: '击败天魔，完成二十岁的宿命',               category: 'bosses'  },
-    { id: 'tianmo-lose',                  name: '魔焰吞噬',             hint: '在天魔降临时力战不敌',                     category: 'bosses'  },
+    { id: 'sword-soul-win',               name: '斩破剑魂',             hint: '击败千年剑意——剑魂',                       category: 'bosses'  },
+    { id: 'sword-soul-lose',              name: '败于剑意',             hint: '在与剑魂的对决中落败',                       category: 'bosses'  },
+    { id: 'designer-win',                 name: '轮回终焉',             hint: '击败轮回的设计者——沈玄清，九百年的操控，化为尘烬', category: 'bosses', secret: true },
+    { id: 'designer-lose',               name: '困于轮回',             hint: '在轮回设计者的最终审判中落败，再度坠入轮回',   category: 'bosses', secret: true },
+    { id: 'tianmo-win',                   name: '天魔陨落',             hint: '击败天魔，完成二十岁的宿命',                 category: 'bosses'  },
+    { id: 'tianmo-lose',                  name: '魔焰吞噬',             hint: '在天魔降临时力战不敌',                       category: 'bosses'  },
     // 羁绊情缘 — 王铁
     { id: 'wang-tie-meet',               name: '王铁·酒馆初识',       hint: '小镇酒馆，初遇独酌的老镖师',               category: 'bonds'   },
     { id: 'wang-tie-bond-1',             name: '王铁·镖路往事',       hint: '听老镖师讲述三十年走镖旧事，接过传承铁牌', category: 'bonds'   },

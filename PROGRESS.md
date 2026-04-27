@@ -1,6 +1,15 @@
 # 轮回江湖 — 开发进度
 
-## 当前版本：v0.24.22
+## 当前版本：v0.24.23
+
+---
+
+### v0.24.23（2026-04-27）
+
+- 修复真结局 NPC 分页符：添加 `epilogue-mode` CSS class（`padding-bottom: 100vh`），章节分隔符高度改为 100vh，确保下一段落可滚动定位至顶部
+- 新增轮回设计者（沈玄清）win/lose 插画：`designer-win` / `designer-lose`，战斗结果正确展示设计者而非剑魂
+- 修复真结局 boss 失败插画：改用 `designer-lose`（原错用 `sword-soul-lose`）
+- 修复追溯解锁：`sword-soul-win` 随 `hidden_boss_triggered` 解锁；`designer-win/lose` 分别随 `true_final_boss_beaten` / `lost_to_final_boss` 解锁
 
 ---
 

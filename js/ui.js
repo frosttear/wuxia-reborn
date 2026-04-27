@@ -802,6 +802,10 @@ const UI = {
         });
     },
 
+    setEpilogueMode(on) {
+        this.logEl.classList.toggle('epilogue-mode', on);
+    },
+
     slideOutEpilogueSection() {
         return new Promise(resolve => {
             // Permanent separator — stays in DOM as chapter break when scrolling up

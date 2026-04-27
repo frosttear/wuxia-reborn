@@ -185,8 +185,13 @@ body {
 
 /* NPC chapter separator — permanent blank space between epilogue sections */
 .log-epilogue-chapter-sep {
-    height: 45vh;
+    height: 100vh;
     flex-shrink: 0;
+}
+
+/* During epilogue, extend scroll room so page-break anchoring can position new sections at top */
+.event-log.epilogue-mode {
+    padding-bottom: 100vh;
 }
 
 /* Click-to-continue prompt (true ending NPC transitions) */

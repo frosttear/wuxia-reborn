@@ -69,6 +69,16 @@ const ILLUSTRATIONS = [
     name: "剑魂 — 失败",
     prompt: `Intense wuxia scene. ${CHAR.player} on his knees overwhelmed, countless translucent sword slashes filling the air like a lattice of silver light. ${CHAR.swordSpirit} towers above — neither human nor monster but pure will given form, cold otherworldly light from the spirit illuminating the kneeling warrior below, the atmosphere of facing something beyond mortal limits. Wide cinematic composition, Chinese ink painting aesthetic with icy silver and deep shadow tones, dramatic and overwhelming atmosphere, anime-inspired semi-realistic art, high quality detailed scene.`,
   },
+  {
+    id: "designer-win",
+    name: "轮回设计者 — 胜利（真结局）",
+    prompt: `Epic wuxia culmination scene. true form ${CHAR.mysteriousElder} collapses to the ground, the cracked jade piece at his waist finally shattering into motes of cold luminescent dust that drift upward and dissolve. ${CHAR.player} stands before him, sword at rest, surrounded by the dissolving remnants of a nine-hundred-year cycle — translucent ghost-silhouettes of past lives unraveling like smoke in the air above. The old sage's ancient eyes hold no malice in defeat, only deep exhaustion and something like release. Dawn light breaks through clouds above for the first honest sunrise in nine hundred years. Wide cinematic landscape composition, Chinese ink painting aesthetic with pale gold and twilight blue tones, transcendent yet melancholic atmosphere, anime-inspired semi-realistic art, high quality detailed scene.`,
+  },
+  {
+    id: "designer-lose",
+    name: "轮回设计者 — 失败（真结局）",
+    prompt: `Overwhelming wuxia scene. ${CHAR.player} kneels on the ground, battered and exhausted. true form ${CHAR.mysteriousElder} stands above him, the cracked jade piece at his waist radiating cold white light that spreads across the ground like frost. His posture is unchanged — the absolute stillness of a man who has watched this loop close a thousand times. No triumph in his face, only cold patience. Faint ghost-traces of failed timelines shimmer in the air behind him like a gallery of echoes. Wide cinematic composition, Chinese ink painting aesthetic with ice-white and deep shadow tones, suffocating inevitability atmosphere, anime-inspired semi-realistic art, high quality detailed scene.`,
+  },
 
   // ── 王铁 / Wang Tie ──
   {
