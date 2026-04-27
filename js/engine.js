@@ -1447,8 +1447,8 @@ const Engine = {
 
         const openingLines = [
             { text: '────────────────────', cls: 'system' },
-            { text: '那双掌握轮回九百年的手，就此散为微尘。', cls: 'epilogue-win' },
-            { text: '双鱼玉佩的碎片化为光点，在风中渐渐消散——那条无形的锁链，就此断裂。', cls: 'epilogue' },
+            { text: '那道盘踞在他身上九百年的力量，终于在这一刻离他而去。', cls: 'epilogue-win' },
+            { text: '双鱼玉佩的碎片化为光点，在风中渐渐消散——那道困了他九百年、也困了你无数世的枷锁，就此断裂。', cls: 'epilogue' },
             { text: '你第一次感到，这个世界上没有任何人在注视你、等待你、安排你。', cls: 'epilogue' },
             { text: '只有你自己，和这片天地。', cls: 'epilogue' },
             { text: '这一世，是你的。', cls: 'epilogue-win' },
