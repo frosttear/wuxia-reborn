@@ -181,6 +181,16 @@ body {
 .log-epilogue-illustration { text-align: center; padding: 12px 0; }
 .log-epilogue-illustration .event-illustration { max-width: 100%; max-height: 55vh; object-fit: contain; }
 
+/* NPC section exit — wraps the section's elements and slides them up+out */
+@keyframes epilogueSectionOut {
+    0%   { opacity: 1; transform: translateY(0); }
+    100% { opacity: 0; transform: translateY(-72px); }
+}
+.log-epilogue-section-exit {
+    animation: epilogueSectionOut 0.65s cubic-bezier(0.4, 0, 0.8, 0.6) forwards;
+    pointer-events: none;
+}
+
 /* Click-to-continue prompt (true ending NPC transitions) */
 .log-click-continue {
     text-align: center; color: rgba(201,168,76,0.6); font-size: 0.85rem;

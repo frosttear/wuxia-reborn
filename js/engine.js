@@ -1532,6 +1532,7 @@ const Engine = {
         ];
 
         for (const { illId, lines } of epilogues) {
+            const sectionMark = UI.epilogueSectionMark();
             for (const { text, cls } of lines) {
                 await UI.addLogTypewriter(text, cls);
                 await sleep(300);
@@ -1539,7 +1540,8 @@ const Engine = {
             await sleep(300);
             await UI.addEpilogueIllustration(illId);
             await UI.waitForClick();
-            await sleep(400);
+            await UI.slideOutEpilogueSection(sectionMark);
+            await sleep(300);
         }
 
         const closingLines = [

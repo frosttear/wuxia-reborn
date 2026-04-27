@@ -777,6 +777,25 @@ const UI = {
         });
     },
 
+    epilogueSectionMark() {
+        return this.logEl.children.length;
+    },
+
+    slideOutEpilogueSection(fromIndex) {
+        return new Promise(resolve => {
+            const els = Array.from(this.logEl.children).slice(fromIndex);
+            if (!els.length) { resolve(); return; }
+            const wrapper = document.createElement('div');
+            wrapper.className = 'log-epilogue-section-exit';
+            this.logEl.insertBefore(wrapper, els[0]);
+            els.forEach(el => wrapper.appendChild(el));
+            wrapper.addEventListener('animationend', () => {
+                wrapper.remove();
+                resolve();
+            }, { once: true });
+        });
+    },
+
     showScrollingCredits(items) {
         return new Promise(resolve => {
             const overlay = document.createElement('div');
