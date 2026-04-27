@@ -1356,8 +1356,8 @@ const Engine = {
         const { char } = this.state;
 
         if (isTrueEnding) {
-            // If player chose to confront the elder, trigger true final boss after 剑魂
-            if (char.flags.elder_true_form_ready && !char.flags.elder_true_form_triggered) {
+            // Always trigger true final boss after defeating 剑魂 in the true ending path
+            if (!char.flags.elder_true_form_triggered) {
                 char.flags.elder_true_form_triggered = true;
                 this.state.gamePhase = 'idle';
                 UI.updateControls(this.state);
@@ -1465,8 +1465,8 @@ const Engine = {
             {
                 illId: 'wang-tie-true-ending',
                 lines: [
-                    { text: '── 同行者们的此后 ──', cls: 'system' },
-                    { text: '【王铁 · 刀路犹存】', cls: 'system' },
+                    { text: '── 同行者们的此后 ──', cls: 'epilogue-title' },
+                    { text: '【王铁 · 刀路犹存】', cls: 'epilogue-title' },
                     { text: '路过镇口的时候，你在旧镖局的院子前停了一下。', cls: 'epilogue' },
                     { text: '里面有个年轻人，正在练刀。大开大合的架子，走位踏实，收势时刀刃贴身——你认出来了，那是王铁的路数，一招一式都是走了三十年镖路的人教出来的。', cls: 'epilogue' },
                     { text: '院子角落里，那棵老槐树还在。你记得他当年习惯靠在那里喝水，刀放在膝上，随意而警觉。', cls: 'epilogue' },
@@ -1477,7 +1477,7 @@ const Engine = {
             {
                 illId: 'yan-chixing-true-ending',
                 lines: [
-                    { text: '【燕赤行 · 了却前尘】', cls: 'system' },
+                    { text: '【燕赤行 · 了却前尘】', cls: 'epilogue-title' },
                     { text: '含光山上的碑立好之后，燕赤行下了山，此后再没回去过。他说那是含光门的事，不是他的事——他的事，已经了了。', cls: 'epilogue' },
                     { text: '他又回到了那种来去无踪的日子，只不过这次走起来不一样——身上没有悬着的东西，步子比以前轻。', cls: 'epilogue' },
                     { text: '「想好去哪了吗？」他有一天忽然问你，语气跟在问今天吃什么差不多。', cls: 'epilogue-dialogue' },
@@ -1490,7 +1490,7 @@ const Engine = {
             {
                 illId: 'ling-xue-true-ending',
                 lines: [
-                    { text: '【凌雪 · 各走天涯】', cls: 'system' },
+                    { text: '【凌雪 · 各走天涯】', cls: 'epilogue-title' },
                     { text: '凌雪和白渊的事了了之后，她在镇上又住了几天，把一些零散的东西处理干净，然后收拾包袱，准备上路。', cls: 'epilogue' },
                     { text: '你去送她，她只是摆了摆手：「不用送。这条路，我走得惯的。」', cls: 'epilogue-dialogue' },
                     { text: '走出十来步，她忽然停下来，侧过身：「你的事，办完了？」', cls: 'epilogue-dialogue' },
@@ -1503,7 +1503,7 @@ const Engine = {
             {
                 illId: 'su-qing-true-ending',
                 lines: [
-                    { text: '【苏青 · 问脉道别】', cls: 'system' },
+                    { text: '【苏青 · 问脉道别】', cls: 'epilogue-title' },
                     { text: '济世堂重开后的生意比苏青预想的忙。你去找她的时候，她正在给人包扎手臂，头都没抬，只说了一句：「等一下。」', cls: 'epilogue' },
                     { text: '等那人走了，她才过来，不由分说地捏住你的手腕，把了把脉，皱眉看了看，点头：「稳了，比以前好多了。气息也顺。」', cls: 'epilogue-dialogue' },
                     { text: '「你这是……」你刚开口，她已经转身拿起了下一张药方，「以后不用再重来了。」她顿了一下，「好好过。」', cls: 'epilogue-dialogue' },
@@ -1515,7 +1515,7 @@ const Engine = {
             {
                 illId: 'mysterious-elder-true-ending',
                 lines: [
-                    { text: '【神秘老者 · 长夜将晓】', cls: 'system' },
+                    { text: '【神秘老者 · 长夜将晓】', cls: 'epilogue-title' },
                     { text: '轮回锁断的那一刻，盘踞在他识海里九百年的东西，随之烟消云散。', cls: 'epilogue' },
                     { text: '你在一间简陋的客房里找到他——脊背已不再挺直，气息也浅，眼神里没有了那种洞察一切的透彻，只剩下一个极度疲倦的老人。', cls: 'epilogue' },
                     { text: '他没有辩解，也没有解释。只是看着你，开口说：「老夫欠你的，比你以为的多得多。」', cls: 'epilogue-dialogue' },
@@ -1528,7 +1528,7 @@ const Engine = {
             {
                 illId: 'li-yunshu-true-ending',
                 lines: [
-                    { text: '【李云舒 · 此后同行】', cls: 'system' },
+                    { text: '【李云舒 · 此后同行】', cls: 'epilogue-title' },
                     { text: '李云舒把那封旧信折好，重新收进怀里。关于她母亲的事——梅林旧宅、那封压在剑谱里的信、旧案的来龙去脉——你已经一一告诉她了。', cls: 'epilogue' },
                     { text: '她听的时候没有说话，只是捏着那封信，手指慢慢收紧，又慢慢松开。', cls: 'epilogue' },
                     { text: '沉默了很久之后，她抬起头：「所以，接下来去哪？」', cls: 'epilogue-dialogue' },

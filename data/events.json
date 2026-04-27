@@ -726,9 +726,9 @@
         "text": "婉言谢绝，不与计较",
         "effects": {
           "attributes": {
-            "comprehension": 1
+            "reputation": 1
           },
-          "narrative": "你淡然拒绝，对方悻悻而去。有时不战而屈人之兵，也是一种智慧。"
+          "narrative": "你淡然拒绝，对方悻悻而去。以礼待人，江湖上自有口碑。"
         }
       }
     ]
@@ -1140,10 +1140,10 @@
         "text": "继续感悟剑意",
         "effects": {
           "attributes": {
-            "agility": 1,
-            "comprehension": 2
+            "agility": 2,
+            "comprehension": 1
           },
-          "narrative": "那一刻的感悟让你对剑道的理解更深，步法与悟性均有精进。"
+          "narrative": "那一刻的感悟让你对剑道的理解更深，步伐随之愈发精准灵动，悟性亦有所精进。"
         }
       }
     ]
@@ -1245,10 +1245,10 @@
         "text": "悄悄为他添酒，继续观察",
         "effects": {
           "attributes": {
-            "comprehension": 2,
+            "luck": 2,
             "strength": 1
           },
-          "narrative": "借着酒意，老人无意中演示了数招绝学，让你深有感悟。"
+          "narrative": "借着酒意，老人无意中演示了数招绝学，让你大开眼界。这份奇遇，也许正是老天爷有意安排的。"
         }
       },
       {
@@ -1407,9 +1407,9 @@
         "text": "绕道而行，不与庸人计较",
         "effects": {
           "attributes": {
-            "comprehension": 1
+            "luck": 1
           },
-          "narrative": "懂得选择战场，也是一种智慧。"
+          "narrative": "懂得避开无谓麻烦，祸患自然绕道而行。"
         }
       }
     ]
@@ -1437,9 +1437,9 @@
         "text": "拂袖而去，不与之争",
         "effects": {
           "attributes": {
-            "comprehension": 1
+            "reputation": 1
           },
-          "narrative": "你转身离去，他哑然失措，喊了几句，却也没敢追上来。"
+          "narrative": "你转身离去，他哑然失措，喊了几句，却也没敢追上来。旁观者无不点头——这份气度，倒比打赢更让人折服。"
         }
       }
     ]
@@ -1490,9 +1490,10 @@
         "text": "以茶代战，交流心得",
         "effects": {
           "attributes": {
-            "comprehension": 2
+            "comprehension": 1,
+            "reputation": 1
           },
-          "narrative": "一番交流让你对武道的理解更加开阔。"
+          "narrative": "一番交流让你对武道的理解更加开阔。此人走遍天下，临别时称赞你气度不凡，消息自然也传了出去。"
         }
       }
     ]
@@ -1599,9 +1600,10 @@
         "text": "坚持武道为本，与他辩论",
         "effects": {
           "attributes": {
-            "comprehension": 2
+            "comprehension": 1,
+            "reputation": 1
           },
-          "narrative": "一番辩论，你对自己的武道之路有了更清晰的认识。"
+          "narrative": "一番辩论，你对自己的武道之路有了更清晰的认识。文士临别拱手，称赞你立场坚定、言之有物，这番交锋的风声也随他的脚步传了出去。"
         }
       },
       {
@@ -2223,10 +2225,10 @@
         "text": "恭敬行礼，请求赐教",
         "effects": {
           "attributes": {
-            "comprehension": 2,
+            "agility": 2,
             "reputation": 2
           },
-          "narrative": "老剑客点头微笑，与你切磋半日。他的剑法看似平淡无奇，却蕴含无尽变化。你虽远不及他，却从中领悟到了许多，悟性与声望均大有提升。"
+          "narrative": "老剑客点头微笑，与你切磋半日。他的身法如流水，进退之间令你眼花缭乱。你虽远不及他，却在这番切磋里将步法磨练得更加精进，声望亦随之传开。"
         }
       },
       {
@@ -2631,9 +2633,10 @@
         "text": "在那棵断松旁坐了一会儿，然后继续走",
         "effects": {
           "attributes": {
-            "comprehension": 3
+            "comprehension": 1,
+            "luck": 2
           },
-          "narrative": "你不知道在这条路上，前世的那个你，发生过什么。\n\n但你的脚知道这条路。你的眼睛认识那块石碑。\n\n有些记忆，没有跟着进入这一世的脑子——但也许，它们以另一种方式留了下来。"
+          "narrative": "你不知道在这条路上，前世的那个你，发生过什么。\n\n但你的脚知道这条路。你的眼睛认识那块石碑。\n\n有些记忆，没有跟着进入这一世的脑子——但也许，它们以另一种方式留了下来。前世走过的路，在这一世，替你挡住了一些看不见的风雨。"
         }
       }
     ]

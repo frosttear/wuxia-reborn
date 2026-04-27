@@ -818,31 +818,30 @@ const UI = {
 
     slideOutEpilogueSection() {
         return new Promise(resolve => {
-            // Remove padding from previous section so the smooth scroll target is correct
-            this.setEpilogueMode(false);
+            // Fade out the visible content, then jump scroll position while invisible
+            this.logEl.style.transition = 'opacity 0.35s ease';
+            this.logEl.style.opacity = '0';
 
-            // Permanent separator — stays in DOM as chapter break when scrolling up
-            const sep = document.createElement('div');
-            sep.className = 'log-epilogue-chapter-sep';
-            this.logEl.appendChild(sep);
+            setTimeout(() => {
+                // Thin visual separator — stays as chapter divider when scrolling back up
+                const sep = document.createElement('div');
+                sep.className = 'log-epilogue-chapter-sep';
+                this.logEl.appendChild(sep);
 
-            // Temporary spacer creates scroll room so the smooth scroll can advance
-            const spacer = document.createElement('div');
-            spacer.style.cssText = `height:${this.logEl.clientHeight}px;flex-shrink:0`;
-            this.logEl.appendChild(spacer);
+                // Ensure epilogue-mode (padding-bottom) is on to provide pin-scroll room
+                this.setEpilogueMode(true);
 
-            // Smooth-scroll to push old NPC section above the fold
-            this.logEl.scrollTo({
-                top: this.logEl.scrollHeight - this.logEl.clientHeight,
-                behavior: 'smooth',
-            });
+                // Instant jump to end of content while invisible — no spacer needed
+                this.logEl.scrollTop = this.logEl.scrollHeight;
 
-            // Signal next addLogTypewriter to anchor its element at the top of the log
-            this._epilogueNextAtTop = true;
-            this._epilogueSpacerEl  = spacer;
+                // Signal next addLogTypewriter to anchor its element at the top
+                this._epilogueNextAtTop = true;
+                this._epilogueSpacerEl  = null;
 
-            // Add padding-bottom AFTER the scroll animation so pinnedScroll is reachable
-            setTimeout(() => { this.setEpilogueMode(true); resolve(); }, 650);
+                // Fade back in
+                this.logEl.style.opacity = '1';
+                setTimeout(resolve, 350);
+            }, 350);
         });
     },
 
