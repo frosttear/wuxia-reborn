@@ -361,10 +361,17 @@ const UI = {
             passivesEl.innerHTML = '';
             const passives = char.passives || [];
             if (passives.length > 0) {
+                const MARK_FLAGS = ['mark_warrior_power', 'mark_hermit_power', 'mark_wuxiang_power', 'mark_rebirth_power', 'mark_afterstory_power'];
                 for (const p of passives) {
                     const span = document.createElement('span');
                     span.className = 'talent-tag passive-tag';
-                    span.innerHTML = `<b>${p.name}</b>：${p.desc}`;
+                    if (p.rebirthPower) {
+                        const n = MARK_FLAGS.filter(m => (char.flags || {})[m]).length;
+                        const stats = n > 0 ? `攻+${n * 25} 防+${n * 20} 气血+${n * 300}（${n}枚印记）` : '尚无印记';
+                        span.innerHTML = `<b>${p.name}</b>：${p.desc}——${stats}，仅对战轮回设计者时有效`;
+                    } else {
+                        span.innerHTML = `<b>${p.name}</b>：${p.desc}`;
+                    }
                     passivesEl.appendChild(span);
                 }
             } else {
@@ -428,14 +435,6 @@ const UI = {
         const bondIds = Object.keys(bonds);
         if (bondIds.length > 0 && bondIds.every(id => ((char.bondLevels || {})[id] || 0) >= bonds[id].length)) {
             items.push({ name: '羁绊之力', effect: '攻+60（对隐藏强敌）' });
-        }
-
-        const MARK_FLAGS = ['mark_warrior_power', 'mark_hermit_power', 'mark_wuxiang_power', 'mark_rebirth_power', 'mark_afterstory_power'];
-        if ((char.passives || []).some(p => p.rebirthPower)) {
-            const markCount = MARK_FLAGS.filter(m => (char.flags || {})[m]).length;
-            if (markCount > 0) {
-                items.push({ name: '轮回之力', effect: `攻+${markCount * 25} 防+${markCount * 20} 气血+${markCount * 300}（${markCount}枚印记）` });
-            }
         }
 
         if (items.length === 0) { el.style.display = 'none'; return; }
