@@ -243,7 +243,7 @@ const Rebirth = {
 
         // Persist critical meta-flags that must survive rebirth
         const PERSIST_FLAGS = [
-            'lost_to_final_boss', 'zhushi_chain_done', 'mark_hermit',
+            'lost_to_final_boss', 'zhushi_chain_done', 'truth_assembled', 'mark_hermit',
             'mark_warrior_power', 'mark_wuxiang_power',
             'mark_rebirth_power', 'mark_afterstory_power', 'mark_hermit_power'
         ];

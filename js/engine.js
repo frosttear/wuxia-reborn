@@ -1199,8 +1199,8 @@ const Engine = {
             UI.renderCharacter(char, this.state.jobs);
             if (enemy.isTrueFinalBoss) {
                 char.flags.lost_to_final_boss = true;
-                if (!char.flags.zhushi_chain_done) {
-                    UI.addLog('【提示】击败那个老者需要更强的力量。下一轮回，在【任务】面板中寻找「诸世之我」——以所有世界线上的自己，来对抗他。', 'info');
+                if (!char.flags.zhushi_chain_done && !char.flags.truth_assembled) {
+                    UI.addLog('【提示】击败那个老者需要更强的力量。下一轮回，可通过「碎片真相」任务链（收集五人的记忆碎片）直接前往，或完成「诸世之我」以诸世之力对抗他。', 'info');
                 }
                 UI.addIllustration('designer-lose');
                 UI.showCombatReturnBtn('lost', () => {
@@ -1368,14 +1368,30 @@ const Engine = {
     triggerFinalBossNow() {
         const { char } = this.state;
         if (!char || this.state.gamePhase !== 'idle') return;
-        if (!char.flags.zhushi_chain_done) return;
+        const hasTruth  = !!(char.flags && char.flags.truth_assembled);
+        const hasZhushi = !!(char.flags && char.flags.zhushi_chain_done);
+        if (!hasTruth && !hasZhushi) return;
+
+        const msg = (hasTruth && !hasZhushi)
+            ? '【碎片汇聚】你已看透九百年的棋局，无需再经历那些序章。直接前往见那位老者？'
+            : '【诸世共鸣】跳过剩余时间，立即触发最终决战？';
+        if (!confirm(msg)) return;
+
         char.ageMonths = Math.max(char.ageMonths, 240);
         char.flags.boss_triggered = true;
-        if (typeof Gallery !== 'undefined') Gallery.unlockIllustration('portrait-tianmo');
-        const bossEvent = this.state.events.find(e => e.id === 'tianmo_appears');
-        if (bossEvent) {
+
+        if (hasTruth && !hasZhushi) {
+            // Truth path: skip 天魔 and 剑魂, go directly to 沈玄清
+            if (typeof Gallery !== 'undefined') Gallery.unlockIllustration('elder-true-form');
+            UI.addLog('【碎片汇聚】你已看透那张棋局——你知道去哪里找到那个真正的人，也知道那场见面将意味着什么。', 'unlock');
+            const elderEvent = this.state.events.find(e => e.id === 'elder_truth_form_appears');
+            if (elderEvent) this.triggerEvent(elderEvent);
+        } else {
+            // Zhushi path: current flow — 天魔 → 剑魂 → 沈玄清
+            if (typeof Gallery !== 'undefined') Gallery.unlockIllustration('portrait-tianmo');
             UI.addLog('【诸世共鸣】你感到所有世界线的意志汇聚于一处，时间已不重要——决战，此刻开始。', 'unlock');
-            this.triggerEvent(bossEvent);
+            const bossEvent = this.state.events.find(e => e.id === 'tianmo_appears');
+            if (bossEvent) this.triggerEvent(bossEvent);
         }
     },
 
