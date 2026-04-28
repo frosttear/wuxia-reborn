@@ -782,6 +782,12 @@ const Engine = {
         return result;
     },
 
+    getCompletedChains() {
+        const { char, chains } = this.state;
+        if (!char || !chains) return [];
+        return chains.filter(c => (char.chainProgress || {})[c.id] === 'done');
+    },
+
     triggerChainStep(chainId, stepIdx) {
         const { char } = this.state;
         if (!char || this.state.gamePhase !== 'idle') return;

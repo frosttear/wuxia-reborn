@@ -1339,8 +1339,10 @@ const UI = {
         if (this.chainBtn) {
             if (!busy) {
                 const chainSteps = Engine.getAllPendingChainSteps();
-                this.chainBtn.style.display = chainSteps.length > 0 ? '' : 'none';
-                if (chainSteps.length === 0 && this.chainPanel) this.chainPanel.style.display = 'none';
+                const doneChains = Engine.getCompletedChains();
+                const hasAny = chainSteps.length > 0 || doneChains.length > 0;
+                this.chainBtn.style.display = hasAny ? '' : 'none';
+                if (!hasAny && this.chainPanel) this.chainPanel.style.display = 'none';
             }
             this.chainBtn.disabled = busy;
         }
@@ -1385,8 +1387,9 @@ const UI = {
         if (panel.style.display !== 'none') { panel.style.display = 'none'; return; }
         this._closeAllPanels(panel);
         const steps = Engine.getAllPendingChainSteps();
-        if (steps.length === 0) return;
-        panel.innerHTML = steps.map(({ chain, step, stepIdx, conditionsMet, lockedReasons, enemyInfo }) => {
+        const doneChains = Engine.getCompletedChains();
+        if (steps.length === 0 && doneChains.length === 0) return;
+        let html = steps.map(({ chain, step, stepIdx, conditionsMet, lockedReasons, enemyInfo }) => {
             const bossTag = enemyInfo ? `<span class="chain-boss-tag">⚔ 含战斗</span>` : '';
             const enemyStats = enemyInfo
                 ? `<span class="chain-enemy-stats">敌方「${enemyInfo.name}」攻击 ${enemyInfo.attack}　防御 ${enemyInfo.defense}　气血 ${enemyInfo.hp}</span>`
@@ -1408,6 +1411,11 @@ const UI = {
                 <span class="chain-desc">${chain.desc}</span>
             </button>`;
         }).join('');
+        if (doneChains.length > 0) {
+            const doneItems = doneChains.map(c => `<div class="chain-done-item">✓ ${c.name}</div>`).join('');
+            html += `<details class="chain-done-section"><summary>已完成任务（${doneChains.length}）</summary><div class="chain-done-list">${doneItems}</div></details>`;
+        }
+        panel.innerHTML = html;
         panel.style.display = 'block';
     },
 

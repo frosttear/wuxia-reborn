@@ -557,6 +557,12 @@ button:disabled { opacity: 0.4; cursor: not-allowed; }
 .chain-lock-reason { font-size: 0.68rem; color: rgba(200,175,90,0.85); }
 .chain-enemy-stats { font-size: 0.7rem; color: rgba(220,120,90,0.9); margin-top: 3px; }
 .type-任务 { background: rgba(100,160,220,0.18); color: rgba(140,190,240,0.9); }
+.chain-done-section { margin-top: 2px; }
+.chain-done-section > summary { font-size: 0.75rem; color: rgba(140,160,180,0.6); cursor: pointer; padding: 5px 2px; list-style: none; user-select: none; }
+.chain-done-section > summary::before { content: '▶ '; font-size: 0.65rem; }
+.chain-done-section[open] > summary::before { content: '▼ '; }
+.chain-done-list { display: flex; flex-direction: column; gap: 2px; padding: 2px 0 4px; }
+.chain-done-item { font-size: 0.78rem; color: rgba(140,160,180,0.5); padding: 2px 4px; }
 
 /* ─── Combat Overlay ─── */
 .combat-overlay {
