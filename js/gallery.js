@@ -38,9 +38,9 @@ const GALLERY_DATA = [
     // 羁绊情缘 — 燕赤行
     { id: 'yan-chixing-meet',            name: '燕赤行·刀疤剑客',     hint: '演武场边，疤脸冷面男子直接向你发问',       category: 'bonds'   },
     { id: 'yan-chixing-bond-1',          name: '燕赤行·刀下问剑',     hint: '以剑相试，接受疤脸剑客的考验',             category: 'bonds'   },
-    { id: 'yan-chixing-bond-2',          name: '燕赤行·铁幕之夜',     hint: '夜巷遭伏，他左臂负伤，你赶到共击刺客',     category: 'bonds'   },
+    { id: 'yan-chixing-bond-2',          name: '燕赤行·铁幕之夜',     hint: '夜巷遭伏，神秘刺客携乌鸦令牌，你赶到共击来人',     category: 'bonds'   },
     { id: 'yan-chixing-bond-3',          name: '燕赤行·疤痕之下',     hint: '河边深夜，他第一次讲述含光门被灭的往事',   category: 'bonds'   },
-    { id: 'yan-chixing-bond-4',          name: '燕赤行·旧仇归来',     hint: '仇人季沧海现身城南，多年夙愿终将了结',     category: 'bonds'   },
+    { id: 'yan-chixing-bond-4',          name: '燕赤行·血债与谎言',   hint: '季沧海独闯天魔，负伤求见，多年仇恨一朝真相',     category: 'bonds'   },
     { id: 'yan-chixing-ending',          name: '燕赤行·无名同行',     hint: '夜道同行，他走在前半步，暗处的风雪扑来，他侧身为你挡。', category: 'bonds' },
     { id: 'yan-chixing-afterstory',      name: '燕赤行·含光遗灯·归山', hint: '重返含光山废墟，为旧弟兄们寻回刻在墙上的名字', category: 'bonds' },
     { id: 'yan-chixing-afterstory-ending', name: '燕赤行·含光遗灯·立碑', hint: '他跪在亲手刻就的碑前，这是他第一次流泪',   category: 'bonds' },
