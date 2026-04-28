@@ -453,11 +453,6 @@ const Gallery = {
         this._replaySeq = (this._replaySeq || 0) + 1;
         const token = this._replaySeq;
         this._replaySkip = null;
-        this._replayNext = null;
-        this._replayLog.onclick = () => {
-            if (this._replaySkip) { this._replaySkip(); }
-            else if (this._replayNext) { this._replayNext(); }
-        };
         this._runReplay(type, id, level, token);
     },
 
@@ -530,12 +525,8 @@ const Gallery = {
         if (illId) items.push({ cls: 'illustration', illId });
         items.push({ text: '── 回想结束 ──', cls: 'sep' });
 
-        // Typewriter with auto-advance: each paragraph typewriters in, then auto-continues
-        // after a brief pause. Click during typewrite = instantly show paragraph, continue.
-        // Click during pause = skip pause, start next paragraph immediately.
         const log = this._replayLog;
 
-        // Only scroll if the element's bottom is below the visible area — never jump up.
         const scrollIntoView = (el) => {
             const elBottom = el.offsetTop + el.offsetHeight;
             if (elBottom > log.scrollTop + log.clientHeight - 8) {
@@ -543,53 +534,24 @@ const Gallery = {
             }
         };
 
-        const typewrite = (el, text, done, skip) => {
-            let j = 0;
-            let called = false;
-            const finish = (isSkip) => {
-                if (called) return;
-                called = true;
-                this._replaySkip = null;
-                el.textContent = text;
-                scrollIntoView(el);
-                isSkip ? skip() : done();
-            };
-            this._replaySkip = () => finish(true);
-            const tick = () => {
-                if (token !== this._replaySeq) return;
-                el.textContent = text.slice(0, ++j);
-                if (j > 1) scrollIntoView(el);
-                if (j < text.length) setTimeout(tick, 28);
-                else finish(false);
-            };
-            tick();
-        };
+        // Single timeout ID — cleared on every skip so old ticks never re-queue.
+        let tickId = null;
+        const cancelTick = () => { clearTimeout(tickId); tickId = null; };
 
-        // Auto-pause between items: resolves after `ms` ms or on click.
-        const autoPause = (ms, next) => {
+        const advance = (i) => {
             if (token !== this._replaySeq) return;
-            const t = setTimeout(() => {
-                if (token !== this._replaySeq) return;
-                this._replayNext = null;
-                next();
-            }, ms);
-            this._replayNext = () => {
-                if (token !== this._replaySeq) return;
-                this._replayNext = null;
-                clearTimeout(t);
-                next();
-            };
+            cancelTick();
+            render(i);
         };
 
-        const stream = (i) => {
+        const render = (i) => {
             if (token !== this._replaySeq) return;
             if (i >= items.length) {
-                // Trailing blank so the last line never sits at the edge of the viewport.
                 const blank = document.createElement('p');
                 blank.className = 'log-replay-narrative';
                 blank.innerHTML = '&nbsp;';
                 log.appendChild(blank);
-                this._replayNext = null;
+                this._replaySkip = null;
                 return;
             }
             const { text, cls, illId } = items[i];
@@ -600,23 +562,42 @@ const Gallery = {
                 loadProgressiveImg(img, `assets/illustrations/${illId}.jpg`, null);
                 log.appendChild(img);
                 scrollIntoView(img);
-                autoPause(2000, () => stream(i + 1));
+                this._replaySkip = () => advance(i + 1);
+                tickId = setTimeout(() => advance(i + 1), 2000);
                 return;
             }
             const p = document.createElement('p');
-            if (cls === 'choice') {
-                p.className = 'log-replay-choice';
-            } else if (cls === 'sep') {
-                p.className = 'log-replay-sep';
-            } else {
-                p.className = 'log-replay-narrative';
-            }
+            if (cls === 'choice') p.className = 'log-replay-choice';
+            else if (cls === 'sep') p.className = 'log-replay-sep';
+            else p.className = 'log-replay-narrative';
             log.appendChild(p);
-            typewrite(p, text,
-                () => autoPause(400, () => stream(i + 1)),
-                () => stream(i + 1));
+
+            let j = 0;
+            this._replaySkip = () => {
+                cancelTick();
+                p.textContent = text;
+                scrollIntoView(p);
+                this._replaySkip = null;
+                advance(i + 1);
+            };
+            const tick = () => {
+                if (token !== this._replaySeq) return;
+                p.textContent = text.slice(0, ++j);
+                if (j > 1) scrollIntoView(p);
+                if (j < text.length) {
+                    tickId = setTimeout(tick, 28);
+                } else {
+                    this._replaySkip = () => advance(i + 1);
+                    tickId = setTimeout(() => advance(i + 1), 400);
+                }
+            };
+            tick();
         };
-        stream(0);
+
+        this._replayLog.onclick = () => {
+            if (this._replaySkip) this._replaySkip();
+        };
+        render(0);
     },
 
     _closeReplay() {
