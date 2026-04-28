@@ -459,6 +459,7 @@ const Gallery = {
                 this._replayToLb.style.display = '';
                 this._replayToLb.onclick = () => {
                     this._closeReplay();
+                    this.switchTab(fromLb.category);
                     this.openLightbox(fromLb.id, fromLb.category);
                 };
             } else {
