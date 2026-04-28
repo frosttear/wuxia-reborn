@@ -1615,7 +1615,7 @@ const Engine = {
         { text: '以及', cls: 'role' },
         { text: '游玩的你', cls: 'final' },
         { text: '', cls: 'spacer' },
-        { text: 'Fin', cls: 'fin' },
+        { text: 'ℱin', cls: 'fin' },
     ],
 
     playCredits() {

@@ -1,10 +1,15 @@
 # 轮回江湖 — 开发进度
 
-## 当前版本：v0.26.25
+## 当前版本：v0.26.26
+
+### v0.26.26（2026-04-28）
+
+- 字幕「Fin」首字母改为 Unicode Script Capital F（ℱ，U+2131），由系统数学字体（Windows: Cambria Math，macOS: STIX）渲染为自然飘逸的花体大写 F，无需外部字体，离线可用
+- 移除对 Google Fonts 的依赖（中国大陆无法访问）
+
+---
 
 ### v0.26.25（2026-04-28）
-
-- 字幕「Fin」改用 Cormorant Garamond Light Italic，并开启 swsh/calt/liga OpenType 特性，f 字母呈现更飘逸的花体弧线
 
 ---
 
