@@ -383,7 +383,7 @@ const Combat = {
                             : Math.min(baseReduce, defCap);
                         incomingMult = 1.0 - cappedReduce;
                     } else if (action === 'focus') {
-                        incomingMult = 1.0 - Math.min(0.55, defCap);
+                        incomingMult = 1.0 - Math.min(0.40, defCap);
                     }
 
                     const rawDmg = Math.max(1, Math.floor(this._bdDmg(cs.enemyEffAtk, playerDef) * skillMult));
@@ -533,8 +533,8 @@ const Combat = {
         const punishDmg = Math.max(1, Math.floor(this._bdDmg(cs.enemyEffAtk, Math.floor(playerDef * 0.5)) * 1.15) - qiShield);
 
         // ── Focus ──
-        const focusReduction = Math.round(Math.min(0.55, defCap) * 100);
-        const focusDmg = Math.max(1, Math.floor(rawEnemyDmg * (1 - Math.min(0.55, defCap))) - qiShield);
+        const focusReduction = Math.round(Math.min(0.40, defCap) * 100);
+        const focusDmg = Math.max(1, Math.floor(rawEnemyDmg * (1 - Math.min(0.40, defCap))) - qiShield);
         const momAfter = Math.min(5, (cs.playerMomentum || 0) + 3);
 
         // ── No-action baseline (strike/focus incoming) ──
