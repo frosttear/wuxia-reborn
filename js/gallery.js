@@ -657,6 +657,32 @@ const Gallery = {
 
     // ── Slot helpers ────────────────────────────────────────────────────────
 
+    _getReplayInfo(meta) {
+        if (meta.category !== 'bonds') return null;
+        const id = meta.id;
+        const CHAPTER = ['一', '二', '三', '四', '五'];
+        let m;
+        if ((m = id.match(/^(.+)-bond-(\d+)$/))) {
+            const npcKebab = m[1];
+            const level = parseInt(m[2]);
+            const npcSnake = npcKebab.replace(/-/g, '_');
+            const portrait = GALLERY_DATA.find(d => d.id === `portrait-${npcKebab}`);
+            const npcName = portrait ? portrait.name : npcKebab;
+            return { type: 'bond', id: npcSnake, level, title: `${npcName} · 第${CHAPTER[level - 1] || level}章` };
+        }
+        if ((m = id.match(/^(.+)-ending$/))) {
+            const npcKebab = m[1];
+            const npcSnake = npcKebab.replace(/-/g, '_');
+            const bonds = (typeof Engine !== 'undefined') && Engine.state && Engine.state.bonds || {};
+            const maxLevel = (bonds[npcSnake] || []).length;
+            if (!maxLevel) return null;
+            const portrait = GALLERY_DATA.find(d => d.id === `portrait-${npcKebab}`);
+            const npcName = portrait ? portrait.name : npcKebab;
+            return { type: 'bond', id: npcSnake, level: maxLevel, title: `${npcName} · 第${CHAPTER[maxLevel - 1] || maxLevel}章` };
+        }
+        return null;
+    },
+
     _fillSlot(el, idx) {
         if (!el) return;
         if (idx < 0) { el.style.visibility = 'hidden'; return; }
@@ -671,6 +697,24 @@ const Gallery = {
         el.querySelector('.gallery-lb-name').textContent = meta.name;
         el.querySelector('.gallery-lb-category').textContent = CATEGORY_LABELS[meta.category] || '';
         el.querySelector('.gallery-lb-hint').textContent = meta.hint;
+        const replayBtn = el.querySelector('.gallery-lb-replay');
+        if (replayBtn) {
+            const info = this._getReplayInfo(meta);
+            if (info) {
+                replayBtn.style.display = '';
+                replayBtn.onclick = (e) => {
+                    e.stopPropagation();
+                    this.closeLightbox();
+                    this._activeTab = 'replay';
+                    for (const btn of this._tabsEl.querySelectorAll('.gallery-tab')) {
+                        btn.classList.toggle('active', btn.dataset.cat === 'replay');
+                    }
+                    this._openReplay(info.type, info.id, info.level, info.title);
+                };
+            } else {
+                replayBtn.style.display = 'none';
+            }
+        }
     },
 
     // visible=true only for the center slot; flanks are always hidden

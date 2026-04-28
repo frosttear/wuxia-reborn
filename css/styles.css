@@ -1051,6 +1051,8 @@ button:disabled { opacity: 0.4; cursor: not-allowed; }
 }
 .gallery-lb-category { font-size: 0.72rem; color: var(--muted); margin-bottom: 8px; }
 .gallery-lb-hint { font-size: 0.82rem; color: var(--text); line-height: 1.7; opacity: 0.8; }
+.gallery-lb-replay { margin-top: 12px; font-size: 0.8rem; padding: 5px 16px; opacity: 0.75; border-color: rgba(100,160,220,0.4); background: rgba(100,160,220,0.08); }
+.gallery-lb-replay:hover { opacity: 1; border-color: rgba(100,160,220,0.7); background: rgba(100,160,220,0.15); }
 
 .gallery-lb-nav {
     position: fixed; top: 50%;
