@@ -457,7 +457,20 @@ const Gallery = {
     },
 
     _splitParagraphs(text, maxLen = 100) {
-        const parts = text.split(/(?<=[。！？])/);
+        const raw = text.split(/(?<=[。！？])/);
+        // Reattach leading closing-quote chars to the preceding sentence
+        const parts = [];
+        for (const p of raw) {
+            if (!p) continue;
+            const m = p.match(/^[」』）)\]》]+/);
+            if (m && parts.length > 0) {
+                parts[parts.length - 1] += m[0];
+                const rest = p.slice(m[0].length);
+                if (rest) parts.push(rest);
+            } else {
+                parts.push(p);
+            }
+        }
         const chunks = [];
         let cur = '';
         for (const p of parts) {
