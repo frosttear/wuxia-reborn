@@ -543,20 +543,24 @@ const Gallery = {
             }
         };
 
-        const typewrite = (el, text, done) => {
+        const typewrite = (el, text, done, skip) => {
             let j = 0;
-            this._replaySkip = () => {
+            let called = false;
+            const finish = (isSkip) => {
+                if (called) return;
+                called = true;
                 this._replaySkip = null;
                 el.textContent = text;
                 scrollIntoView(el);
-                done();
+                isSkip ? skip() : done();
             };
+            this._replaySkip = () => finish(true);
             const tick = () => {
                 if (token !== this._replaySeq) return;
                 el.textContent = text.slice(0, ++j);
-                if (j > 1) scrollIntoView(el); // skip scroll on first (empty) tick
+                if (j > 1) scrollIntoView(el);
                 if (j < text.length) setTimeout(tick, 28);
-                else { this._replaySkip = null; done(); }
+                else finish(false);
             };
             tick();
         };
@@ -608,7 +612,9 @@ const Gallery = {
                 p.className = 'log-replay-narrative';
             }
             log.appendChild(p);
-            typewrite(p, text, () => autoPause(400, () => stream(i + 1)));
+            typewrite(p, text,
+                () => autoPause(400, () => stream(i + 1)),
+                () => stream(i + 1));
         };
         stream(0);
     },

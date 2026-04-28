@@ -1192,7 +1192,6 @@ const Engine = {
             if (Object.keys(loseRewards).length > 0) this.applyEffects({ attributes: loseRewards });
             UI.renderCharacter(char, this.state.jobs);
             if (enemy.isTrueFinalBoss) {
-                UI.addLog(enemy.loseNarrative, 'lose');
                 char.flags.lost_to_final_boss = true;
                 if (!char.flags.zhushi_chain_done) {
                     UI.addLog('【提示】击败那个老者需要更强的力量。下一轮回，在【任务】面板中寻找「诸世之我」——以所有世界线上的自己，来对抗他。', 'info');

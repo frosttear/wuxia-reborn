@@ -1,10 +1,19 @@
 # 轮回江湖 — 开发进度
 
-## 当前版本：v0.26.1
+## 当前版本：v0.26.2
 
-### v0.26.1（2026-04-28）
+### v0.26.2（2026-04-28）
 
-- 禁用音频模块：playBGM / playSFX / stopBGM 改为空操作，消除所有 OGG 文件 404 请求
+**剧情回想修复**
+- 修复 typewriter 重复渲染 bug：添加 `called` 防重入守卫，`done()` 不再被调用两次
+- 点击跳过打字中段落时，立即开始下一段（不等待 autoPause）
+
+**真结局 Boss 落败修复**
+- 修复 `true_final_boss` 落败后显示"江湖争斗中身亡"的问题：补全 cause map 中的对应文本与叙事
+- 修复 loseNarrative 在真结局 Boss 战落败时被记录两次的 bug
+
+**音频模块**
+- 恢复 playBGM / playSFX / stopBGM 完整实现，改用 `_enabled = false` 开关控制；将来可一键启用
 
 ---
 
