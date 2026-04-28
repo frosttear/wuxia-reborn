@@ -172,6 +172,8 @@ const UI = {
         this.chainBtn  = document.getElementById('chainBtn');
         this.chainPanel = document.getElementById('chainPanel');
         this.logBuffer = [];
+        this._twSkip = null;
+        this.logEl.addEventListener('click', () => { if (this._twSkip) this._twSkip(); });
         this._preloadAvatars();
         if (typeof Gallery !== 'undefined') Gallery.init();
 
@@ -783,11 +785,9 @@ const UI = {
                     this._epilogueSpacerEl.remove();
                     this._epilogueSpacerEl = null;
                 }
-                // getBoundingClientRect() forces a synchronous layout after DOM change
                 const logRect = this.logEl.getBoundingClientRect();
                 const divRect = div.getBoundingClientRect();
                 const divAbsTop = this.logEl.scrollTop + (divRect.top - logRect.top);
-                // Position div below the top-fade zone (14px padding + 64px fade mask)
                 pinnedScroll = Math.max(0, divAbsTop - 78);
                 this.logEl.scrollTop = pinnedScroll;
             }
@@ -807,26 +807,31 @@ const UI = {
                 }
             };
 
+            let tickId = null;
             let i = 0;
-            let done = false;
-            const finish = () => {
-                if (done) return;
-                done = true;
-                this.logEl.removeEventListener('click', finish);
+
+            const complete = () => {
+                clearTimeout(tickId);
+                this._twSkip = null;
                 div.innerHTML = text.replace(/\n/g, '<br>');
                 scroll();
                 resolve();
             };
-            this.logEl.addEventListener('click', finish, { once: true });
-            const step = () => {
-                if (done) return;
+
+            this._twSkip = complete;
+
+            const tick = () => {
                 i = Math.min(i + 1, text.length);
                 div.innerHTML = text.slice(0, i).replace(/\n/g, '<br>');
                 scroll();
-                if (i < text.length) setTimeout(step, 20);
-                else finish();
+                if (i < text.length) {
+                    tickId = setTimeout(tick, 20);
+                } else {
+                    this._twSkip = null;
+                    resolve();
+                }
             };
-            step();
+            tick();
         });
     },
 
@@ -838,16 +843,15 @@ const UI = {
             this.logEl.appendChild(el);
             const excess = el.getBoundingClientRect().bottom - this.logEl.getBoundingClientRect().bottom + 16;
             if (excess > 0) this.logEl.scrollTop += excess;
-            el.addEventListener('click', () => { el.remove(); resolve(); }, { once: true });
+            this._twSkip = () => { this._twSkip = null; el.remove(); resolve(); };
         });
     },
 
     epiloguePause(ms) {
         return new Promise(resolve => {
-            const done = () => { this.logEl.removeEventListener('click', done); resolve(); };
+            const done = () => { this._twSkip = null; resolve(); };
             const t = setTimeout(done, ms);
-            const click = () => { clearTimeout(t); done(); };
-            this.logEl.addEventListener('click', click, { once: true });
+            this._twSkip = () => { clearTimeout(t); done(); };
         });
     },
 

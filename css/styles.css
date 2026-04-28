@@ -30,7 +30,7 @@ body {
 .game-header {
     background: var(--surface);
     border-bottom: 1px solid var(--border);
-    padding: 10px 20px;
+    padding: 0 12px;
     display: flex;
     align-items: center;
     justify-content: space-between;
@@ -778,7 +778,7 @@ button:disabled { opacity: 0.4; cursor: not-allowed; }
     body { overflow: hidden; height: 100dvh; }
 
     /* Header compact */
-    .game-header  { padding: 8px 12px; }
+    .game-header  { padding: 0 8px; }
     .game-title-logo { height: 48px; }
     .btn-small    { padding: 5px 10px; font-size: 0.75rem; }
 
