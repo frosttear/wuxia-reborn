@@ -661,6 +661,28 @@ const Gallery = {
         if (meta.category !== 'bonds') return null;
         const id = meta.id;
         const CHAPTER = ['一', '二', '三', '四', '五'];
+        // Afterstory/afterstory-ending → chain replay
+        const AFTERSTORY_CHAIN = {
+            'wang-tie-afterstory':              'wang_revenge',
+            'wang-tie-afterstory-ending':       'wang_revenge',
+            'li-yunshu-afterstory':             'li_yunshu_afterstory',
+            'li-yunshu-afterstory-ending':      'li_yunshu_afterstory',
+            'su-qing-afterstory':               'su_qing_afterstory',
+            'su-qing-afterstory-ending':        'su_qing_afterstory',
+            'ling-xue-afterstory':              'lingxue_afterstory',
+            'ling-xue-afterstory-ending':       'lingxue_afterstory',
+            'mysterious-elder-afterstory':      'elder_afterstory',
+            'mysterious-elder-afterstory-ending': 'elder_afterstory',
+            'yan-chixing-afterstory':           'yan_afterstory',
+            'yan-chixing-afterstory-ending':    'yan_afterstory',
+        };
+        if (AFTERSTORY_CHAIN[id]) {
+            const chainId = AFTERSTORY_CHAIN[id];
+            const chains = (typeof Engine !== 'undefined') && Engine.state && Engine.state.chains || [];
+            const chain = chains.find(c => c.id === chainId);
+            if (!chain) return null;
+            return { type: 'chain', id: chainId, level: null, title: chain.name };
+        }
         let m;
         if ((m = id.match(/^(.+)-bond-(\d+)$/))) {
             const npcKebab = m[1];
