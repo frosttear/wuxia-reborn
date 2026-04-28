@@ -4,6 +4,7 @@ const GALLERY_DATA = [
     // 武道传承
     { id: 'rebirth',                      name: '世界线回溯',           hint: '完成一世旅途，踏入轮回之门',               category: 'bosses' },
     { id: 'wuxiang-unlock',               name: '无相剑意',             hint: '完成「无相剑意」任务链',                   category: 'bosses' },
+    { id: 'zhushi-zhi-wo',               name: '诸世共鸣',             hint: '完成「诸世之我」任务链——所有轮回的自己，聚于一念', category: 'bosses' },
     { id: 'elder-true-form',              name: '设计者显形',           hint: '首次面对轮回的设计者——沈玄清的真实目的浮出水面', category: 'bosses', secret: true },
     // 传说瞬间
     { id: 'tianmo-and-jianhun',           name: '天魔与剑魂',           hint: '击败天魔后，玉牌碎裂——更古老的存在从碎片中浮现', category: 'bosses' },
