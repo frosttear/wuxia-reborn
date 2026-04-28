@@ -461,7 +461,7 @@ const Gallery = {
         this._runReplay(type, id, level, token);
     },
 
-    _splitParagraphs(text, maxLen = 60) {
+    _splitParagraphs(text, maxLen = 100) {
         const parts = text.split(/(?<=[。！？])/);
         const chunks = [];
         let cur = '';
@@ -530,46 +530,64 @@ const Gallery = {
         if (illId) items.push({ cls: 'illustration', illId });
         items.push({ text: '── 回想结束 ──', cls: 'sep' });
 
-        // VN-style click-to-advance: typewrite each item, then pause until user clicks.
-        // Clicking during typewrite skips to instant; clicking while paused advances to next.
+        // Typewriter with auto-advance: each paragraph typewriters in, then auto-continues
+        // after a brief pause. Click during typewrite = instantly show paragraph, continue.
+        // Click during pause = skip pause, start next paragraph immediately.
         const log = this._replayLog;
-        const scrollTo = (el) => {
-            log.scrollTop = el.offsetTop + el.offsetHeight - log.clientHeight + 16;
+
+        // Only scroll if the element's bottom is below the visible area — never jump up.
+        const scrollIntoView = (el) => {
+            const elBottom = el.offsetTop + el.offsetHeight;
+            if (elBottom > log.scrollTop + log.clientHeight - 8) {
+                log.scrollTop = Math.max(log.scrollTop, elBottom - log.clientHeight + 16);
+            }
         };
+
         const typewrite = (el, text, done) => {
             let j = 0;
             this._replaySkip = () => {
                 this._replaySkip = null;
                 el.textContent = text;
-                scrollTo(el);
+                scrollIntoView(el);
                 done();
             };
             const tick = () => {
                 if (token !== this._replaySeq) return;
                 el.textContent = text.slice(0, ++j);
-                scrollTo(el);
+                if (j > 1) scrollIntoView(el); // skip scroll on first (empty) tick
                 if (j < text.length) setTimeout(tick, 28);
                 else { this._replaySkip = null; done(); }
             };
             tick();
         };
-        const waitClick = (next) => {
+
+        // Auto-pause between items: resolves after `ms` ms or on click.
+        const autoPause = (ms, next) => {
             if (token !== this._replaySeq) return;
-            const hint = document.createElement('p');
-            hint.className = 'gallery-replay-continue';
-            hint.textContent = '▼';
-            log.appendChild(hint);
-            scrollTo(hint);
+            const t = setTimeout(() => {
+                if (token !== this._replaySeq) return;
+                this._replayNext = null;
+                next();
+            }, ms);
             this._replayNext = () => {
                 if (token !== this._replaySeq) return;
                 this._replayNext = null;
-                hint.remove();
+                clearTimeout(t);
                 next();
             };
         };
+
         const stream = (i) => {
             if (token !== this._replaySeq) return;
-            if (i >= items.length) { this._replayNext = null; return; }
+            if (i >= items.length) {
+                // Trailing blank so the last line never sits at the edge of the viewport.
+                const blank = document.createElement('p');
+                blank.className = 'log-replay-narrative';
+                blank.innerHTML = '&nbsp;';
+                log.appendChild(blank);
+                this._replayNext = null;
+                return;
+            }
             const { text, cls, illId } = items[i];
             if (cls === 'illustration') {
                 const img = document.createElement('img');
@@ -577,8 +595,8 @@ const Gallery = {
                 img.alt = '';
                 loadProgressiveImg(img, `assets/illustrations/${illId}.jpg`, null);
                 log.appendChild(img);
-                scrollTo(img);
-                waitClick(() => stream(i + 1));
+                scrollIntoView(img);
+                autoPause(2000, () => stream(i + 1));
                 return;
             }
             const p = document.createElement('p');
@@ -590,7 +608,7 @@ const Gallery = {
                 p.className = 'log-replay-narrative';
             }
             log.appendChild(p);
-            typewrite(p, text, () => waitClick(() => stream(i + 1)));
+            typewrite(p, text, () => autoPause(400, () => stream(i + 1)));
         };
         stream(0);
     },

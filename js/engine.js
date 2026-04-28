@@ -1439,8 +1439,6 @@ const Engine = {
         char.flags = char.flags || {};
         char.flags.true_ending_done = true;
 
-        const sleep = ms => new Promise(r => setTimeout(r, ms));
-
         const openingLines = [
             { text: '────────────────────', cls: 'system' },
             { text: '那道盘踞在他身上九百年的力量，终于在这一刻离他而去。', cls: 'epilogue-win' },
@@ -1450,16 +1448,16 @@ const Engine = {
             { text: '这一世，是你的。', cls: 'epilogue-win' },
         ];
 
-        await sleep(800);
+        await UI.epiloguePause(800);
         for (const { text, cls } of openingLines) {
             await UI.addLogTypewriter(text, cls);
-            await sleep(300);
+            await UI.epiloguePause(300);
         }
-        await sleep(400);
+        await UI.epiloguePause(400);
         UI.setEpilogueMode(true);
         await UI.addEpilogueIllustration('designer-win');
         await UI.waitForClick();
-        await sleep(400);
+        await UI.epiloguePause(400);
 
         const epilogues = [
             {
@@ -1550,13 +1548,13 @@ const Engine = {
         for (const { illId, lines } of epilogues) {
             for (const { text, cls } of lines) {
                 await UI.addLogTypewriter(text, cls);
-                await sleep(300);
+                await UI.epiloguePause(300);
             }
-            await sleep(300);
+            await UI.epiloguePause(300);
             await UI.addEpilogueIllustration(illId);
             await UI.waitForClick();
             await UI.slideOutEpilogueSection();
-            await sleep(200);
+            await UI.epiloguePause(200);
         }
 
         const closingLines = [
@@ -1567,9 +1565,9 @@ const Engine = {
         ];
         for (const { text, cls } of closingLines) {
             await UI.addLogTypewriter(text, cls);
-            await sleep(300);
+            await UI.epiloguePause(300);
         }
-        await sleep(800);
+        await UI.epiloguePause(800);
         await UI.waitForClick();
 
         await UI.showScrollingCredits(this.CREDITS_ITEMS);

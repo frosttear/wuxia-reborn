@@ -791,9 +791,6 @@ const UI = {
                 // Position div below the top-fade zone (14px padding + 64px fade mask)
                 pinnedScroll = Math.max(0, divAbsTop - 78);
                 this.logEl.scrollTop = pinnedScroll;
-            } else {
-                const excess = div.getBoundingClientRect().bottom - this.logEl.getBoundingClientRect().bottom + 16;
-                if (excess > 0) this.logEl.scrollTop += excess;
             }
 
             this.notifyEventTab();
@@ -804,8 +801,10 @@ const UI = {
                 if (pinnedScroll !== null) {
                     this.logEl.scrollTop = pinnedScroll;
                 } else {
-                    const excess = div.getBoundingClientRect().bottom - this.logEl.getBoundingClientRect().bottom + 16;
-                    if (excess > 0) this.logEl.scrollTop += excess;
+                    const elBottom = div.offsetTop + div.offsetHeight;
+                    if (elBottom > this.logEl.scrollTop + this.logEl.clientHeight - 8) {
+                        this.logEl.scrollTop = Math.max(this.logEl.scrollTop, elBottom - this.logEl.clientHeight + 16);
+                    }
                 }
             };
 
@@ -841,6 +840,15 @@ const UI = {
             const excess = el.getBoundingClientRect().bottom - this.logEl.getBoundingClientRect().bottom + 16;
             if (excess > 0) this.logEl.scrollTop += excess;
             el.addEventListener('click', () => { el.remove(); resolve(); }, { once: true });
+        });
+    },
+
+    epiloguePause(ms) {
+        return new Promise(resolve => {
+            const done = () => { this.logEl.removeEventListener('click', done); resolve(); };
+            const t = setTimeout(done, ms);
+            const click = () => { clearTimeout(t); done(); };
+            this.logEl.addEventListener('click', click, { once: true });
         });
     },
 
