@@ -1740,6 +1740,7 @@
           "unlockConditions": {
             "flags": {
               "lost_to_final_boss": true,
+              "truth_assembled": true,
               "zhushi_chain_done": false
             },
             "minRebirth": 1

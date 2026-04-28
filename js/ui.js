@@ -1347,11 +1347,11 @@ const UI = {
             this.chainBtn.disabled = busy;
         }
 
-        // Show final boss shortcut when either 诸世之我 or 碎片真相 is complete
+        // Show final boss shortcut only when BOTH 碎片真相 and 诸世之我 are complete
         const finalBossBtn = document.getElementById('finalBossBtn');
         if (finalBossBtn) {
             const char = state.char;
-            const chainDone = char && char.flags && (char.flags.zhushi_chain_done || char.flags.truth_assembled);
+            const chainDone = char && char.flags && char.flags.zhushi_chain_done && char.flags.truth_assembled;
             const bossNotYetFired = char && !(char.flags && char.flags.boss_triggered);
             finalBossBtn.style.display = (chainDone && bossNotYetFired && !busy) ? '' : 'none';
             finalBossBtn.disabled = busy;
