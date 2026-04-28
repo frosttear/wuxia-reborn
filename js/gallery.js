@@ -116,6 +116,7 @@ const Gallery = {
         this._replayTitle = document.getElementById('galleryReplayTitle');
         this._replayLog   = document.getElementById('galleryReplayLog');
         this._lbStage     = document.getElementById('galleryLbStage');
+        this._replayToLb  = document.getElementById('galleryReplayToLb');
         document.getElementById('galleryReplayBack').onclick = () => this._closeReplay();
         this._contents = [
             document.getElementById('galleryLbContent0'),
@@ -445,7 +446,7 @@ const Gallery = {
         this._grid.appendChild(ul);
     },
 
-    _openReplay(type, id, level, title) {
+    _openReplay(type, id, level, title, fromLb) {
         this._grid.style.display = 'none';
         this._replayTitle.textContent = title || '';
         this._replayLog.innerHTML = '';
@@ -453,6 +454,17 @@ const Gallery = {
         this._replaySeq = (this._replaySeq || 0) + 1;
         const token = this._replaySeq;
         this._replaySkip = null;
+        if (this._replayToLb) {
+            if (fromLb) {
+                this._replayToLb.style.display = '';
+                this._replayToLb.onclick = () => {
+                    this._closeReplay();
+                    this.openLightbox(fromLb.id, fromLb.category);
+                };
+            } else {
+                this._replayToLb.style.display = 'none';
+            }
+        }
         this._runReplay(type, id, level, token);
     },
 
@@ -619,6 +631,7 @@ const Gallery = {
         this._replayNext = null;
         this._replayPanel.style.display = 'none';
         this._replayLog.innerHTML = '';
+        if (this._replayToLb) this._replayToLb.style.display = 'none';
         this._renderReplayList();
     },
 
@@ -731,7 +744,7 @@ const Gallery = {
                     for (const btn of this._tabsEl.querySelectorAll('.gallery-tab')) {
                         btn.classList.toggle('active', btn.dataset.cat === 'replay');
                     }
-                    this._openReplay(info.type, info.id, info.level, info.title);
+                    this._openReplay(info.type, info.id, info.level, info.title, { id: meta.id, category: meta.category });
                 };
             } else {
                 replayBtn.style.display = 'none';
