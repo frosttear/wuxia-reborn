@@ -93,6 +93,34 @@ const CATEGORY_LABELS = {
 };
 const CATEGORY_ORDER = ['bosses', 'bonds', 'portraits', 'replay'];
 
+// kebab NPC id → meet event id
+const MEET_EVENT_IDS = {
+    'wang-tie':         'meet_wang_tie',
+    'li-yunshu':        'meet_li_yunshu',
+    'yan-chixing':      'meet_yan_chixing',
+    'su-qing':          'meet_su_qing',
+    'ling-xue':         'meet_lingxue',
+    'mysterious-elder': 'meet_mysterious_elder',
+};
+// meet event id → gallery illustration id
+const MEET_ILL_IDS = {
+    'meet_wang_tie':         'wang-tie-meet',
+    'meet_li_yunshu':        'li-yunshu-meet',
+    'meet_yan_chixing':      'yan-chixing-meet',
+    'meet_su_qing':          'su-qing-meet',
+    'meet_lingxue':          'ling-xue-meet',
+    'meet_mysterious_elder': 'mysterious-elder-meet',
+};
+// snake NPC id → NPC-specific afterstory chain id
+const NPC_AFTERSTORY_CHAIN = {
+    'wang_tie':         'wang_revenge',
+    'li_yunshu':        'li_yunshu_afterstory',
+    'su_qing':          'su_qing_afterstory',
+    'ling_xue':         'lingxue_afterstory',
+    'mysterious_elder': 'elder_afterstory',
+    'yan_chixing':      'yan_afterstory',
+};
+
 const Gallery = {
     _activeTab: 'bosses',
     _lightboxItems: [],
@@ -372,9 +400,9 @@ const Gallery = {
         const lifetimeBondLevels = (char && char.lifetimeBondLevels) || {};
         const chainProgress      = (char && char.chainProgress)      || {};
         const lifetimeChainsDone = (char && char.lifetimeChainsDone) || [];
+        const unlockedIlls       = (char && char.unlockedIllustrations) || [];
         const chains             = ((typeof Engine !== 'undefined') && Engine.state && Engine.state.chains) || [];
 
-        // Merge current life with lifetime accumulator
         const mergedBondLevels = { ...lifetimeBondLevels };
         for (const [id, lvl] of Object.entries(bondLevels)) {
             mergedBondLevels[id] = Math.max(mergedBondLevels[id] || 0, Number(lvl) || 0);
@@ -383,12 +411,13 @@ const Gallery = {
             ...lifetimeChainsDone,
             ...Object.keys(chainProgress).filter(k => chainProgress[k] === 'done')
         ]);
+        const npcChainIds = new Set(Object.values(NPC_AFTERSTORY_CHAIN));
 
         const CHAPTER = ['一', '二', '三', '四', '五'];
-        const ul = document.createElement('ul');
-        ul.className = 'gallery-replay-list';
+        const container = document.createElement('div');
+        container.className = 'gallery-replay-list';
 
-        // ── Bond chapters (NPC order from GALLERY_DATA) ──
+        // ── NPC order derived from bond-1 entries in GALLERY_DATA ──
         const seenNpcs = new Set();
         const npcOrder = [];
         for (const d of GALLERY_DATA) {
@@ -399,51 +428,91 @@ const Gallery = {
             if (!seenNpcs.has(kebab)) { seenNpcs.add(kebab); npcOrder.push(kebab); }
         }
 
-        let hasBonds = false;
+        let hasBondSection = false;
         for (const kebab of npcOrder) {
             const snakeId = kebab.replace(/-/g, '_');
             const maxLevel = Number(mergedBondLevels[snakeId] || 0);
-            if (maxLevel < 1) continue;
-            if (!hasBonds) {
-                const hdr = document.createElement('li');
-                hdr.className = 'gallery-replay-section-header';
-                hdr.textContent = '羁绊情缘';
-                ul.appendChild(hdr);
-                hasBonds = true;
+            const meetUnlocked = unlockedIlls.includes(kebab + '-meet');
+            const npcChainId = NPC_AFTERSTORY_CHAIN[snakeId];
+            const npcChain = (npcChainId && allDoneChainIds.has(npcChainId))
+                ? chains.find(c => c.id === npcChainId) : null;
+
+            if (!meetUnlocked && maxLevel < 1 && !npcChain) continue;
+
+            if (!hasBondSection) {
+                const mainHdr = document.createElement('div');
+                mainHdr.className = 'gallery-replay-main-header';
+                mainHdr.textContent = '羁绊情缘';
+                container.appendChild(mainHdr);
+                hasBondSection = true;
             }
+
             const portrait = GALLERY_DATA.find(d => d.id === 'portrait-' + kebab);
             const displayName = portrait ? portrait.name : kebab;
+
+            const details = document.createElement('details');
+            details.className = 'gallery-replay-npc-group';
+            details.open = true;
+            const summary = document.createElement('summary');
+            summary.className = 'gallery-replay-npc-header';
+            summary.textContent = displayName;
+            details.appendChild(summary);
+
+            const ul = document.createElement('ul');
+            ul.className = 'gallery-replay-npc-items';
+
+            if (meetUnlocked) {
+                const meetEventId = MEET_EVENT_IDS[kebab];
+                if (meetEventId) {
+                    const li = document.createElement('li');
+                    li.textContent = '初遇';
+                    li.onclick = () => this._openReplay('meet', meetEventId, null, `${displayName}·初遇`);
+                    ul.appendChild(li);
+                }
+            }
             for (let lvl = 1; lvl <= maxLevel; lvl++) {
                 const li = document.createElement('li');
-                li.textContent = `${displayName} · 第${CHAPTER[lvl - 1] || lvl}章`;
-                li.onclick = () => this._openReplay('bond', snakeId, lvl, li.textContent);
+                li.textContent = `第${CHAPTER[lvl - 1] || lvl}章`;
+                li.onclick = () => this._openReplay('bond', snakeId, lvl, `${displayName}·第${CHAPTER[lvl - 1] || lvl}章`);
                 ul.appendChild(li);
             }
+            if (npcChain) {
+                const li = document.createElement('li');
+                li.textContent = npcChain.name;
+                li.onclick = () => this._openReplay('chain', npcChain.id, null, npcChain.name);
+                ul.appendChild(li);
+            }
+
+            details.appendChild(ul);
+            container.appendChild(details);
         }
 
-        // ── Completed chains (current + lifetime) ──
-        const doneChains = chains.filter(c => allDoneChainIds.has(c.id));
-        if (doneChains.length > 0) {
-            const hdr = document.createElement('li');
-            hdr.className = 'gallery-replay-section-header';
-            hdr.textContent = '支线传说';
-            ul.appendChild(hdr);
-            for (const chain of doneChains) {
+        // ── Non-NPC completed chains → 支线传说 ──
+        const standaloneChains = chains.filter(c => allDoneChainIds.has(c.id) && !npcChainIds.has(c.id));
+        if (standaloneChains.length > 0) {
+            const mainHdr = document.createElement('div');
+            mainHdr.className = 'gallery-replay-main-header';
+            mainHdr.textContent = '支线传说';
+            container.appendChild(mainHdr);
+            const ul = document.createElement('ul');
+            ul.className = 'gallery-replay-npc-items';
+            for (const chain of standaloneChains) {
                 const li = document.createElement('li');
                 li.textContent = chain.name;
                 li.onclick = () => this._openReplay('chain', chain.id, null, chain.name);
                 ul.appendChild(li);
             }
+            container.appendChild(ul);
         }
 
-        if (!hasBonds && doneChains.length === 0) {
-            const empty = document.createElement('li');
-            empty.className = 'gallery-replay-section-header';
+        if (!hasBondSection && standaloneChains.length === 0) {
+            const empty = document.createElement('div');
+            empty.className = 'gallery-replay-main-header';
             empty.textContent = '暂无可回想的剧情';
-            ul.appendChild(empty);
+            container.appendChild(empty);
         }
 
-        this._grid.appendChild(ul);
+        this._grid.appendChild(container);
     },
 
     _openReplay(type, id, level, title, fromLb) {
@@ -506,6 +575,10 @@ const Gallery = {
             const levelArr = bonds[id] || [];
             const levelData = levelArr.find(b => b.level === level);
             steps = (levelData && levelData.steps) || [];
+        } else if (type === 'meet') {
+            const events = ((typeof Engine !== 'undefined') && Engine.state && Engine.state.events) || [];
+            const ev = events.find(e => e.id === id);
+            if (ev) steps = [{ text: ev.text, choices: ev.choices || [] }];
         } else {
             const chain = chains.find(c => c.id === id);
             steps = (chain && chain.steps) || [];
@@ -514,13 +587,15 @@ const Gallery = {
             }
         }
 
-        // Derive illustration ID: bonds follow predictable pattern; chains check GALLERY_DATA
+        // Derive illustration ID
         let illId = null;
         if (type === 'bond') {
             const maxLevel = (bonds[id] || []).length;
             illId = level >= maxLevel
                 ? id.replace(/_/g, '-') + '-ending'
                 : id.replace(/_/g, '-') + '-bond-' + level;
+        } else if (type === 'meet') {
+            illId = MEET_ILL_IDS[id] || null;
         } else {
             const kebab = id.replace(/_/g, '-');
             if (GALLERY_DATA.find(d => d.id === kebab)) illId = kebab;
@@ -698,6 +773,17 @@ const Gallery = {
             return { type: 'chain', id: chainId, level: null, title: chain.name };
         }
         let m;
+        if ((m = id.match(/^(.+)-meet$/))) {
+            const npcKebab = m[1];
+            const eventId = MEET_EVENT_IDS[npcKebab];
+            if (!eventId) return null;
+            const events = (typeof Engine !== 'undefined') && Engine.state && Engine.state.events || [];
+            const ev = events.find(e => e.id === eventId);
+            if (!ev) return null;
+            const portrait = GALLERY_DATA.find(d => d.id === `portrait-${npcKebab}`);
+            const npcName = portrait ? portrait.name : npcKebab;
+            return { type: 'meet', id: eventId, level: null, title: `${npcName}·初遇` };
+        }
         if ((m = id.match(/^(.+)-bond-(\d+)$/))) {
             const npcKebab = m[1];
             const level = parseInt(m[2]);
