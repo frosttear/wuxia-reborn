@@ -1,6 +1,12 @@
 # 轮回江湖 — 开发进度
 
-## 当前版本：v0.26.31
+## 当前版本：v0.26.32
+
+### v0.26.32（2026-04-29）
+
+- 修复 `scripts/generate-story-doc.js` 中 `formatChain` 误读 `step.narrative` 的 bug（改为 `step.text`），重新生成 `docs/story-review.md`（169 KB / 3027 行，较旧版多 618 行补回缺失的步骤正文）
+
+---
 
 ### v0.26.31（2026-04-29）
 

@@ -46,8 +46,8 @@ function formatChain(chain) {
   (chain.steps || []).forEach((step, i) => {
     out(`#### 步骤 ${i+1}：${step.title || ''}`);
     out('');
-    if (step.narrative) {
-      step.narrative.split('\n').forEach(l => out(l));
+    if (step.text) {
+      step.text.split('\n').forEach(l => out(l));
       out('');
     }
     (step.choices || []).forEach(c => {
