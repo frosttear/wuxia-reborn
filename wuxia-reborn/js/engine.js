@@ -742,8 +742,8 @@ const Engine = {
         for (const chain of chains) {
             const progress = char.chainProgress ? char.chainProgress[chain.id] : undefined;
             if (progress === 'done') continue;
-            // Chain completed in a previous life — treat as done, don't show as pending
-            if (lifetimeDone.has(chain.id)) continue;
+            // One-time chains whose rewards persist across lives: hide once done in any life
+            if (chain.oneTimeOnly && lifetimeDone.has(chain.id)) continue;
             const stepIdx = (typeof progress === 'number') ? progress : 0;
             if (stepIdx >= chain.steps.length) continue;
             const step = chain.steps[stepIdx];
@@ -812,7 +812,8 @@ const Engine = {
         if (!char || !chains) return [];
         const lifetimeDone = new Set(char.lifetimeChainsDone || []);
         return chains.filter(c =>
-            (char.chainProgress || {})[c.id] === 'done' || lifetimeDone.has(c.id)
+            (char.chainProgress || {})[c.id] === 'done' ||
+            (c.oneTimeOnly && lifetimeDone.has(c.id))
         );
     },
 
