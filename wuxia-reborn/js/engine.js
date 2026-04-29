@@ -1620,7 +1620,7 @@ const Engine = {
         { text: '以及', cls: 'role' },
         { text: '游玩的你', cls: 'final' },
         { text: '', cls: 'spacer' },
-        { text: 'ℱin', cls: 'fin' },
+        { text: 'Fin', cls: 'fin' },
     ],
 
     playCredits() {

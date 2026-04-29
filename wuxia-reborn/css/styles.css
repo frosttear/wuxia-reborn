@@ -238,11 +238,11 @@ body {
 .credits-scroll-fin {
     display: block;
     font-size: 8rem;
-    font-family: 'Palatino Linotype', 'Palatino', 'Book Antiqua', 'Garamond', 'Georgia', serif;
-    font-style: italic;
+    font-family: 'Pinyon Script', 'Palatino Linotype', 'Palatino', cursive;
+    font-style: normal;
     font-weight: 400;
     color: #f5e8b0;
-    letter-spacing: 0.12em;
+    letter-spacing: 0.06em;
     margin-top: 4rem;
     padding-bottom: 2rem;
     text-shadow:
