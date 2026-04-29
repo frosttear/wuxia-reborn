@@ -216,11 +216,12 @@ body {
 /* Scrolling movie credits overlay */
 .credits-scroll-overlay {
     position: fixed; inset: 0; background: rgba(0,0,0,0.93);
-    z-index: 9000; overflow: hidden; cursor: pointer;
+    z-index: 9000; cursor: pointer;
 }
 .credits-scroll-inner {
     position: absolute; left: 0; right: 0; margin: 0 auto;
     width: min(520px, 90vw); text-align: center; padding-bottom: 60vh;
+    will-change: transform;
 }
 .credits-scroll-line { margin: 0; }
 .credits-scroll-role {

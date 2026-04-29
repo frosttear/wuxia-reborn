@@ -892,7 +892,6 @@ const UI = {
         return new Promise(resolve => {
             const overlay = document.createElement('div');
             overlay.className = 'credits-scroll-overlay';
-            // Fade in over ~600ms so the pre-rasterize pause feels intentional
             overlay.style.opacity = '0';
             overlay.style.transition = 'opacity 0.6s ease';
 
@@ -910,21 +909,23 @@ const UI = {
             overlay.appendChild(inner);
             document.body.appendChild(overlay);
 
-            let rafId = null, startTs = null, finished = false;
+            let wanim = null, stopTimer = null, finished = false;
 
             const done = () => {
                 if (finished) return;
                 finished = true;
-                if (rafId) cancelAnimationFrame(rafId);
+                if (stopTimer) clearTimeout(stopTimer);
+                if (wanim) { try { wanim.cancel(); } catch (_) {} }
                 overlay.remove();
                 resolve();
             };
             overlay.addEventListener('click', done, { once: true });
 
-            // Trigger fade-in on the next paint
             requestAnimationFrame(() => { overlay.style.opacity = '1'; });
 
-            // Two rAF frames to settle layout, then pre-rasterize all GPU tiles
+            // Two rAF frames to settle layout, then start compositor-driven WAAPI
+            // animation. Without overflow:hidden on the overlay, Chrome can rasterize
+            // the full inner layer upfront rather than lazily tile-by-tile.
             requestAnimationFrame(() => requestAnimationFrame(() => {
                 const viewH = overlay.clientHeight;
                 const contentH = inner.scrollHeight;
@@ -935,40 +936,22 @@ const UI = {
                     ? viewH / 2 - finEl.offsetTop - finEl.offsetHeight / 2
                     : null;
 
-                // Chrome rasterizes composited-layer tiles lazily as content nears
-                // the viewport, causing a visible stutter at each new tile boundary.
-                // Fix: run a fast invisible pass through the entire content so all
-                // tiles are rasterized upfront. Invisible because opacity is 0.001
-                // (compositing still happens; rasterization is unaffected by opacity).
-                inner.style.opacity = '0.001';
-                const preAnim = inner.animate(
+                wanim = inner.animate(
                     [
                         { transform: `translate3d(0, ${viewH}px, 0)` },
                         { transform: `translate3d(0, ${-contentH}px, 0)` },
                     ],
-                    { duration: 600, easing: 'linear' }
+                    { duration: durationMs, easing: 'linear', fill: 'forwards' }
                 );
+                wanim.addEventListener('finish', done);
 
-                preAnim.addEventListener('finish', () => {
-                    if (finished) return;
-                    // preAnim ended (no fill) → inline style reasserts: y = 100vh = viewH
-                    inner.style.opacity = '1';
-
-                    const tick = (ts) => {
-                        if (finished) return;
-                        if (!startTs) startTs = ts;
-                        const progress = (ts - startTs) / durationMs;
-                        if (progress >= 1) { done(); return; }
-                        const y = viewH - (viewH + contentH) * progress;
-                        if (stopY !== null && y <= stopY) {
-                            inner.style.transform = `translate3d(0, ${stopY}px, 0)`;
-                            return; // paused at Fin center — click dismisses
-                        }
-                        inner.style.transform = `translate3d(0, ${y}px, 0)`;
-                        rafId = requestAnimationFrame(tick);
-                    };
-                    rafId = requestAnimationFrame(tick);
-                });
+                if (stopY !== null) {
+                    // Pause at Fin center via setTimeout — avoids per-frame JS overhead
+                    const stopTime = (viewH - stopY) / (viewH + contentH) * durationMs;
+                    stopTimer = setTimeout(() => {
+                        if (!finished && wanim) wanim.pause();
+                    }, stopTime);
+                }
             }));
         });
     },
