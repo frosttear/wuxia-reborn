@@ -913,27 +913,32 @@ const UI = {
 
             requestAnimationFrame(() => { overlay.style.opacity = '1'; });
 
-            // Wait for web fonts + 2 rAF frames so Pinyon Script is available
-            // before pre-rendering the offscreen canvas.
+            const DPR  = window.devicePixelRatio || 1;
+            const finPx = Math.round(8 * 16 * DPR);
+
+            // Explicitly load Pinyon Script for canvas use (fonts.ready alone does
+            // not guarantee web fonts are available in 2D canvas contexts).
             Promise.all([
-                document.fonts.ready,
+                document.fonts.load(`${finPx}px "Pinyon Script"`).catch(() => {}),
                 new Promise(r => requestAnimationFrame(() => requestAnimationFrame(r))),
             ]).then(() => {
                 if (finished) return;
 
+                // All canvas work in physical pixels — no ctx.scale() to avoid
+                // coord-system confusion in drawImage calls.
                 const viewW = overlay.clientWidth;
                 const viewH = overlay.clientHeight;
-                const DPR   = Math.min(window.devicePixelRatio || 1, 2);
+                const phW   = Math.round(viewW * DPR);
+                const phH_v = Math.round(viewH * DPR);
+                const cx    = phW / 2;  // physical center-x
 
-                canvas.width        = viewW * DPR;
-                canvas.height       = viewH * DPR;
+                canvas.width        = phW;
+                canvas.height       = phH_v;
                 canvas.style.width  = viewW + 'px';
                 canvas.style.height = viewH + 'px';
-
                 const ctx = canvas.getContext('2d');
-                ctx.scale(DPR, DPR);
 
-                // Style table — mirrors the CSS credits rules
+                // Style table — mirrors the CSS credits rules, sizes in CSS px
                 const B     = 16;
                 const SERIF = "Georgia, 'Songti SC', 'SimSun', serif";
                 const FIN   = "'Pinyon Script', 'Palatino Linotype', Palatino, cursive";
@@ -946,7 +951,7 @@ const UI = {
                     fin:     { color: '#f5e8b0',              size: 8.0*B, mt: 4.0*B,     mb: 2.0*B,     font: FIN   },
                 };
 
-                // Pre-compute line positions (mirrors CSS margin/padding logic)
+                // Pre-compute line positions in CSS px
                 const lines = [];
                 let yOff = 0;
                 for (const { text, cls } of items) {
@@ -957,32 +962,31 @@ const UI = {
                     lines.push({ text, color: s.color, y: yOff, size: s.size, lineH, font: s.font, cls });
                     yOff += lineH + (s.mb || 0);
                 }
-                const contentH  = yOff + viewH * 0.6;
+                const contentH   = yOff + viewH * 0.6;
                 const durationMs = Math.max(20000, (viewH + contentH) / 70 * 1000);
 
-                // Pre-render entire credits to offscreen canvas — one-time CPU cost,
-                // avoids GPU tile lazy-rasterization and compositor jitter entirely.
-                const src    = document.createElement('canvas');
-                src.width    = viewW * DPR;
-                src.height   = Math.ceil(contentH * DPR);
-                const sCtx   = src.getContext('2d');
-                sCtx.scale(DPR, DPR);
+                // Pre-render entire credits to offscreen canvas in physical pixels
+                const src  = document.createElement('canvas');
+                src.width  = phW;
+                src.height = Math.ceil(contentH * DPR);
+                const sCtx = src.getContext('2d');
                 sCtx.textAlign    = 'center';
                 sCtx.textBaseline = 'top';
                 for (const line of lines) {
                     sCtx.fillStyle = line.color;
-                    sCtx.font      = `normal ${line.size}px ${line.font}`;
+                    sCtx.font      = `${Math.round(line.size * DPR)}px ${line.font}`;
                     if ('letterSpacing' in sCtx) {
-                        sCtx.letterSpacing =
-                            line.cls === 'role'    ? `${(0.14 * line.size).toFixed(1)}px` :
-                            line.cls === 'section' ? `${(0.22 * line.size).toFixed(1)}px` :
-                            line.cls === 'fin'     ? `${(0.06 * line.size).toFixed(1)}px` : '0px';
+                        const lsPx =
+                            line.cls === 'role'    ? 0.14 * line.size * DPR :
+                            line.cls === 'section' ? 0.22 * line.size * DPR :
+                            line.cls === 'fin'     ? 0.06 * line.size * DPR : 0;
+                        sCtx.letterSpacing = lsPx ? `${lsPx.toFixed(1)}px` : '0px';
                     }
-                    sCtx.fillText(line.text, viewW / 2, line.y);
+                    sCtx.fillText(line.text, cx, Math.round(line.y * DPR));
                 }
 
                 // Fin center stop
-                const finLine   = lines.find(l => l.cls === 'fin');
+                const finLine     = lines.find(l => l.cls === 'fin');
                 const stopScrollY = finLine
                     ? viewH / 2 - finLine.y - finLine.lineH / 2
                     : null;
@@ -992,19 +996,17 @@ const UI = {
                     setTimeout(() => { if (!finished) paused = true; }, stopTime);
                 }
 
-                // Blit visible slice of src onto viewport canvas each frame
+                // Blit visible slice — scrollY in CSS px, blit in physical px
                 const drawAt = (scrollY) => {
-                    ctx.clearRect(0, 0, viewW, viewH);
-                    const srcY = Math.max(0, -scrollY);
-                    const dstY = Math.max(0,  scrollY);
-                    const h    = Math.min(viewH - dstY, contentH - srcY);
-                    if (h > 0) {
-                        ctx.drawImage(src,
-                            0, srcY * DPR, viewW * DPR, h * DPR,
-                            0, dstY,       viewW,        h);
-                    }
+                    ctx.clearRect(0, 0, phW, phH_v);
+                    const srcYph = Math.round(Math.max(0, -scrollY) * DPR);
+                    const dstYph = Math.round(Math.max(0,  scrollY) * DPR);
+                    const hph    = Math.round(
+                        Math.min(viewH - Math.max(0, scrollY),
+                                 contentH - Math.max(0, -scrollY)) * DPR);
+                    if (hph > 0) ctx.drawImage(src, 0, srcYph, phW, hph, 0, dstYph, phW, hph);
                 };
-                drawAt(viewH); // initial: content below viewport
+                drawAt(viewH);
 
                 const tick = (ts) => {
                     if (finished || paused) return;
