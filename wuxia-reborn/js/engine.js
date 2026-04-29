@@ -1610,6 +1610,7 @@ const Engine = {
         { text: '小猪', cls: 'name' },
         { text: '大皮', cls: 'name' },
         { text: '大呆', cls: 'name' },
+        { text: '白胖熊一只', cls: 'name' },
         { text: '提供建议和帮助的家人们', cls: 'role' },
         { text: '牛牛（可爱的儿子）', cls: 'name' },
         { text: 'Ayumi（亲爱的老婆）', cls: 'name' },
