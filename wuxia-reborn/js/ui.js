@@ -902,50 +902,65 @@ const UI = {
                 inner.appendChild(p);
             }
 
+            // Keep content below viewport while fonts load and layout settles
             inner.style.transform = 'translate3d(0, 100vh, 0)';
             overlay.appendChild(inner);
             document.body.appendChild(overlay);
 
-            let rafId = null;
-            let startTs = null;
+            let wanim = null;
+            let monitorId = null;
             let finished = false;
 
             const done = () => {
                 if (finished) return;
                 finished = true;
-                if (rafId) cancelAnimationFrame(rafId);
+                if (monitorId) cancelAnimationFrame(monitorId);
+                if (wanim) wanim.cancel();
                 overlay.remove();
                 resolve();
             };
             overlay.addEventListener('click', done, { once: true });
 
-            // Two rAF frames to ensure layout is fully settled before measuring
-            requestAnimationFrame(() => requestAnimationFrame(() => {
-                const viewH = overlay.clientHeight;
-                const contentH = inner.scrollHeight;
-                const durationMs = Math.max(20000, (viewH + contentH) / 70 * 1000);
+            // Wait for fonts (prevents mid-scroll Pinyon Script swap stutter),
+            // then two rAF frames to ensure layout is fully settled before measuring.
+            // Use Web Animations API so the browser knows the full trajectory upfront
+            // and can prefetch GPU tiles — avoids rasterization stutters on long layers.
+            document.fonts.ready.then(() => {
+                requestAnimationFrame(() => requestAnimationFrame(() => {
+                    const viewH = overlay.clientHeight;
+                    const contentH = inner.scrollHeight;
+                    const startY = viewH;
+                    const endY = -contentH;
+                    const durationMs = Math.max(20000, (viewH + contentH) / 70 * 1000);
 
-                // Compute the y at which the Fin element is vertically centered
-                const finEl = inner.querySelector('.credits-scroll-fin');
-                const stopY = finEl
-                    ? viewH / 2 - finEl.offsetTop - finEl.offsetHeight / 2
-                    : null;
+                    const finEl = inner.querySelector('.credits-scroll-fin');
+                    const stopY = finEl
+                        ? viewH / 2 - finEl.offsetTop - finEl.offsetHeight / 2
+                        : null;
 
-                const tick = (ts) => {
-                    if (finished) return;
-                    if (!startTs) startTs = ts;
-                    const progress = (ts - startTs) / durationMs;
-                    if (progress >= 1) { done(); return; }
-                    const y = viewH - (viewH + contentH) * progress;
-                    if (stopY !== null && y <= stopY) {
-                        inner.style.transform = `translate3d(0, ${stopY}px, 0)`;
-                        return; // paused at center — click dismisses
+                    wanim = inner.animate(
+                        [
+                            { transform: `translate3d(0, ${startY}px, 0)` },
+                            { transform: `translate3d(0, ${endY}px, 0)` },
+                        ],
+                        { duration: durationMs, easing: 'linear', fill: 'forwards' }
+                    );
+                    wanim.addEventListener('finish', done);
+
+                    if (stopY !== null) {
+                        const pauseTime = ((stopY - startY) / (endY - startY)) * durationMs;
+                        const monitor = () => {
+                            if (finished) return;
+                            if ((wanim.currentTime ?? 0) >= pauseTime) {
+                                wanim.pause();
+                                return; // paused at Fin center — click dismisses
+                            }
+                            monitorId = requestAnimationFrame(monitor);
+                        };
+                        monitorId = requestAnimationFrame(monitor);
                     }
-                    inner.style.transform = `translate3d(0, ${y}px, 0)`;
-                    rafId = requestAnimationFrame(tick);
-                };
-                rafId = requestAnimationFrame(tick);
-            }));
+                }));
+            });
         });
     },
 
