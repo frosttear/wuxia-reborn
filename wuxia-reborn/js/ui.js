@@ -905,17 +905,15 @@ const UI = {
                 inner.appendChild(p);
             }
 
-            inner.style.transform = 'translate3d(0, 100vh, 0)';
             overlay.appendChild(inner);
             document.body.appendChild(overlay);
 
-            let wanim = null, stopTimer = null, finished = false;
+            let stopTimer = null, finished = false;
 
             const done = () => {
                 if (finished) return;
                 finished = true;
                 if (stopTimer) clearTimeout(stopTimer);
-                if (wanim) { try { wanim.cancel(); } catch (_) {} }
                 overlay.remove();
                 resolve();
             };
@@ -923,9 +921,9 @@ const UI = {
 
             requestAnimationFrame(() => { overlay.style.opacity = '1'; });
 
-            // Two rAF frames to settle layout, then start compositor-driven WAAPI
-            // animation. Without overflow:hidden on the overlay, Chrome can rasterize
-            // the full inner layer upfront rather than lazily tile-by-tile.
+            // Two rAF frames to settle layout, then start CSS keyframes animation.
+            // CSS animation lets the compositor know the full travel path upfront so
+            // it can rasterize tiles eagerly — avoids the lazy per-tile stutter.
             requestAnimationFrame(() => requestAnimationFrame(() => {
                 const viewH = overlay.clientHeight;
                 const contentH = inner.scrollHeight;
@@ -936,21 +934,21 @@ const UI = {
                     ? viewH / 2 - finEl.offsetTop - finEl.offsetHeight / 2
                     : null;
 
-                wanim = inner.animate(
-                    [
-                        { transform: `translate3d(0, ${viewH}px, 0)` },
-                        { transform: `translate3d(0, ${-contentH}px, 0)` },
-                    ],
-                    { duration: durationMs, easing: 'linear', fill: 'forwards' }
-                );
-                wanim.addEventListener('finish', done);
+                inner.style.setProperty('--credits-start', `${viewH}px`);
+                inner.style.setProperty('--credits-end', `${-contentH}px`);
+                inner.style.setProperty('--credits-duration', `${(durationMs / 1000).toFixed(2)}s`);
+                inner.classList.add('rolling');
 
-                if (stopY !== null) {
-                    // Pause at Fin center via setTimeout — avoids per-frame JS overhead
-                    const stopTime = (viewH - stopY) / (viewH + contentH) * durationMs;
-                    stopTimer = setTimeout(() => {
-                        if (!finished && wanim) wanim.pause();
-                    }, stopTime);
+                const anim = inner.getAnimations()[0];
+
+                if (anim) {
+                    anim.addEventListener('finish', done);
+                    if (stopY !== null) {
+                        const stopTime = (viewH - stopY) / (viewH + contentH) * durationMs;
+                        stopTimer = setTimeout(() => {
+                            if (!finished && anim) anim.pause();
+                        }, stopTime);
+                    }
                 }
             }));
         });
