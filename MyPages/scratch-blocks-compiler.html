@@ -1,0 +1,617 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Deep Dive: How Scratch Blocks are Compiled to JavaScript</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, sans-serif;
+            background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
+            min-height: 100vh;
+            color: #e0e0e0;
+            padding: 40px 20px;
+            line-height: 1.7;
+        }
+
+        .container {
+            max-width: 820px;
+            margin: 0 auto;
+        }
+
+        .back-link {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            color: #888;
+            text-decoration: none;
+            font-size: 0.9rem;
+            margin-bottom: 40px;
+            transition: color 0.2s;
+        }
+
+        .back-link:hover {
+            color: #00d4ff;
+        }
+
+        .article-header {
+            margin-bottom: 48px;
+            padding-bottom: 32px;
+            border-bottom: 1px solid rgba(255,255,255,0.1);
+        }
+
+        .article-tag {
+            display: inline-block;
+            background: rgba(0, 212, 255, 0.15);
+            color: #00d4ff;
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            margin-bottom: 16px;
+            letter-spacing: 0.05em;
+        }
+
+        h1 {
+            font-size: 2rem;
+            font-weight: 700;
+            line-height: 1.3;
+            margin-bottom: 16px;
+            background: linear-gradient(90deg, #00d4ff, #7b2cbf);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .article-meta {
+            color: #666;
+            font-size: 0.9rem;
+            display: flex;
+            gap: 16px;
+            flex-wrap: wrap;
+        }
+
+        h2 {
+            font-size: 1.35rem;
+            font-weight: 600;
+            color: #fff;
+            margin: 40px 0 16px;
+            padding-left: 14px;
+            border-left: 3px solid #00d4ff;
+        }
+
+        h3 {
+            font-size: 1.05rem;
+            font-weight: 600;
+            color: #ccc;
+            margin: 28px 0 10px;
+        }
+
+        p {
+            margin-bottom: 16px;
+            color: #c8c8c8;
+        }
+
+        ul, ol {
+            margin: 0 0 16px 24px;
+            color: #c8c8c8;
+        }
+
+        li {
+            margin-bottom: 6px;
+        }
+
+        code {
+            font-family: 'JetBrains Mono', 'Fira Code', 'Cascadia Code', Consolas, monospace;
+            background: rgba(255,255,255,0.07);
+            color: #a5d6ff;
+            padding: 2px 6px;
+            border-radius: 4px;
+            font-size: 0.88em;
+        }
+
+        pre {
+            background: rgba(0,0,0,0.35);
+            border: 1px solid rgba(255,255,255,0.08);
+            border-radius: 10px;
+            padding: 20px 24px;
+            overflow-x: auto;
+            margin: 16px 0 24px;
+            font-family: 'JetBrains Mono', 'Fira Code', 'Cascadia Code', Consolas, monospace;
+            font-size: 0.85rem;
+            line-height: 1.6;
+            color: #cdd9e5;
+        }
+
+        pre code {
+            background: transparent;
+            padding: 0;
+            color: inherit;
+            font-size: inherit;
+        }
+
+        .lang-label {
+            display: block;
+            font-size: 0.72rem;
+            color: #445;
+            margin-bottom: 6px;
+            font-family: 'JetBrains Mono', Consolas, monospace;
+            letter-spacing: 0.05em;
+            text-transform: uppercase;
+        }
+
+        .diagram {
+            background: rgba(0,0,0,0.35);
+            border: 1px solid rgba(0, 212, 255, 0.15);
+            border-radius: 10px;
+            padding: 20px 24px;
+            font-family: 'JetBrains Mono', Consolas, monospace;
+            font-size: 0.78rem;
+            line-height: 1.5;
+            color: #aad4f5;
+            overflow-x: auto;
+            margin: 24px 0;
+            white-space: pre;
+        }
+
+        .insight-box {
+            background: rgba(123, 44, 191, 0.12);
+            border: 1px solid rgba(123, 44, 191, 0.3);
+            border-radius: 10px;
+            padding: 20px 24px;
+            margin: 28px 0;
+        }
+
+        .insight-box strong {
+            color: #c084fc;
+        }
+
+        .insight-box p:last-child {
+            margin-bottom: 0;
+        }
+
+        .section-number {
+            color: #00d4ff;
+            opacity: 0.6;
+            margin-right: 6px;
+        }
+
+        .scratch-blocks {
+            background: rgba(255, 140, 0, 0.06);
+            border: 1px solid rgba(255, 140, 0, 0.2);
+            border-radius: 10px;
+            padding: 16px 20px;
+            font-family: 'JetBrains Mono', Consolas, monospace;
+            font-size: 0.85rem;
+            color: #ffcc80;
+            margin: 8px 0 4px;
+            white-space: pre;
+            overflow-x: auto;
+        }
+
+        .compiled-label {
+            font-size: 0.78rem;
+            color: #556;
+            margin: 12px 0 4px;
+            letter-spacing: 0.04em;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 16px 0 28px;
+            font-size: 0.88rem;
+        }
+
+        th {
+            background: rgba(0, 212, 255, 0.1);
+            color: #00d4ff;
+            padding: 10px 14px;
+            text-align: left;
+            font-weight: 600;
+            border-bottom: 1px solid rgba(0, 212, 255, 0.2);
+        }
+
+        td {
+            padding: 10px 14px;
+            border-bottom: 1px solid rgba(255,255,255,0.05);
+            color: #c0c0c0;
+            vertical-align: top;
+        }
+
+        td code {
+            font-size: 0.82em;
+        }
+
+        tr:last-child td {
+            border-bottom: none;
+        }
+
+        tr:hover td {
+            background: rgba(255,255,255,0.02);
+        }
+
+        .perf-gain {
+            color: #4ade80;
+            font-weight: 600;
+        }
+
+        hr {
+            border: none;
+            border-top: 1px solid rgba(255,255,255,0.07);
+            margin: 48px 0;
+        }
+
+        footer {
+            text-align: center;
+            margin-top: 60px;
+            color: #444;
+            font-size: 0.85rem;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <a href="../index.html" class="back-link">← Back</a>
+
+        <header class="article-header">
+            <div class="article-tag">Technical Deep Dive</div>
+            <h1>Deep Dive: How Scratch Blocks are Compiled to JavaScript</h1>
+            <div class="article-meta">
+                <span>By Zhenxing Liu（刘振兴）</span>
+                <span>· 5 min read</span>
+                <span>· Published Nov 25, 2025</span>
+            </div>
+        </header>
+
+        <h2><span class="section-number">1.</span> Scratch Block Format (project.json)</h2>
+        <p>Scratch blocks are stored as a linked list of JSON objects in <code>project.json</code>. Each block has:</p>
+        <ul>
+            <li><code>opcode</code> — The block type (e.g., <code>motion_movesteps</code>, <code>control_forever</code>)</li>
+            <li><code>inputs</code> — References to other blocks (arguments)</li>
+            <li><code>fields</code> — Static values (dropdown selections)</li>
+            <li><code>next</code> — Reference to the next block in the stack</li>
+            <li><code>parent</code> — Reference to the parent block</li>
+        </ul>
+        <p>Example: "Forever" loop with "move 10 steps":</p>
+        <span class="lang-label">json</span>
+        <pre><code>{
+  "va[U{Cbi_NZpSOSx_kVA": {
+    "opcode": "event_whenflagclicked",
+    "inputs": {},
+    "fields": {},
+    "next": "tzXnZ{8G!xK|t^WAWF{m",
+    "topLevel": true
+  },
+  "tzXnZ{8G!xK|t^WAWF{m": {
+    "opcode": "control_forever",
+    "inputs": {
+      "SUBSTACK": { "block": "$xf$bq|xl(}RhT-K,taS" }
+    },
+    "next": null
+  },
+  "$xf$bq|xl(}RhT-K,taS": {
+    "opcode": "motion_movesteps",
+    "inputs": {
+      "STEPS": { "block": "cw__.I:g}Y~`:5KmO00q" }
+    },
+    "next": null
+  },
+  "cw__.I:g}Y~`:5KmO00q": {
+    "opcode": "data_variable",
+    "fields": {
+      "VARIABLE": { "id": "`jEk@4|i[#Fk?(8x)AV.-my variable" }
+    }
+  }
+}</code></pre>
+
+        <h2><span class="section-number">2.</span> Interpreter vs Compiler Approach</h2>
+
+        <h3>Scratch (Interpreter)</h3>
+        <p>When running each block, Scratch's interpreter must:</p>
+        <ul>
+            <li>Look up block by its ID</li>
+            <li>Find the function for the block's opcode</li>
+            <li>Recursively evaluate all inputs (which are also blocks)</li>
+            <li>Manually maintain execution stack (for loops, conditions, procedures)</li>
+            <li>Handle yielding (scripts can pause and resume)</li>
+            <li>Support live editing (blocks can change while running)</li>
+        </ul>
+
+        <h3>TurboWarp (Compiler)</h3>
+        <p>TurboWarp compiles blocks directly to JavaScript functions at load time, eliminating all that overhead.</p>
+
+        <h2><span class="section-number">3.</span> Compilation Examples</h2>
+
+        <h3>Example 1: Simple Loop</h3>
+        <p>Scratch blocks:</p>
+        <div class="scratch-blocks">when green flag clicked
+forever
+  move (my variable) steps</div>
+        <p class="compiled-label">Compiled JavaScript:</p>
+        <span class="lang-label">javascript</span>
+        <pre><code>const myVariable = stage.variables["`jEk@4|i[#Fk?(8x)AV.-my variable"];
+return function* () {
+  while (true) {
+    runtime.ext_scratch3_motion._moveSteps((+myVariable.value || 0), target);
+    yield;  // Allow other scripts to run
+  }
+};</code></pre>
+        <p>Key observations:</p>
+        <ul>
+            <li><strong>Variable lookup is cached</strong> — <code>myVariable</code> is resolved once at compile time</li>
+            <li><strong><code>function*</code> (generator)</strong> — Used for cooperative multitasking; <code>yield</code> pauses execution</li>
+            <li><strong><code>(+myVariable.value || 0)</code></strong> — Ensures numeric conversion (Scratch quirk)</li>
+            <li><strong>Direct method call</strong> — <code>_moveSteps</code> instead of opcode lookup</li>
+        </ul>
+
+        <h3>Example 2: Bubble Sort Algorithm</h3>
+        <p>Scratch blocks:</p>
+        <div class="scratch-blocks">define sort
+set [length] to (length of [list])
+repeat until &lt;(length) = [0]&gt;
+  set [newLength] to [0]
+  set [i] to [1]
+  repeat ((length) - (1))
+    change [i] by (1)
+    if &lt;(item ((i) - (1)) of [list]) &gt; (item (i) of [list])&gt; then
+      set [temp] to (item (i) of [list])
+      replace item (i) of [list] with (item ((i) - (1)) of [list])
+      replace item ((i) - (1)) of [list] with (temp)
+      set [newLength] to (i)
+    end
+  end
+  set [length] to (newLength)
+end</div>
+        <p class="compiled-label">Compiled JavaScript:</p>
+        <span class="lang-label">javascript</span>
+        <pre><code>const length = stage.variables["O;aH~(njYNn}Bl@}!%pS-length-"];
+const list = stage.variables["O;aH~(njYNn}Bl@}!%pS-list-list"];
+const newLength = stage.variables["O;aH~(njYNn}Bl@}!%pS-new-"];
+const i = stage.variables["O;aH~(njYNn}Bl@}!%pS-i-"];
+const temp = stage.variables["O;aH~(njYNn}Bl@}!%pS-tmp-"];
+return function fun1_sort() {
+  length.value = list.value.length;
+  // repeat until length = 0
+  while (!compareEqual(length.value, 0)) {
+    newLength.value = 0;
+    i.value = 1;
+    // repeat length - 1 times
+    for (var counter = ((+length.value || 0) - 1) || 0; counter >= 0.5; counter--) {
+      // change i by 1
+      i.value = ((+i.value || 0) + 1);
+      // if item i - 1 of list is greater than item i of list
+      if (compareGreaterThan(
+        list.value[((((i.value || 0) - 1) || 0) | 0) - 1] ?? "",
+        list.value[((i.value || 0) | 0) - 1] ?? ""
+      )) {
+        // swap item i and i - 1 of list
+        temp.value = listGet(list.value, i.value);
+        listReplace(list, i.value, list.value[((((+i.value || 0) - 1) || 0) | 0) - 1] ?? "");
+        listReplace(list, (+i.value || 0) - 1, temp.value);
+        newLength.value = i.value;
+      }
+    }
+    length.value = newLength.value;
+  }
+};</code></pre>
+
+        <h2><span class="section-number">4.</span> Runtime Helper Functions</h2>
+        <p>The compiled code uses runtime helpers to handle Scratch's quirky semantics:</p>
+
+        <h3><code>compareEqual</code> — Scratch's unusual equality rules</h3>
+        <span class="lang-label">javascript</span>
+        <pre><code>const compareEqual = (v1, v2) => {
+  // Fast path: both numbers
+  if (typeof v1 === 'number' && typeof v2 === 'number' && !isNaN(v1) && !isNaN(v2)) {
+    return v1 === v2;
+  }
+  // Slow path: case-insensitive string comparison or mixed types
+  return compareEqualSlow(v1, v2);
+};
+const compareEqualSlow = (v1, v2) => {
+  const n1 = +v1;
+  if (isNaN(n1) || (n1 === 0 && isNotActuallyZero(v1))) {
+    return ('' + v1).toLowerCase() === ('' + v2).toLowerCase();
+  }
+  const n2 = +v2;
+  if (isNaN(n2) || (n2 === 0 && isNotActuallyZero(v2))) {
+    return ('' + v1).toLowerCase() === ('' + v2).toLowerCase();
+  }
+  return n1 === n2;
+};</code></pre>
+
+        <h3><code>listGet</code> — Scratch's 1-indexed lists and special indices</h3>
+        <span class="lang-label">javascript</span>
+        <pre><code>const listIndex = (index, length) => {
+  if (typeof index !== 'number') {
+    return listIndexSlow(index, length);
+  }
+  index = index | 0;
+  return index < 1 || index > length ? -1 : index - 1;
+};
+const listIndexSlow = (index, length) => {
+  if (index === 'last') {
+    return length - 1;
+  } else if (index === 'random' || index === 'any') {
+    return length > 0 ? (Math.random() * length) | 0 : -1;
+  }
+  index = (+index || 0) | 0;
+  return index < 1 || index > length ? -1 : index - 1;
+};
+const listGet = (list, idx) => {
+  const index = listIndex(idx, list.length);
+  return index === -1 ? '' : list[index];
+};</code></pre>
+
+        <h2><span class="section-number">5.</span> Compilation Pipeline</h2>
+        <div class="diagram">┌─────────────────────────────────────────────────────────────────────┐
+│                     TurboWarp Compiler Pipeline                      │
+├─────────────────────────────────────────────────────────────────────┤
+│                                                                     │
+│  1. PARSE                                                           │
+│     project.json → Block AST (linked list of block objects)         │
+│                                                                     │
+│  2. IR GENERATION (irgen.js)                                        │
+│     Block AST → Intermediate Representation                         │
+│     - Resolves block references                                     │
+│     - Identifies loops, conditions, procedures                      │
+│     - Determines which scripts need generators (yield points)       │
+│                                                                     │
+│  3. JS GENERATION (jsgen.js)                                        │
+│     IR → JavaScript source string                                   │
+│     - Generates variable declarations                               │
+│     - Converts each block opcode to JS equivalent                   │
+│     - Inlines runtime helpers where possible                        │
+│                                                                     │
+│  4. FUNCTION CREATION                                               │
+│     JavaScript string → Executable function                         │
+│     - Uses `new Function()` to create the function                  │
+│     - Binds to runtime context (stage, target, runtime)             │
+│                                                                     │
+│  5. EXECUTION                                                       │
+│     Hat blocks trigger compiled functions                           │
+│     - Green flag → run all "when flag clicked" functions            │
+│     - Broadcasts → run matching "when I receive" functions          │
+│     - Generator functions yield to allow interleaving               │
+│                                                                     │
+└─────────────────────────────────────────────────────────────────────┘</div>
+
+        <h2><span class="section-number">6.</span> Block Opcode to JavaScript Mapping</h2>
+        <table>
+            <thead>
+                <tr>
+                    <th>Scratch Block</th>
+                    <th>Opcode</th>
+                    <th>Compiled JavaScript</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td>move (10) steps</td>
+                    <td><code>motion_movesteps</code></td>
+                    <td><code>runtime.ext_scratch3_motion._moveSteps(10, target)</code></td>
+                </tr>
+                <tr>
+                    <td>set [var] to (5)</td>
+                    <td><code>data_setvariableto</code></td>
+                    <td><code>var.value = 5</code></td>
+                </tr>
+                <tr>
+                    <td>change [var] by (1)</td>
+                    <td><code>data_changevariableby</code></td>
+                    <td><code>var.value = (+var.value || 0) + 1</code></td>
+                </tr>
+                <tr>
+                    <td>if &lt;&gt; then</td>
+                    <td><code>control_if</code></td>
+                    <td><code>if (condition) { ... }</code></td>
+                </tr>
+                <tr>
+                    <td>repeat (10)</td>
+                    <td><code>control_repeat</code></td>
+                    <td><code>for (var i = 10; i >= 0.5; i--) { ... }</code></td>
+                </tr>
+                <tr>
+                    <td>forever</td>
+                    <td><code>control_forever</code></td>
+                    <td><code>while (true) { ... yield; }</code></td>
+                </tr>
+                <tr>
+                    <td>wait (1) secs</td>
+                    <td><code>control_wait</code></td>
+                    <td><code>yield* waitSeconds(1)</code></td>
+                </tr>
+                <tr>
+                    <td>say [Hello]</td>
+                    <td><code>looks_say</code></td>
+                    <td><code>runtime.ext_scratch3_looks._say("Hello", target)</code></td>
+                </tr>
+                <tr>
+                    <td>(x position)</td>
+                    <td><code>motion_xposition</code></td>
+                    <td><code>target.x</code></td>
+                </tr>
+                <tr>
+                    <td>((a) + (b))</td>
+                    <td><code>operator_add</code></td>
+                    <td><code>(+a || 0) + (+b || 0)</code></td>
+                </tr>
+                <tr>
+                    <td>&lt;(a) = (b)&gt;</td>
+                    <td><code>operator_equals</code></td>
+                    <td><code>compareEqual(a, b)</code></td>
+                </tr>
+            </tbody>
+        </table>
+
+        <h2><span class="section-number">7.</span> Why the Generated Code Looks Strange</h2>
+        <p>The generated JavaScript prioritizes correctness over readability:</p>
+        <span class="lang-label">javascript</span>
+        <pre><code>// Why ((+value || 0) + 1) instead of (value + 1)?
+// Because in Scratch, "hello" + 1 = 1, not "hello1" or NaN
+i.value = ((+i.value || 0) + 1);
+
+// Why (index | 0) - 1 instead of index - 1?
+// Because Scratch list indices must be integers
+list.value[((i.value || 0) | 0) - 1]
+
+// Why ?? "" instead of just accessing?
+// Because accessing out-of-bounds in Scratch returns empty string, not undefined
+list.value[index] ?? ""</code></pre>
+
+        <h2><span class="section-number">8.</span> Performance Comparison</h2>
+        <table>
+            <thead>
+                <tr>
+                    <th>Operation</th>
+                    <th>Scratch Interpreter</th>
+                    <th>TurboWarp Compiler</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td>Variable read</td>
+                    <td>Hash lookup + object property</td>
+                    <td>Direct property access</td>
+                </tr>
+                <tr>
+                    <td>Block execution</td>
+                    <td>Opcode lookup + function call</td>
+                    <td>Inlined JS</td>
+                </tr>
+                <tr>
+                    <td>Loop iteration</td>
+                    <td>Stack manipulation + yield check</td>
+                    <td>Native <code>for</code>/<code>while</code></td>
+                </tr>
+                <tr>
+                    <td>Type coercion</td>
+                    <td>Runtime type checking</td>
+                    <td>Compile-time optimization</td>
+                </tr>
+                <tr>
+                    <td colspan="2"></td>
+                    <td class="perf-gain">10–100× speedup</td>
+                </tr>
+            </tbody>
+        </table>
+
+        <div class="insight-box">
+            <p><strong>Key Insight</strong></p>
+            <p>TurboWarp doesn't convert Scratch to "readable" JavaScript — it generates optimized machine-specific code that matches Scratch's exact semantics while removing interpreter overhead. The code is generated at runtime via <code>new Function()</code>, making it a true JIT compiler.</p>
+        </div>
+
+        <hr>
+
+        <footer>
+            <p>Hosted on GitHub Pages · By Zhenxing Liu</p>
+        </footer>
+    </div>
+</body>
+</html>
