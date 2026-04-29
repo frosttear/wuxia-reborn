@@ -164,6 +164,26 @@ const Engine = {
             return;
         }
 
+        // NG+: force an unmet-NPC intro on every explore if any remain this life.
+        // Birthday months are reserved for the birthday mechanic.
+        // Age gates are waived in NG+ — players already know these characters.
+        if ((char.rebirthCount || 0) > 0 && !char.flags._is_birthday) {
+            const unmetPool = this.state.events.filter(ev => {
+                const flags = (ev.conditions || {}).flags || {};
+                const isFirstMeet = Object.entries(flags).some(([k, v]) => k.startsWith('met_') && v === false);
+                if (!isFirstMeet) return false;
+                // Waive age gates: copy conditions without minAgeYears/maxAgeYears
+                const condNoAge = { ...ev.conditions, minAgeYears: undefined, maxAgeYears: undefined };
+                return this.checkConditions(condNoAge);
+            });
+            if (unmetPool.length > 0) {
+                const picked = unmetPool[Math.floor(Math.random() * unmetPool.length)];
+                this.state.seenEvents.add(picked.id);
+                this.triggerEvent(picked);
+                return;
+            }
+        }
+
         const eligible = this.selectEvents();
         // On birthday months, force a birthday-specific event if available
         if (char.flags._is_birthday && eligible.length > 0) {
