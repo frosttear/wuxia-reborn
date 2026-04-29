@@ -1025,7 +1025,7 @@ button:disabled { opacity: 0.4; cursor: not-allowed; }
 
 .gallery-lb-box {
     position: relative; display: flex;
-    align-items: center; width: min(1100px, 98vw); max-height: 96vh;
+    align-items: center; width: min(1100px, 98vw); height: 94vh;
 }
 .gallery-lb-stage {
     display: grid; grid-template-columns: 100%; overflow: hidden; width: 100%;
@@ -1033,7 +1033,7 @@ button:disabled { opacity: 0.4; cursor: not-allowed; }
 .gallery-lb-content {
     grid-row: 1; grid-column: 1;
     display: flex; flex-direction: column; align-items: center;
-    max-height: 96vh; overflow: hidden; width: 100%;
+    height: 94vh; overflow: hidden; width: 100%;
 }
 .gallery-lb-img {
     height: 60vh; width: min(900px, 90vw, 100%);
