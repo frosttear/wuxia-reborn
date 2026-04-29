@@ -42,8 +42,8 @@ const GALLERY_DATA = [
     { id: 'yan-chixing-bond-3',          name: '燕赤行·疤痕之下',     hint: '河边深夜，他第一次讲述含光门被灭的往事',   category: 'bonds'   },
     { id: 'yan-chixing-bond-4',          name: '燕赤行·血债与谎言',   hint: '季沧海独闯天魔，负伤求见，多年仇恨一朝真相',     category: 'bonds'   },
     { id: 'yan-chixing-ending',          name: '燕赤行·无名同行',     hint: '夜道同行，他走在前半步，暗处的风雪扑来，他侧身为你挡。', category: 'bonds' },
-    { id: 'yan-chixing-afterstory',      name: '燕赤行·含光遗灯·归山', hint: '重返含光山废墟，为旧弟兄们寻回刻在墙上的名字', category: 'bonds' },
-    { id: 'yan-chixing-afterstory-ending', name: '燕赤行·含光遗灯·立碑', hint: '他跪在亲手刻就的碑前，这是他第一次流泪',   category: 'bonds' },
+    { id: 'yan-chixing-afterstory',      name: '燕赤行·含光遗灯·归山', hint: '重返含光山废墟，他拂过墙上每一个名字，手最后停在两个还活着的人的名字上', category: 'bonds' },
+    { id: 'yan-chixing-afterstory-ending', name: '燕赤行·含光遗灯·立碑', hint: '碑背面刻下三十个离去者的名字，留下两格空白——两个活着的人，不该被放进这里', category: 'bonds' },
     { id: 'yan-chixing-true-ending',       name: '燕赤行·了却前尘',      hint: '山路上轻装而行，他第一次没有什么放不下的',                     category: 'bonds', secret: true },
     // 羁绊情缘 — 苏青
     { id: 'su-qing-meet',                name: '苏青·顺手之事',       hint: '镇口巧遇，她正蹲身为孩子包扎伤口',         category: 'bonds'   },
