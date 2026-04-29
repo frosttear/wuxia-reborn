@@ -223,13 +223,6 @@ body {
     width: min(520px, 90vw); text-align: center; padding-bottom: 60vh;
     will-change: transform;
 }
-.credits-scroll-inner.rolling {
-    animation: creditsRoll var(--credits-duration, 30s) linear forwards;
-}
-@keyframes creditsRoll {
-    from { transform: translate3d(0, var(--credits-start, 100vh), 0); }
-    to   { transform: translate3d(0, var(--credits-end, -200vh), 0); }
-}
 .credits-scroll-line { margin: 0; }
 .credits-scroll-role {
     color: rgba(201,168,76,0.8); font-size: 0.9rem; letter-spacing: 0.14em;
