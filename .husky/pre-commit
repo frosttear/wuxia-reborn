@@ -1,1 +1,1 @@
-npm test
+cd wuxia-reborn && npm test

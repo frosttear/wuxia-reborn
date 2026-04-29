@@ -1,0 +1,848 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Async/Await Thread Switching Pitfall</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: #1a1a2e;
+            color: #eee;
+            overflow: hidden;
+        }
+
+        .slide {
+            display: none;
+            width: 100vw;
+            height: 100vh;
+            padding: 60px 80px;
+            background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
+            overflow-y: auto;
+        }
+
+        .slide.active {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .slide.title-slide {
+            justify-content: center;
+            align-items: center;
+            text-align: center;
+        }
+
+        h1 {
+            font-size: 2.8em;
+            color: #00d4ff;
+            margin-bottom: 20px;
+            text-shadow: 0 0 20px rgba(0, 212, 255, 0.3);
+        }
+
+        h2 {
+            font-size: 1.8em;
+            color: #ff6b6b;
+            margin: 25px 0 15px 0;
+        }
+
+        h3 {
+            font-size: 1.3em;
+            color: #ffd93d;
+            margin: 15px 0 10px 0;
+        }
+
+        p, li {
+            font-size: 1.3em;
+            line-height: 1.6;
+            margin: 10px 0;
+        }
+
+        ul {
+            margin-left: 40px;
+        }
+
+        li {
+            margin: 12px 0;
+        }
+
+        code {
+            background: #2d2d44;
+            padding: 3px 8px;
+            border-radius: 4px;
+            font-family: 'Consolas', 'Courier New', monospace;
+            color: #00d4ff;
+        }
+
+        pre {
+            background: #0d1117;
+            padding: 20px;
+            border-radius: 10px;
+            overflow-x: auto;
+            margin: 15px 0;
+            border-left: 4px solid #00d4ff;
+        }
+
+        pre code {
+            background: none;
+            padding: 0;
+            font-size: 0.95em;
+            line-height: 1.5;
+            color: #e6e6e6;
+        }
+
+        .highlight-green { color: #4ade80; }
+        .highlight-red { color: #f87171; }
+        .highlight-yellow { color: #fbbf24; }
+        .highlight-blue { color: #60a5fa; }
+        .highlight-purple { color: #c084fc; }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 20px 0;
+            font-size: 1.1em;
+        }
+
+        th, td {
+            padding: 15px 20px;
+            text-align: left;
+            border: 1px solid #444;
+        }
+
+        th {
+            background: #00d4ff;
+            color: #1a1a2e;
+            font-weight: 600;
+        }
+
+        td {
+            background: #2d2d44;
+        }
+
+        tr:nth-child(even) td {
+            background: #252540;
+        }
+
+        blockquote {
+            border-left: 4px solid #ffd93d;
+            padding: 15px 25px;
+            margin: 20px 0;
+            background: rgba(255, 217, 61, 0.1);
+            font-style: italic;
+            font-size: 1.3em;
+        }
+
+        .ascii-diagram {
+            font-family: 'Consolas', monospace;
+            font-size: 0.85em;
+            line-height: 1.3;
+            white-space: pre;
+            background: #0d1117;
+            padding: 20px;
+            border-radius: 10px;
+            overflow-x: auto;
+        }
+
+        .two-column {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 40px;
+            margin-top: 20px;
+        }
+
+        .emoji {
+            font-size: 1.2em;
+        }
+
+        .progress-bar {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            height: 4px;
+            background: #00d4ff;
+            transition: width 0.3s ease;
+        }
+
+        .slide-number {
+            position: fixed;
+            bottom: 20px;
+            right: 30px;
+            font-size: 1em;
+            color: #666;
+        }
+
+        .nav-hint {
+            position: fixed;
+            bottom: 20px;
+            left: 30px;
+            font-size: 0.9em;
+            color: #666;
+        }
+
+        .checkmark { color: #4ade80; }
+        .crossmark { color: #f87171; }
+        .warning { color: #fbbf24; }
+
+        .comparison-table td:nth-child(2) {
+            color: #f87171;
+        }
+        .comparison-table td:nth-child(3) {
+            color: #4ade80;
+        }
+
+        .subtitle {
+            font-size: 1.5em;
+            color: #888;
+            margin-top: 10px;
+        }
+
+        .center-content {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            height: 100%;
+            text-align: center;
+        }
+
+        .flow-diagram {
+            background: #0d1117;
+            padding: 30px;
+            border-radius: 15px;
+            margin: 20px 0;
+        }
+
+        .key-point {
+            background: linear-gradient(135deg, rgba(0, 212, 255, 0.1), rgba(255, 107, 107, 0.1));
+            padding: 20px 30px;
+            border-radius: 10px;
+            border: 1px solid #00d4ff;
+            margin: 15px 0;
+        }
+
+        /* Mobile responsive styles */
+        @media (max-width: 768px) {
+            .slide {
+                padding: 20px 15px;
+                height: auto;
+                min-height: 100vh;
+            }
+
+            h1 {
+                font-size: 1.5em;
+                margin-bottom: 15px;
+            }
+
+            h2 {
+                font-size: 1.2em;
+                margin: 15px 0 10px 0;
+            }
+
+            h3 {
+                font-size: 1.1em;
+                margin: 10px 0 8px 0;
+            }
+
+            p, li {
+                font-size: 1em;
+                line-height: 1.5;
+                margin: 8px 0;
+            }
+
+            ul {
+                margin-left: 20px;
+            }
+
+            li {
+                margin: 8px 0;
+            }
+
+            pre {
+                padding: 12px;
+                margin: 10px 0;
+                font-size: 0.85em;
+            }
+
+            pre code {
+                font-size: 0.8em;
+                line-height: 1.4;
+            }
+
+            code {
+                padding: 2px 5px;
+                font-size: 0.9em;
+            }
+
+            table {
+                font-size: 0.85em;
+                display: block;
+                overflow-x: auto;
+            }
+
+            th, td {
+                padding: 8px 10px;
+            }
+
+            blockquote {
+                padding: 10px 15px;
+                font-size: 1em;
+                margin: 15px 0;
+            }
+
+            .two-column {
+                grid-template-columns: 1fr;
+                gap: 20px;
+            }
+
+            .ascii-diagram {
+                font-size: 0.65em;
+                padding: 12px;
+                overflow-x: auto;
+            }
+
+            .flow-diagram {
+                padding: 15px;
+                overflow-x: auto;
+            }
+
+            .key-point {
+                padding: 12px 15px;
+            }
+
+            .subtitle {
+                font-size: 1.1em;
+            }
+
+            .slide-number {
+                bottom: 10px;
+                right: 15px;
+                font-size: 0.85em;
+            }
+
+            .nav-hint {
+                display: none;
+            }
+
+            .progress-bar {
+                height: 3px;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .slide {
+                padding: 15px 10px;
+            }
+
+            h1 {
+                font-size: 1.3em;
+            }
+
+            h2 {
+                font-size: 1.1em;
+            }
+
+            p, li {
+                font-size: 0.95em;
+            }
+
+            pre code {
+                font-size: 0.75em;
+            }
+
+            .ascii-diagram {
+                font-size: 0.55em;
+            }
+
+            table {
+                font-size: 0.75em;
+            }
+
+            th, td {
+                padding: 6px 8px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Slide 1: Title -->
+    <div class="slide title-slide active">
+        <h1>⚡ Async/Await Thread Switching Pitfall</h1>
+        <p class="subtitle">Why Thread-Local State Gets Lost After Await</p>
+        <br><br>
+        <p style="color: #666; font-size: 1em;">Press → or Space to navigate</p>
+    </div>
+
+    <!-- Slide 2: Agenda -->
+    <div class="slide">
+        <h1>📋 Agenda</h1>
+        <ul style="font-size: 1.5em; margin-top: 40px;">
+            <li><strong>The Problem</strong> - What went wrong</li>
+            <li><strong>Root Cause Analysis</strong> - Why async/await breaks thread-local state</li>
+            <li><strong>Live Demo</strong> - See the issue in action</li>
+            <li><strong>The Solution</strong> - How we fixed it</li>
+            <li><strong>Key Takeaways</strong> - How to avoid this pitfall</li>
+        </ul>
+    </div>
+
+    <!-- Slide 3: The Problem -->
+    <div class="slide">
+        <h1>🔴 The Problem</h1>
+        <h2>Real-World Symptom</h2>
+        <ul>
+            <li>AppX registration tool started failing with <code>ACCESS_DENIED (0x5)</code></li>
+            <li><strong>Predictable pattern:</strong> Users 1, 3, 5, 7... <span class="checkmark">✅ succeed</span>; Users 2, 4, 6, 8... <span class="crossmark">❌ fail</span></li>
+            <li>Logs showed: <code>RevertToSelf()</code> returning <strong class="highlight-red">false</strong></li>
+        </ul>
+        <h2>What Was Happening?</h2>
+        <ul>
+            <li>Thread impersonation was "leaking" between users</li>
+            <li>Stale impersonation affects the <strong>next</strong> user, then error handling cleans it up</li>
+            <li>Pattern: <span class="highlight-green">Work</span> → <span class="highlight-yellow">Leak</span> → <span class="highlight-red">Fail</span> (cleanup) → <span class="highlight-green">Work</span> → <span class="highlight-yellow">Leak</span> → <span class="highlight-red">Fail</span> (cleanup) → ...</li>
+        </ul>
+    </div>
+
+    <!-- Slide 4: Understanding Thread-Local State -->
+    <div class="slide">
+        <h1>🔍 Understanding Thread-Local State</h1>
+        <h2>What is Thread-Local State?</h2>
+        <ul>
+            <li>Data that belongs to a <strong>specific thread</strong></li>
+            <li>Each thread has its own copy</li>
+            <li>Examples: <code>ThreadLocal&lt;T&gt;</code>, Impersonation tokens, Culture settings</li>
+        </ul>
+        <h2>In Windows Security:</h2>
+        <pre><code>ImpersonateLoggedOnUser(token)  → Sets impersonation on CURRENT thread
+RevertToSelf()                   → Clears impersonation on CURRENT thread</code></pre>
+        <div class="key-point">
+            <strong>Key Point:</strong> Impersonation is bound to the <em>thread</em>, NOT the code!
+        </div>
+    </div>
+
+    <!-- Slide 5: The Async/Await Thread Switch -->
+    <div class="slide">
+        <h1>⚡ The Async/Await Thread Switch</h1>
+        <div class="two-column">
+            <div>
+                <h2>Before Await</h2>
+                <pre><code><span class="highlight-green">Thread A:</span> [Your Code]
+    ↓
+Set impersonation
+    ↓
+Start async work
+    ↓
+<span class="highlight-yellow">await</span> ← yields here
+    ↓
+(Thread A returns to pool)</code></pre>
+            </div>
+            <div>
+                <h2>After Await</h2>
+                <pre><code><span class="highlight-blue">Thread B:</span> (picked from pool)
+    ↓
+Continuation code
+    ↓
+Finally block
+    ↓
+<span class="highlight-red">RevertToSelf()</span> ← Wrong thread!</code></pre>
+            </div>
+        </div>
+        <table style="margin-top: 30px;">
+            <tr><th>Thread A</th><th>Thread B</th></tr>
+            <tr>
+                <td><span class="checkmark">✅</span> Has impersonation set<br>🔄 Returns to pool (STILL impersonated!)</td>
+                <td><span class="crossmark">❌</span> No impersonation<br>⚠️ RevertToSelf() does nothing</td>
+            </tr>
+        </table>
+    </div>
+
+    <!-- Slide 6: Why Thread Changes -->
+    <div class="slide">
+        <h1>🔬 Why Does The Thread Change?</h1>
+        <h2>The Mechanics of async/await</h2>
+        <div class="key-point">
+            <p><code>await</code> does NOT pause the thread. It <strong>releases</strong> the thread back to the pool and schedules a <strong>continuation</strong> to run when the async operation completes.</p>
+        </div>
+        <h2>Step-by-Step:</h2>
+        <ol style="font-size: 1.2em; line-height: 1.8;">
+            <li><strong>Before await:</strong> Thread 1 executes your code, sets impersonation</li>
+            <li><strong>At await:</strong> The compiler transforms your code into a <em>state machine</em></li>
+            <li><strong>Thread 1 released:</strong> Returns to ThreadPool, <span class="highlight-red">still carrying impersonation!</span></li>
+            <li><strong>Async work completes:</strong> TaskScheduler picks <em>any available thread</em> from pool</li>
+            <li><strong>Continuation runs:</strong> Thread 12 (different!) resumes after the await</li>
+        </ol>
+        <h2 style="margin-top: 20px;">Key Insight:</h2>
+        <div class="key-point">
+            <p>The ThreadPool doesn't care about thread-local state. It just grabs the <strong>first available thread</strong> to run your continuation. That thread knows nothing about what Thread 1 was doing.</p>
+        </div>
+    </div>
+
+    <!-- Slide 7: Visual Flow - The Bug -->
+    <div class="slide">
+        <h1>📊 Visual Flow: The Bug</h1>
+        <div class="ascii-diagram">
+┌─────────────────────────────────────────────────────────────────────────┐
+│  ProcessUserAsync("User1")                                              │
+├─────────────────────────────────────────────────────────────────────────┤
+│                                                                         │
+│  <span class="highlight-green">Thread 1</span>                                    <span class="highlight-blue">THREAD 12</span>                   │
+│                                                                          │
+│  1. ImpersonateLoggedOnUser()                                            │
+│     <span class="checkmark">✓</span> Thread 1 is now User1                                            │
+│                                                                          │
+│  2. await Task.WhenAll(...)                                              │
+│     └── Thread 1 returns to pool ──┐                                     │
+│         <span class="highlight-red">(STILL IMPERSONATED!)</span>      │                                     │
+│                                    │                                     │
+│                                    └──▶ 3. Continuation runs             │
+│                                         Thread 12 has NO impersonation!  │
+│                                                                          │
+│                                    4. finally { RevertToSelf() }         │
+│                                       <span class="crossmark">❌</span> Returns FALSE - Nothing to revert!  │
+└─────────────────────────────────────────────────────────────────────────┘
+        </div>
+        <h3 style="margin-top: 20px;">Thread Pool State After User1:</h3>
+        <pre><code>┌──────────┬────────────────────┐
+│ Thread 1 │ Thread 12          │
+├──────────┼────────────────────┤
+│ <span class="highlight-red">🔴User1</span> │<span class="highlight-green">✅No Impersonation</span> │  ← Thread 1 is <span class="highlight-red">DIRTY!</span>
+└──────────┴────────────────────┘</code></pre>
+    </div>
+
+    <!-- Slide 8: Visual Flow - The Failure -->
+    <div class="slide">
+        <h1>📊 Visual Flow: The Failure</h1>
+        <div class="ascii-diagram">
+┌─────────────────────────────────────────────────────────────────────────┐
+│  ProcessUserAsync("User2")                                               │
+├─────────────────────────────────────────────────────────────────────────┤
+│                                                                          │
+│  <span class="highlight-yellow">Thread 1</span> (reused from pool - still impersonated as User1!)            │
+│                                                                          │
+│  1. Code assumes it's running as <span class="highlight-green">LOCAL ADMIN</span> (high privilege)          │
+│     But actually still impersonated as <span class="highlight-red">User1</span> from previous operation!  │
+│                                                                          │
+│  2. Tries to perform admin-level operation                               │
+│     (e.g., access protected resource)             │
+│                                                                          │
+│     <span class="crossmark">❌</span> <span class="highlight-red">FAILS!</span> Running as User1, not admin                              │
+│     <span class="crossmark">❌</span> Returns <span class="highlight-red">ACCESS_DENIED (0x5)</span>                                      │
+│                                                                          │
+│  3. Error handling catches and cleans up                                 │
+│     <span class="checkmark">✓</span> Thread 1 is now clean again                                       │
+│                                                                          │
+└─────────────────────────────────────────────────────────────────────────┘
+        </div>
+        <h2 style="margin-top: 30px;">The Predictable Pattern:</h2>
+        <table>
+            <tr><th>User</th><th>Thread State</th><th>Result</th><th>After</th></tr>
+            <tr><td>User 1</td><td>Clean</td><td class="highlight-green">✅ Success</td><td>Thread dirty</td></tr>
+            <tr><td>User 2</td><td>Dirty</td><td class="highlight-red">❌ Fail + Cleanup</td><td>Thread clean</td></tr>
+            <tr><td>User 3</td><td>Clean</td><td class="highlight-green">✅ Success</td><td>Thread dirty</td></tr>
+            <tr><td>User 4</td><td>Dirty</td><td class="highlight-red">❌ Fail + Cleanup</td><td>Thread clean</td></tr>
+        </table>
+    </div>
+
+    <!-- Slide 8: Live Demo -->
+    <div class="slide">
+        <h1>🎬 Live Demo</h1>
+        <h2>Running the Demo</h2>
+        <pre><code>cd c:\Users\zhenxingl\upm\AppxPreRegisterTool\AsyncThreadSwitchDemo
+dotnet run</code></pre>
+        <h2>Watch For:</h2>
+        <ul>
+            <li><span class="highlight-yellow">⚠️</span> <strong>Thread ID changes</strong> after <code>await</code></li>
+            <li><span class="highlight-red">❌</span> <strong>State loss</strong> on continuation thread</li>
+            <li><span class="highlight-red">❌</span> <strong>Cleanup failure</strong> in finally block</li>
+            <li><span class="highlight-purple">🔴</span> <strong>Lingering state</strong> affects next user</li>
+        </ul>
+        <h2>Expected Output Pattern:</h2>
+        <pre><code>[User1] Thread <span class="highlight-green">1</span>: Set thread-local state to 'User1'
+[User1] Thread <span class="highlight-blue">12</span>: <span class="highlight-yellow">⚠️ THREAD SWITCH!</span> Was on Thread 1
+[User1] Thread 12: <span class="highlight-red">❌ State LOST!</span>
+[User1] Thread 12: <span class="highlight-red">❌ CLEANUP FAILED!</span> No state to clear.</code></pre>
+    </div>
+
+    <!-- Slide 9: The Problem Code -->
+    <div class="slide">
+        <h1>📋 The Problem Code Pattern</h1>
+        <pre><code><span class="highlight-red">// ❌ WRONG: async method with thread-local state</span>
+static <span class="highlight-yellow">async Task</span> ProcessUserAsync(string userName)
+{
+    try
+    {
+        ThreadLocalState.Value = userName;     <span class="highlight-green">// Thread A: Sets state</span>
+        
+        <span class="highlight-yellow">await</span> Task.Delay(100);                  <span class="highlight-red">// ⚠️ THREAD SWITCH HAPPENS HERE!</span>
+        
+        <span class="highlight-blue">// Now on Thread B - state is LOST!</span>
+    }
+    finally
+    {
+        ThreadLocalState.Value = null;         <span class="highlight-red">// Thread B: Nothing to clear!</span>
+    }
+}</code></pre>
+        <div class="key-point">
+            <strong>The Problem:</strong> The <code>await</code> keyword allows the thread to switch,
+            but the <code>finally</code> block expects to run on the same thread that set up the state.
+        </div>
+    </div>
+
+    <!-- Slide 10: The Solution -->
+    <div class="slide">
+        <h1>✅ The Solution</h1>
+        <h2>Encapsulate Async Work in Separate Function</h2>
+        <pre><code><span class="highlight-green">// ✅ CORRECT: Synchronous wrapper keeps impersonation on same thread</span>
+static <span class="highlight-green">void</span> ProcessUser(string userName)  <span class="highlight-blue">// No async!</span>
+{
+    ImpersonateLoggedOnUser(userToken);  <span class="highlight-green">// Thread A</span>
+    try
+    {
+        <span class="highlight-blue">// Call async work and BLOCK - do NOT await here!</span>
+        DoAsyncWorkAsync().<span class="highlight-yellow">Wait()</span>;       <span class="highlight-blue">// Async work runs on thread pool</span>
+    }
+    finally
+    {
+        RevertToSelf();                  <span class="highlight-green">// Thread A - SAME thread! ✅</span>
+    }
+}
+
+<span class="highlight-blue">// Async work is isolated - no impersonation concerns here</span>
+static async Task DoAsyncWorkAsync()
+{
+    await Task.WhenAll(registrationTasks);
+    <span class="highlight-blue">// Thread switches are fine here - no thread-local state</span>
+}</code></pre>
+    </div>
+
+    <!-- Slide 11: Why It Works -->
+    <div class="slide">
+        <h1>✅ Why The Solution Works</h1>
+        <table>
+            <tr><th>Thread</th><th>Action</th></tr>
+            <tr><td><span class="highlight-green">Thread A</span></td><td><code>ImpersonateLoggedOnUser()</code> - sets impersonation</td></tr>
+            <tr><td><span class="highlight-green">Thread A</span></td><td>Calls <code>DoAsyncWorkAsync().Wait()</code> - <strong>BLOCKS</strong> but stays on Thread A</td></tr>
+            <tr><td><span class="highlight-blue">Thread B/C/D</span></td><td>Async work runs on thread pool (no impersonation needed)</td></tr>
+            <tr><td><span class="highlight-green">Thread A</span></td><td><code>finally</code> block runs - <code>RevertToSelf()</code> on <strong>SAME thread</strong> <span class="checkmark">✅</span></td></tr>
+        </table>
+        <h2 style="margin-top: 40px;">Key Insight:</h2>
+        <div class="key-point">
+            Using <code>.Wait()</code> instead of <code>await</code> causes the calling thread to <strong>block but not yield</strong>.
+            The thread stays parked until the async work completes, guaranteeing the <code>finally</code> block runs on the same thread.
+        </div>
+    </div>
+
+    <!-- Slide 12: Key Takeaways -->
+    <div class="slide">
+        <h1>🔑 Key Takeaways</h1>
+        <div class="key-point">
+            <h3>1. Async/Await Can Switch Threads</h3>
+            <p>Code before <code>await</code> and code after <code>await</code> may run on <strong>different threads</strong></p>
+        </div>
+        <div class="key-point">
+            <h3>2. Thread-Local State Doesn't Transfer</h3>
+            <p>Impersonation, <code>ThreadLocal&lt;T&gt;</code>, and other thread-bound state stays on the original thread</p>
+        </div>
+        <div class="key-point">
+            <h3>3. Finally Blocks Run on Continuation Thread</h3>
+            <p>Cleanup code in <code>finally</code> cannot access the original thread's state</p>
+        </div>
+        <div class="key-point">
+            <h3>4. Encapsulate Async Work Separately</h3>
+            <p>Keep thread-local setup/cleanup in a <strong>synchronous wrapper</strong>, isolate async work in separate functions</p>
+        </div>
+    </div>
+
+    <!-- Slide 13: Red Flags -->
+    <div class="slide">
+        <h1>⚠️ Red Flags to Watch For</h1>
+        <h2>Dangerous Code Pattern:</h2>
+        <pre><code><span class="highlight-red">// 🚨 DANGEROUS: Setting thread state before await</span>
+async Task DoWork()
+{
+    SetThreadState();      <span class="highlight-blue">// impersonation, culture, etc</span>
+    try
+    {
+        await SomeAsyncOperation();  <span class="highlight-red">// Thread switch happens here!</span>
+    }
+    finally
+    {
+        ClearThreadState();          <span class="highlight-red">// Wrong thread!</span>
+    }
+}</code></pre>
+        <h2>Affected APIs:</h2>
+        <ul>
+            <li><code>ImpersonateLoggedOnUser()</code> / <code>RevertToSelf()</code></li>
+            <li><code>ThreadLocal&lt;T&gt;</code></li>
+            <li><code>Thread.CurrentPrincipal</code></li>
+            <li><code>Thread.CurrentCulture</code></li>
+            <li>Any thread-affine state</li>
+        </ul>
+    </div>
+
+    <!-- Slide 14: Best Practices -->
+    <div class="slide">
+        <h1>✨ Best Practices</h1>
+        <div class="two-column">
+            <div>
+                <h2 class="highlight-red">❌ WRONG</h2>
+                <pre><code>async Task Bad()
+{
+    Impersonate();
+    try
+    {
+        <span class="highlight-red">await</span> Work();
+    }
+    finally
+    {
+        Revert(); <span class="highlight-red">// Wrong thread!</span>
+    }
+}</code></pre>
+            </div>
+            <div>
+                <h2 class="highlight-green">✅ CORRECT</h2>
+                <pre><code>void Good()
+{
+    Impersonate();
+    try
+    {
+        Work()<span class="highlight-green">.Wait()</span>;
+    }
+    finally
+    {
+        Revert(); <span class="highlight-green">// Same thread!</span>
+    }
+}</code></pre>
+            </div>
+        </div>
+        <h2 style="margin-top: 30px;">Additional Tips:</h2>
+        <ul>
+            <li>Use <code>AsyncLocal&lt;T&gt;</code> instead of <code>ThreadLocal&lt;T&gt;</code> if state must flow with async</li>
+            <li><code>ConfigureAwait(true)</code> does <strong>NOT</strong> guarantee same thread - don't rely on it!</li>
+        </ul>
+    </div>
+
+    <!-- Slide 15: Summary -->
+    <div class="slide">
+        <h1>📚 Summary</h1>
+        <table style="font-size: 1.1em;">
+            <tr><th style="width: 25%;">Concept</th><th>Key Point</th></tr>
+            <tr><td><strong>Problem</strong></td><td>Async/await switches threads; thread-local state stays on original thread</td></tr>
+            <tr><td><strong>Symptom</strong></td><td>Alternating failures (odd users work, even users fail), ACCESS_DENIED</td></tr>
+            <tr><td><strong>Root Cause</strong></td><td>Cleanup runs on different thread than setup</td></tr>
+            <tr><td><strong>Solution</strong></td><td>Encapsulate async work; keep impersonation in sync wrapper</td></tr>
+            <tr><td><strong>Prevention</strong></td><td>Never <code>await</code> inside impersonation try/finally block</td></tr>
+        </table>
+    </div>
+
+    <!-- Slide 16: Questions -->
+    <div class="slide">
+        <h1>🙋 Questions?</h1>
+        <h2>Resources:</h2>
+        <ul>
+            <li>Demo code: <code>AsyncThreadSwitchDemo/</code></li>
+            <li>README: <code>AsyncThreadSwitchDemo/README.md</code></li>
+        </ul>
+        <h2>Key Pattern Applied:</h2>
+        <pre><code>void ProcessUser()            <span class="highlight-blue">// Sync wrapper</span>
+{
+    Impersonate();
+    try
+    {
+        AsyncWork().<span class="highlight-green">Wait()</span>;  <span class="highlight-blue">// Block here</span>
+    }
+    finally
+    {
+        RevertToSelf();       <span class="highlight-green">// Same thread!</span>
+    }
+}</code></pre>
+    </div>
+
+    <!-- Slide 17: Thank You -->
+    <div class="slide title-slide">
+        <h1>🎉 Thank You!</h1>
+        <br>
+        <blockquote style="max-width: 800px;">
+            "The best bug fixes are often one line of code,<br>
+            but finding that line requires understanding the whole system."
+        </blockquote>
+    </div>
+
+    <div class="progress-bar" id="progress"></div>
+    <div class="slide-number" id="slideNumber">1 / 18</div>
+    <div class="nav-hint">← → or Space to navigate | Tap/Swipe on mobile</div>
+
+    <script>
+        const slides = document.querySelectorAll('.slide');
+        let currentSlide = 0;
+        const totalSlides = slides.length;
+
+        function showSlide(n) {
+            slides[currentSlide].classList.remove('active');
+            currentSlide = (n + totalSlides) % totalSlides;
+            slides[currentSlide].classList.add('active');
+            
+            // Update progress bar
+            const progress = ((currentSlide + 1) / totalSlides) * 100;
+            document.getElementById('progress').style.width = progress + '%';
+            
+            // Update slide number
+            document.getElementById('slideNumber').textContent = (currentSlide + 1) + ' / ' + totalSlides;
+        }
+
+        function nextSlide() {
+            showSlide(currentSlide + 1);
+        }
+
+        function prevSlide() {
+            showSlide(currentSlide - 1);
+        }
+
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'ArrowRight' || e.key === ' ' || e.key === 'Enter') {
+                e.preventDefault();
+                nextSlide();
+            } else if (e.key === 'ArrowLeft' || e.key === 'Backspace') {
+                e.preventDefault();
+                prevSlide();
+            } else if (e.key === 'Home') {
+                e.preventDefault();
+                showSlide(0);
+            } else if (e.key === 'End') {
+                e.preventDefault();
+                showSlide(totalSlides - 1);
+            }
+        });
+
+        // Click to advance (optional)
+        document.addEventListener('click', (e) => {
+            if (e.clientX > window.innerWidth / 2) {
+                nextSlide();
+            } else {
+                prevSlide();
+            }
+        });
+
+        // Touch support for mobile
+        let touchStartX = 0;
+        document.addEventListener('touchstart', (e) => {
+            touchStartX = e.touches[0].clientX;
+        });
+        document.addEventListener('touchend', (e) => {
+            const touchEndX = e.changedTouches[0].clientX;
+            if (touchStartX - touchEndX > 50) {
+                nextSlide();
+            } else if (touchEndX - touchStartX > 50) {
+                prevSlide();
+            }
+        });
+
+        // Initialize
+        showSlide(0);
+    </script>
+</body>
+</html>

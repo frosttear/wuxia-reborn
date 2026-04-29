@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>霜冻之泪个人文章分享 | My Pages</title>
+    <title>我的页面 | My Pages</title>
     <style>
         * {
             margin: 0;
@@ -72,15 +72,8 @@
         .subtitle {
             text-align: center;
             color: #888;
-            margin-bottom: 8px;
-            font-size: 1.1rem;
-        }
-
-        .site-description {
-            text-align: center;
-            color: #666;
             margin-bottom: 50px;
-            font-size: 0.9rem;
+            font-size: 1.1rem;
         }
 
         .card-grid {
@@ -154,38 +147,37 @@
 
         <h1 data-i18n="title">我的页面</h1>
         <p class="subtitle" data-i18n="subtitle">演示、游戏和演示文稿合集</p>
-        <p class="site-description" data-i18n="site_description">霜冻之泪个人文章分享</p>
-
+        
         <div class="card-grid">
-            <a href="MyPages/Async%3AAwait%20Thread%20Switching%20Pitfall.html" class="card">
+            <a href="Async%3AAwait%20Thread%20Switching%20Pitfall.html" class="card">
                 <div class="card-icon">📊</div>
                 <div class="card-title" data-i18n="async_title">Async/Await 线程切换陷阱</div>
                 <div class="card-description" data-i18n="async_desc">一个关于 async/await 和线程切换常见陷阱的交互式演示文稿。</div>
                 <span class="tag" data-i18n="tag_presentation">演示文稿</span>
             </a>
 
-            <a href="MyPages/Baseball.html" class="card">
+            <a href="Baseball.html" class="card">
                 <div class="card-icon">⚾</div>
                 <div class="card-title" data-i18n="baseball_title">棒球</div>
                 <div class="card-description" data-i18n="baseball_desc">使用 Scratch 制作并通过 TurboWarp 打包的有趣棒球游戏。</div>
                 <span class="tag" data-i18n="tag_game">游戏</span>
             </a>
 
-            <a href="MyPages/FlyingBird_mobile.html" class="card">
+            <a href="FlyingBird_mobile.html" class="card">
                 <div class="card-icon">🐦</div>
                 <div class="card-title" data-i18n="bird_title">飞翔的小鸟</div>
                 <div class="card-description" data-i18n="bird_desc">适配移动端的飞翔小鸟游戏，点击屏幕即可飞行！</div>
                 <span class="tag" data-i18n="tag_game">游戏</span>
             </a>
 
-            <a href="MyPages/%E7%8B%90%E5%A6%96%E5%A4%A7%E4%BD%9C%E6%88%98%20-%20Preview.html" class="card">
+            <a href="%E7%8B%90%E5%A6%96%E5%A4%A7%E4%BD%9C%E6%88%98%20-%20Preview.html" class="card">
                 <div class="card-icon">🦊</div>
                 <div class="card-title" data-i18n="foxdemon_title">狐妖大作战</div>
                 <div class="card-description" data-i18n="foxdemon_desc">类似植物大战僵尸的塔防游戏，部署防御抵御敌人入侵！</div>
                 <span class="tag" data-i18n="tag_game">游戏</span>
             </a>
 
-            <a href="MyPages/%E4%B8%89%E5%B9%B4%E7%BA%A7%E8%8B%B1%E8%AF%AD%E6%89%93%E5%AD%97%E7%BB%83%E4%B9%A0.html" class="card">
+            <a href="%E4%B8%89%E5%B9%B4%E7%BA%A7%E8%8B%B1%E8%AF%AD%E6%89%93%E5%AD%97%E7%BB%83%E4%B9%A0.html" class="card">
                 <div class="card-icon">⌨️</div>
                 <div class="card-title" data-i18n="typing_title">三年级英语打字练习</div>
                 <div class="card-description" data-i18n="typing_desc">英语单词打字练习游戏，10秒内输入正确单词得分，共10题。</div>
@@ -200,8 +192,7 @@
         const i18n = {
             zh: {
                 title: '我的页面',
-                subtitle: '演示、网页小游戏和演示文稿合集',
-                site_description: '霜冻之泪个人文章分享',
+                subtitle: '演示、游戏和演示文稿合集',
                 async_title: 'Async/Await 线程切换陷阱',
                 async_desc: '一个关于 async/await 和线程切换常见陷阱的交互式演示文稿。',
                 baseball_title: '棒球',
@@ -215,12 +206,11 @@
                 tag_presentation: '演示文稿',
                 tag_game: '游戏',
                 tag_education: '教育',
-                footer: ''
+                footer: '托管于 GitHub Pages'
             },
             en: {
                 title: 'My Pages',
                 subtitle: 'A collection of demos, games, and presentations',
-                site_description: 'Personal articles and projects by 霜冻之泪',
                 async_title: 'Async/Await Thread Switching Pitfall',
                 async_desc: 'An interactive presentation about common pitfalls when working with async/await and thread switching.',
                 baseball_title: 'Baseball',
@@ -234,7 +224,7 @@
                 tag_presentation: 'Presentation',
                 tag_game: 'Game',
                 tag_education: 'Education',
-                footer: ''
+                footer: 'Hosted on GitHub Pages'
             }
         };
 
