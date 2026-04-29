@@ -15,7 +15,10 @@
     <img src="assets/logo/logo.jpg?v=0.26.39" class="start-logo" alt="轮回江湖" onerror="retryImg(this,this.src)">
     <div class="start-sub">武侠 · 轮回 · 文字冒险</div>
     <div class="start-form">
-        <input id="nameInput" class="start-input" type="text" placeholder="输入角色名" maxlength="8" value="独孤宸">
+        <div style="display:flex; gap:8px; align-items:center;">
+            <input id="nameInput" class="start-input" type="text" placeholder="输入角色名" maxlength="8" value="独孤宸" style="flex:1; min-width:0;">
+            <button id="randomNameBtn" class="btn-secondary" style="padding:8px 12px; white-space:nowrap; flex-shrink:0;" onclick="randomizeName()">随机</button>
+        </div>
         <div class="start-birth-row">
             <span class="start-birth-label">出生月份</span>
             <select id="birthMonthInput" class="start-select">
@@ -279,6 +282,13 @@ if (localStorage.getItem('wuxia_save')) {
                 UI.renderAll(Engine.state);
             }
         }
+    }
+
+    const _nameSurnames = ['独孤','慕容','上官','欧阳','令狐','东方','西门','南宫','北冥','司徒','诸葛','轩辕','皇甫','公孙','左丘','百里','夏侯','宇文','尉迟','长孙','叶','沈','林','萧','裴','顾','苏','谢','江','云','白','凌','霍','岳','蓝','秦','韩','赵','魏','燕'];
+    const _nameGivens = ['宸','澜','霁','凛','瑾','玄','渊','烬','清','尘','寒','煜','璃','弦','影','夜','枫','云','墨','霜','凰','鸿','锋','绝','远','孤','行','辞','吟','啸','长风','无涯','孤鸣','飞雪','断魂','凌云','破晓','归尘','问天','逐月','踏歌','断弦','残影','听雨','望舒','怀瑾','抱玉','含光','洗剑','独行'];
+    function randomizeName() {
+        const pick = arr => arr[Math.floor(Math.random() * arr.length)];
+        document.getElementById('nameInput').value = pick(_nameSurnames) + pick(_nameGivens);
     }
 
     const startBtn = document.getElementById('startBtn');
