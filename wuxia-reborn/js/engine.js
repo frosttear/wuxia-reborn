@@ -734,11 +734,16 @@ const Engine = {
             shard_wang_tie: '完成「铁哥的旧事」', shard_yan_chixing: '完成「独行剑客的记账」',
             shard_su_qing: '完成「药师的检验」', shard_li_yunshu: '完成「焚书之记」',
             shard_ling_xue: '完成「天魔的指令」', truth_assembled: '完成「碎片真相」',
+            zhao_defeated_for_wang: '完成「黑鹰寨对峙」',
+            wuxiang_echo_felt: '完成「剑意余温」', wuxiang_six_understood: '完成「六人如镜」',
         };
+        const lifetimeDone = new Set(char.lifetimeChainsDone || []);
         const result = [];
         for (const chain of chains) {
             const progress = char.chainProgress ? char.chainProgress[chain.id] : undefined;
             if (progress === 'done') continue;
+            // Chain completed in a previous life — treat as done, don't show as pending
+            if (lifetimeDone.has(chain.id)) continue;
             const stepIdx = (typeof progress === 'number') ? progress : 0;
             if (stepIdx >= chain.steps.length) continue;
             const step = chain.steps[stepIdx];
@@ -805,7 +810,10 @@ const Engine = {
     getCompletedChains() {
         const { char, chains } = this.state;
         if (!char || !chains) return [];
-        return chains.filter(c => (char.chainProgress || {})[c.id] === 'done');
+        const lifetimeDone = new Set(char.lifetimeChainsDone || []);
+        return chains.filter(c =>
+            (char.chainProgress || {})[c.id] === 'done' || lifetimeDone.has(c.id)
+        );
     },
 
     triggerChainStep(chainId, stepIdx) {
