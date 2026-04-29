@@ -1,6 +1,6 @@
 // Service worker: cache-first for all image assets
 // Bump CACHE_NAME when images are updated to force re-download
-const CACHE_NAME = 'wuxia-v0.26.30';
+const CACHE_NAME = 'wuxia-v0.26.31';
 
 // Install: activate immediately without blocking on image downloads
 // Images are cached lazily on first access via the fetch handler below
