@@ -11,8 +11,10 @@ changed=$(git diff-tree --no-commit-id -r --name-only HEAD | grep '^wuxia-reborn
 # Bail if target branch doesn't exist
 git rev-parse --verify backup/pre-restructure >/dev/null 2>&1 || exit 0
 
-# Create a temporary worktree for backup/pre-restructure
-worktree=$(mktemp -d) || exit 0
+# Use a repo-relative temp dir to avoid Windows TMPDIR path issues
+root=$(git rev-parse --show-toplevel)
+worktree="$root/.sync-worktree"
+rm -rf "$worktree"
 git worktree add --quiet "$worktree" backup/pre-restructure || { rm -rf "$worktree"; exit 0; }
 
 # Copy each changed file, stripping the wuxia-reborn/ prefix
