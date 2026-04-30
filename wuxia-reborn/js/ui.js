@@ -796,7 +796,7 @@ const UI = {
         return result.length ? result : [text];
     },
 
-    async addLogTypewriter(text, cls) {
+    addLogTypewriter(text, cls) {
         const segments = this._segmentText(text);
 
         const epilogueFlag = this._epilogueNextAtTop;
@@ -814,36 +814,40 @@ const UI = {
 
         let pinnedScroll = null;
 
-        for (let si = 0; si < segments.length; si++) {
-            const seg = segments[si];
-            const isLast = si === segments.length - 1;
+        return new Promise(outerResolve => {
+            const runSegment = (si) => {
+                if (si >= segments.length) { outerResolve(); return; }
 
-            const div = document.createElement('div');
-            div.className = `log-entry log-${cls}`;
-            this.logEl.appendChild(div);
+                const seg = segments[si];
+                const isLast = si === segments.length - 1;
 
-            if (si === 0 && epilogueFlag) {
-                const logRect = this.logEl.getBoundingClientRect();
-                const divRect = div.getBoundingClientRect();
-                const divAbsTop = this.logEl.scrollTop + (divRect.top - logRect.top);
-                pinnedScroll = Math.max(0, divAbsTop - 78);
-                this.logEl.scrollTop = pinnedScroll;
-            }
+                const div = document.createElement('div');
+                div.className = `log-entry log-${cls}`;
+                this.logEl.appendChild(div);
 
-            const scroll = () => {
-                if (pinnedScroll !== null) {
+                if (si === 0 && epilogueFlag) {
+                    const logRect = this.logEl.getBoundingClientRect();
+                    const divRect = div.getBoundingClientRect();
+                    const divAbsTop = this.logEl.scrollTop + (divRect.top - logRect.top);
+                    pinnedScroll = Math.max(0, divAbsTop - 78);
                     this.logEl.scrollTop = pinnedScroll;
-                } else {
-                    const elBottom = div.offsetTop + div.offsetHeight;
-                    if (elBottom > this.logEl.scrollTop + this.logEl.clientHeight - 8) {
-                        this.logEl.scrollTop = Math.max(this.logEl.scrollTop, elBottom - this.logEl.clientHeight + 16);
-                    }
                 }
-            };
 
-            await new Promise(resolve => {
+                const scroll = () => {
+                    if (pinnedScroll !== null) {
+                        this.logEl.scrollTop = pinnedScroll;
+                    } else {
+                        const elBottom = div.offsetTop + div.offsetHeight;
+                        if (elBottom > this.logEl.scrollTop + this.logEl.clientHeight - 8) {
+                            this.logEl.scrollTop = Math.max(this.logEl.scrollTop, elBottom - this.logEl.clientHeight + 16);
+                        }
+                    }
+                };
+
                 let tickId = null;
                 let i = 0;
+
+                const next = () => runSegment(si + 1);
 
                 const showHint = () => {
                     const hint = document.createElement('span');
@@ -851,14 +855,14 @@ const UI = {
                     hint.textContent = ' ▼';
                     div.appendChild(hint);
                     scroll();
-                    this._twSkip = () => { this._twSkip = null; hint.remove(); resolve(); };
+                    this._twSkip = () => { this._twSkip = null; hint.remove(); next(); };
                 };
 
                 const completeTyping = () => {
                     clearTimeout(tickId);
                     div.innerHTML = seg.replace(/\n/g, '<br>');
                     scroll();
-                    if (isLast) { this._twSkip = null; resolve(); }
+                    if (isLast) { this._twSkip = null; outerResolve(); }
                     else showHint();
                 };
 
@@ -872,13 +876,15 @@ const UI = {
                         tickId = setTimeout(tick, 20);
                     } else {
                         this._twSkip = null;
-                        if (isLast) resolve();
+                        if (isLast) outerResolve();
                         else showHint();
                     }
                 };
                 tick();
-            });
-        }
+            };
+
+            runSegment(0);
+        });
     },
 
     waitForClick(msg = '▾ 点击继续') {
