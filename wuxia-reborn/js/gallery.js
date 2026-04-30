@@ -638,7 +638,7 @@ const Gallery = {
             const logRect = log.getBoundingClientRect();
             const elRect = el.getBoundingClientRect();
             if (elRect.bottom > logRect.bottom - 8) {
-                log.scrollTop += elRect.bottom - logRect.bottom + 40;
+                log.scrollTop = log.scrollHeight;
             }
         };
 

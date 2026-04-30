@@ -873,7 +873,7 @@ const UI = {
                         const logRect = this.logEl.getBoundingClientRect();
                         const elRect = div.getBoundingClientRect();
                         if (elRect.bottom > logRect.bottom - 8) {
-                            this.logEl.scrollTop += elRect.bottom - logRect.bottom + 40;
+                            this.logEl.scrollTop = this.logEl.scrollHeight;
                         }
                     }
                 };
