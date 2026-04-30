@@ -527,7 +527,13 @@ const UI = {
         hero_tyrant_defeated: '击败铁面判官',
         zhao_traced: '追踪赵霸天',
         zhao_defeated_for_wang: '击败赵霸天',
-        wang_wish_fulfilled: '告慰王铁英灵'
+        wang_wish_fulfilled: '告慰王铁英灵',
+        tianmo_weakness_known: '知晓天魔弱点',
+        han_revelation: '知悉含光往事',
+        mark_hermit: '携带隐者印记',
+        wuxiang_sword_mastered: '无相剑意大成',
+        li_afterstory_done: '完成李云舒后续',
+        lost_to_final_boss: '在最终决战中败北',
     },
 
     formatFlagRequirementsWithChar(reqFlags, char) {
