@@ -1647,7 +1647,7 @@ const Engine = {
         { text: '提供建议和帮助的家人们', cls: 'role' },
         { text: '牛牛（可爱的儿子）', cls: 'name' },
         { text: 'Ayumi（亲爱的老婆）', cls: 'name' },
-        { text: '姐姐（ChatGPT赞助者）', cls: 'name' },
+        { text: '姐姐（协助开通ChatGPT Plus）', cls: 'name' },
         { text: '安安安安遥（聪明的外甥）', cls: 'name' },
         { text: '', cls: 'spacer' },
         { text: '以及', cls: 'role' },
