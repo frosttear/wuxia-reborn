@@ -483,6 +483,15 @@ const Gallery = {
                 li.textContent = npcChain.name;
                 li.onclick = () => this._openReplay('chain', npcChain.id, null, npcChain.name);
                 ul.appendChild(li);
+                const endingIllId = kebab + '-afterstory-ending';
+                const endingMeta = GALLERY_DATA.find(d => d.id === endingIllId);
+                if (endingMeta) {
+                    const li2 = document.createElement('li');
+                    li2.textContent = endingMeta.name.split('·').pop();
+                    const startStep = Math.max(0, npcChain.steps.length - 1);
+                    li2.onclick = () => this._openReplay('chain', npcChain.id, null, endingMeta.name, null, startStep, endingIllId);
+                    ul.appendChild(li2);
+                }
             }
 
             details.appendChild(ul);
@@ -517,7 +526,7 @@ const Gallery = {
         this._grid.appendChild(container);
     },
 
-    _openReplay(type, id, level, title, fromLb) {
+    _openReplay(type, id, level, title, fromLb, startStep = 0, customIllId = null) {
         this._grid.style.display = 'none';
         this._replayTitle.textContent = title || '';
         this._replayLog.innerHTML = '';
@@ -537,7 +546,7 @@ const Gallery = {
                 this._replayToLb.style.display = 'none';
             }
         }
-        this._runReplay(type, id, level, token);
+        this._runReplay(type, id, level, token, startStep, customIllId);
     },
 
     _splitParagraphs(text, maxLen = 100) {
@@ -566,7 +575,7 @@ const Gallery = {
         return chunks.length > 1 ? chunks : [text];
     },
 
-    _runReplay(type, id, level, token) {
+    _runReplay(type, id, level, token, startStep = 0, customIllId = null) {
         const bonds  = ((typeof Engine !== 'undefined') && Engine.state && Engine.state.bonds)  || {};
         const chains = ((typeof Engine !== 'undefined') && Engine.state && Engine.state.chains) || [];
 
@@ -583,24 +592,26 @@ const Gallery = {
             if (ev) steps = [{ text: ev.text, choices: ev.choices || [] }];
         } else {
             const chain = chains.find(c => c.id === id);
-            steps = (chain && chain.steps) || [];
+            steps = ((chain && chain.steps) || []).slice(startStep);
             if (chain && chain.completionReward && chain.completionReward.narrative) {
                 completionNarrative = chain.completionReward.narrative;
             }
         }
 
         // Derive illustration ID
-        let illId = null;
-        if (type === 'bond') {
-            const maxLevel = (bonds[id] || []).length;
-            illId = level >= maxLevel
-                ? id.replace(/_/g, '-') + '-ending'
-                : id.replace(/_/g, '-') + '-bond-' + level;
-        } else if (type === 'meet') {
-            illId = MEET_ILL_IDS[id] || null;
-        } else {
-            const kebab = id.replace(/_/g, '-');
-            if (GALLERY_DATA.find(d => d.id === kebab)) illId = kebab;
+        let illId = customIllId || null;
+        if (!illId) {
+            if (type === 'bond') {
+                const maxLevel = (bonds[id] || []).length;
+                illId = level >= maxLevel
+                    ? id.replace(/_/g, '-') + '-ending'
+                    : id.replace(/_/g, '-') + '-bond-' + level;
+            } else if (type === 'meet') {
+                illId = MEET_ILL_IDS[id] || null;
+            } else {
+                const kebab = id.replace(/_/g, '-');
+                if (GALLERY_DATA.find(d => d.id === kebab)) illId = kebab;
+            }
         }
 
         // Build ordered list of {text, cls} items to stream
@@ -772,7 +783,14 @@ const Gallery = {
             const chains = (typeof Engine !== 'undefined') && Engine.state && Engine.state.chains || [];
             const chain = chains.find(c => c.id === chainId);
             if (!chain) return null;
-            return { type: 'chain', id: chainId, level: null, title: chain.name };
+            const isEnding = id.endsWith('-afterstory-ending');
+            if (isEnding) {
+                const startStep = Math.max(0, chain.steps.length - 1);
+                const endingMeta = GALLERY_DATA.find(d => d.id === id);
+                const title = endingMeta ? endingMeta.name : chain.name;
+                return { type: 'chain', id: chainId, level: null, title, startStep, customIllId: id };
+            }
+            return { type: 'chain', id: chainId, level: null, title: chain.name, startStep: 0, customIllId: null };
         }
         let m;
         if ((m = id.match(/^(.+)-meet$/))) {
@@ -833,7 +851,7 @@ const Gallery = {
                     for (const btn of this._tabsEl.querySelectorAll('.gallery-tab')) {
                         btn.classList.toggle('active', btn.dataset.cat === 'replay');
                     }
-                    this._openReplay(info.type, info.id, info.level, info.title, { id: meta.id, category: meta.category });
+                    this._openReplay(info.type, info.id, info.level, info.title, { id: meta.id, category: meta.category }, info.startStep || 0, info.customIllId || null);
                 };
             } else {
                 replayBtn.style.display = 'none';
