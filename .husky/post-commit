@@ -5,7 +5,7 @@ branch=$(git symbolic-ref --short HEAD 2>/dev/null) || exit 0
 [ "$branch" = "main" ] || exit 0
 
 # Collect wuxia-reborn/ files changed in this commit
-changed=$(git diff-tree --no-commit-id -r --name-only HEAD | grep '^wuxia-reborn/')
+changed=$(git diff-tree --no-commit-id -r --name-only HEAD | grep '^wuxia-reborn/' || true)
 [ -z "$changed" ] && exit 0
 
 # Bail if target branch doesn't exist
@@ -36,3 +36,4 @@ if [ -n "$(git -C "$worktree" status --porcelain)" ]; then
 fi
 
 git worktree remove --force "$worktree"
+exit 0
