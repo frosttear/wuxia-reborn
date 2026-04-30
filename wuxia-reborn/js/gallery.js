@@ -687,35 +687,83 @@ const Gallery = {
                 return;
             }
 
-            const showHint = () => {
-                const hint = document.createElement('span');
-                hint.className = 'gallery-replay-continue-hint';
-                hint.textContent = ' ▼';
-                p.appendChild(hint);
-                scrollIntoView(p);
-                this._replaySkip = () => { hint.remove(); advance(i + 1); };
-            };
+            if (cls === 'narrative') {
+                const subParas = text.split('\n\n');
+                const cumPos = [];
+                let pos = 0;
+                for (const sp of subParas) { cumPos.push(pos); pos += sp.length + 2; }
+                let curParaIdx = 0;
+                let curP = p;
 
-            let j = 0;
-            this._replaySkip = () => {
-                cancelTick();
-                p.innerHTML = text.replace(/\n/g, '<br>');
-                scrollIntoView(p);
-                if (cls === 'narrative') { showHint(); }
-                else { this._replaySkip = null; advance(i + 1); }
-            };
-            const tick = () => {
-                if (token !== this._replaySeq) return;
-                p.innerHTML = text.slice(0, ++j).replace(/\n/g, '<br>');
-                if (j > 1) scrollIntoView(p);
-                if (j < text.length) {
-                    tickId = setTimeout(tick, 28);
-                } else {
-                    if (cls === 'narrative') { showHint(); }
-                    else { this._replaySkip = () => advance(i + 1); tickId = setTimeout(() => advance(i + 1), 200); }
-                }
-            };
-            tick();
+                const updateRender = (j) => {
+                    let pi = 0;
+                    while (pi < subParas.length - 1 && j >= cumPos[pi + 1]) pi++;
+                    while (curParaIdx < pi) {
+                        curP.textContent = subParas[curParaIdx];
+                        curParaIdx++;
+                        curP = document.createElement('p');
+                        curP.className = 'log-replay-narrative';
+                        log.appendChild(curP);
+                    }
+                    const posInPara = Math.min(j - cumPos[pi], subParas[pi].length);
+                    curP.textContent = subParas[pi].slice(0, Math.max(0, posInPara));
+                };
+
+                const finalizeAll = () => {
+                    while (curParaIdx < subParas.length - 1) {
+                        curP.textContent = subParas[curParaIdx];
+                        curParaIdx++;
+                        curP = document.createElement('p');
+                        curP.className = 'log-replay-narrative';
+                        log.appendChild(curP);
+                    }
+                    curP.textContent = subParas[subParas.length - 1];
+                };
+
+                const showHint = () => {
+                    finalizeAll();
+                    const hint = document.createElement('span');
+                    hint.className = 'gallery-replay-continue-hint';
+                    hint.textContent = ' ▼';
+                    curP.appendChild(hint);
+                    scrollIntoView(curP);
+                    this._replaySkip = () => { hint.remove(); advance(i + 1); };
+                };
+
+                let j = 0;
+                this._replaySkip = () => { cancelTick(); showHint(); };
+
+                const tick = () => {
+                    if (token !== this._replaySeq) return;
+                    updateRender(++j);
+                    if (j > 1) scrollIntoView(curP);
+                    if (j < text.length) { tickId = setTimeout(tick, 28); }
+                    else { showHint(); }
+                };
+                tick();
+            } else {
+                // choice: auto-advance after typing
+                let j = 0;
+                this._replaySkip = () => {
+                    cancelTick();
+                    p.textContent = text;
+                    scrollIntoView(p);
+                    this._replaySkip = () => advance(i + 1);
+                    tickId = setTimeout(() => advance(i + 1), 200);
+                };
+                const tick = () => {
+                    if (token !== this._replaySeq) return;
+                    p.textContent = text.slice(0, ++j);
+                    if (j > 1) scrollIntoView(p);
+                    if (j < text.length) {
+                        tickId = setTimeout(tick, 28);
+                    } else {
+                        this._replaySkip = () => advance(i + 1);
+                        tickId = setTimeout(() => advance(i + 1), 200);
+                    }
+                };
+                tick();
+            }
         };
 
         this._replayLog.onclick = () => {

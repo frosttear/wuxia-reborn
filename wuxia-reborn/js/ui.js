@@ -659,9 +659,6 @@ const UI = {
 
         const textEl = entry.querySelector('.log-text');
         const text = event.text;
-        let charIdx = 0;
-        let done = false;
-
         const renderChoices = () => {
             if (choices && choices.length > 0) {
                 let unlockIdx = 0;
@@ -698,29 +695,65 @@ const UI = {
             }
         };
 
-        const finishReveal = () => {
-            if (done) return;
-            done = true;
+        const segments = this._segmentText(text);
+        let currentSkip = null;
+        let completedHtml = '';
+
+        const onClick = () => { if (currentSkip) currentSkip(); };
+        entry.addEventListener('click', onClick);
+        entry.style.cursor = 'pointer';
+
+        const finish = () => {
             if (this._revealTimer) { clearTimeout(this._revealTimer); this._revealTimer = null; }
             entry.style.cursor = '';
-            textEl.innerHTML = event.text.replace(/\n/g, '<br>');
+            entry.removeEventListener('click', onClick);
             renderChoices();
-            // Re-scroll after choices panel expands and shrinks the log's visible area
             requestAnimationFrame(() => { this.logEl.scrollTop = this.logEl.scrollHeight; });
         };
 
-        const revealStep = () => {
-            if (charIdx >= text.length) { finishReveal(); return; }
-            charIdx = Math.min(charIdx + 1, text.length);
-            textEl.innerHTML = text.slice(0, charIdx).replace(/\n/g, '<br>');
-            this.logEl.scrollTop = this.logEl.scrollHeight;
-            this._revealTimer = setTimeout(revealStep, 45);
+        const runSegment = (si) => {
+            const seg = segments[si];
+            const isLast = si === segments.length - 1;
+            let charIdx = 0;
+
+            const showHint = () => {
+                completedHtml += (completedHtml ? '<br><br>' : '') + seg.replace(/\n/g, '<br>');
+                textEl.innerHTML = completedHtml;
+                const hint = document.createElement('span');
+                hint.className = 'log-continue-hint';
+                hint.textContent = ' ▼';
+                textEl.appendChild(hint);
+                this.logEl.scrollTop = this.logEl.scrollHeight;
+                currentSkip = () => {
+                    hint.remove();
+                    currentSkip = null;
+                    if (isLast) finish();
+                    else runSegment(si + 1);
+                };
+            };
+
+            currentSkip = () => {
+                if (this._revealTimer) { clearTimeout(this._revealTimer); this._revealTimer = null; }
+                showHint();
+            };
+
+            const revealStep = () => {
+                charIdx = Math.min(charIdx + 1, seg.length);
+                const prefix = completedHtml ? completedHtml + '<br><br>' : '';
+                textEl.innerHTML = prefix + seg.slice(0, charIdx).replace(/\n/g, '<br>');
+                this.logEl.scrollTop = this.logEl.scrollHeight;
+                if (charIdx < seg.length) {
+                    this._revealTimer = setTimeout(revealStep, 45);
+                } else {
+                    this._revealTimer = null;
+                    showHint();
+                }
+            };
+
+            revealStep();
         };
 
-        // Click the event card to skip the animation
-        entry.style.cursor = 'pointer';
-        entry.addEventListener('click', finishReveal);
-        revealStep();
+        runSegment(0);
     },
 
     addLog(text, type) {
