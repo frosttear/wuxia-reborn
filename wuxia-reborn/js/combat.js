@@ -182,6 +182,7 @@ const Combat = {
             const skillFires  = activeSkill
                 && action !== 'defend'
                 && action !== 'parry'
+                && action !== 'focus'
                 && cs.playerMomentum >= activeSkill.momentumCost
                 && cs.skillCooldown === 0;
 
