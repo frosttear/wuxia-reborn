@@ -750,6 +750,7 @@
       "id": "wuxiang_sword",
       "name": "无相剑意",
       "desc": "剑魂创造者一生未竟的心愿——以心观人，万念归一。非剑法，非武功，是走遍江湖、读懂六颗心之后，自然涌现的东西。",
+      "oneTimeOnly": true,
       "steps": [
         {
           "id": "wuxiang_1",
@@ -1534,6 +1535,7 @@
       "id": "truth_shards",
       "name": "碎片真相",
       "desc": "五块碎片，散落在五个人的记忆里——那些沈玄清从未开口说过的事情。",
+      "oneTimeOnly": true,
       "steps": [
         {
           "id": "shard_0_wang_tie",
@@ -1736,6 +1738,7 @@
       "id": "zhushi_zhi_wo",
       "name": "诸世之我",
       "desc": "轮回后的某一夜，断裂的回声从虚空中传来——那是你自己。",
+      "oneTimeOnly": true,
       "steps": [
         {
           "id": "zhushi_1",

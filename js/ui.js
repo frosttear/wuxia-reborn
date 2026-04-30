@@ -892,23 +892,15 @@ const UI = {
         return new Promise(resolve => {
             const overlay = document.createElement('div');
             overlay.className = 'credits-scroll-overlay';
-            const inner = document.createElement('div');
-            inner.className = 'credits-scroll-inner';
+            overlay.style.opacity = '0';
+            overlay.style.transition = 'opacity 0.6s ease';
 
-            for (const { text, cls } of items) {
-                const p = document.createElement('p');
-                p.className = `credits-scroll-line credits-scroll-${cls}`;
-                p.textContent = text;
-                inner.appendChild(p);
-            }
-
-            inner.style.transform = 'translate3d(0, 100vh, 0)';
-            overlay.appendChild(inner);
+            const canvas = document.createElement('canvas');
+            canvas.style.cssText = 'position:absolute;top:0;left:0;';
+            overlay.appendChild(canvas);
             document.body.appendChild(overlay);
 
-            let rafId = null;
-            let startTs = null;
-            let finished = false;
+            let rafId = null, startTs = null, finished = false, paused = false;
 
             const done = () => {
                 if (finished) return;
@@ -919,33 +911,113 @@ const UI = {
             };
             overlay.addEventListener('click', done, { once: true });
 
-            // Two rAF frames to ensure layout is fully settled before measuring
-            requestAnimationFrame(() => requestAnimationFrame(() => {
+            requestAnimationFrame(() => { overlay.style.opacity = '1'; });
+
+            const DPR  = window.devicePixelRatio || 1;
+            const finPx = Math.round(8 * 16 * DPR);
+
+            // Explicitly load Pinyon Script for canvas use (fonts.ready alone does
+            // not guarantee web fonts are available in 2D canvas contexts).
+            Promise.all([
+                document.fonts.load(`${finPx}px "Pinyon Script"`).catch(() => {}),
+                new Promise(r => requestAnimationFrame(() => requestAnimationFrame(r))),
+            ]).then(() => {
+                if (finished) return;
+
+                // All canvas work in physical pixels — no ctx.scale() to avoid
+                // coord-system confusion in drawImage calls.
+                const viewW = overlay.clientWidth;
                 const viewH = overlay.clientHeight;
-                const contentH = inner.scrollHeight;
+                const phW   = Math.round(viewW * DPR);
+                const phH_v = Math.round(viewH * DPR);
+                const cx    = phW / 2;  // physical center-x
+
+                canvas.width        = phW;
+                canvas.height       = phH_v;
+                canvas.style.width  = viewW + 'px';
+                canvas.style.height = viewH + 'px';
+                const ctx = canvas.getContext('2d');
+
+                // Style table — mirrors the CSS credits rules, sizes in CSS px
+                const B     = 16;
+                const SERIF = "Georgia, 'Songti SC', 'SimSun', serif";
+                const FIN   = "'Pinyon Script', 'Palatino Linotype', Palatino, cursive";
+                const STYLE = {
+                    role:    { color: 'rgba(201,168,76,0.8)', size: 0.9*B, mt: 1.6*0.9*B, mb: 0,         font: SERIF },
+                    name:    { color: '#e0d8c8',              size: 1.2*B, mt: 0.2*1.2*B, mb: 0,         font: SERIF },
+                    section: { color: '#c9a84c',              size: 1.0*B, mt: 3.0*B,     mb: 0.4*B,     font: SERIF },
+                    spacer:  { size: 0,         mt: 5.0*B, mb: 0, skip: true },
+                    final:   { color: '#e2b96f',              size: 2.2*B, mt: 0.4*2.2*B, mb: 0,         font: SERIF },
+                    fin:     { color: '#f5e8b0',              size: 8.0*B, mt: 4.0*B,     mb: 2.0*B,     font: FIN   },
+                };
+
+                // Pre-compute line positions in CSS px
+                const lines = [];
+                let yOff = 0;
+                for (const { text, cls } of items) {
+                    const s = STYLE[cls] || STYLE.name;
+                    yOff += s.mt;
+                    if (s.skip) continue;
+                    const lineH = s.size * 1.35;
+                    lines.push({ text, color: s.color, y: yOff, size: s.size, lineH, font: s.font, cls });
+                    yOff += lineH + (s.mb || 0);
+                }
+                const contentH   = yOff + viewH * 0.6;
                 const durationMs = Math.max(20000, (viewH + contentH) / 70 * 1000);
 
-                // Compute the y at which the Fin element is vertically centered
-                const finEl = inner.querySelector('.credits-scroll-fin');
-                const stopY = finEl
-                    ? viewH / 2 - finEl.offsetTop - finEl.offsetHeight / 2
+                // Pre-render entire credits to offscreen canvas in physical pixels
+                const src  = document.createElement('canvas');
+                src.width  = phW;
+                src.height = Math.ceil(contentH * DPR);
+                const sCtx = src.getContext('2d');
+                sCtx.textAlign    = 'center';
+                sCtx.textBaseline = 'top';
+                for (const line of lines) {
+                    sCtx.fillStyle = line.color;
+                    sCtx.font      = `${Math.round(line.size * DPR)}px ${line.font}`;
+                    if ('letterSpacing' in sCtx) {
+                        const lsPx =
+                            line.cls === 'role'    ? 0.14 * line.size * DPR :
+                            line.cls === 'section' ? 0.22 * line.size * DPR :
+                            line.cls === 'fin'     ? 0.06 * line.size * DPR : 0;
+                        sCtx.letterSpacing = lsPx ? `${lsPx.toFixed(1)}px` : '0px';
+                    }
+                    sCtx.fillText(line.text, cx, Math.round(line.y * DPR));
+                }
+
+                // Fin center stop
+                const finLine     = lines.find(l => l.cls === 'fin');
+                const stopScrollY = finLine
+                    ? viewH / 2 - finLine.y - finLine.lineH / 2
                     : null;
 
+                if (stopScrollY !== null) {
+                    const stopTime = (viewH - stopScrollY) / (viewH + contentH) * durationMs;
+                    setTimeout(() => { if (!finished) paused = true; }, stopTime);
+                }
+
+                // Blit visible slice — scrollY in CSS px, blit in physical px
+                const drawAt = (scrollY) => {
+                    ctx.clearRect(0, 0, phW, phH_v);
+                    const srcYph = Math.round(Math.max(0, -scrollY) * DPR);
+                    const dstYph = Math.round(Math.max(0,  scrollY) * DPR);
+                    const hph    = Math.round(
+                        Math.min(viewH - Math.max(0, scrollY),
+                                 contentH - Math.max(0, -scrollY)) * DPR);
+                    if (hph > 0) ctx.drawImage(src, 0, srcYph, phW, hph, 0, dstYph, phW, hph);
+                };
+                drawAt(viewH);
+
                 const tick = (ts) => {
-                    if (finished) return;
+                    if (finished || paused) return;
                     if (!startTs) startTs = ts;
                     const progress = (ts - startTs) / durationMs;
                     if (progress >= 1) { done(); return; }
-                    const y = viewH - (viewH + contentH) * progress;
-                    if (stopY !== null && y <= stopY) {
-                        inner.style.transform = `translate3d(0, ${stopY}px, 0)`;
-                        return; // paused at center — click dismisses
-                    }
-                    inner.style.transform = `translate3d(0, ${y}px, 0)`;
+                    drawAt(viewH - (viewH + contentH) * progress);
                     rafId = requestAnimationFrame(tick);
                 };
                 rafId = requestAnimationFrame(tick);
-            }));
+            });
         });
     },
 

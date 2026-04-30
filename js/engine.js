@@ -164,6 +164,26 @@ const Engine = {
             return;
         }
 
+        // NG+: force an unmet-NPC intro on every explore if any remain this life.
+        // Birthday months are reserved for the birthday mechanic.
+        // Age gates are waived in NG+ — players already know these characters.
+        if ((char.rebirthCount || 0) > 0 && !char.flags._is_birthday) {
+            const unmetPool = this.state.events.filter(ev => {
+                const flags = (ev.conditions || {}).flags || {};
+                const isFirstMeet = Object.entries(flags).some(([k, v]) => k.startsWith('met_') && v === false);
+                if (!isFirstMeet) return false;
+                // Waive age gates: copy conditions without minAgeYears/maxAgeYears
+                const condNoAge = { ...ev.conditions, minAgeYears: undefined, maxAgeYears: undefined };
+                return this.checkConditions(condNoAge);
+            });
+            if (unmetPool.length > 0) {
+                const picked = unmetPool[Math.floor(Math.random() * unmetPool.length)];
+                this.state.seenEvents.add(picked.id);
+                this.triggerEvent(picked);
+                return;
+            }
+        }
+
         const eligible = this.selectEvents();
         // On birthday months, force a birthday-specific event if available
         if (char.flags._is_birthday && eligible.length > 0) {
@@ -714,11 +734,16 @@ const Engine = {
             shard_wang_tie: '完成「铁哥的旧事」', shard_yan_chixing: '完成「独行剑客的记账」',
             shard_su_qing: '完成「药师的检验」', shard_li_yunshu: '完成「焚书之记」',
             shard_ling_xue: '完成「天魔的指令」', truth_assembled: '完成「碎片真相」',
+            zhao_defeated_for_wang: '完成「黑鹰寨对峙」',
+            wuxiang_echo_felt: '完成「剑意余温」', wuxiang_six_understood: '完成「六人如镜」',
         };
+        const lifetimeDone = new Set(char.lifetimeChainsDone || []);
         const result = [];
         for (const chain of chains) {
             const progress = char.chainProgress ? char.chainProgress[chain.id] : undefined;
             if (progress === 'done') continue;
+            // One-time chains whose rewards persist across lives: hide once done in any life
+            if (chain.oneTimeOnly && lifetimeDone.has(chain.id)) continue;
             const stepIdx = (typeof progress === 'number') ? progress : 0;
             if (stepIdx >= chain.steps.length) continue;
             const step = chain.steps[stepIdx];
@@ -785,7 +810,11 @@ const Engine = {
     getCompletedChains() {
         const { char, chains } = this.state;
         if (!char || !chains) return [];
-        return chains.filter(c => (char.chainProgress || {})[c.id] === 'done');
+        const lifetimeDone = new Set(char.lifetimeChainsDone || []);
+        return chains.filter(c =>
+            (char.chainProgress || {})[c.id] === 'done' ||
+            (c.oneTimeOnly && lifetimeDone.has(c.id))
+        );
     },
 
     triggerChainStep(chainId, stepIdx) {
@@ -1610,6 +1639,7 @@ const Engine = {
         { text: '小猪', cls: 'name' },
         { text: '大皮', cls: 'name' },
         { text: '大呆', cls: 'name' },
+        { text: '白胖熊一只', cls: 'name' },
         { text: '提供建议和帮助的家人们', cls: 'role' },
         { text: '牛牛（可爱的儿子）', cls: 'name' },
         { text: 'Ayumi（亲爱的老婆）', cls: 'name' },
@@ -1619,7 +1649,7 @@ const Engine = {
         { text: '以及', cls: 'role' },
         { text: '游玩的你', cls: 'final' },
         { text: '', cls: 'spacer' },
-        { text: 'ℱin', cls: 'fin' },
+        { text: 'Fin', cls: 'fin' },
     ],
 
     playCredits() {
