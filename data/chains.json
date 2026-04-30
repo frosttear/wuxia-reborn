@@ -1745,9 +1745,7 @@
           "title": "轮回回声",
           "unlockConditions": {
             "flags": {
-              "lost_to_final_boss": true,
-              "truth_assembled": true,
-              "zhushi_chain_done": false
+              "truth_assembled": true
             },
             "minRebirth": 1
           },

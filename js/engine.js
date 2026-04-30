@@ -736,6 +736,7 @@ const Engine = {
             shard_ling_xue: '完成「天魔的指令」', truth_assembled: '完成「碎片真相」',
             zhao_defeated_for_wang: '完成「黑鹰寨对峙」',
             wuxiang_echo_felt: '完成「剑意余温」', wuxiang_six_understood: '完成「六人如镜」',
+            lost_to_final_boss: '在最终决战中败北（先完成主线再轮回）',
         };
         const lifetimeDone = new Set(char.lifetimeChainsDone || []);
         const result = [];
@@ -750,6 +751,9 @@ const Engine = {
             const conditionsMet = this.checkConditions(step.unlockConditions || {});
             const cond = step.unlockConditions || {};
             const lockedReasons = [];
+            if (cond.minRebirth !== undefined && char.rebirthCount < cond.minRebirth) {
+                lockedReasons.push(`需轮回${cond.minRebirth}世（当前第${char.rebirthCount}世）`);
+            }
             if (cond.minAgeYears !== undefined) {
                 const age = Character.getAgeYears(char);
                 if (age < cond.minAgeYears) lockedReasons.push(`需年满${cond.minAgeYears}岁（当前${age}岁）`);
