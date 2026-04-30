@@ -12,9 +12,10 @@
         "text": "专注锤炼体魄，反复出拳踢腿",
         "effects": {
           "attributes": {
-            "strength": 1
+            "strength": 1,
+            "agility": 1
           },
-          "narrative": "你不断重复着最基础的马步和出拳，大汗淋漓，体魄渐渐强壮。"
+          "narrative": "你不断重复着最基础的马步和出拳，大汗淋漓。力量渐渐增长，反复的步法操练也让身形更加矫健。"
         }
       },
       {
@@ -22,9 +23,10 @@
         "text": "练习轻盈身法，翻腾跳跃",
         "effects": {
           "attributes": {
-            "agility": 1
+            "agility": 1,
+            "constitution": 1
           },
-          "narrative": "你专注于步伐和腾挪，身法愈发灵动，如风中柳絮。"
+          "narrative": "你专注于步伐和腾挪，身法愈发灵动。腾跃之间不断适应落点，体能与协调俱有提升。"
         }
       },
       {
@@ -333,9 +335,10 @@
         "text": "稍作尝试，不强求",
         "effects": {
           "attributes": {
-            "constitution": 1
+            "constitution": 1,
+            "luck": 1
           },
-          "narrative": "虽然只是浅尝，体质也略有提升。"
+          "narrative": "虽然只是浅尝，冷水激过之后体质也略有提升；退出时你顺势捡了块磨刀石送给过路的渔民，对方回赠了一把鱼干，今日倒也不亏。"
         }
       }
     ]
@@ -726,7 +729,8 @@
         "text": "婉言谢绝，不与计较",
         "effects": {
           "attributes": {
-            "reputation": 1
+            "reputation": 1,
+            "comprehension": 1
           },
           "narrative": "你淡然拒绝，对方悻悻而去。以礼待人，江湖上自有口碑。"
         }
@@ -1653,9 +1657,10 @@
         "text": "认真研读，推敲武学道理",
         "effects": {
           "attributes": {
-            "comprehension": 1
+            "comprehension": 1,
+            "innerForce": 1
           },
-          "narrative": "卧床之时，倒让你静下心来钻研武学，悟性有所精进。"
+          "narrative": "卧床之时，倒让你静下心来钻研武学，悟性有所精进；反复默念行气口诀，内力也悄悄积累了一分。"
         }
       },
       {
@@ -1663,9 +1668,10 @@
         "text": "随手翻阅，消磨时光",
         "effects": {
           "attributes": {
-            "luck": 1
+            "luck": 1,
+            "comprehension": 1
           },
-          "narrative": "随手翻到几段奇闻轶事，颇为有趣，心情也好了不少。"
+          "narrative": "随手翻到几段奇闻轶事，颇为有趣。一段无意看到的推理居然触发了灵感，对某些问题有了新的想法。"
         }
       }
     ]
@@ -1683,9 +1689,10 @@
         "text": "凝神入定，以内功疗伤",
         "effects": {
           "attributes": {
-            "innerForce": 1
+            "innerForce": 1,
+            "constitution": 1
           },
-          "narrative": "内力在体内游走，缓缓修复受损经脉，内功有所精进。"
+          "narrative": "内力在体内游走，缓缓修复受损经脉，内功有所精进；调息之中，气血运转顺畅，身体也随之康健了几分。"
         }
       }
     ]
@@ -1959,7 +1966,8 @@
         "text": "推杯换盏，听他讲古",
         "effects": {
           "attributes": {
-            "constitution": 1
+            "constitution": 1,
+            "luck": 1
           },
           "npcAffinity": {
             "wang_tie": 8
@@ -2001,7 +2009,8 @@
         "text": "收下心意，道谢言欢",
         "effects": {
           "attributes": {
-            "luck": 1
+            "luck": 1,
+            "reputation": 1
           },
           "npcAffinity": {
             "li_yunshu": 8
@@ -2152,9 +2161,10 @@
         "text": "将图解誊抄下来，留待日后慢慢研究",
         "effects": {
           "attributes": {
-            "comprehension": 1
+            "comprehension": 1,
+            "luck": 1
           },
-          "narrative": "你将能看清的图解一一誊抄，虽一时难以完全参透，日后必有所获。悟性小有提升。"
+          "narrative": "你将能看清的图解一一誊抄，虽一时难以完全参透，日后必有所获，悟性小有提升。誊抄之余，你在一处夹层中摸到了一枚古钱，竟是前朝遗物，手气不坏。"
         }
       },
       {
@@ -2162,7 +2172,7 @@
         "text": "此地阴气太重，不宜久留，速速离开",
         "effects": {
           "attributes": {
-            "luck": 1
+            "luck": 2
           },
           "narrative": "你心生警惕，果断撤出洞穴。出口处，一块石头绊了你一跤，却让你发现了地下埋藏的一枚铜钱，倒是沾了点运气。"
         }
@@ -2193,9 +2203,10 @@
         "text": "寻找避雨之处，等雨停再走",
         "effects": {
           "attributes": {
-            "luck": 1
+            "luck": 1,
+            "constitution": 1
           },
-          "narrative": "你找到一处破庙暂避风雨，与几位同行旅人相谈甚欢，还从他们口中听说了一些江湖消息，运气不坏。"
+          "narrative": "你找到一处破庙暂避风雨，与几位同行旅人相谈甚欢，还从他们口中听说了不少江湖消息，运气不坏；歇息半日，精力也恢复了不少。"
         }
       },
       {
@@ -2247,9 +2258,10 @@
         "text": "婉言谢绝，继续赶路",
         "effects": {
           "attributes": {
-            "agility": 1
+            "agility": 1,
+            "comprehension": 1
           },
-          "narrative": "你礼貌推辞后快步离去，倒是这一路越走越快，步伐比往日更加轻盈。"
+          "narrative": "你礼貌推辞后快步离去，倒是这一路越走越快，步伐比往日更加轻盈。远远观察了一段那老剑客的身影，隐约看出几分独特的意境，若有所思。"
         }
       }
     ]
@@ -2437,9 +2449,10 @@
         "text": "此等赌局，不沾为妙，拂袖而去",
         "effects": {
           "attributes": {
-            "reputation": 1
+            "reputation": 1,
+            "comprehension": 1
           },
-          "narrative": "你昂首离去，恰好被路过的几位侠客看见，纷纷称赞你定力过人，声誉略有提升。"
+          "narrative": "你昂首离去，恰好被路过的几位侠客看见，纷纷称赞你定力过人，声誉略有提升。这一走，你在心里把骰盅里的算计梳理了一遍，反倒悟出些道理。"
         }
       }
     ]
@@ -2611,7 +2624,8 @@
         "text": "或许只是巧合——不去多想",
         "effects": {
           "attributes": {
-            "luck": 1
+            "luck": 1,
+            "constitution": 1
           },
           "narrative": "你把这个念头摁下去。\n\n江湖里什么消息都有，有人提前打听一个外乡人的到来，也不是什么稀奇事。\n\n你继续走，但那个细节，就这么留在了心里某个角落。"
         }
