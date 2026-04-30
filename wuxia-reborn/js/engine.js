@@ -736,6 +736,7 @@ const Engine = {
             shard_ling_xue: '完成「天魔的指令」', truth_assembled: '完成「碎片真相」',
             zhao_defeated_for_wang: '完成「黑鹰寨对峙」',
             wuxiang_echo_felt: '完成「剑意余温」', wuxiang_six_understood: '完成「六人如镜」',
+            fought_final_boss: '与神秘老者正面交锋过（胜负皆可）',
             lost_to_final_boss: '在最终决战中败北（先完成主线再轮回）',
         };
         const lifetimeDone = new Set(char.lifetimeChainsDone || []);
@@ -1165,6 +1166,7 @@ const Engine = {
 
             if (enemy.isTrueFinalBoss) {
                 char.flags.true_final_boss_beaten = true;
+                char.flags.fought_final_boss = true;
                 UI.addLog(enemy.winNarrative, 'win');
                 UI.showCombatReturnBtn('won', () => {
                     UI.hideCombatOverlay();
@@ -1232,6 +1234,7 @@ const Engine = {
             UI.renderCharacter(char, this.state.jobs);
             if (enemy.isTrueFinalBoss) {
                 char.flags.lost_to_final_boss = true;
+                char.flags.fought_final_boss = true;
                 if (!char.flags.zhushi_chain_done || !char.flags.truth_assembled) {
                     UI.addLog('【提示】击败那个老者需要理解与力量的结合。下一轮回：先通过「碎片真相」任务链看透九百年的棋局，再以「诸世之我」汇聚所有世界线的自己——两者皆备，方可触发最终决战。', 'info');
                 }

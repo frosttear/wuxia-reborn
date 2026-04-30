@@ -243,9 +243,10 @@ const Rebirth = {
 
         // Persist critical meta-flags that must survive rebirth
         const PERSIST_FLAGS = [
-            'lost_to_final_boss', 'zhushi_chain_done', 'truth_assembled', 'mark_hermit',
+            'lost_to_final_boss', 'fought_final_boss', 'zhushi_chain_done', 'truth_assembled', 'mark_hermit',
             'mark_warrior_power', 'mark_wuxiang_power',
-            'mark_rebirth_power', 'mark_afterstory_power', 'mark_hermit_power'
+            'mark_rebirth_power', 'mark_afterstory_power', 'mark_hermit_power',
+            'wuxiang_sword_mastered'
         ];
         for (const f of PERSIST_FLAGS) {
             if (char.flags[f]) newChar.flags[f] = char.flags[f];
@@ -257,6 +258,15 @@ const Rebirth = {
                 id: 'rebirth_power', name: '轮回之力',
                 desc: '诸世之我的意志共鸣——以所有的自己，对抗设计者',
                 rebirthPower: true
+            });
+        }
+        // Re-grant 无相剑意 passive if mastered in a previous life
+        if (char.flags.wuxiang_sword_mastered) {
+            if (!newChar.passives) newChar.passives = [];
+            newChar.passives.push({
+                id: 'wuxiang_intent', name: '无相剑意',
+                desc: '走遍江湖、读懂六颗心之后自然涌现——敌方意图在你眼中无所遁形',
+                perfectIntentRead: true
             });
         }
 
