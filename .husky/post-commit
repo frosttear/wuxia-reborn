@@ -1,0 +1,38 @@
+# Auto-sync game files (wuxia-reborn/) to backup/pre-restructure after each main commit.
+# Skips MyPages changes (root-level files) and skips non-main branches.
+
+branch=$(git symbolic-ref --short HEAD 2>/dev/null) || exit 0
+[ "$branch" = "main" ] || exit 0
+
+# Collect wuxia-reborn/ files changed in this commit
+changed=$(git diff-tree --no-commit-id -r --name-only HEAD | grep '^wuxia-reborn/')
+[ -z "$changed" ] && exit 0
+
+# Bail if target branch doesn't exist
+git rev-parse --verify backup/pre-restructure >/dev/null 2>&1 || exit 0
+
+# Create a temporary worktree for backup/pre-restructure
+worktree=$(mktemp -d) || exit 0
+git worktree add --quiet "$worktree" backup/pre-restructure || { rm -rf "$worktree"; exit 0; }
+
+# Copy each changed file, stripping the wuxia-reborn/ prefix
+echo "$changed" | while IFS= read -r file; do
+    dest="${file#wuxia-reborn/}"
+    dest_path="$worktree/$dest"
+    if git cat-file -e "HEAD:$file" 2>/dev/null; then
+        mkdir -p "$(dirname "$dest_path")"
+        git show "HEAD:$file" > "$dest_path"
+    elif [ -f "$dest_path" ]; then
+        rm "$dest_path"
+    fi
+done
+
+# Commit if anything changed
+if [ -n "$(git -C "$worktree" status --porcelain)" ]; then
+    commit_msg=$(git log -1 --pretty=%B)
+    git -C "$worktree" add -A
+    git -C "$worktree" commit --no-verify -m "$commit_msg" >/dev/null
+    printf '✓ Synced %s to backup/pre-restructure\n' "$(echo "$changed" | wc -l | tr -d ' ') file(s)"
+fi
+
+git worktree remove --force "$worktree"
