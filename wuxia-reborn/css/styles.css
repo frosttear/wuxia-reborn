@@ -205,6 +205,17 @@ body {
     padding-bottom: 100vh;
 }
 
+/* Inline paragraph-continue hint (▼ shown after each display segment) */
+.log-continue-hint,
+.gallery-replay-continue-hint {
+    color: rgba(201,168,76,0.75);
+    font-size: 0.75em;
+    animation: continuePulse 1.2s ease-in-out infinite;
+    cursor: pointer;
+    user-select: none;
+}
+@keyframes continuePulse { 0%, 100% { opacity: 0.9; } 50% { opacity: 0.2; } }
+
 /* Click-to-continue prompt (true ending NPC transitions) */
 .log-click-continue {
     text-align: center; color: rgba(201,168,76,0.6); font-size: 0.85rem;

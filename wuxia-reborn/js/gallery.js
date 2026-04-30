@@ -549,30 +549,23 @@ const Gallery = {
         this._runReplay(type, id, level, token, startStep, customIllId);
     },
 
-    _splitParagraphs(text, maxLen = 100) {
-        const raw = text.split(/(?<=[。！？])/);
-        // Reattach leading closing-quote chars to the preceding sentence
-        const parts = [];
-        for (const p of raw) {
-            if (!p) continue;
-            const m = p.match(/^[」』）)\]》]+/);
-            if (m && parts.length > 0) {
-                parts[parts.length - 1] += m[0];
-                const rest = p.slice(m[0].length);
-                if (rest) parts.push(rest);
-            } else {
-                parts.push(p);
+    _segmentText(text, minLen = 70) {
+        const result = [];
+        for (const hard of text.split('▼')) {
+            const paras = hard.split(/\n\n+/).map(p => p.trim()).filter(Boolean);
+            if (!paras.length) continue;
+            let group = [], groupLen = 0;
+            for (const para of paras) {
+                group.push(para);
+                groupLen += para.length;
+                if (groupLen >= minLen) {
+                    result.push(group.join('\n\n'));
+                    group = []; groupLen = 0;
+                }
             }
+            if (group.length) result.push(group.join('\n\n'));
         }
-        const chunks = [];
-        let cur = '';
-        for (const p of parts) {
-            if (!p) continue;
-            if (cur.length > 0 && cur.length + p.length > maxLen) { chunks.push(cur); cur = p; }
-            else cur += p;
-        }
-        if (cur) chunks.push(cur);
-        return chunks.length > 1 ? chunks : [text];
+        return result.length ? result : [text];
     },
 
     _runReplay(type, id, level, token, startStep = 0, customIllId = null) {
@@ -624,17 +617,17 @@ const Gallery = {
             // Skip step if ALL choices are combat (pure combat gate, no story text worth showing)
             if (choices.length > 0 && combatChoices.length === choices.length) continue;
 
-            if (step.text) this._splitParagraphs(step.text).forEach(t => items.push({ text: t, cls: 'narrative' }));
+            if (step.text) this._segmentText(step.text).forEach(t => items.push({ text: t, cls: 'narrative' }));
 
             const nonCombat = choices.filter(c => !(c.effects && c.effects.combat));
             for (const choice of nonCombat) {
                 items.push({ text: choice.text, cls: 'choice' });
                 const narr = choice.effects && choice.effects.narrative;
-                if (narr) this._splitParagraphs(narr).forEach(t => items.push({ text: t, cls: 'narrative' }));
+                if (narr) this._segmentText(narr).forEach(t => items.push({ text: t, cls: 'narrative' }));
             }
         }
 
-        if (completionNarrative) this._splitParagraphs(completionNarrative).forEach(t => items.push({ text: t, cls: 'narrative' }));
+        if (completionNarrative) this._segmentText(completionNarrative).forEach(t => items.push({ text: t, cls: 'narrative' }));
         // Illustration appears after all text so the reader finishes the story first
         if (illId) items.push({ cls: 'illustration', illId });
         items.push({ text: '── 回想结束 ──', cls: 'sep' });
@@ -686,23 +679,40 @@ const Gallery = {
             else p.className = 'log-replay-narrative';
             log.appendChild(p);
 
+            // sep: appear instantly, advance on next tick
+            if (cls === 'sep') {
+                p.textContent = text;
+                this._replaySkip = () => advance(i + 1);
+                tickId = setTimeout(() => advance(i + 1), 0);
+                return;
+            }
+
+            const showHint = () => {
+                const hint = document.createElement('span');
+                hint.className = 'gallery-replay-continue-hint';
+                hint.textContent = ' ▼';
+                p.appendChild(hint);
+                scrollIntoView(p);
+                this._replaySkip = () => { hint.remove(); advance(i + 1); };
+            };
+
             let j = 0;
             this._replaySkip = () => {
                 cancelTick();
-                p.textContent = text;
+                p.innerHTML = text.replace(/\n/g, '<br>');
                 scrollIntoView(p);
-                this._replaySkip = null;
-                advance(i + 1);
+                if (cls === 'narrative') { showHint(); }
+                else { this._replaySkip = null; advance(i + 1); }
             };
             const tick = () => {
                 if (token !== this._replaySeq) return;
-                p.textContent = text.slice(0, ++j);
+                p.innerHTML = text.slice(0, ++j).replace(/\n/g, '<br>');
                 if (j > 1) scrollIntoView(p);
                 if (j < text.length) {
                     tickId = setTimeout(tick, 28);
                 } else {
-                    this._replaySkip = () => advance(i + 1);
-                    tickId = setTimeout(() => advance(i + 1), 400);
+                    if (cls === 'narrative') { showHint(); }
+                    else { this._replaySkip = () => advance(i + 1); tickId = setTimeout(() => advance(i + 1), 200); }
                 }
             };
             tick();

@@ -777,30 +777,58 @@ const UI = {
         });
     },
 
-    addLogTypewriter(text, cls) {
-        return new Promise(resolve => {
+    _segmentText(text, minLen = 70) {
+        const result = [];
+        for (const hard of text.split('▼')) {
+            const paras = hard.split(/\n\n+/).map(p => p.trim()).filter(Boolean);
+            if (!paras.length) continue;
+            let group = [], groupLen = 0;
+            for (const para of paras) {
+                group.push(para);
+                groupLen += para.length;
+                if (groupLen >= minLen) {
+                    result.push(group.join('\n\n'));
+                    group = []; groupLen = 0;
+                }
+            }
+            if (group.length) result.push(group.join('\n\n'));
+        }
+        return result.length ? result : [text];
+    },
+
+    async addLogTypewriter(text, cls) {
+        const segments = this._segmentText(text);
+
+        const epilogueFlag = this._epilogueNextAtTop;
+        if (epilogueFlag) {
+            this._epilogueNextAtTop = false;
+            if (this._epilogueSpacerEl) {
+                this._epilogueSpacerEl.remove();
+                this._epilogueSpacerEl = null;
+            }
+        }
+
+        this.notifyEventTab();
+        this.logBuffer.push({ text, type: cls });
+        if (this.logBuffer.length > 30) this.logBuffer.shift();
+
+        let pinnedScroll = null;
+
+        for (let si = 0; si < segments.length; si++) {
+            const seg = segments[si];
+            const isLast = si === segments.length - 1;
+
             const div = document.createElement('div');
             div.className = `log-entry log-${cls}`;
             this.logEl.appendChild(div);
 
-            // Page-break: first line of a new epilogue section anchors to top of log
-            let pinnedScroll = null;
-            if (this._epilogueNextAtTop) {
-                this._epilogueNextAtTop = false;
-                if (this._epilogueSpacerEl) {
-                    this._epilogueSpacerEl.remove();
-                    this._epilogueSpacerEl = null;
-                }
+            if (si === 0 && epilogueFlag) {
                 const logRect = this.logEl.getBoundingClientRect();
                 const divRect = div.getBoundingClientRect();
                 const divAbsTop = this.logEl.scrollTop + (divRect.top - logRect.top);
                 pinnedScroll = Math.max(0, divAbsTop - 78);
                 this.logEl.scrollTop = pinnedScroll;
             }
-
-            this.notifyEventTab();
-            this.logBuffer.push({ text, type: cls });
-            if (this.logBuffer.length > 30) this.logBuffer.shift();
 
             const scroll = () => {
                 if (pinnedScroll !== null) {
@@ -813,32 +841,44 @@ const UI = {
                 }
             };
 
-            let tickId = null;
-            let i = 0;
+            await new Promise(resolve => {
+                let tickId = null;
+                let i = 0;
 
-            const complete = () => {
-                clearTimeout(tickId);
-                this._twSkip = null;
-                div.innerHTML = text.replace(/\n/g, '<br>');
-                scroll();
-                resolve();
-            };
+                const showHint = () => {
+                    const hint = document.createElement('span');
+                    hint.className = 'log-continue-hint';
+                    hint.textContent = ' ▼';
+                    div.appendChild(hint);
+                    scroll();
+                    this._twSkip = () => { this._twSkip = null; hint.remove(); resolve(); };
+                };
 
-            this._twSkip = complete;
+                const completeTyping = () => {
+                    clearTimeout(tickId);
+                    div.innerHTML = seg.replace(/\n/g, '<br>');
+                    scroll();
+                    if (isLast) { this._twSkip = null; resolve(); }
+                    else showHint();
+                };
 
-            const tick = () => {
-                i = Math.min(i + 1, text.length);
-                div.innerHTML = text.slice(0, i).replace(/\n/g, '<br>');
-                scroll();
-                if (i < text.length) {
-                    tickId = setTimeout(tick, 20);
-                } else {
-                    this._twSkip = null;
-                    resolve();
-                }
-            };
-            tick();
-        });
+                this._twSkip = completeTyping;
+
+                const tick = () => {
+                    i = Math.min(i + 1, seg.length);
+                    div.innerHTML = seg.slice(0, i).replace(/\n/g, '<br>');
+                    scroll();
+                    if (i < seg.length) {
+                        tickId = setTimeout(tick, 20);
+                    } else {
+                        this._twSkip = null;
+                        if (isLast) resolve();
+                        else showHint();
+                    }
+                };
+                tick();
+            });
+        }
     },
 
     waitForClick(msg = '▾ 点击继续') {
