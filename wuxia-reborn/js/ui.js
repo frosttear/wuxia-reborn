@@ -855,15 +855,19 @@ const UI = {
                     hint.textContent = ' ▼';
                     div.appendChild(hint);
                     scroll();
-                    this._twSkip = () => { this._twSkip = null; hint.remove(); next(); };
+                    this._twSkip = () => {
+                        this._twSkip = null;
+                        hint.remove();
+                        if (isLast) outerResolve();
+                        else next();
+                    };
                 };
 
                 const completeTyping = () => {
                     clearTimeout(tickId);
                     div.innerHTML = seg.replace(/\n/g, '<br>');
                     scroll();
-                    if (isLast) { this._twSkip = null; outerResolve(); }
-                    else showHint();
+                    showHint();
                 };
 
                 this._twSkip = completeTyping;
@@ -876,8 +880,7 @@ const UI = {
                         tickId = setTimeout(tick, 20);
                     } else {
                         this._twSkip = null;
-                        if (isLast) outerResolve();
-                        else showHint();
+                        showHint();
                     }
                 };
                 tick();
