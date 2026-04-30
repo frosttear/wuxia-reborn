@@ -870,9 +870,10 @@ const UI = {
                     if (pinnedScroll !== null) {
                         this.logEl.scrollTop = pinnedScroll;
                     } else {
-                        const elBottom = div.offsetTop + div.offsetHeight;
-                        if (elBottom > this.logEl.scrollTop + this.logEl.clientHeight - 8) {
-                            this.logEl.scrollTop = Math.max(this.logEl.scrollTop, elBottom - this.logEl.clientHeight + 16);
+                        const logRect = this.logEl.getBoundingClientRect();
+                        const elRect = div.getBoundingClientRect();
+                        if (elRect.bottom > logRect.bottom - 8) {
+                            this.logEl.scrollTop += elRect.bottom - logRect.bottom + 40;
                         }
                     }
                 };

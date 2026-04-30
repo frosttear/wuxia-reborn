@@ -635,9 +635,10 @@ const Gallery = {
         const log = this._replayLog;
 
         const scrollIntoView = (el) => {
-            const elBottom = el.offsetTop + el.offsetHeight;
-            if (elBottom > log.scrollTop + log.clientHeight - 8) {
-                log.scrollTop = Math.max(log.scrollTop, elBottom - log.clientHeight + 16);
+            const logRect = log.getBoundingClientRect();
+            const elRect = el.getBoundingClientRect();
+            if (elRect.bottom > logRect.bottom - 8) {
+                log.scrollTop += elRect.bottom - logRect.bottom + 40;
             }
         };
 
