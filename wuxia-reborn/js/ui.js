@@ -1340,6 +1340,7 @@ const UI = {
             html += `成功率 ${Math.round(cs.fleeChance * 100)}% · 失败受 ${preview.incoming.fullDmg} 伤害`;
             html += `<br><span class="preview-muted">每次失败+15%成功率</span>`;
         }
+        bar.style.display = '';
         bar.innerHTML = html;
     },
 
