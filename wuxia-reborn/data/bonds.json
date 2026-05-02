@@ -799,8 +799,12 @@
               "id": "open_the_door",
               "text": "「查到了，也许就知道该怎么办了。」",
               "effects": {
-                "flags": {"li_yunshu_family_path": true},
-                "attributes": {"comprehension": 1},
+                "flags": {
+                  "li_yunshu_family_path": true
+                },
+                "attributes": {
+                  "comprehension": 1
+                },
                 "narrative": "她没有回答。但你注意到，她回去的时候，步子比来的时候慢了一些，像是在想什么。"
               }
             },
@@ -808,7 +812,9 @@
               "id": "let_it_be",
               "text": "「那就先不查。」",
               "effects": {
-                "attributes": {"comprehension": 1},
+                "attributes": {
+                  "comprehension": 1
+                },
                 "narrative": "她点点头，轻声说了句「嗯」，然后沉默地看着城外的夜色。有些事不需要急着去碰。"
               }
             }
@@ -819,7 +825,11 @@
     {
       "level": 4,
       "minAffinity": 65,
-      "conditions": {"flags": {"li_yunshu_family_path": true}},
+      "conditions": {
+        "flags": {
+          "li_yunshu_family_path": true
+        }
+      },
       "steps": [
         {
           "text": "她来找你，带来一叠泛黄的记录——街坊口述、旧案文书、几页她自己的笔记。\n\n「我查到了。」她把那叠东西放在桌上，没有剧烈的情绪，只有一种被证实了的平静，「杀我母亲梅影剑的，是天魔宫的人。他们找上门，是要知道她曾经藏过的一个人在哪里。」\n\n她说完，从怀里取出一个旧木盒：「这是我在梅园旧宅里找到的。母亲藏的。里面是一封没有寄出去的信。」",
@@ -828,7 +838,9 @@
               "id": "read_the_letter",
               "text": "「打开看吧。」",
               "effects": {
-                "attributes": {"comprehension": 2},
+                "attributes": {
+                  "comprehension": 2
+                },
                 "narrative": "信纸已经发黄，字迹仍清晰。梅影剑在游历时遇到了一个从天魔宫出逃、身负重伤的年轻人。她收留了他两个月，为他换了身份，帮他离开。天魔宫多年后找上门，要她说出那人的去向。她没有说。信的末尾只有一句话：「我不知道他后来过得怎样。但他走出那扇门的时候，眼神变了——那就够了。」"
               }
             }
@@ -841,8 +853,13 @@
               "id": "acknowledge_weight",
               "text": "「这不是一件能轻易决定的事。」",
               "effects": {
-                "npcAffinity": {"li_yunshu": 10},
-                "attributes": {"comprehension": 1, "reputation": 1},
+                "npcAffinity": {
+                  "li_yunshu": 10
+                },
+                "attributes": {
+                  "comprehension": 1,
+                  "reputation": 1
+                },
                 "narrative": "「我知道。」她把那叠记录重新叠好，收进怀里，「我只是需要有人知道这件事。」她抬起头，眼神里有一种沉静的重量：「谢谢你陪我查到这里。」"
               }
             }
@@ -931,7 +948,11 @@
     {
       "level": 5,
       "minAffinity": 85,
-      "conditions": {"flags": {"li_yunshu_family_path": true}},
+      "conditions": {
+        "flags": {
+          "li_yunshu_family_path": true
+        }
+      },
       "steps": [
         {
           "text": "她来找你，不是平常拜访的样子——更像是道别，但又不完全是。\n\n「我想去见那个人。」她说，「不是去杀他——大概。我也不知道去了会怎样。但我得去。」\n\n「你愿意陪我去吗？」",
@@ -940,7 +961,10 @@
               "id": "go_together",
               "text": "「走吧。」",
               "effects": {
-                "attributes": {"agility": 1, "innerForce": 1},
+                "attributes": {
+                  "agility": 1,
+                  "innerForce": 1
+                },
                 "narrative": "你们一路走了很久，没有太多话。她手按剑柄，步子平稳，像是把很多东西都想清楚了，或者至少做好了什么都没想清楚就走进去的准备。"
               }
             }
@@ -953,7 +977,10 @@
               "id": "walk_out",
               "text": "陪她走出来",
               "effects": {
-                "attributes": {"constitution": 2, "innerForce": 2},
+                "attributes": {
+                  "constitution": 2,
+                  "innerForce": 2
+                },
                 "narrative": "外面的风很大。她走在前面，步子很稳，不像刚才，也不像从前。\n\n走了很久，她才开口：「我以为我会后悔。」她顿了一下，「还没有。」"
               }
             }
@@ -966,8 +993,13 @@
               "id": "accept_the_name",
               "text": "「梅影。挺好的。」",
               "effects": {
-                "npcAffinity": {"li_yunshu": 15},
-                "attributes": {"constitution": 1, "innerForce": 1},
+                "npcAffinity": {
+                  "li_yunshu": 15
+                },
+                "attributes": {
+                  "constitution": 1,
+                  "innerForce": 1
+                },
                 "narrative": "她没有说话，只是轻轻点了点头。那把剑还插在旁边的木桩上，剑光沉着，不像从前那样好看，但每一寸都有重量。"
               }
             }
@@ -980,7 +1012,7 @@
         "desc": "习得梅影剑意，以承担为根，护人之剑：体质与内力+15%，防御反击时伤害+10%",
         "innerForce": 0.15,
         "constitution": 0.15,
-        "counterDmgBonus": 0.10
+        "counterDmgBonus": 0.1
       }
     },
     {
@@ -1898,6 +1930,19 @@
           "text": "废弃的驿站光线昏暗，积尘厚重。季沧海靠在墙角，伤口用破布草草包扎，渗血还没止。他比燕赤行描述的老了许多，面容憔悴，但眼神仍是清醒的。\n\n看见燕赤行走进来，他的表情没有恐惧，也没有喜悦——只是一种疲惫的认出。\n\n「来了，」他说，嗓音沙哑，「我知道你会来。」\n\n「我上个月去找天魔了，」他没等燕赤行开口，自己先说，「找了十年，终于摸到他一处据点，以为能行。」他低头看了一眼自己的伤，苦笑了一下，「高估了自己。」\n\n「说清楚，」燕赤行的声音很轻，「含光门那一夜，你在哪里。」\n\n季沧海闭了一下眼。\n\n「师父在你下山之前，托人给我送了封信，说你在南坡迷路了，让我去接你。」他慢慢说，「我去了。南坡什么都没有，是空的。等我反应过来，山顶已经在烧了。我往回跑，半路上撞上了一队人——乌鸦印记，十几号，把我围在山道上。打了将近一个时辰，才冲出去。」\n\n「等我跑回山门……你正好从里面冲出来。」\n\n燕赤行的手从刀柄上慢慢移开，垂在身侧。\n\n「那封信是假的，」季沧海看着他，「把我从山上诱走的，是天魔的人。那一夜含光门里有没有内鬼，我不知道。但内鬼不是我。」\n\n「你后来听说的那些话——说我含光门出事前多次跟外人秘密会面。」季沧海抬起头，「那些『亲眼见过』的人，你找过他们吗？还能找到几个？」\n\n沉默。\n\n「天魔让我活着，」季沧海慢慢说，「是因为死了我，你就会去找他。活着的我，可以让你一直追着我跑，永远往不了那个方向。他需要时间——我就是他买时间的代价。」\n\n他颤抖着从怀里取出一个皮质封套，推到燕赤行脚边：「这是我这十年查到的。天魔的来历，手下，他在江湖上各处的布局。我没能用上——你拿去。」\n\n燕赤行盯着那个封套，久久没有动。\n\n「大哥，」他的嗓音忽然卡住了——那是他第一次，当着你的面叫出这两个字。\n\n就在这时，驿站外传来低沉的脚步声，不止一人。",
           "choices": [
             {
+              "id": "question_belief",
+              "text": "「你相信他了？」",
+              "effects": {
+                "flags": {
+                  "yan_chixing_hatred_path": true
+                },
+                "attributes": {
+                  "comprehension": 1
+                },
+                "narrative": "他沉默了很久。「信又怎样，三十个人还是死了。我恨了七年——如果这个恨是错的，那这七年是什么？」\n\n他把季沧海给的那个皮质封套留在地上，走了。没有回头。"
+              }
+            },
+            {
               "id": "protect_both",
               "text": "拔刀，先护住两人再说",
               "effects": {
@@ -1934,15 +1979,6 @@
                 "combat": "han_night_attackers",
                 "narrative": "外面的人冲进来，战斗短暂而激烈。等尘埃落定，季沧海挣扎着站了起来，背靠墙，手里握着刀。三个人站在那间破驿站里，谁也没有先开口。\n\n最后是燕赤行弯腰把皮质封套从地上拾起来，收进怀里。他走到季沧海面前，站了很久，把那枚旧的含光门令牌取出，放在他手上：「师父的东西，你比我更应该守着。」\n\n他对你说：「走。」\n\n你知道他放下了——不是原谅，而是那七年的恨，终于有了一个可以落地的方向。"
               }
-            },
-            {
-              "id": "question_belief",
-              "text": "「你相信他了？」",
-              "effects": {
-                "flags": {"yan_chixing_hatred_path": true},
-                "attributes": {"comprehension": 1},
-                "narrative": "他沉默了很久。「信又怎样，三十个人还是死了。我恨了七年——如果这个恨是错的，那这七年是什么？」\n\n他把季沧海给的那个皮质封套留在地上，走了。没有回头。"
-              }
             }
           ]
         }
@@ -1951,7 +1987,11 @@
     {
       "level": 5,
       "minAffinity": 80,
-      "conditions": {"flags": {"yan_chixing_hatred_path": true}},
+      "conditions": {
+        "flags": {
+          "yan_chixing_hatred_path": true
+        }
+      },
       "steps": [
         {
           "text": "你四处打听，才知道他去了哪里——他一个人去找天魔了。没有情报，没有盟友，只有一把刀和一个方向。\n\n你找到他的时候，他在城郊一处破庙里，靠着断墙坐着，衣服上有干涸的血迹。没能靠近天魔，在外围的遭遇战里就倒下了。\n\n他看见你进来，只是「嗤」了一声，没有说话。",
@@ -1960,7 +2000,10 @@
               "id": "sit_with_him",
               "text": "什么都不说，在他旁边坐下来",
               "effects": {
-                "attributes": {"constitution": 1, "comprehension": 1},
+                "attributes": {
+                  "constitution": 1,
+                  "comprehension": 1
+                },
                 "narrative": "你们就那么坐着，外头的风把破庙的门吹得一下一下响。他也没有开口的意思，你也没有。"
               }
             }
@@ -1973,8 +2016,12 @@
               "id": "name_the_real_target",
               "text": "「也许你在恨那个没能救下他们的自己。」",
               "effects": {
-                "npcAffinity": {"yan_chixing": 8},
-                "attributes": {"comprehension": 2},
+                "npcAffinity": {
+                  "yan_chixing": 8
+                },
+                "attributes": {
+                  "comprehension": 2
+                },
                 "narrative": "他没有回答。良久之后，他站起来，拍了拍身上的灰，「走了。」\n\n他没有说去哪里——不是走向天魔，也不是走向含光门，就是走了，去向不明。\n\n你站在破庙门口，看着他的背影消失在暮色里。有些问题这一世解不了。"
               }
             },
@@ -1982,8 +2029,13 @@
               "id": "no_answer",
               "text": "「不知道。但你还活着，还有时间找答案。」",
               "effects": {
-                "npcAffinity": {"yan_chixing": 6},
-                "attributes": {"comprehension": 1, "constitution": 1},
+                "npcAffinity": {
+                  "yan_chixing": 6
+                },
+                "attributes": {
+                  "comprehension": 1,
+                  "constitution": 1
+                },
                 "narrative": "他没有回答。良久之后，他站起来，「走了。」\n\n去向不明。你站在破庙门口，不知道这算不算是某种结束，还是只是这一世他能走到的地方。"
               }
             }
@@ -1996,7 +2048,7 @@
         "desc": "走过未解之路的共鸣：气血+8%，在气血低于30%时，攻击+15%",
         "constitution": 0.08,
         "lowHpAtkBonus": 0.15,
-        "lowHpAtkThreshold": 0.30
+        "lowHpAtkThreshold": 0.3
       }
     },
     {
@@ -2357,8 +2409,12 @@
               "id": "piece_it_together",
               "text": "陪她把所有线索整理一遍",
               "effects": {
-                "flags": {"su_qing_mission_path": true},
-                "attributes": {"comprehension": 2},
+                "flags": {
+                  "su_qing_mission_path": true
+                },
+                "attributes": {
+                  "comprehension": 2
+                },
                 "narrative": "天亮的时候，她把医书合上，抬起头。眼神里不是悲伤，是某种平静的、被证实了的东西，还有一个问题：「师父知道吗？」"
               }
             },
@@ -2366,7 +2422,9 @@
               "id": "leave_it_uncertain",
               "text": "「也许只是巧合。」",
               "effects": {
-                "attributes": {"comprehension": 1},
+                "attributes": {
+                  "comprehension": 1
+                },
                 "narrative": "她沉默地点了头，没有反驳，也没有完全接受。有些事情，她还需要更多时间。"
               }
             }
@@ -2456,7 +2514,11 @@
     {
       "level": 5,
       "minAffinity": 80,
-      "conditions": {"flags": {"su_qing_mission_path": true}},
+      "conditions": {
+        "flags": {
+          "su_qing_mission_path": true
+        }
+      },
       "steps": [
         {
           "text": "师父恢复之后，把一件从没告诉苏青的事说出来。\n\n那是一份残缺的记录——噬魂真经修炼者的病案、解毒方碎片，他二十年来私下记录，但始终只是「记录」，没有对抗。\n\n「我藏着不说，是为了保护你，」他说，「如果天魔知道你掌握这些，你便成了靶子。」\n\n苏青的反应不是感动，是平静的愤怒：「你让我找了五年……是为了保护我？」\n\n他反问：「告诉你了，你会停下来吗？」\n\n她没有回答。",
@@ -2465,7 +2527,10 @@
               "id": "take_the_records",
               "text": "「把记录给我看。」",
               "effects": {
-                "attributes": {"comprehension": 2, "innerForce": 1},
+                "attributes": {
+                  "comprehension": 2,
+                  "innerForce": 1
+                },
                 "narrative": "她接过那叠纸，没有说什么，开始读。师父在一边坐着，沉默地看着她的背影。"
               }
             }
@@ -2478,9 +2543,16 @@
               "id": "take_the_document",
               "text": "接下这份文书",
               "effects": {
-                "npcAffinity": {"su_qing": 12},
-                "attributes": {"comprehension": 2, "reputation": 1},
-                "flags": {"su_qing_diagnosis_ready": true},
+                "npcAffinity": {
+                  "su_qing": 12
+                },
+                "attributes": {
+                  "comprehension": 2,
+                  "reputation": 1
+                },
+                "flags": {
+                  "su_qing_diagnosis_ready": true
+                },
                 "narrative": "那叠文书写得很密，每一页都是从病案到推论的细致工夫。你把它收好——这是她完成师父没有完成的事，也是她第一次用自己的方式去对抗那个她一直在追的东西。"
               }
             }
@@ -2492,10 +2564,10 @@
         "name": "脉诊知敌",
         "desc": "噬魂真经研究的结晶：对内力≥20的敌人，战斗前三轮伤害+10%；天魔大战中天魔HP上限降低20%",
         "diagnosisBonus": true,
-        "diagnosisDmgBonus": 0.10,
+        "diagnosisDmgBonus": 0.1,
         "diagnosisDmgRounds": 3,
         "diagnosisMinInnerForce": 20,
-        "tianmoPenalty": 0.20
+        "tianmoPenalty": 0.2
       }
     },
     {
@@ -2891,8 +2963,12 @@
               "id": "push_her_back",
               "text": "「你还没想清楚。不要为了我做这个决定。」",
               "effects": {
-                "flags": {"ling_xue_blade_path": true},
-                "attributes": {"comprehension": 1},
+                "flags": {
+                  "ling_xue_blade_path": true
+                },
+                "attributes": {
+                  "comprehension": 1
+                },
                 "narrative": "她怔了一下。沉默很久，然后走了。\n\n她回去了——不是因为害怕，是因为你说对了：她不知道自己是在选择新的路，还是只是选择了一个新的人跟着走。这个问题，她需要自己找答案。"
               }
             }
@@ -2903,7 +2979,11 @@
     {
       "level": 5,
       "minAffinity": 80,
-      "conditions": {"flags": {"ling_xue_blade_path": true}},
+      "conditions": {
+        "flags": {
+          "ling_xue_blade_path": true
+        }
+      },
       "steps": [
         {
           "text": "她来了。\n\n以天魔宫首席弟子的身份，手按剑柄，眼神里没有你从前见过的那种质疑——只有一种极冷静的东西，像是下定了什么决心。\n\n「师父知道我来了。」她说，「我需要自己找到答案，不能从你这里借。」\n\n「这一战，我要自己知道我信的是什么。」",
@@ -2925,8 +3005,13 @@
               "id": "let_her_go",
               "text": "看着她离开",
               "effects": {
-                "npcAffinity": {"ling_xue": 10},
-                "attributes": {"comprehension": 2, "agility": 1},
+                "npcAffinity": {
+                  "ling_xue": 10
+                },
+                "attributes": {
+                  "comprehension": 2,
+                  "agility": 1
+                },
                 "narrative": "她的背影走进了夜色里。有些事不能替人完成——只能陪他们走到他们能走的地方，然后等。"
               }
             }
@@ -2938,7 +3023,7 @@
         "name": "未解之刃",
         "desc": "与凌雪未竟之缘的共鸣：敏捷+15%，悟性+10%",
         "agility": 0.15,
-        "comprehension": 0.10
+        "comprehension": 0.1
       }
     },
     {
