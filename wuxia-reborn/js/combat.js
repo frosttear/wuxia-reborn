@@ -431,6 +431,19 @@ const Combat = {
             }
         }
 
+        // ── Per-round passive healing (e.g. 青心丹药) ────────────────────────────
+        if (!combatOver) {
+            const healPassive = (char.passives || []).find(p => p.combatHealPctPerRound);
+            if (healPassive) {
+                const hpMax = Character.getHPMax(char, job);
+                const healAmt = Math.max(1, Math.floor(hpMax * healPassive.combatHealPctPerRound));
+                const before = char.hp;
+                Character.healHP(char, healAmt, job);
+                const actual = char.hp - before;
+                if (actual > 0) lines.push(`【<b>${healPassive.name}</b>】药力流转，恢复 <b>${actual}</b> 气血（剩余 ${char.hp}）。`);
+            }
+        }
+
         // ── Preview enemy's NEXT action (accuracy = f(playerComp / enemyComp)) ────
         // Cap: 普通对手80%，天魔60%（威压遮蔽），剑魂50%（神意难测）；无相剑意→百分百洞察
         if (combatOver) {

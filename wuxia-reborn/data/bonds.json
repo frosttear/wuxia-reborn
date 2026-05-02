@@ -2266,9 +2266,9 @@
       "passive": {
         "id": "su_qing_legacy",
         "name": "青心丹药",
-        "desc": "战后自动清除伤势；每月额外回复100%的损失气血",
+        "desc": "战斗中每回合恢复5%上限气血；战后自动清除伤势",
         "autoHealInjury": true,
-        "hpRegenPctMissing": 1
+        "combatHealPctPerRound": 0.05
       },
       "steps": [
         {
