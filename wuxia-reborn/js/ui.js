@@ -850,6 +850,7 @@ const UI = {
         return new Promise(outerResolve => {
             const runSegment = (si) => {
                 if (si >= segments.length) { outerResolve(); return; }
+                if (si > 0) pinnedScroll = null;
 
                 const seg = segments[si];
                 const isLast = si === segments.length - 1;
