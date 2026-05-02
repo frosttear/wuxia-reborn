@@ -6,13 +6,13 @@ const GALLERY_DATA = [
     { id: 'wuxiang-unlock',               name: '无相剑意',             hint: '完成「无相剑意」任务链',                   category: 'bosses' },
     { id: 'zhushi-zhi-wo',               name: '诸世共鸣',             hint: '完成「诸世之我」任务链——所有轮回的自己，聚于一念', category: 'bosses' },
     { id: 'truth-shards',                name: '碎片真相·五物对证',    hint: '完成「碎片真相」任务链——将五人的记忆碎片，一一摆在老者面前', category: 'bosses' },
-    { id: 'elder-true-form',              name: '设计者显形',           hint: '首次面对轮回的设计者——沈玄清的真实目的浮出水面', category: 'bosses', secret: true },
+    { id: 'elder-true-form',              name: '剑魂·吞噬',            hint: '以力量击败剑魂，却在胜利的瞬间被那道千年剑意吞噬——余光中，白发身影强行启动了玉佩', category: 'bosses', secret: true },
     // 传说瞬间
     { id: 'tianmo-and-jianhun',           name: '天魔与剑魂',           hint: '击败天魔后，玉牌碎裂——更古老的存在从碎片中浮现', category: 'bosses' },
     { id: 'sword-soul-win',               name: '斩破剑魂',             hint: '击败千年剑意——剑魂',                       category: 'bosses'  },
     { id: 'sword-soul-lose',              name: '败于剑意',             hint: '在与剑魂的对决中落败',                       category: 'bosses'  },
-    { id: 'designer-win',                 name: '轮回终焉',             hint: '击败轮回的设计者——沈玄清，九百年的操控，化为尘烬', category: 'bosses', secret: true },
-    { id: 'designer-lose',               name: '困于轮回',             hint: '在轮回设计者的最终审判中落败，再度坠入轮回',   category: 'bosses', secret: true },
+    { id: 'designer-win',                 name: '九百年前·终结',        hint: '以信念和人间之力，在九百年前终结了剑魂的本源——长夜将尽，曙光初破', category: 'bosses', secret: true },
+    { id: 'designer-lose',               name: '九百年前·败北',        hint: '在那道千年剑意的本源面前力竭倒下，尚未准备好', category: 'bosses', secret: true },
     { id: 'tianmo-win',                   name: '天魔陨落',             hint: '击败天魔，完成二十岁的宿命',                 category: 'bosses'  },
     { id: 'tianmo-lose',                  name: '魔焰吞噬',             hint: '在天魔降临时力战不敌',                       category: 'bosses'  },
     // 羁绊情缘 — 王铁

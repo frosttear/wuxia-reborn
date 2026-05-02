@@ -1246,9 +1246,7 @@ const Engine = {
             if (enemy.isTrueFinalBoss) {
                 char.flags.lost_to_final_boss = true;
                 char.flags.fought_final_boss = true;
-                if (!char.flags.zhushi_chain_done || !char.flags.truth_assembled) {
-                    UI.addLog('【提示】击败那个老者需要理解与力量的结合。下一轮回：先通过「碎片真相」任务链看透九百年的棋局，再以「诸世之我」汇聚所有世界线的自己——两者皆备，方可触发最终决战。', 'info');
-                }
+                UI.addLog('【提示】信念和人间之力，才是终结它的根源。下一轮回：与王铁、李云舒、神秘老者、燕赤行、苏青、凌雪六人结下真正的羁绊，再踏上这条路。', 'info');
                 UI.addIllustration('designer-lose');
                 UI.showCombatReturnBtn('lost', () => {
                     UI.hideCombatOverlay();
@@ -1415,34 +1413,40 @@ const Engine = {
     triggerFinalBossNow() {
         const { char } = this.state;
         if (!char || this.state.gamePhase !== 'idle') return;
-        const hasTruth  = !!(char.flags && char.flags.truth_assembled);
-        const hasZhushi = !!(char.flags && char.flags.zhushi_chain_done);
-        if (!hasTruth || !hasZhushi) return;
+        if (!this.allBondsComplete(char)) return;
 
-        if (!confirm('【真相与共鸣】你已看透棋局，也已汇聚诸世之力。跳过剩余时间，直接前往那场最终的对决？')) return;
+        if (!confirm('【羁绊汇聚】你与所有同行者都结下了真正的羁绊。跳过剩余时间，直接前往那场最终的对决？')) return;
 
         char.ageMonths = Math.max(char.ageMonths, 240);
         char.flags.boss_triggered = true;
-        // Always go directly to the elder: truth gives understanding, zhushi gives power
-        if (typeof Gallery !== 'undefined') Gallery.unlockIllustration('elder-true-form');
-        UI.addLog('【真相与共鸣】你明白了来龙去脉，也积聚了斩断那道枷锁所需的力量。不需要再绕路——你知道去哪里，也知道去做什么。', 'unlock');
-        const elderEvent = this.state.events.find(e => e.id === 'elder_truth_form_appears');
-        if (elderEvent) this.triggerEvent(elderEvent);
+        UI.addLog('【羁绊汇聚】一切准备就绪——你知道去哪里，也知道该带什么去面对它。', 'unlock');
+        const bossEvent = this.state.events.find(e => e.id === 'hidden_boss_appears');
+        if (bossEvent) this.triggerEvent(bossEvent);
     },
 
     triggerVictory(isTrueEnding) {
         const { char } = this.state;
 
         if (isTrueEnding) {
-            // Defeating 剑魂 always leads directly to the true final boss (沈玄清)
+            // Route based on whether bonds are complete:
+            // true path (all bonds) → elder_truth_form_appears (reveal + 九百年前)
+            // wrong path (missing bonds) → elder_true_form_appears (absorption)
+            const truePath = this.allBondsComplete(char);
             this.state.gamePhase = 'idle';
             UI.updateControls(this.state);
             UI.addLog('剑意化为飞灰，玉牌归于沉寂。', 'win');
             UI.addLog('你以为，一切终于结束了……', 'system');
             setTimeout(() => {
                 this.state.gamePhase = 'idle';
-                const elderEvent = this.state.events.find(e => e.id === 'elder_true_form_appears');
-                if (elderEvent) this.triggerEvent(elderEvent);
+                if (truePath) {
+                    const elderEvent = this.state.events.find(e => e.id === 'elder_truth_form_appears');
+                    if (elderEvent) this.triggerEvent(elderEvent);
+                } else {
+                    char.flags.elder_true_form_seen = true;
+                    if (typeof Gallery !== 'undefined') Gallery.unlockIllustration('elder-true-form');
+                    const elderEvent = this.state.events.find(e => e.id === 'elder_true_form_appears');
+                    if (elderEvent) this.triggerEvent(elderEvent);
+                }
             }, 2500);
             return;
         }
@@ -1794,7 +1798,7 @@ const Engine = {
             if (f.boss_lost)             push('tianmo-lose');
             if (f.true_final_boss_beaten) push('designer-win');
             if (f.lost_to_final_boss)    push('designer-lose');
-            if (f.elder_true_form_seen || f.zhushi_chain_done) push('elder-true-form');
+            if (f.elder_true_form_seen) push('elder-true-form');
             if (f.li_afterstory_done)    push('li-yunshu-afterstory');
             if (f.su_afterstory_done)    push('su-qing-afterstory');
             if (f.lx_afterstory_done)    push('ling-xue-afterstory');
@@ -1897,7 +1901,7 @@ const Engine = {
         if (!char) { alert('没有存档可以导出'); return; }
         this.saveGame();
         const payload = {
-            v: '0.26.73',
+            v: '0.26.74',
             char: JSON.parse(localStorage.getItem('wuxia_save')),
         };
         const encoded = btoa(unescape(encodeURIComponent(JSON.stringify(payload))));

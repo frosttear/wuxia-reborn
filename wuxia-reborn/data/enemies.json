@@ -397,7 +397,7 @@
       "comprehension": 5
     },
     "loseEffects": {},
-    "isHiddenBoss": true,
+    "isTrueFinalBoss": true,
     "skills": [
       {
         "id": "origin_slash",

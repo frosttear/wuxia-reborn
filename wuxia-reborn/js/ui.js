@@ -282,6 +282,15 @@ const UI = {
             constitution: 'at-constitution', innerForce: 'at-inner-force',
             comprehension: 'at-comprehension', luck: 'at-luck', reputation: 'at-reputation'
         };
+        const ATTR_DESC = {
+            strength:      '攻击力来源，影响每次出招伤害',
+            agility:       '影响闪避率与防御力',
+            constitution:  '决定最大气血上限',
+            innerForce:    '提供气盾减伤与技能增幅',
+            comprehension: '加快成长速度，影响境界突破',
+            luck:          '触发属性双倍收益与战斗闪避',
+            reputation:    '江湖地位，影响人脉与特殊机遇',
+        };
         const attrsEl = document.getElementById('attributes');
         attrsEl.innerHTML = '';
         const attack = Character.getAttackPower(char, job);
@@ -290,7 +299,8 @@ const UI = {
             const val = char.attributes[key] || 0;
             const row = document.createElement('div');
             row.className = `attr-row ${ATTR_COLOR[key] || ''}`;
-            row.innerHTML = `<span class="attr-name">${ATTR_NAMES[key]}</span><span class="attr-val">${val}</span>`;
+            row.title = ATTR_DESC[key] || '';
+            row.innerHTML = `<span class="attr-name">${ATTR_NAMES[key]}</span><span class="attr-val">${val}</span><span class="attr-desc-hint">${ATTR_DESC[key] || ''}</span>`;
             attrsEl.appendChild(row);
         }
         // Combat stats + derived stat effects
@@ -1514,13 +1524,15 @@ const UI = {
             this.chainBtn.disabled = busy;
         }
 
-        // Show final boss shortcut only when BOTH 碎片真相 and 诸世之我 are complete
+        // Show final boss shortcut only when all bonds are complete
         const finalBossBtn = document.getElementById('finalBossBtn');
         if (finalBossBtn) {
             const char = state.char;
-            const chainDone = char && char.flags && char.flags.zhushi_chain_done && char.flags.truth_assembled;
+            const bonds = state.bonds || {};
+            const allBondsDone = char && Object.keys(bonds).length > 0 &&
+                Object.entries(bonds).every(([npcId, levels]) => (char.bondLevels || {})[npcId] >= levels.length);
             const bossNotYetFired = char && !(char.flags && char.flags.boss_triggered);
-            finalBossBtn.style.display = (chainDone && bossNotYetFired && !busy) ? '' : 'none';
+            finalBossBtn.style.display = (allBondsDone && bossNotYetFired && !busy) ? '' : 'none';
             finalBossBtn.disabled = busy;
         }
 
