@@ -1575,9 +1575,11 @@ const Engine = {
                 lines: [
                     { text: '【神秘老者 · 长夜将晓】', cls: 'epilogue-title' },
                     { text: '轮回锁断的那一刻，盘踞在他识海里九百年的东西，随之烟消云散。', cls: 'epilogue' },
-                    { text: '你在一间简陋的客房里找到他——脊背已不再挺直，气息也浅，眼神里没有了那种洞察一切的透彻，只剩下一个极度疲倦的老人。', cls: 'epilogue' },
-                    { text: '他没有辩解，也没有解释。只是看着你，开口说：「老夫欠你的，比你以为的多得多。」', cls: 'epilogue-dialogue' },
-                    { text: '你没有答话。这件事的是非曲直，你已经在走完的那条路上想清楚了——有些问题，不需要当面摊开。', cls: 'epilogue' },
+                    { text: '你在一间简陋的客房里找到他——脊背终于不再绷着了，气息也浅，眼神里没有了那种洞察一切的透彻，只剩下一个极度疲倦的老人。', cls: 'epilogue' },
+                    { text: '但那是另一种疲倦。不是被重担压垮，而是重担终于放下了的那种。', cls: 'epilogue' },
+                    { text: '他看着你进来，只是安静地看了一会儿，才开口：「终于。」', cls: 'epilogue-dialogue' },
+                    { text: '「九百年了。」', cls: 'epilogue-dialogue' },
+                    { text: '那两个字里没有悲伤，没有感慨。只是一个事实，说出来之后，连呼吸都轻了。', cls: 'epilogue-win' },
                     { text: '沈微尘是自己找来的。她听见门开的声音，在门口站了很久，才轻声叫了一声：「爹。」', cls: 'epilogue' },
                     { text: '那一声，让他眼里有什么东西——像是熄了很久的火，重新有了一点温度。', cls: 'epilogue-win' },
                     { text: '你悄悄退出去，把门带上。外面天光正好，风里有一点草木的气味。那是他们自己的事了。', cls: 'epilogue' },
@@ -1895,7 +1897,7 @@ const Engine = {
         if (!char) { alert('没有存档可以导出'); return; }
         this.saveGame();
         const payload = {
-            v: '0.26.71',
+            v: '0.26.73',
             char: JSON.parse(localStorage.getItem('wuxia_save')),
         };
         const encoded = btoa(unescape(encodeURIComponent(JSON.stringify(payload))));
