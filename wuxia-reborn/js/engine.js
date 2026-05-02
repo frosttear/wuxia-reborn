@@ -1010,6 +1010,14 @@ const Engine = {
                 enemy.attack = Math.max(0, enemy.attack - 25);
                 UI.addLog('「师父，你输了——不是输给他，是输给你自己。」\n\n凌雪站在天魔面前，那句话如一把刀，刺进了陆无归的心。天魔神情一滞，气机微乱。', 'dialog');
             }
+
+            // 王铁: 纯叙事内心独白——「为什么要赢」的重量
+            if ((bl.wang_tie || 0) >= 1) {
+                UI.addLog('战前某个瞬间，你想到了王铁。', 'system');
+                UI.addLog('不是因为他说过「为什么要赢」——他没有。他只是在荒坡上蹲着，把酒一口一口倒在地上，把那些名字一个一个说出来：赵四海、刘大炮、马半仙……', 'epilogue');
+                UI.addLog('那块铁牌沉在腰间。「信义」两个字磨平了，但份量一点没减。', 'epilogue');
+                UI.addLog('为什么要赢。不是为了什么大道理——是为了走完他们没走完的路，带着他们没送到的东西，继续往前走。', 'epilogue');
+            }
         }
 
         const job = this.getJob(char.job);
