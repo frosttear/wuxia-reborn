@@ -566,7 +566,7 @@ const Engine = {
             if (!npc) continue;
             const npcBonds = bonds[npcId];
             const currentLevel = (char.bondLevels || {})[npcId] || 0;
-            const bondEvent = Array.isArray(npcBonds) ? npcBonds.find(b => b.level === currentLevel + 1) : null;
+            const bondEvent = Array.isArray(npcBonds) ? npcBonds.filter(b => b.level === currentLevel + 1).find(b => this.checkConditions(b.conditions || {})) : null;
             const affinity = NPCSystem.getAffinity(char, npcId);
             const bondReady = !!(bondEvent &&
                 !((char.bondEventsDone || {})[`${npcId}_${bondEvent.level}`]) &&
@@ -598,7 +598,7 @@ const Engine = {
         }
 
         const currentLevel = char.bondLevels[npcId] || 0;
-        const bondEvent = npcBonds.find(b => b.level === currentLevel + 1);
+        const bondEvent = npcBonds.filter(b => b.level === currentLevel + 1).find(b => this.checkConditions(b.conditions || {}));
         const affinity = NPCSystem.getAffinity(char, npcId);
         const bondReady = !!(bondEvent &&
             !char.bondEventsDone[`${npcId}_${bondEvent.level}`] &&
@@ -926,7 +926,7 @@ const Engine = {
     allBondsComplete(char) {
         const bonds = this.state.bonds;
         for (const npcId in bonds) {
-            const maxLevel = bonds[npcId].length;
+            const maxLevel = Math.max(...bonds[npcId].map(b => b.level));
             if ((char.bondLevels[npcId] || 0) < maxLevel) return false;
         }
         return true;
@@ -969,6 +969,49 @@ const Engine = {
                 hp:      Math.max(enemy.hp,      Math.round((peak.hp  || 500) * 1.4)),
             };
         }
+        // NPC effects on 天魔 battle
+        if (enemy.isFinalBoss) {
+            const f = char.flags || {};
+            const bl = char.bondLevels || {};
+
+            // 凌雪刀刃线: 拦路，须先过她这关
+            if (f.ling_xue_blade_path && (bl.ling_xue || 0) >= 5 && !f.ling_xue_tianmo_gate_passed) {
+                char.flags.ling_xue_tianmo_gate_passed = true;
+                const gateEnemy = this.getEnemy('ling_xue_blade');
+                if (gateEnemy) {
+                    UI.addLog('【刀刃问道】凌雪以天魔首席弟子的身份出现在你眼前，手按剑柄。「我需要自己找到答案，不能从你这里借。」', 'system');
+                    this.startCombat({
+                        ...gateEnemy,
+                        chainCombat: 'tianmo',
+                        chainCombatNarrative: '',
+                        winNarrative: '「……还没有答案，但我知道去哪里找了。」\n\n她没有死，也没有留下。带着未解决的问题，她独自离开了这条路。\n\n天魔，就在前方。',
+                    }, postNarrative);
+                }
+                return;
+            }
+
+            // Clone enemy to apply NPC debuffs
+            enemy = { ...enemy };
+
+            // 苏青济世线: 天魔 HP -20%
+            if (f.su_qing_mission_path && (bl.su_qing || 0) >= 5) {
+                enemy.hp = Math.round(enemy.hp * 0.8);
+                UI.addLog('【脉诊知敌】苏青整理的噬魂真经诊断文书，让你明晰天魔本源的弱点——天魔气血上限削减两成。', 'unlock');
+            }
+
+            // 李云舒家族压力线: 天魔 defense -25
+            if (f.li_yunshu_family_path && (bl.li_yunshu || 0) >= 5) {
+                enemy.defense = Math.max(0, enemy.defense - 25);
+                UI.addLog('【梅影剑意】李云舒所查到的天魔宫内情，让你对天魔的防御布置了然于胸——天魔防御降低。', 'unlock');
+            }
+
+            // 凌雪自由线: 天魔 attack -25
+            if (!f.ling_xue_blade_path && (bl.ling_xue || 0) >= 5) {
+                enemy.attack = Math.max(0, enemy.attack - 25);
+                UI.addLog('「师父，你输了——不是输给他，是输给你自己。」\n\n凌雪站在天魔面前，那句话如一把刀，刺进了陆无归的心。天魔神情一滞，气机微乱。', 'dialog');
+            }
+        }
+
         const job = this.getJob(char.job);
         const cs = Combat.initState(char, enemy, job);
         cs.postNarrative = postNarrative || '';
@@ -979,6 +1022,15 @@ const Engine = {
             UI.addLog('【羁绊未满】你感到胸中力量空缺……或许，集齐所有羁绊才能撼动此敌。', 'info');
         }
         if (enemy.isFinalBoss || enemy.isHiddenBoss || enemy.isTrueFinalBoss) cs.noFlee = true;
+        // 燕赤行放下执念线: player attack buff for 天魔 battle
+        if (enemy.isFinalBoss) {
+            const f = char.flags || {};
+            const bl = char.bondLevels || {};
+            if (!f.yan_chixing_hatred_path && (bl.yan_chixing || 0) >= 5) {
+                cs.yanBattleBonus = 30;
+                UI.addLog('【含光门三十人】燕赤行低声念出含光门三十个人的名字，一个一个，沉甸甸地落在你肩上，化为力量——攻击提升。', 'unlock');
+            }
+        }
         if (enemy.isTrueFinalBoss && (char.passives || []).some(p => p.rebirthPower)) {
             const MARK_FLAGS = ['mark_warrior_power', 'mark_hermit_power', 'mark_wuxiang_power', 'mark_rebirth_power', 'mark_afterstory_power'];
             const markCount = MARK_FLAGS.filter(m => (char.flags || {})[m]).length;
@@ -1461,6 +1513,22 @@ const Engine = {
             this.state.gamePhase = 'victory';   // block player actions during transition
             UI.updateControls(this.state);
             UI.addLog('天魔轰然倒下。江湖归于平静，风也停了。', 'win');
+
+            // 燕赤行放下执念线: 落败后在战场边缘，念出含光门三十人名字
+            const f = char.flags || {};
+            const bl = char.bondLevels || {};
+            if (!f.yan_chixing_hatred_path && (bl.yan_chixing || 0) >= 5) {
+                UI.addLog('战场沉寂了许久。', 'system');
+                UI.addLog('战场边缘，一个沉默的身影。燕赤行不知从何时出现在那里，望着倒下的陆无归，低声念出三十个名字——含光门那些人的名字，一个一个，不急不缓，像是他七年欠下的债，此刻终于还清。', 'epilogue');
+                UI.addLog('他念完了，抬起头，看了你一眼，什么都没说，走了。', 'epilogue');
+            }
+
+            // 李云舒家族线 + 燕赤行放下执念线 cross-NPC easter egg
+            if (f.li_yunshu_family_path && (bl.li_yunshu || 0) >= 5 && !f.yan_chixing_hatred_path && (bl.yan_chixing || 0) >= 5) {
+                UI.addLog('李云舒后来说起母亲和那个人的故事。燕赤行才第一次知道，季沧海能活到今天，有一个叫梅影剑的女人付出过什么代价。', 'epilogue');
+                UI.addLog('无人明说，无人追问。只是一个停顿，和沉默。', 'epilogue');
+            }
+
             UI.addLog('你以为，一切终于结束了……', 'system');
             setTimeout(() => {
                 this.state.gamePhase = 'idle';  // restore before triggering event
@@ -1901,7 +1969,7 @@ const Engine = {
         if (!char) { alert('没有存档可以导出'); return; }
         this.saveGame();
         const payload = {
-            v: '0.26.74',
+            v: '0.27.0',
             char: JSON.parse(localStorage.getItem('wuxia_save')),
         };
         const encoded = btoa(unescape(encodeURIComponent(JSON.stringify(payload))));

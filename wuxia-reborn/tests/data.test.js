@@ -148,12 +148,17 @@ describe('bonds.json - NPC bond structure', () => {
     test.each(npcIds)('NPC "%s" has 5 bond chapters', (npcId) => {
         const chapters = bonds[npcId];
         expect(Array.isArray(chapters)).toBe(true);
-        expect(chapters.length).toBe(5);
+        // Conditional alternate-path entries (those with a "conditions" field) are allowed
+        // in addition to the standard 5 chapters.
+        const mainChapters = chapters.filter(c => !c.conditions);
+        expect(mainChapters.length).toBe(5);
     });
 
     test.each(npcIds)('NPC "%s" last chapter has a passive', (npcId) => {
         const chapters = bonds[npcId];
-        const last = chapters[chapters.length - 1];
+        // The last default (non-conditional) chapter must have a passive.
+        const mainChapters = chapters.filter(c => !c.conditions);
+        const last = mainChapters[mainChapters.length - 1];
         expect(last.passive).toBeDefined();
         expect(typeof last.passive.id).toBe('string');
         expect(typeof last.passive.name).toBe('string');
@@ -161,15 +166,19 @@ describe('bonds.json - NPC bond structure', () => {
 
     test.each(npcIds)('NPC "%s" chapters have ascending levels', (npcId) => {
         const chapters = bonds[npcId];
-        for (let i = 0; i < chapters.length; i++) {
-            expect(chapters[i].level).toBe(i + 1);
+        // Only check ascending level order for default (non-conditional) entries.
+        const mainChapters = chapters.filter(c => !c.conditions);
+        for (let i = 0; i < mainChapters.length; i++) {
+            expect(mainChapters[i].level).toBe(i + 1);
         }
     });
 
     test.each(npcIds)('NPC "%s" chapters have ascending minAffinity', (npcId) => {
         const chapters = bonds[npcId];
-        for (let i = 1; i < chapters.length; i++) {
-            expect(chapters[i].minAffinity).toBeGreaterThan(chapters[i - 1].minAffinity);
+        // Only check ascending minAffinity for default (non-conditional) entries.
+        const mainChapters = chapters.filter(c => !c.conditions);
+        for (let i = 1; i < mainChapters.length; i++) {
+            expect(mainChapters[i].minAffinity).toBeGreaterThan(mainChapters[i - 1].minAffinity);
         }
     });
 

@@ -117,10 +117,10 @@ const Character = {
         return base + jobBase + skillBonus;
     },
 
-    // 运气+内力：会心率（属性双倍触发），上限35%
+    // 运气：属性双倍触发概率，上限20%
     getLuckTriggerChance(char) {
         const luckPart = char.attributes.luck / 120;
-        return Math.min(0.35, luckPart);
+        return Math.min(0.20, luckPart);
     },
 
     // 运气+敏捷：战斗闪避概率，上限25%

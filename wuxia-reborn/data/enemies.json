@@ -1398,6 +1398,34 @@
     "loseEffects": {}
   },
   {
+    "id": "ling_xue_blade",
+    "name": "凌雪",
+    "description": "凌霜剑意化为一问，以刃询心。",
+    "comprehension": 50,
+    "innerForce": 45,
+    "attack": 90,
+    "defense": 60,
+    "hp": 500,
+    "attackScale": 0,
+    "defenseScale": 0,
+    "hpScale": 0,
+    "intentReadMsgs": {
+      "heavy": ["她剑意骤然凝聚，一击沉如霜压——<b>重击将至</b>"],
+      "swift": ["她身形错步，剑势轻盈——<b>快攻将至</b>"]
+    },
+    "intentUnreadMsgs": ["她的剑路清晰却难以捉摸，你看不透她这一刻在想什么"],
+    "attackDescs": [
+      "凌霜一剑，冷而精准",
+      "剑光如霜，无声滑来",
+      "以速制胜，剑尖指向要害",
+      "剑势压低，以力相搏"
+    ],
+    "winNarrative": "她的剑停了。\n\n你看见她眼神里有什么东西松动了，但只是一瞬，随即又冷静下来。\n\n「嗯，」她只说了一个字。",
+    "loseNarrative": "你倒下了。\n\n她没有追击，只是站在那里看着你，沉默地等你站起来。这不是要击败谁，是在寻找答案。",
+    "winEffects": {"agility": 2, "comprehension": 1},
+    "loseEffects": {}
+  },
+  {
     "id": "shadow_strongest",
     "name": "诸世最强之影",
     "description": "你所有的前世合而为一的极限——所有走过的路，所有做出的选择，汇聚而成的终极影子。",

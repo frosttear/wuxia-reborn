@@ -138,6 +138,7 @@ const Combat = {
         let playerAtk = Character.getAttackPower(char, job);
         if (cs.allBondsBonus) playerAtk += 60;
         if (cs.rebirthPowerBonus) playerAtk += cs.rebirthPowerBonus.atk;
+        if (cs.yanBattleBonus) playerAtk += cs.yanBattleBonus;
         let playerDef = Character.getDefensePower(char, job);
         if (cs.rebirthPowerBonus) playerDef += cs.rebirthPowerBonus.def;
         const qiShield  = Character.getQiShield(char);       // flat reduction per hit
@@ -488,7 +489,7 @@ const Combat = {
     // ── Action preview for UI ────────────────────────────────────────────────
     // Returns estimated values for each action button display
     getActionPreview(cs, char, job) {
-        const playerAtk = Character.getAttackPower(char, job) + (cs.allBondsBonus ? 60 : 0);
+        const playerAtk = Character.getAttackPower(char, job) + (cs.allBondsBonus ? 60 : 0) + (cs.yanBattleBonus || 0);
         const playerDef = Character.getDefensePower(char, job);
         const qiShield  = Character.getQiShield(char);
         const innerAmp  = this._effectiveSkillAmp(char.attributes.innerForce || 0, cs.enemyInnerForce)

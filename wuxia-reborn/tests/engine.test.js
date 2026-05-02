@@ -232,8 +232,8 @@ describe('Engine.allBondsComplete', () => {
     function setupBonds(bondLevels) {
         const char = makeChar({ bondLevels });
         Engine.state.char = char;
-        // bonds: each NPC has 5 chapters
-        Engine.state.bonds = Object.fromEntries(NPC_IDS.map(id => [id, [1, 2, 3, 4, 5]]));
+        // bonds: each NPC has 5 chapters (real format: array of objects with level property)
+        Engine.state.bonds = Object.fromEntries(NPC_IDS.map(id => [id, [{level:1},{level:2},{level:3},{level:4},{level:5}]]));
     }
 
     test('returns true when all NPCs are at max bond level', () => {

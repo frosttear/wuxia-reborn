@@ -24,7 +24,7 @@ fix: combat return button disabled after battle ends
 
 ## Versioning
 
-Bump the version on every commit that changes code or content. Update version strings in `index.html` (all `?v=X.X.X` cache busters), `sw.js` (`CACHE_NAME`), `README.md` (title line), and `PROGRESS.md` (current version line).
+Bump the version on every commit that changes code or content. Update version strings in `index.html` (all `?v=X.X.X` cache busters), `sw.js` (`CACHE_NAME`), `README.md` (title line), `PROGRESS.md` (current version line), and `js/engine.js` (`exportSave` → `v:` field).
 
 Version bump rules — use judgment:
 - **Minor patch** (x.x.**N+1**): bug fixes, UI tweaks, copy changes, small balance adjustments
