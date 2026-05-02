@@ -168,10 +168,13 @@ const TALENTS = [
         condition: (char) => char.attributes.agility >= 22,
     },
     {
-        id: 'serendipity',
-        name: '天赐奇缘',
-        desc: '前世运气超群，江湖奇遇类事件出现概率+25%',
-        condition: (char) => char.attributes.luck >= 18,
+        id: 'time_master',
+        name: '时间管理大师',
+        desc: '深谙时机，羁绊时刻无需耗费岁月——与知己相逢，不必以月份为代价',
+        condition: (char) => {
+            const metCount = Object.keys(char.flags || {}).filter(k => k.startsWith('met_')).length;
+            return metCount >= 6 || (char.rebirthCount || 0) >= 2;
+        },
     },
 ];
 

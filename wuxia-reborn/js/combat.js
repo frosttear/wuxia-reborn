@@ -27,12 +27,13 @@ const Combat = {
     // ── Scaled enemy stats ──────────────────────────────────────────────────
     getEffectiveStats(enemy, char) {
         const tier = Math.max(0, Character.getAgeYears(char) - 15);
+        const rebirth = char.rebirthCount || 0;
         const hpScale = enemy.hpScale != null ? enemy.hpScale : 0.15;
-        const hp = Math.round((enemy.hp || 80) * (1 + tier * hpScale));
+        const hp = Math.round((enemy.hp || 80) * (1 + tier * hpScale) * (1 + rebirth * 0.12));
         const innerForce = enemy.innerForce || 0;
         return {
-            attack:  enemy.attack  + tier * (enemy.attackScale  || 0),
-            defense: enemy.defense + tier * (enemy.defenseScale || 0),
+            attack:  enemy.attack  + tier * (enemy.attackScale  || 0) + Math.floor(rebirth * 2.5),
+            defense: enemy.defense + tier * (enemy.defenseScale || 0) + Math.floor(rebirth * 1.5),
             hp,
             innerForce,
             qiShield: innerForce >= 35 ? Math.floor(innerForce / 8) : 0

@@ -222,9 +222,6 @@ const Engine = {
             if (!this.checkConditions(event.conditions || {})) continue;
 
             let weight = event.weight;
-            if (event.type === '奇遇' && (char.legacyTalents || []).includes('serendipity')) {
-                weight = Math.round(weight * 1.25);
-            }
             if (['奇遇', '机缘'].includes(event.type))  weight += compBonus;
             if (['奇遇', '机缘', '交友'].includes(event.type)) weight += Math.floor(luckBonus / 2);
             if (event.type === '遭遇战') weight = Math.max(1, weight - Math.floor(luckBonus / 2));
@@ -378,7 +375,7 @@ const Engine = {
         const char = this.state.char;
         if ((char.inheritedBonds || {})[npcId] >= level) {
             const nonCombatChoices = (step.choices || []).filter(c => !(c.effects && c.effects.combat));
-            if (nonCombatChoices.length > 0) {
+            if (nonCombatChoices.length > 1) {
                 const merged = { attributes: {}, npcAffinity: {}, flags: {} };
                 for (const c of nonCombatChoices) {
                     const ef = c.effects || {};
@@ -432,48 +429,46 @@ const Engine = {
 
         const isNonFinalStep = bondStep && bondStep.stepIdx < bondStep.steps.length - 1;
 
-        // Log lucky trigger if attributes changed
+        // Attribute effects: apply immediately for non-combat choices;
+        // defer to post-win (merged with enemy winEffects) when combat follows
         if (effects.attributes) {
-            const { luckyTriggered, actualGains } = Character.applyAttributeChanges(this.state.char, effects.attributes);
-            if (luckyTriggered) UI.addLog('✨ 幸运触发！属性收益翻倍！', 'unlock');
-            const effectsCopy = Object.assign({}, effects);
-            delete effectsCopy.attributes;
-            // For last-step bond combats, defer npcAffinity to post-victory so the player sees it as a reward
-            if (bondInfo && effects.combat && effectsCopy.npcAffinity) delete effectsCopy.npcAffinity;
-            this.applyEffects(effectsCopy);
-            const gainsStr = this.formatAttrGains(actualGains);
-            const gainsTag = gainsStr ? `　<span class="attr-gains">⬆ ${gainsStr}</span>` : '';
-            const narrative = effects.narrative ? effects.narrative + gainsTag : (gainsTag || '');
-            if (narrative) UI.addLog(narrative, 'result');
-            if (chainStep && !effects.combat) this.completeChainStep(chainStep.chainId, chainStep.stepIdx);
-            if (!effects.combat && isNonFinalStep) {
-                this._showBondStep(bondStep.npcId, bondStep.steps, bondStep.stepIdx + 1, bondStep.level, '');
-                return;
-            }
             if (!effects.combat) {
+                const { luckyTriggered, actualGains } = Character.applyAttributeChanges(this.state.char, effects.attributes);
+                if (luckyTriggered) UI.addLog('✨ 幸运触发！属性收益翻倍！', 'unlock');
+                const effectsCopy = Object.assign({}, effects);
+                delete effectsCopy.attributes;
+                this.applyEffects(effectsCopy);
+                const gainsStr = this.formatAttrGains(actualGains);
+                const gainsTag = gainsStr ? `　<span class="attr-gains">⬆ ${gainsStr}</span>` : '';
+                const narrative = effects.narrative ? effects.narrative + gainsTag : (gainsTag || '');
+                if (narrative) UI.addLog(narrative, 'result');
+                if (chainStep) this.completeChainStep(chainStep.chainId, chainStep.stepIdx);
+                if (isNonFinalStep) {
+                    this._showBondStep(bondStep.npcId, bondStep.steps, bondStep.stepIdx + 1, bondStep.level, '');
+                    return;
+                }
                 this._checkAndAutoPromote();
                 UI.renderAll(this.state);
                 this.saveGame();
                 return;
             }
-            // Has combat — fall through to combat block (side effects + narrative already applied above)
+            // Has combat: defer attribute rewards to post-win, merged with enemy winEffects
+            this.state.pendingCombatAttrRewards = effects.attributes;
         }
 
         // Combat event → start turn-based combat
         if (effects.combat) {
             const enemy = this.getEnemy(effects.combat);
             if (enemy) {
-                // Only apply side effects and log narrative here if the attribute branch didn't already do it
-                if (!effects.attributes) {
-                    const sideEffects = Object.assign({}, effects);
-                    delete sideEffects.combat;
-                    delete sideEffects.narrative;
-                    delete sideEffects.attributes;
-                    // For last-step bond combats, defer npcAffinity to post-victory
-                    if (bondInfo && sideEffects.npcAffinity) delete sideEffects.npcAffinity;
-                    this.applyEffects(sideEffects);
-                    if (effects.narrative) UI.addLog(effects.narrative, 'result');
-                }
+                // Apply side effects and narrative (runs whether or not attributes were also present)
+                const sideEffects = Object.assign({}, effects);
+                delete sideEffects.combat;
+                delete sideEffects.narrative;
+                delete sideEffects.attributes;
+                // For last-step bond combats, defer npcAffinity to post-victory
+                if (bondInfo && sideEffects.npcAffinity) delete sideEffects.npcAffinity;
+                this.applyEffects(sideEffects);
+                if (effects.narrative) UI.addLog(effects.narrative, 'result');
                 if (chainStep) this.state.pendingChainStep = chainStep;
                 if (isNonFinalStep) {
                     this.state.pendingBondStep = {
@@ -625,6 +620,15 @@ const Engine = {
         }
 
         if (bondReady) {
+            // Bond events cost 1 month unless the player has 时间管理大师
+            const hasTimeMaster = (char.legacyTalents || []).includes('time_master');
+            if (!hasTimeMaster) {
+                const bondJob = this.getJob(char.job);
+                char.ageMonths++;
+                Character.monthlyHPRegen(char, bondJob);
+                if (this._checkBirthdayAndBoss()) return;
+                UI.renderCharacter(char, this.state.jobs);
+            }
             const lifeTimeLevel = Math.max(
                 (char.lifetimeBondLevels || {})[npcId] || 0,
                 (char.inheritedBonds || {})[npcId] || 0);
@@ -1137,8 +1141,15 @@ const Engine = {
         const postBondStep = this.state.pendingBondStep;
         if (postBondStep) this.state.pendingBondStep = null;
 
+        // Capture and clear deferred choice attribute rewards (only applied on win)
+        const pendingCombatAttrs = this.state.pendingCombatAttrRewards || {};
+        this.state.pendingCombatAttrRewards = null;
+
         if (result === 'won') {
-            const rewards = enemy.winEffects || {};
+            const rewards = Object.assign({}, enemy.winEffects || {});
+            for (const [k, v] of Object.entries(pendingCombatAttrs)) {
+                rewards[k] = (rewards[k] || 0) + v;
+            }
 
             // Chain combat: if enemy has chainCombat, immediately fight next enemy
             if (enemy.chainCombat) {
@@ -1740,6 +1751,9 @@ const Engine = {
         if (!char.inheritedBonds)  char.inheritedBonds = {};
         if (!char.learnedSkills)   char.learnedSkills = [];
         if (!char.legacyTalents)   char.legacyTalents = [];
+        // Remove retired talent IDs so old saves don't carry dead entries
+        const RETIRED_TALENTS = ['serendipity'];
+        char.legacyTalents = char.legacyTalents.filter(t => !RETIRED_TALENTS.includes(t));
         if (!char.passives)        char.passives = [];
         if (!char.birthMonth)      char.birthMonth = 1;
         if (char.kills === undefined) char.kills = 0;
@@ -1881,7 +1895,7 @@ const Engine = {
         if (!char) { alert('没有存档可以导出'); return; }
         this.saveGame();
         const payload = {
-            v: '0.26.70',
+            v: '0.26.71',
             char: JSON.parse(localStorage.getItem('wuxia_save')),
         };
         const encoded = btoa(unescape(encodeURIComponent(JSON.stringify(payload))));
