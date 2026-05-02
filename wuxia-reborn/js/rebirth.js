@@ -249,7 +249,8 @@ const Rebirth = {
             'lost_to_final_boss', 'fought_final_boss', 'zhushi_chain_done', 'truth_assembled', 'mark_hermit',
             'mark_warrior_power', 'mark_wuxiang_power',
             'mark_rebirth_power', 'mark_afterstory_power', 'mark_hermit_power',
-            'wuxiang_sword_mastered'
+            'wuxiang_sword_mastered',
+            'elder_true_form_seen',  // unlocks NPC elevated path choices in subsequent lives
         ];
         for (const f of PERSIST_FLAGS) {
             if (char.flags[f]) newChar.flags[f] = char.flags[f];

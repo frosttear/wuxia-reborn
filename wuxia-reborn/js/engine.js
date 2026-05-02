@@ -742,6 +742,7 @@ const Engine = {
             wuxiang_echo_felt: '完成「剑意余温」', wuxiang_six_understood: '完成「六人如镜」',
             fought_final_boss: '与神秘老者正面交锋过（胜负皆可）',
             lost_to_final_boss: '在最终决战中败北（先完成主线再轮回）',
+            elder_true_form_seen: '曾历容器路径——击败剑魂，被吞噬，由沈玄清救出后重入轮回',
         };
         const lifetimeDone = new Set(char.lifetimeChainsDone || []);
         const result = [];
@@ -1977,7 +1978,7 @@ const Engine = {
         if (!char) { alert('没有存档可以导出'); return; }
         this.saveGame();
         const payload = {
-            v: '0.27.2',
+            v: '0.27.3',
             char: JSON.parse(localStorage.getItem('wuxia_save')),
         };
         const encoded = btoa(unescape(encodeURIComponent(JSON.stringify(payload))));
