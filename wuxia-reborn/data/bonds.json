@@ -2089,6 +2089,9 @@
               "id": "name_the_real_target",
               "text": "「也许你在恨那个没能救下他们的自己。」",
               "effects": {
+                "flags": {
+                  "yan_sp5_done": true
+                },
                 "npcAffinity": {
                   "yan_chixing": 8
                 },
@@ -2102,6 +2105,9 @@
               "id": "no_answer",
               "text": "「不知道。但你还活着，还有时间找答案。」",
               "effects": {
+                "flags": {
+                  "yan_sp5_done": true
+                },
                 "npcAffinity": {
                   "yan_chixing": 6
                 },
@@ -2632,7 +2638,8 @@
                   "reputation": 1
                 },
                 "flags": {
-                  "su_qing_diagnosis_ready": true
+                  "su_qing_diagnosis_ready": true,
+                  "su_sp5_done": true
                 },
                 "narrative": "那叠文书写得很密，每一页都是从病案到推论的细致工夫。你把它收好——这是她完成师父没有完成的事，也是她第一次用自己的方式去对抗那个她一直在追的东西。"
               }
@@ -3151,6 +3158,9 @@
               "id": "accept_sword",
               "text": "将剑系在腰间，与她并肩而立",
               "effects": {
+                "flags": {
+                  "lx_sp5_done": true
+                },
                 "attributes": {
                   "innerForce": 4,
                   "comprehension": 3,
