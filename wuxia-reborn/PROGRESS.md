@@ -1,6 +1,15 @@
 # 轮回江湖 — 开发进度
 
-## 当前版本：v0.27.7
+## 当前版本：v0.27.8
+
+### v0.27.8（2026-05-03）
+
+**李云舒 afterstory 重构 + Special Bond 4 画廊**
+- `li_yunshu_afterstory`（梅影重现）完整重写：解锁条件改为 `li_yunshu_family_path: true`（升华线独占），内容从"查赤蝎帮/沈千伤"改为"找季沧海——听他说梅影剑当年的最后一句话——梅园祭扫"；跨 NPC 隐线（燕赤行→季沧海→李云舒）在此汇合
+- Special Bond 4「梅影旧事」加 gallery 条目 `li-yunshu-special-bond-4`（secret）及 engine.js 解锁触发
+- generate-illustrations.mjs 加 Special Bond 4 插画提示词（candlelit room, 李云舒 reading mother's letter）
+
+---
 
 ### v0.27.7（2026-05-03）
 

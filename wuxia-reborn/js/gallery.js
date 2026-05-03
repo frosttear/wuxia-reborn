@@ -34,6 +34,7 @@ const GALLERY_DATA = [
     { id: 'li-yunshu-ending',            name: '李云舒·一剑长歌',     hint: '风过时，剑鸣如歌——那是属于两个人的长歌。', category: 'bonds' },
     { id: 'li-yunshu-afterstory',        name: '李云舒·旧案浮现',     hint: '整理她留下的旧物，发现亡母遗信，旧案重见天日', category: 'bonds' },
     { id: 'li-yunshu-afterstory-ending', name: '李云舒·母亲的墓前',   hint: '旧案了结后，二人并肩立于李若兰墓前，无声告别', category: 'bonds' },
+    { id: 'li-yunshu-special-bond-4',   name: '李云舒·梅影旧事',      hint: '旧木盒里，一封没有寄出的信——娘告诉她，那就够了', category: 'bonds', secret: true },
     { id: 'li-yunshu-special-bond-5',   name: '李云舒·承重之剑',      hint: '她把剑拔了出来——不是对所有人一样，是看清楚了再选择', category: 'bonds', secret: true },
     { id: 'li-yunshu-true-ending',       name: '李云舒·此后同行',      hint: '高台上，她将旧信收进怀里，二人同望远山——第一次，时间是自己的了', category: 'bonds', secret: true },
     // 羁绊情缘 — 燕赤行
