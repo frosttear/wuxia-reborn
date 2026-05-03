@@ -32,7 +32,7 @@ const GALLERY_DATA = [
     { id: 'li-yunshu-bond-3',            name: '李云舒·月下长谈',     hint: '城墙上的深夜，她说出十五岁那次无法忘却的杀人', category: 'bonds' },
     { id: 'li-yunshu-bond-4',            name: '李云舒·异地之邀',     hint: '秋水剑宗来函相邀三年，她在去留之间两难',   category: 'bonds'   },
     { id: 'li-yunshu-ending',            name: '李云舒·一剑长歌',     hint: '风过时，剑鸣如歌——那是属于两个人的长歌。', category: 'bonds' },
-    { id: 'li-yunshu-afterstory',        name: '李云舒·她想见那个人',  hint: '燕赤行带来了消息——那个娘用命护过的人，她想知道他是什么样的人', category: 'bonds' },
+    { id: 'li-yunshu-afterstory',        name: '李云舒·她想见那个人',  hint: '季沧海说：你走出那扇门的时候，眼神变了。那就够了。——她第一次听见娘最后说的话', category: 'bonds' },
     { id: 'li-yunshu-afterstory-ending', name: '李云舒·梅园祭扫',     hint: '梅园旧树根下，她把信放了进去：娘，有人见过你了——你那时候看见的是真的', category: 'bonds' },
     { id: 'li-yunshu-special-bond-4',   name: '李云舒·梅影旧事',      hint: '旧木盒里，一封没有寄出的信——娘告诉她，那就够了', category: 'bonds', secret: true },
     { id: 'li-yunshu-special-bond-5',   name: '李云舒·承重之剑',      hint: '她把剑拔了出来——不是对所有人一样，是看清楚了再选择', category: 'bonds', secret: true },
