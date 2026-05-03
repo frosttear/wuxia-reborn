@@ -1060,6 +1060,9 @@
               "id": "accept_the_name",
               "text": "「梅影。挺好的。」",
               "effects": {
+                "flags": {
+                  "li_sp5_done": true
+                },
                 "npcAffinity": {
                   "li_yunshu": 15
                 },
