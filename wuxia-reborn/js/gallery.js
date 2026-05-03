@@ -34,6 +34,7 @@ const GALLERY_DATA = [
     { id: 'li-yunshu-ending',            name: '李云舒·一剑长歌',     hint: '风过时，剑鸣如歌——那是属于两个人的长歌。', category: 'bonds' },
     { id: 'li-yunshu-afterstory',        name: '李云舒·旧案浮现',     hint: '整理她留下的旧物，发现亡母遗信，旧案重见天日', category: 'bonds' },
     { id: 'li-yunshu-afterstory-ending', name: '李云舒·母亲的墓前',   hint: '旧案了结后，二人并肩立于李若兰墓前，无声告别', category: 'bonds' },
+    { id: 'li-yunshu-special-bond-5',   name: '李云舒·承重之剑',      hint: '她把剑拔了出来——不是对所有人一样，是看清楚了再选择', category: 'bonds', secret: true },
     { id: 'li-yunshu-true-ending',       name: '李云舒·此后同行',      hint: '高台上，她将旧信收进怀里，二人同望远山——第一次，时间是自己的了', category: 'bonds', secret: true },
     // 羁绊情缘 — 燕赤行
     { id: 'yan-chixing-meet',            name: '燕赤行·刀疤剑客',     hint: '演武场边，疤脸冷面男子直接向你发问',       category: 'bonds'   },
@@ -64,6 +65,7 @@ const GALLERY_DATA = [
     { id: 'ling-xue-ending',             name: '凌雪·凌霜剑域',       hint: '冻原风雪中，两把剑并肩而立——不需要回头，也知道彼此不会退。', category: 'bonds' },
     { id: 'ling-xue-afterstory',         name: '凌雪·凌霜化雪·追杀',  hint: '天魔门追杀令至，她看了一眼，平静开口：来了', category: 'bonds' },
     { id: 'ling-xue-afterstory-ending',  name: '凌雪·凌霜化雪·自由',  hint: '追杀令碎成漫天白纸，随风而散——从今天起，我只是凌雪', category: 'bonds' },
+    { id: 'ling-xue-afterstory-memory',  name: '凌雪·那一杯水',         hint: '她第一次知道，原来自己还是个可以被人这样对待的人', category: 'bonds', secret: true },
     { id: 'ling-xue-true-ending',        name: '凌雪·各走天涯',         hint: '山路拐角，她回头看了一眼，然后转身走进了薄雾里',               category: 'bonds', secret: true },
     // 羁绊情缘 — 神秘老者
     { id: 'mysterious-elder-meet',       name: '神秘老者·月夜现身',    hint: '月黑风高，练功时一位白发老人从黑暗中走来，问：你可知自己肩负着什么？', category: 'bonds' },
@@ -832,6 +834,7 @@ const Gallery = {
             'su-qing-afterstory-ending':        'su_qing_afterstory',
             'ling-xue-afterstory':              'lingxue_afterstory',
             'ling-xue-afterstory-ending':       'lingxue_afterstory',
+            'ling-xue-afterstory-memory':       'lingxue_afterstory',
             'mysterious-elder-afterstory':      'elder_afterstory',
             'mysterious-elder-afterstory-ending': 'elder_afterstory',
             'yan-chixing-afterstory':           'yan_afterstory',

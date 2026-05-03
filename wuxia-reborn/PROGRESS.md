@@ -1,6 +1,17 @@
 # 轮回江湖 — 开发进度
 
-## 当前版本：v0.27.6
+## 当前版本：v0.27.7
+
+### v0.27.7（2026-05-03）
+
+**凌雪·梅影剑暗线 & 李云舒·升华路线完善**
+- 凌雪 afterstory 拆为四步：lx_after_3（旧师重逢）用 `lx_third_assassin_done` 过渡，新增 lx_after_4「那一杯水」揭示凌雪亲眼见过梅影剑、报了消息，主旨"她让我第一次知道自己还是个可以被人这样对待的人"
+- 李云舒 afterstory（梅影重现）加 `li_yunshu_family_path: false` 门槛，与家族压力线互斥
+- gallery.js：新增 `ling-xue-afterstory-memory`（凌雪·那一杯水，secret）和 `li-yunshu-special-bond-5`（李云舒·承重之剑，secret）
+- engine.js：`chainStepIllustrations` 加 `lx_after_4 → ling-xue-afterstory-memory`；`migrateCharacter` 加 `li_yunshu_family_path && li_yunshu ≥ 5` 插画解锁
+- generate-illustrations.mjs：新增两条插画提示词
+
+---
 
 ### v0.27.6（2026-05-03）
 

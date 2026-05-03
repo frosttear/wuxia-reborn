@@ -864,6 +864,7 @@ const Engine = {
             li_after_1:    'li-yunshu-afterstory',
             su_after_1:    'su-qing-afterstory',
             lx_after_1:    'ling-xue-afterstory',
+            lx_after_4:    'ling-xue-afterstory-memory',
             elder_after_1: 'mysterious-elder-afterstory',
             yan_after_1:   'yan-chixing-afterstory',
             wang_revenge_1:'wang-tie-afterstory',
@@ -1877,6 +1878,7 @@ const Engine = {
             if (f.lost_to_final_boss)    push('designer-lose');
             if (f.elder_true_form_seen) push('elder-true-form');
             if (f.li_afterstory_done)    push('li-yunshu-afterstory');
+            if (f.li_yunshu_family_path && (bl.li_yunshu || 0) >= 5) push('li-yunshu-special-bond-5');
             if (f.su_afterstory_done)    push('su-qing-afterstory');
             if (f.lx_afterstory_done)    push('ling-xue-afterstory');
             if (f.elder_afterstory_done) push('mysterious-elder-afterstory');
@@ -1978,7 +1980,7 @@ const Engine = {
         if (!char) { alert('没有存档可以导出'); return; }
         this.saveGame();
         const payload = {
-            v: '0.27.6',
+            v: '0.27.7',
             char: JSON.parse(localStorage.getItem('wuxia_save')),
         };
         const encoded = btoa(unescape(encodeURIComponent(JSON.stringify(payload))));
