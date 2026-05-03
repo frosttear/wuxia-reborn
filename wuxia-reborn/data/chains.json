@@ -880,7 +880,8 @@
           "title": "她想见那个人",
           "unlockConditions": {
             "bondLevels": {
-              "li_yunshu": 5
+              "li_yunshu": 5,
+              "yan_chixing": 4
             },
             "flags": {
               "elder_true_form_seen": true,
