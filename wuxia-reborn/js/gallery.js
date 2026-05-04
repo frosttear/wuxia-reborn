@@ -67,7 +67,7 @@ const GALLERY_DATA = [
     { id: 'ling-xue-ending',             name: '凌雪·凌霜剑域',       hint: '冻原风雪中，两把剑并肩而立——不需要回头，也知道彼此不会退。', category: 'bonds' },
     { id: 'ling-xue-afterstory',         name: '凌雪·凌霜化雪·追杀',  hint: '天魔门追杀令至，她看了一眼，平静开口：来了', category: 'bonds' },
     { id: 'ling-xue-afterstory-ending',  name: '凌雪·凌霜化雪·自由',  hint: '追杀令碎成漫天白纸，随风而散——从今天起，我只是凌雪', category: 'bonds' },
-    { id: 'ling-xue-special-bond-4',     name: '凌雪·那一杯水',         hint: '她提着旧陶壶而来，第一次知道，原来自己还是个可以被人这样对待的人', category: 'bonds', secret: true },
+    { id: 'ling-xue-special-bond-5',     name: '凌雪·那一杯水',         hint: '她提着旧陶壶而来，第一次知道，原来自己还是个可以被人这样对待的人', category: 'bonds', secret: true },
     { id: 'ling-xue-true-ending',        name: '凌雪·各走天涯',         hint: '山路拐角，她回头看了一眼，然后转身走进了薄雾里',               category: 'bonds', secret: true },
     // 羁绊情缘 — 神秘老者
     { id: 'mysterious-elder-meet',       name: '神秘老者·月夜现身',    hint: '月黑风高，练功时一位白发老人从黑暗中走来，问：你可知自己肩负着什么？', category: 'bonds' },
