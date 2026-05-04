@@ -741,7 +741,6 @@ const Engine = {
             zhao_defeated_for_wang: '完成「黑鹰寨对峙」',
             wuxiang_echo_felt: '完成「剑意余温」', wuxiang_six_understood: '完成「六人如镜」',
             fought_final_boss: '与神秘老者正面交锋过（胜负皆可）',
-            lost_to_final_boss: '在最终决战中败北（先完成主线再轮回）',
             elder_true_form_seen: '曾历容器路径——击败剑魂，被吞噬，由沈玄清救出后重入轮回',
         };
         const lifetimeDone = new Set(char.lifetimeChainsDone || []);
@@ -977,7 +976,7 @@ const Engine = {
             const bl = char.bondLevels || {};
 
             // 凌雪刀刃线: 拦路，须先过她这关
-            if (f.ling_xue_blade_path && (bl.ling_xue || 0) >= 5 && !f.ling_xue_tianmo_gate_passed) {
+            if (f.lx_blade_path && (bl.ling_xue || 0) >= 5 && !f.ling_xue_tianmo_gate_passed) {
                 char.flags.ling_xue_tianmo_gate_passed = true;
                 const gateEnemy = this.getEnemy('ling_xue_blade');
                 if (gateEnemy) {
@@ -1008,7 +1007,7 @@ const Engine = {
             }
 
             // 凌雪自由线: 天魔 attack -25
-            if (!f.ling_xue_blade_path && (bl.ling_xue || 0) >= 5) {
+            if (!f.lx_blade_path && (bl.ling_xue || 0) >= 5) {
                 enemy.attack = Math.max(0, enemy.attack - 25);
                 UI.addLog('「师父，你输了——不是输给他，是输给你自己。」\n\n凌雪站在天魔面前，那句话如一把刀，刺进了陆无归的心。天魔神情一滞，气机微乱。', 'dialog');
             }
@@ -1306,13 +1305,12 @@ const Engine = {
             if (Object.keys(loseRewards).length > 0) this.applyEffects({ attributes: loseRewards });
             UI.renderCharacter(char, this.state.jobs);
             if (enemy.isTrueFinalBoss) {
-                char.flags.lost_to_final_boss = true;
                 char.flags.fought_final_boss = true;
-                UI.addLog('【提示】信念和人间之力，才是终结它的根源。下一轮回：与王铁、李云舒、神秘老者、燕赤行、苏青、凌雪六人结下真正的羁绊，再踏上这条路。', 'info');
-                UI.addIllustration('designer-lose');
+                UI.addLog('力竭。意识开始涣散——', 'system');
+                UI.addLog('然后，腰间的玉牌射出一道冷光。\n\n「这条时间线，还没走到头。」\n\n沈玄清的声音从很远的地方传来。意识重新聚拢，你还站在九百年前的荒野上。', 'epilogue');
                 UI.showCombatReturnBtn('lost', () => {
                     UI.hideCombatOverlay();
-                    this.triggerDeath('true_final_boss');
+                    this.startCombat(enemy, '');
                 });
                 return;
             }
@@ -1593,7 +1591,7 @@ const Engine = {
         }
         await UI.epiloguePause(400);
         UI.setEpilogueMode(true);
-        await UI.addEpilogueIllustration('designer-win');
+        await UI.addEpilogueIllustration('jianhun-origin-win');
         await UI.waitForClick();
         await UI.epiloguePause(400);
 
@@ -1731,7 +1729,7 @@ const Engine = {
         { text: '开发测试', cls: 'role' },
         { text: 'FrostTear', cls: 'name' },
         { text: '插画生成', cls: 'role' },
-        { text: 'ChatGPT Image 2', cls: 'name' },
+        { text: 'ChatGPT Images 2', cls: 'name' },
         { text: '特别感谢', cls: 'section' },
         { text: '积极测试的朋友们', cls: 'role' },
         { text: '孔局', cls: 'name' },
@@ -1874,12 +1872,13 @@ const Engine = {
             if (f.boss_triggered)        push('portrait-tianmo');
             if (f.hidden_boss_triggered) { push('tianmo-and-jianhun'); push('portrait-jianhun'); push('tianmo-win'); push('sword-soul-win'); }
             if (f.boss_lost)             push('tianmo-lose');
-            if (f.true_final_boss_beaten) push('designer-win');
-            if (f.lost_to_final_boss)    push('designer-lose');
+            if (f.true_final_boss_beaten) push('jianhun-origin-win');
             if (f.elder_true_form_seen) push('elder-true-form');
             if (f.li_afterstory_done)    push('li-yunshu-afterstory');
             if (f.li_yunshu_family_path && (bl.li_yunshu || 0) >= 4) push('li-yunshu-special-bond-4');
             if (f.li_yunshu_family_path && (bl.li_yunshu || 0) >= 5) push('li-yunshu-special-bond-5');
+            if (f.yan_sp4_done && (bl.yan_chixing || 0) >= 5) push('yan-chixing-special-bond-4');
+            if (f.yan_sp5_done && (bl.yan_chixing || 0) >= 5) push('yan-chixing-special-bond-5');
             if (f.su_afterstory_done)    push('su-qing-afterstory');
             if (f.lx_afterstory_done)    push('ling-xue-afterstory');
             if (f.elder_afterstory_done) push('mysterious-elder-afterstory');
