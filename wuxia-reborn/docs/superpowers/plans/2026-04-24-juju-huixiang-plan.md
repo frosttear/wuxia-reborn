@@ -25,7 +25,7 @@
 **Files:**
 - Modify: `css/styles.css` (append near the end of the gallery section)
 
-- [ ] **Step 1: Find the insertion point**
+- [x] **Step 1: Find the insertion point**
 
 Open `css/styles.css` and search for `.gallery-close-btn` or `.gallery-tab-badge` to locate the gallery CSS block. Append the following block after the existing gallery rules:
 
@@ -48,7 +48,7 @@ Open `css/styles.css` and search for `.gallery-close-btn` or `.gallery-tab-badge
 .log-replay-choice::before { content: "▷ "; }
 ```
 
-- [ ] **Step 2: Run tests**
+- [x] **Step 2: Run tests**
 
 ```bash
 npm test
@@ -63,7 +63,7 @@ Expected: all 344 tests pass (CSS changes don't affect tests).
 **Files:**
 - Modify: `index.html` around line 302 (the `#galleryGrid` div)
 
-- [ ] **Step 1: Find the insertion point**
+- [x] **Step 1: Find the insertion point**
 
 In `index.html`, locate this block (around line 299–303):
 
@@ -76,7 +76,7 @@ In `index.html`, locate this block (around line 299–303):
         <div class="gallery-grid" id="galleryGrid"></div>
 ```
 
-- [ ] **Step 2: Add the replay panel div after `#galleryGrid`**
+- [x] **Step 2: Add the replay panel div after `#galleryGrid`**
 
 Replace the closing `</div>` of `.gallery-box` section so it reads:
 
@@ -94,7 +94,7 @@ Replace the closing `</div>` of `.gallery-box` section so it reads:
         </div>
 ```
 
-- [ ] **Step 3: Run tests**
+- [x] **Step 3: Run tests**
 
 ```bash
 npm test
@@ -109,7 +109,7 @@ Expected: all 344 tests pass.
 **Files:**
 - Modify: `js/gallery.js`
 
-- [ ] **Step 1: Add `'replay'` to CATEGORY_ORDER (line 89)**
+- [x] **Step 1: Add `'replay'` to CATEGORY_ORDER (line 89)**
 
 Find:
 ```javascript
@@ -121,7 +121,7 @@ Replace with:
 const CATEGORY_ORDER = ['scenes', 'bosses', 'bonds', 'portraits', 'replay'];
 ```
 
-- [ ] **Step 2: Add `replay` label to CATEGORY_LABELS (lines 83–88)**
+- [x] **Step 2: Add `replay` label to CATEGORY_LABELS (lines 83–88)**
 
 Find:
 ```javascript
@@ -144,7 +144,7 @@ const CATEGORY_LABELS = {
 };
 ```
 
-- [ ] **Step 3: Cache `_replayPanel`, `_replayTitle`, `_replayLog` in `init()` (around line 109)**
+- [x] **Step 3: Cache `_replayPanel`, `_replayTitle`, `_replayLog` in `init()` (around line 109)**
 
 Find these lines inside `init()`:
 ```javascript
@@ -161,7 +161,7 @@ Insert immediately before them:
         document.getElementById('galleryReplayBack').onclick = () => this._closeReplay();
 ```
 
-- [ ] **Step 4: Update `_buildTabs()` to handle replay tab badge**
+- [x] **Step 4: Update `_buildTabs()` to handle replay tab badge**
 
 Find this block inside `_buildTabs()`:
 ```javascript
@@ -184,7 +184,7 @@ Replace with:
         }
 ```
 
-- [ ] **Step 5: Update `switchTab()` to branch for replay**
+- [x] **Step 5: Update `switchTab()` to branch for replay**
 
 Find:
 ```javascript
@@ -214,7 +214,7 @@ Replace with:
     },
 ```
 
-- [ ] **Step 6: Run tests**
+- [x] **Step 6: Run tests**
 
 ```bash
 npm test
@@ -229,7 +229,7 @@ Expected: all 344 tests pass.
 **Files:**
 - Modify: `js/gallery.js` (add method to the Gallery object, after `_renderGrid`)
 
-- [ ] **Step 1: Add `_renderReplayList()` method**
+- [x] **Step 1: Add `_renderReplayList()` method**
 
 Locate the closing brace of `_renderGrid(category) { ... },` and add the following method immediately after it:
 
@@ -306,7 +306,7 @@ Locate the closing brace of `_renderGrid(category) { ... },` and add the followi
     },
 ```
 
-- [ ] **Step 2: Run tests**
+- [x] **Step 2: Run tests**
 
 ```bash
 npm test
@@ -321,7 +321,7 @@ Expected: all 344 tests pass.
 **Files:**
 - Modify: `js/gallery.js` (add three methods after `_renderReplayList`)
 
-- [ ] **Step 1: Add `_openReplay()`, `_runReplay()`, `_closeReplay()` methods**
+- [x] **Step 1: Add `_openReplay()`, `_runReplay()`, `_closeReplay()` methods**
 
 Immediately after `_renderReplayList() { ... },` add:
 
@@ -402,7 +402,7 @@ Immediately after `_renderReplayList() { ... },` add:
     },
 ```
 
-- [ ] **Step 2: Run tests**
+- [x] **Step 2: Run tests**
 
 ```bash
 npm test
@@ -417,7 +417,7 @@ Expected: all 344 tests pass.
 **Files:**
 - Modify: `sw.js`, `index.html` (all `?v=` query strings), `README.md`, `PROGRESS.md`
 
-- [ ] **Step 1: Bump version**
+- [x] **Step 1: Bump version**
 
 Current version is `0.21.69`. New version: `0.21.70`.
 
@@ -427,7 +427,7 @@ Update all occurrences (use sed or find-replace):
 - `README.md` line 1: `# 轮回江湖（开发中）v0.21.70`
 - `PROGRESS.md` line 3: `## 当前版本：v0.21.70`
 
-- [ ] **Step 2: Add PROGRESS.md entry** (newest at top, after the `## 当前版本` line)
+- [x] **Step 2: Add PROGRESS.md entry** (newest at top, after the `## 当前版本` line)
 
 ```markdown
 ### v0.21.70（2026-04-24）
@@ -440,7 +440,7 @@ Update all occurrences (use sed or find-replace):
 ---
 ```
 
-- [ ] **Step 3: Run final tests**
+- [x] **Step 3: Run final tests**
 
 ```bash
 npm test
@@ -448,9 +448,62 @@ npm test
 
 Expected: all tests pass.
 
-- [ ] **Step 4: Commit**
+- [x] **Step 4: Commit**
 
 ```bash
 git add css/styles.css index.html js/gallery.js sw.js README.md PROGRESS.md
 git commit -m "feat: add 剧情回想 gallery tab for story replay of bonds and chains"
+```
+
+---
+
+### Task 7: 凌雪 Special Bond 升华线 重构
+
+**Goal:** 刀刃线 repurposed as 凌雪's SP升华 path; two paths only (normal 凌霜剑域 + SP 升华).
+
+**Files:**
+- Modify: `data/bonds.json` — Bond 4 trigger, Level 5 SP content
+- Modify: `data/chains.json` — remove 那一杯水 step from afterstory
+- Modify: `js/gallery.js` — rename `ling-xue-afterstory-memory` → `ling-xue-special-bond-4`
+- Modify: `js/engine.js` — add gallery push for `ling-xue-special-bond-4`
+- Modify: `scripts/generate-illustrations.mjs` — rename illustration entry
+
+- [x] **Step 1: Rewrite Bond 4 SP trigger in bonds.json**
+
+In the `push_her_back` choice (around line 3016), replace:
+- `"lx_blade_path": true` → `"lx_sp4_trigger": true`
+- Choice text: `「你还没想清楚。不要为了我做这个决定。」`
+  → `「如果那个乱葬岗上，捡走你的不是天魔——你现在会信什么？」`
+- Narrative: she goes still; can't answer; leaves without direction, not back to 天魔宫
+
+- [x] **Step 2: Rewrite Level 5 SP ("以刃问心") in bonds.json**
+
+Replace the `以刃问心` level-5 block (currently `lx_blade_path: true` gated, lines 3037–3089) with a new block:
+- Title: `「那一杯水」`
+- Condition: `lx_sp4_trigger: true`
+- Step 1 (那一杯水): She returns having thought it over; shares 梅影剑 memory; realizes she can receive human kindness; sets `lx_sp4_done: true`
+- Step 2 (自渡): Her genuine choice from her own center, not following the player; redefines 天魔's "没有人能渡你" as 自渡; sets `lx_sp5_done: true`
+
+- [x] **Step 3: Remove 那一杯水 step (lx_after_4) from chains.json afterstory**
+
+In `lingxue_afterstory`, delete the step with `"id": "lx_after_4"` (the 那一杯水 scene), since it moves to Bond Level 5 SP.
+
+- [x] **Step 4: Rename gallery entry in gallery.js**
+
+Find `ling-xue-afterstory-memory` and rename to `ling-xue-special-bond-4`. Update `name`, `lore`, `category` (→ `'bonds'`) accordingly.
+
+- [x] **Step 5: Add gallery push in engine.js**
+
+Add: `if (f.lx_sp4_done && (bl.ling_xue || 0) >= 5) push('ling-xue-special-bond-4');`
+
+- [x] **Step 6: Rename illustration entry in generate-illustrations.mjs**
+
+Rename `ling-xue-afterstory-memory` → `ling-xue-special-bond-4`. Update prompt if needed to reflect the 那一杯水 scene (she quietly offers water, soft afternoon light, plum petals, realized peace).
+
+- [x] **Step 7: Run tests and commit**
+
+```bash
+npm test
+git add data/bonds.json data/chains.json js/gallery.js js/engine.js scripts/generate-illustrations.mjs
+git commit -m "refine: restructure 凌雪 SP升华线 — Bond 4 trigger + 那一杯水/自渡 Level 5 SP"
 ```

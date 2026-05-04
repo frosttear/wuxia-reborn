@@ -863,7 +863,6 @@ const Engine = {
             li_after_1:    'li-yunshu-afterstory',
             su_after_1:    'su-qing-afterstory',
             lx_after_1:    'ling-xue-afterstory',
-            lx_after_4:    'ling-xue-afterstory-memory',
             elder_after_1: 'mysterious-elder-afterstory',
             yan_after_1:   'yan-chixing-afterstory',
             wang_revenge_1:'wang-tie-afterstory',
@@ -1880,6 +1879,7 @@ const Engine = {
             if (f.yan_sp4_done && (bl.yan_chixing || 0) >= 5) push('yan-chixing-special-bond-4');
             if (f.yan_sp5_done && (bl.yan_chixing || 0) >= 5) push('yan-chixing-special-bond-5');
             if (f.su_afterstory_done)    push('su-qing-afterstory');
+            if (f.lx_sp4_done && (bl.ling_xue || 0) >= 5) push('ling-xue-special-bond-4');
             if (f.lx_afterstory_done)    push('ling-xue-afterstory');
             if (f.elder_afterstory_done) push('mysterious-elder-afterstory');
             if (f.yan_afterstory_done)   push('yan-chixing-afterstory');
