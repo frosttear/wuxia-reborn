@@ -314,7 +314,7 @@ if (localStorage.getItem('wuxia_save')) {
 
     // Register service worker for persistent image caching
     if ('serviceWorker' in navigator) {
-        navigator.serviceWorker.register('sw.js').catch(() => {});
+        navigator.serviceWorker.register('sw.js', { updateViaCache: 'none' }).catch(() => {});
     }
 })();
 </script>
