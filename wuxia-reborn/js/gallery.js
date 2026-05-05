@@ -663,6 +663,10 @@ const Gallery = {
                 blank.className = 'log-replay-narrative';
                 blank.innerHTML = '&nbsp;';
                 log.appendChild(blank);
+                const spacer = document.createElement('div');
+                spacer.style.cssText = 'height:32px;flex-shrink:0;';
+                log.appendChild(spacer);
+                log.scrollTop = log.scrollHeight;
                 this._replaySkip = null;
                 return;
             }
