@@ -4,6 +4,7 @@
 //   node scripts/test-server.mjs --hq-delay=5000   # 5 s HQ delay
 //   node scripts/test-server.mjs --hq-delay=0      # no delay (plain static server)
 //   node scripts/test-server.mjs --port=8080
+//   node scripts/test-server.mjs --unlock-all       # unlock all gallery illustrations on load
 //
 // Special routes:
 //   /test/true-ending   game page with a "触发真结局" debug button (skips all unlock conditions)
@@ -20,8 +21,9 @@ const args = Object.fromEntries(
         .filter(a => a.startsWith('--'))
         .map(a => { const [k, v] = a.slice(2).split('='); return [k, v ?? 'true']; })
 );
-const PORT     = parseInt(args.port     ?? 3000);
-const HQ_DELAY = parseInt(args['hq-delay'] ?? 3000);
+const PORT      = parseInt(args.port     ?? 3000);
+const HQ_DELAY  = parseInt(args['hq-delay'] ?? 3000);
+const UNLOCK_ALL = args['unlock-all'] === 'true';
 
 const MIME = {
     '.html': 'text/html; charset=utf-8',
@@ -141,6 +143,41 @@ const TRUE_ENDING_DEBUG = `
 </script>
 `;
 
+// ── Unlock-all debug injection ───────────────────────────────────────────────
+// Injected into index.html when --unlock-all is set. Polls until Engine and
+// GALLERY_DATA are both ready, then pushes every non-portrait gallery entry
+// into unlockedIllustrations. Re-runs every second to survive new-game resets.
+const UNLOCK_ALL_DEBUG = `
+<script>
+(function () {
+  var badge = document.createElement('div');
+  badge.textContent = '🔓 ALL UNLOCKED';
+  badge.style.cssText = [
+    'position:fixed', 'top:8px', 'right:8px', 'z-index:99999',
+    'background:#1a3a1a', 'border:1px solid #4a8a4a', 'color:#7ddb7d',
+    'padding:4px 10px', 'border-radius:4px', 'font-size:10px',
+    'letter-spacing:.06em', 'pointer-events:none'
+  ].join(';');
+  document.body.appendChild(badge);
+
+  function unlockAll() {
+    if (typeof Engine === 'undefined' || !Engine.state || !Engine.state.char) return;
+    if (typeof GALLERY_DATA === 'undefined') return;
+    var char = Engine.state.char;
+    if (!char.unlockedIllustrations) char.unlockedIllustrations = [];
+    GALLERY_DATA.forEach(function (entry) {
+      if (!entry.src && char.unlockedIllustrations.indexOf(entry.id) === -1) {
+        char.unlockedIllustrations.push(entry.id);
+      }
+    });
+  }
+
+  setInterval(unlockAll, 1000);
+  unlockAll();
+})();
+</script>
+`;
+
 const server = http.createServer((req, res) => {
     const urlPath  = req.url.split('?')[0];
 
@@ -185,6 +222,12 @@ const server = http.createServer((req, res) => {
         return;
     }
 
+    // Inject unlock-all script into index.html when flag is set
+    if (UNLOCK_ALL && (urlPath === '/' || urlPath === '/index.html')) {
+        const injected = data.toString('utf8').replace('</body>', UNLOCK_ALL_DEBUG + '\n</body>');
+        data = Buffer.from(injected, 'utf8');
+    }
+
     const send = () => {
         res.writeHead(200, {
             'Content-Type':   mime,
@@ -202,6 +245,7 @@ server.listen(PORT, () => {
     console.log(`\nTest server  →  http://localhost:${PORT}`);
     console.log(`HQ delay     →  ${HQ_DELAY} ms  (illustrations and character portraits)`);
     console.log(`LQ/thumb     →  no delay`);
+    console.log(`Unlock all   →  ${UNLOCK_ALL ? 'YES (all gallery illustrations auto-unlocked)' : 'no'}`);
     console.log(`\nDebug routes:`);
     console.log(`  /test/true-ending  →  game + "触发真结局" button (bypasses all unlock conditions)`);
     console.log(`\nLog format:  [HQ +Xms] = slow  [LQ] = fast  [thumb] = fast  [static] = instant`);
