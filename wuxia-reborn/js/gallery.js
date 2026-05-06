@@ -55,6 +55,7 @@ const GALLERY_DATA = [
     { id: 'su-qing-bond-3',              name: '苏青·别离之药',       hint: '她收拾药箱准备远行寻师，临走留下一瓶解毒药', category: 'bonds' },
     { id: 'su-qing-bond-4',              name: '苏青·师门寻踪',       hint: '师父被扣押于山寨，营救行动迫在眉睫',       category: 'bonds'   },
     { id: 'su-qing-ending',              name: '苏青·针灸传心',       hint: '她别过头去，不说话，但肩膀轻轻颤了一下——苏老先生说，她一个人找了五年，这份心比什么针法都值钱。', category: 'bonds' },
+    { id: 'su-qing-special-bond-5',     name: '苏青·悬壶问道',       hint: '师父藏着二十年的记录终于说出口——苏青没有感动，只是平静地把「记录」变成了「诊断」，超过了他', category: 'bonds', secret: true },
     { id: 'su-qing-afterstory',          name: '苏青·济世堂往事·秘方', hint: '师父透露手中藏有天魔解毒药方——是救人之药，还是终结之剑', category: 'bonds' },
     { id: 'su-qing-afterstory-ending',   name: '苏青·济世堂往事·重开', hint: '重新挂起的招牌下，她站在门口，望着落日',    category: 'bonds'   },
     { id: 'su-qing-true-ending',         name: '苏青·问脉道别',         hint: '济世堂里，她把了最后一次脉，叮嘱了一句：以后不用再重来了',      category: 'bonds', secret: true },
@@ -495,7 +496,8 @@ const Gallery = {
                 const spLevel = parseInt(se.id.match(/-special-bond-(\d+)$/)[1]);
                 const li = document.createElement('li');
                 li.className = 'gallery-replay-special';
-                li.textContent = se.name.includes('·') ? se.name.split('·').slice(1).join('·') : se.name;
+                const spSubtitle = se.name.includes('·') ? se.name.split('·').slice(1).join('·') : se.name;
+                li.textContent = `第${CHAPTER[spLevel - 1] || spLevel}章（升华线）- ${spSubtitle}`;
                 li.onclick = () => this._openReplay('bond_special', snakeId, spLevel, se.name, null, 0, se.id);
                 ul.appendChild(li);
             }
