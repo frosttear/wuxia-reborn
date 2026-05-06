@@ -287,8 +287,8 @@ const UI = {
             agility:       '影响闪避率与防御力',
             constitution:  '决定最大气血上限',
             innerForce:    '提供气盾减伤与技能增幅',
-            comprehension: '加快成长速度，影响境界突破',
-            luck:          '触发属性双倍收益与战斗闪避',
+            comprehension: '加快成长速度（+0.1%/点），影响战斗中敌人意图洞察几率',
+            luck:          '触发属性×1.5收益（上限15%）与战斗闪避',
             reputation:    '江湖地位，影响人脉与特殊机遇',
         };
         const attrsEl = document.getElementById('attributes');
@@ -445,7 +445,7 @@ const UI = {
 
         const bonds = state.bonds || {};
         const bondIds = Object.keys(bonds);
-        if (bondIds.length > 0 && bondIds.every(id => ((char.bondLevels || {})[id] || 0) >= bonds[id].length)) {
+        if (bondIds.length > 0 && bondIds.every(id => ((char.bondLevels || {})[id] || 0) >= (bonds[id].length > 0 ? Math.max(...bonds[id].map(b => b.level)) : 0))) {
             items.push({ name: '羁绊之力', effect: '攻+60（对隐藏强敌）' });
         }
 

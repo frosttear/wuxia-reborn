@@ -434,7 +434,7 @@ const Engine = {
         if (effects.attributes) {
             if (!effects.combat) {
                 const { luckyTriggered, actualGains } = Character.applyAttributeChanges(this.state.char, effects.attributes);
-                if (luckyTriggered) UI.addLog('✨ 幸运触发！属性收益翻倍！', 'unlock');
+                if (luckyTriggered) UI.addLog('✨ 幸运触发！属性收益×1.5！', 'unlock');
                 const effectsCopy = Object.assign({}, effects);
                 delete effectsCopy.attributes;
                 this.applyEffects(effectsCopy);
@@ -512,12 +512,15 @@ const Engine = {
         const npc = this.state.npcs.find(n => n.id === npcId);
         UI.addLog(`💞 与【${npc ? npc.name : npcId}】的羁绊加深！（第${level}章）`, 'unlock');
         const npcBonds = this.state.bonds[npcId];
-        const maxLevel = npcBonds ? npcBonds.length : 0;
+        const maxLevel = npcBonds ? Math.max(...npcBonds.map(b => b.level)) : 0;
         if (level < maxLevel) {
             UI.addIllustration(npcId.replace(/_/g, '-') + '-bond-' + level);
         }
         if (level >= maxLevel) {
-            const bondChapter = npcBonds.find(b => b.level === level);
+            const _matching = npcBonds.filter(b => b.level === level);
+            const bondChapter = _matching.length > 1
+                ? (_matching.find(b => this.checkConditions(b.conditions || {})) || _matching[_matching.length - 1])
+                : (_matching[0] || null);
             if (bondChapter && bondChapter.passive) {
                 const passive = bondChapter.passive;
                 if (!char.passives) char.passives = [];
@@ -535,7 +538,7 @@ const Engine = {
         const { char } = this.state;
         if (effects.attributes) {
             const { luckyTriggered, actualGains } = Character.applyAttributeChanges(char, effects.attributes);
-            if (luckyTriggered) UI.addLog('✨ 幸运触发！属性收益翻倍！', 'unlock');
+            if (luckyTriggered) UI.addLog('✨ 幸运触发！属性收益×1.5！', 'unlock');
             UI.addLog(`⬆ ${this.formatAttrGains(actualGains)}`, 'result');
         }
         if (effects.npcAffinity) {

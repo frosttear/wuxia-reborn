@@ -54,7 +54,7 @@ const GALLERY_DATA = [
     { id: 'su-qing-bond-2',              name: '苏青·青心草',         hint: '悬崖峭壁，她执意为病童采集青心草',         category: 'bonds'   },
     { id: 'su-qing-bond-3',              name: '苏青·别离之药',       hint: '她收拾药箱准备远行寻师，临走留下一瓶解毒药', category: 'bonds' },
     { id: 'su-qing-bond-4',              name: '苏青·师门寻踪',       hint: '师父被扣押于山寨，营救行动迫在眉睫',       category: 'bonds'   },
-    { id: 'su-qing-ending',              name: '苏青·针灸传心',       hint: '她背对着门口，肩膀轻轻颤着——她的父亲向你深深弯腰。', category: 'bonds' },
+    { id: 'su-qing-ending',              name: '苏青·针灸传心',       hint: '她别过头去，不说话，但肩膀轻轻颤了一下——苏老先生说，她一个人找了五年，这份心比什么针法都值钱。', category: 'bonds' },
     { id: 'su-qing-afterstory',          name: '苏青·济世堂往事·秘方', hint: '师父透露手中藏有天魔解毒药方——是救人之药，还是终结之剑', category: 'bonds' },
     { id: 'su-qing-afterstory-ending',   name: '苏青·济世堂往事·重开', hint: '重新挂起的招牌下，她站在门口，望着落日',    category: 'bonds'   },
     { id: 'su-qing-true-ending',         name: '苏青·问脉道别',         hint: '济世堂里，她把了最后一次脉，叮嘱了一句：以后不用再重来了',      category: 'bonds', secret: true },
@@ -579,9 +579,19 @@ const Gallery = {
         let steps = [];
         let completionNarrative = null;
 
-        if (type === 'bond') {
+        if (type === 'bond' || type === 'bond_normal' || type === 'bond_special') {
             const levelArr = bonds[id] || [];
-            const levelData = levelArr.find(b => b.level === level);
+            const matching = levelArr.filter(b => b.level === level);
+            let levelData;
+            if (type === 'bond_special') {
+                levelData = matching.find(b => Object.keys(b.conditions || {}).length > 0) || matching[0] || null;
+            } else if (type === 'bond_normal') {
+                levelData = matching[matching.length - 1] || null;
+            } else {
+                levelData = matching.length > 1
+                    ? (matching.find(b => (typeof Engine !== 'undefined') && Engine.checkConditions(b.conditions || {})) || matching[matching.length - 1])
+                    : (matching[0] || null);
+            }
             steps = (levelData && levelData.steps) || [];
         } else if (type === 'meet') {
             const events = ((typeof Engine !== 'undefined') && Engine.state && Engine.state.events) || [];
@@ -598,8 +608,9 @@ const Gallery = {
         // Derive illustration ID
         let illId = customIllId || null;
         if (!illId) {
-            if (type === 'bond') {
-                const maxLevel = (bonds[id] || []).length;
+            if (type === 'bond' || type === 'bond_normal') {
+                const bondArr = bonds[id] || [];
+                const maxLevel = bondArr.length > 0 ? Math.max(...bondArr.map(b => b.level)) : 0;
                 illId = level >= maxLevel
                     ? id.replace(/_/g, '-') + '-ending'
                     : id.replace(/_/g, '-') + '-bond-' + level;
@@ -877,17 +888,28 @@ const Gallery = {
             const npcSnake = npcKebab.replace(/-/g, '_');
             const portrait = GALLERY_DATA.find(d => d.id === `portrait-${npcKebab}`);
             const npcName = portrait ? portrait.name : npcKebab;
-            return { type: 'bond', id: npcSnake, level, title: `${npcName} · 第${CHAPTER[level - 1] || level}章` };
+            return { type: 'bond_normal', id: npcSnake, level, title: `${npcName} · 第${CHAPTER[level - 1] || level}章` };
+        }
+        if ((m = id.match(/^(.+)-special-bond-(\d+)$/))) {
+            const npcKebab = m[1];
+            const level = parseInt(m[2]);
+            const npcSnake = npcKebab.replace(/-/g, '_');
+            const portrait = GALLERY_DATA.find(d => d.id === `portrait-${npcKebab}`);
+            const npcName = portrait ? portrait.name : npcKebab;
+            const bondMeta = GALLERY_DATA.find(d => d.id === id);
+            const title = bondMeta ? bondMeta.name : `${npcName}·升华`;
+            return { type: 'bond_special', id: npcSnake, level, title, startStep: 0, customIllId: id };
         }
         if ((m = id.match(/^(.+)-ending$/))) {
             const npcKebab = m[1];
             const npcSnake = npcKebab.replace(/-/g, '_');
             const bonds = (typeof Engine !== 'undefined') && Engine.state && Engine.state.bonds || {};
-            const maxLevel = (bonds[npcSnake] || []).length;
+            const npcBondArr = bonds[npcSnake] || [];
+            const maxLevel = npcBondArr.length > 0 ? Math.max(...npcBondArr.map(b => b.level)) : 0;
             if (!maxLevel) return null;
             const portrait = GALLERY_DATA.find(d => d.id === `portrait-${npcKebab}`);
             const npcName = portrait ? portrait.name : npcKebab;
-            return { type: 'bond', id: npcSnake, level: maxLevel, title: `${npcName} · 第${CHAPTER[maxLevel - 1] || maxLevel}章` };
+            return { type: 'bond_normal', id: npcSnake, level: maxLevel, title: `${npcName} · 第${CHAPTER[maxLevel - 1] || maxLevel}章` };
         }
         return null;
     },

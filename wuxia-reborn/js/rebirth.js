@@ -344,7 +344,7 @@ const Rebirth = {
                 if (level > 0) {
                     const npc = npcs.find(n => n.id === npcId);
                     const npcName = npc ? npc.name : npcId;
-                    const total = bonds[npcId] ? bonds[npcId].length : '?';
+                    const total = bonds[npcId] ? Math.max(...bonds[npcId].map(b => b.level)) : '?';
                     bondLines.push(`  ${npcName}（第 ${level}/${total} 章）`);
                 }
             }

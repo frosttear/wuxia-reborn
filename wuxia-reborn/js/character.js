@@ -117,10 +117,10 @@ const Character = {
         return base + jobBase + skillBonus;
     },
 
-    // 运气：属性双倍触发概率，上限20%
+    // 运气：属性×1.5触发概率，上限15%
     getLuckTriggerChance(char) {
-        const luckPart = char.attributes.luck / 120;
-        return Math.min(0.20, luckPart);
+        const luckPart = char.attributes.luck / 150;
+        return Math.min(0.15, luckPart);
     },
 
     // 运气+敏捷：战斗闪避概率，上限25%
@@ -162,8 +162,11 @@ const Character = {
             if (!(attr in char.attributes)) continue;
             let amount = changes[attr];
             if (amount > 0) {
-                // 运气幸运触发：双倍
-                if (isLucky) { amount *= 2; luckyTriggered = true; }
+                // 运气幸运触发：×1.5
+                if (isLucky) { amount = Math.round(amount * 1.5); luckyTriggered = true; }
+                // 悟性：0.1%/点成长加成（独立于幸运，基于原始增量）
+                const compExtra = Math.round(changes[attr] * (char.attributes.comprehension || 0) / 1000);
+                if (compExtra > 0) { amount += compExtra; }
             }
             char.attributes[attr] = Math.max(0, char.attributes[attr] + amount);
             actualGains[attr] = amount;
