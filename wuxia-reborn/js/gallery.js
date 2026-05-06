@@ -8,12 +8,12 @@ const GALLERY_DATA = [
     { id: 'truth-shards',                name: '碎片真相·五物对证',    hint: '完成「碎片真相」任务链——将五人的记忆碎片，一一摆在老者面前', category: 'bosses' },
     { id: 'elder-true-form',              name: '剑魂·吞噬',            hint: '以力量击败剑魂，却在胜利的瞬间被那道千年剑意吞噬——余光中，白发身影强行启动了玉佩', category: 'bosses', secret: true },
     // 传说瞬间
+    { id: 'tianmo-win',                   name: '天魔陨落',             hint: '击败天魔，完成二十岁的宿命',                 category: 'bosses'  },
+    { id: 'tianmo-lose',                  name: '魔焰吞噬',             hint: '在天魔降临时力战不敌',                       category: 'bosses'  },
     { id: 'tianmo-and-jianhun',           name: '天魔与剑魂',           hint: '击败天魔后，玉牌碎裂——更古老的存在从碎片中浮现', category: 'bosses' },
     { id: 'sword-soul-win',               name: '斩破剑魂',             hint: '击败千年剑意——剑魂',                       category: 'bosses'  },
     { id: 'sword-soul-lose',              name: '败于剑意',             hint: '在与剑魂的对决中落败',                       category: 'bosses'  },
     { id: 'jianhun-origin-win',            name: '九百年前·终结',        hint: '以信念和人间之力，在九百年前终结了剑魂的本源——长夜将尽，曙光初破', category: 'bosses', secret: true },
-    { id: 'tianmo-win',                   name: '天魔陨落',             hint: '击败天魔，完成二十岁的宿命',                 category: 'bosses'  },
-    { id: 'tianmo-lose',                  name: '魔焰吞噬',             hint: '在天魔降临时力战不敌',                       category: 'bosses'  },
     // 羁绊情缘 — 王铁
     { id: 'wang-tie-meet',               name: '王铁·酒馆初识',       hint: '小镇酒馆，初遇独酌的老镖师',               category: 'bonds'   },
     { id: 'wang-tie-bond-1',             name: '王铁·镖路往事',       hint: '听老镖师讲述三十年走镖旧事，接过传承铁牌', category: 'bonds'   },
@@ -399,6 +399,10 @@ const Gallery = {
 
     _renderReplayList() {
         this._grid.style.display = '';
+        const openGroups = new Set(
+            [...this._grid.querySelectorAll('details.gallery-replay-npc-group[open]')]
+                .map(el => el.dataset.npc)
+        );
         this._grid.innerHTML = '';
 
         const char = (typeof Engine !== 'undefined') && Engine.state && Engine.state.char;
@@ -458,7 +462,8 @@ const Gallery = {
 
             const details = document.createElement('details');
             details.className = 'gallery-replay-npc-group';
-            details.open = true;
+            details.dataset.npc = kebab;
+            details.open = openGroups.has(kebab);
             const summary = document.createElement('summary');
             summary.className = 'gallery-replay-npc-header';
             summary.textContent = displayName;
@@ -480,6 +485,18 @@ const Gallery = {
                 const li = document.createElement('li');
                 li.textContent = `第${CHAPTER[lvl - 1] || lvl}章`;
                 li.onclick = () => this._openReplay('bond', snakeId, lvl, `${displayName}·第${CHAPTER[lvl - 1] || lvl}章`);
+                ul.appendChild(li);
+            }
+            // Special (升华) bond entries — shown after normal chapters if unlocked
+            const specialEntries = GALLERY_DATA.filter(d =>
+                d.id.startsWith(kebab + '-special-bond-') && unlockedIlls.includes(d.id)
+            );
+            for (const se of specialEntries) {
+                const spLevel = parseInt(se.id.match(/-special-bond-(\d+)$/)[1]);
+                const li = document.createElement('li');
+                li.className = 'gallery-replay-special';
+                li.textContent = se.name.includes('·') ? se.name.split('·').slice(1).join('·') : se.name;
+                li.onclick = () => this._openReplay('bond_special', snakeId, spLevel, se.name, null, 0, se.id);
                 ul.appendChild(li);
             }
             if (npcChain) {

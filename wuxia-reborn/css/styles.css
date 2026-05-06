@@ -1098,6 +1098,9 @@ button:disabled { opacity: 0.4; cursor: not-allowed; }
 .gallery-replay-npc-items { list-style: none; padding: 0; margin: 0; }
 .gallery-replay-npc-items li { padding: 8px 16px 8px 32px; cursor: pointer; border-bottom: 1px solid rgba(255,255,255,0.05); color: #c4b896; font-size: 0.92rem; line-height: 1.8; transition: background 0.15s; }
 .gallery-replay-npc-items li:hover { background: rgba(255,255,255,0.06); color: #e0d0a8; }
+.gallery-replay-npc-items li.gallery-replay-special { color: #a89ccc; padding-left: 40px; }
+.gallery-replay-npc-items li.gallery-replay-special::before { content: '✦ '; font-size: 0.7em; opacity: 0.7; }
+.gallery-replay-npc-items li.gallery-replay-special:hover { color: #c8bce8; }
 
 /* Replay sub-view panel */
 .gallery-replay-panel { display: none; flex-direction: column; padding: 12px 16px; height: 100%; box-sizing: border-box; }

@@ -170,6 +170,28 @@ const UNLOCK_ALL_DEBUG = `
         char.unlockedIllustrations.push(entry.id);
       }
     });
+    // Unlock all bond progression so replay list shows every chapter
+    var bonds = (Engine.state && Engine.state.bonds) || {};
+    if (!char.bondLevels) char.bondLevels = {};
+    if (!char.lifetimeBondLevels) char.lifetimeBondLevels = {};
+    if (!char.flags) char.flags = {};
+    var bondsChanged = false;
+    for (var npcId in bonds) {
+      if (npcId === '_casualVisits') continue;
+      var arr = bonds[npcId];
+      if (!Array.isArray(arr) || arr.length === 0) continue;
+      var maxLvl = Math.max.apply(null, arr.map(function(b) { return b.level; }));
+      if ((char.bondLevels[npcId] || 0) < maxLvl) {
+        char.bondLevels[npcId] = maxLvl;
+        char.lifetimeBondLevels[npcId] = maxLvl;
+        bondsChanged = true;
+      }
+      char.flags['met_' + npcId] = true;
+    }
+    // Refresh gallery replay list only when something actually changed
+    if (bondsChanged && typeof Gallery !== 'undefined' && Gallery._activeTab === 'replay') {
+      Gallery._renderReplayList();
+    }
   }
 
   setInterval(unlockAll, 1000);
