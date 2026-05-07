@@ -111,6 +111,17 @@ const Combat = {
         return Math.random() < (hpPct < 0.35 ? 0.55 : 0.45) ? 'heavy' : 'swift';
     },
 
+    // ── Win condition: 0 HP or winHpThreshold reached ────────────────────────
+    _isEnemyDefeated(cs) {
+        if (cs.enemyHp <= 0) return true;
+        const threshold = cs.enemy.winHpThreshold;
+        if (threshold && cs.enemyHp <= cs.enemyMaxHp * threshold) {
+            cs.thresholdWin = true;
+            return true;
+        }
+        return false;
+    },
+
     // ── Inner-force combat bonus (relative advantage) ──────────────────────
     // Returns 0 when playerIF ≤ enemyIF; up to ~40% when massively dominant.
     // Formula: max(0, (pIF - eIF) / (pIF + eIF + 10) * 0.40)
@@ -221,7 +232,7 @@ const Combat = {
                     if (sk.type === 'stun') cs.enemyStunned = true;
                     lines.push(`【<b style="color:#f4c430">${sk.name}</b>】对方损失 <b>${dmg}</b> 气血（剩余 ${Math.max(0, cs.enemyHp)}）。${stunNote}${ampNote}`);
                 }
-                if (cs.enemyHp <= 0) { result = 'won'; combatOver = true; }
+                if (this._isEnemyDefeated(cs)) { result = 'won'; combatOver = true; }
 
             } else if (action === 'strike') {
                 const lv    = 1 + (Math.random() - 0.5) * (char.attributes.luck / 100);
@@ -235,7 +246,7 @@ const Combat = {
                 cs.playerMomentum = Math.min(5, cs.playerMomentum + 2);
                 const pd = this._pick(this.STANCE_ATTACK_DESCS.strike);
                 lines.push(`${pd}${isCrit ? '【<b>会心一击</b>】' : ''}，对方损失 <b>${dmg}</b> 气血（剩余 ${Math.max(0, cs.enemyHp)}）。`);
-                if (cs.enemyHp <= 0) { result = 'won'; combatOver = true; }
+                if (this._isEnemyDefeated(cs)) { result = 'won'; combatOver = true; }
 
             } else if (action === 'defend') {
                 if (swiftAnticipated) {
@@ -333,7 +344,7 @@ const Combat = {
                         const skillNote = skillName ? `【<b style="color:#e07b39">${skillName}</b>】` : '';
                         lines.push(`${cs.enemy.name}${skillNote}${this._pick(this.ENEMY_HEAVY_DESCS)}——你【${counterLabel}】！${counterText}，你承受 <b>${parryDmg}</b> 点冲击。`);
                         if (char.hp <= 0) { result = 'lost'; combatOver = true; }
-                        if (!combatOver && cs.enemyHp <= 0) { result = 'won'; combatOver = true; }
+                        if (!combatOver && this._isEnemyDefeated(cs)) { result = 'won'; combatOver = true; }
                         // Break: successful parry disrupts enemy skill charge
                         if (!combatOver) {
                             const breakAmt = Math.min(2, cs.enemyMomentum);

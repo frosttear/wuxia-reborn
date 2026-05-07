@@ -1241,6 +1241,15 @@ const Engine = {
             if (enemy.isTrueFinalBoss) {
                 char.flags.true_final_boss_beaten = true;
                 char.flags.fought_final_boss = true;
+                if (enemy.npcBondLines) {
+                    const NPC_ORDER = ['wang_tie', 'li_yunshu', 'yan_chixing', 'su_qing', 'ling_xue', 'mysterious_elder'];
+                    const bondDmg = Math.round(cs.enemyMaxHp * 0.05);
+                    for (const npcId of NPC_ORDER) {
+                        if ((char.bondLevels[npcId] || 0) >= 5 && enemy.npcBondLines[npcId]) {
+                            UI.addLog(enemy.npcBondLines[npcId].replace('{dmg}', bondDmg), 'win');
+                        }
+                    }
+                }
                 UI.addLog(enemy.winNarrative, 'win');
                 UI.showCombatReturnBtn('won', () => {
                     UI.hideCombatOverlay();
