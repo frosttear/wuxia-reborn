@@ -138,7 +138,7 @@ const TALENTS = [
     {
         id: 'worldline_echo',
         name: '既视感',
-        desc: '世界线回溯后，前世羁绊直接解锁至第3章（跳过前3级好感门槛）',
+        desc: '世界线回溯后，前世羁绊好感大幅提升，无需从零积累即可触发后续章节',
         condition: (char) => char.rebirthCount >= 3
     },
     {
@@ -307,17 +307,15 @@ const Rebirth = {
         // NPC affinity is NOT inherited — NPCs don't remember previous lives.
         // The 前世记忆 bond choice gives bonuses instead when replaying bond events.
 
-        // 既视感: directly unlock bond levels up to 3 for all inherited NPCs
+        // 既视感: boost affinity only — player still plays all chapters so flag
+        // choices (e.g. li_yunshu_family_path) can trigger special bond lines
         if (newChar.legacyTalents.includes('worldline_echo')) {
             for (const npcId in newChar.inheritedBonds) {
-                const prevLevel = newChar.inheritedBonds[npcId];
-                const grantLevel = Math.min(3, prevLevel);
-                if (grantLevel > 0) {
-                    newChar.bondLevels[npcId] = grantLevel;
-                    // Also set affinity high enough for level 3
-                    const targetAffinity = 70; // enough for most L3 thresholds
-                    if ((newChar.relationships[npcId] || {}).affinity < targetAffinity) {
-                        NPCSystem.applyAffinityChanges(newChar, { [npcId]: targetAffinity - ((newChar.relationships[npcId] || {}).affinity || 0) });
+                if (newChar.inheritedBonds[npcId] > 0) {
+                    const targetAffinity = 70; // enough to skip casual-visit grind
+                    const current = (newChar.relationships[npcId] || {}).affinity || 0;
+                    if (current < targetAffinity) {
+                        NPCSystem.applyAffinityChanges(newChar, { [npcId]: targetAffinity - current });
                     }
                 }
             }
