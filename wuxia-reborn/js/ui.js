@@ -686,8 +686,11 @@ const UI = {
                         const unlockTag = choice.requirements
                             ? `<span class="choice-unlock-tag">${this.formatRequirementLabel(choice.requirements, true)}</span>`
                             : '';
+                        const branchTag = choice.label
+                            ? `<span class="choice-branch-tag">${choice.label}</span>`
+                            : '';
                         btn.className = 'choice-btn';
-                        btn.innerHTML = unlockTag
+                        btn.innerHTML = unlockTag + branchTag
                             + `<span class="choice-text">${choice.text}</span>`
                             + (preview ? `<span class="choice-effects">${preview}</span>` : '');
                         btn.onclick = () => {

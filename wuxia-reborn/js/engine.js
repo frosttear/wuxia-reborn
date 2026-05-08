@@ -468,7 +468,9 @@ const Engine = {
                 // For last-step bond combats, defer npcAffinity to post-victory
                 if (bondInfo && sideEffects.npcAffinity) delete sideEffects.npcAffinity;
                 this.applyEffects(sideEffects);
+                if (effects.illustration) UI.addIllustration(effects.illustration);
                 if (effects.narrative) UI.addLog(effects.narrative, 'result');
+                if (effects.combatIllustration) UI.addIllustration(effects.combatIllustration);
                 if (chainStep) this.state.pendingChainStep = chainStep;
                 if (isNonFinalStep) {
                     this.state.pendingBondStep = {
@@ -526,6 +528,7 @@ const Engine = {
                 if (!char.passives) char.passives = [];
                 if (!char.passives.find(p => p.id === passive.id)) {
                     char.passives.push(passive);
+                    if (passive.attributes) Character.applyAttributeChanges(char, passive.attributes);
                     UI.addLog(`✨ 解锁被动【${passive.name}】：${passive.desc}`, 'unlock');
                 }
             }
@@ -919,6 +922,7 @@ const Engine = {
             for (const passive of reward.passives) {
                 if (!char.passives.find(p => p.id === passive.id)) {
                     char.passives.push(passive);
+                    if (passive.attributes) Character.applyAttributeChanges(char, passive.attributes);
                     UI.addLog(`✨ 解锁被动【${passive.name}】：${passive.desc}`, 'unlock');
                 }
             }

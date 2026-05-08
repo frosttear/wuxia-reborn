@@ -93,7 +93,8 @@ const Combat = {
             // 天魔威压遮蔽，识破上限60%；剑魂神意难测，上限50%；普通对手上限80%
             const intentCap = enemy.id === 'sword_soul' ? 0.50
                             : enemy.id === 'tianmo'      ? 0.60 : 0.80;
-            const accurateChance = Math.min(intentCap, 0.80 * Math.log(1 + playerComp / (enemyComp + 20)));
+            const intentBonus0 = (char.passives || []).reduce((s, p) => s + (p.combatIntentBonus || 0), 0);
+            const accurateChance = Math.min(intentCap, 0.80 * Math.log(1 + playerComp / (enemyComp + 20)) + intentBonus0);
             if (Math.random() < accurateChance) {
                 cs.enemyIntentHint = this._getIntentHint(enemy, firstAction);
                 cs.enemyIntentType = 'accurate';
@@ -473,7 +474,8 @@ const Combat = {
                 const enemyComp     = cs.enemyComp;
                 const intentCap = cs.enemy.id === 'sword_soul' ? 0.50
                                 : cs.enemy.id === 'tianmo'      ? 0.60 : 0.80;
-                const accurateChance = Math.min(intentCap, 0.80 * Math.log(1 + playerComp / (enemyComp + 20)));
+                const intentBonus = (char.passives || []).reduce((s, p) => s + (p.combatIntentBonus || 0), 0);
+                const accurateChance = Math.min(intentCap, 0.80 * Math.log(1 + playerComp / (enemyComp + 20)) + intentBonus);
                 if (Math.random() < accurateChance) {
                     cs.enemyIntentHint = this._getIntentHint(cs.enemy, next);
                     cs.enemyIntentType = 'accurate';

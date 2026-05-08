@@ -339,6 +339,16 @@ body {
     padding: 1px 6px;
     font-family: inherit;
 }
+.choice-branch-tag {
+    font-size: 0.72rem;
+    color: #c084fc;
+    background: rgba(192,132,252,0.12);
+    border: 1px solid rgba(192,132,252,0.35);
+    border-radius: 3px;
+    padding: 1px 6px;
+    margin-right: 4px;
+    font-family: inherit;
+}
 .choice-text  { line-height: 1.4; }
 .choice-effects {
     font-size: 0.72rem;
