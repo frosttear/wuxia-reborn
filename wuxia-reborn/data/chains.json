@@ -307,7 +307,7 @@
           "title": "义救灾民",
           "unlockConditions": {
             "jobs": [
-              "swordsman"
+              "blade_master"
             ],
             "minAttributes": {
               "strength": 20,
@@ -880,12 +880,9 @@
           "title": "她想见那个人",
           "unlockConditions": {
             "bondLevels": {
-              "li_yunshu": 5,
-              "yan_chixing": 4
+              "li_yunshu": 5
             },
             "flags": {
-              "elder_true_form_seen": true,
-              "li_yunshu_family_path": true,
               "li_sp5_done": true
             }
           },
@@ -1018,7 +1015,6 @@
               "su_qing": 5
             },
             "flags": {
-              "su_qing_mission_path": true,
               "su_sp5_done": true
             }
           },
@@ -1161,7 +1157,6 @@
               "ling_xue": 5
             },
             "flags": {
-              "lx_blade_path": false,
               "lx_sp5_done": true
             }
           },
@@ -1305,7 +1300,7 @@
               "mysterious_elder": 5
             },
             "flags": {
-              "elder_true_form_seen": true
+              "elder_sp5_done": true
             }
           },
           "text": "老者传你元气之后，身体大不如前。几日后，他把你叫到院中，从怀中取出一样东西——一枚铜制的发簪，簪头雕着一朵小小的梅花。\n\n「这是微尘的。」他的声音很轻，「她走的那天，留在桌上的。老夫带了二十年。」\n\n「老夫知道她在清风镇——这是多年前云中子转告的，在通信被截断之前的最后一条消息。那一带是天魔的势力范围，外人难以进入。老夫曾亲自去过，在镇外十里遭了伏击，此后再无力尝试。」\n\n他把发簪放在你手心：「云中子在西边的落霞峰隐居，是微尘的师姐，当年知道进那一带的路子，也许能给你些帮助。」\n\n「老夫去不了，你去。」他合上你的手指，让你握住那枚发簪，「哪怕只是让她知道，老夫一直没有忘——也好。」",
@@ -1446,7 +1441,6 @@
               "yan_chixing": 5
             },
             "flags": {
-              "elder_true_form_seen": true,
               "yan_sp5_done": true
             }
           },

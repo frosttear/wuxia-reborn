@@ -76,6 +76,40 @@ describe.each(chains.chains)('chain "$id"', (chain) => {
     });
 });
 
+// ── chain-specific unlock condition regressions ────────────────────────────
+
+describe('chain unlock condition regressions', () => {
+    test('hero_path_1 (义救灾民) requires blade_master job', () => {
+        const heroPath = chains.chains.find(c => c.id === 'hero_path');
+        expect(heroPath).toBeDefined();
+        const step = heroPath.steps.find(s => s.id === 'hero_path_1');
+        expect(step).toBeDefined();
+        expect(step.unlockConditions.jobs).toContain('blade_master');
+        expect(step.unlockConditions.jobs).not.toContain('swordsman');
+    });
+
+    const afterstoryCases = [
+        { chainId: 'li_yunshu_afterstory',  stepId: 'li_after_1',   npcId: 'li_yunshu',        sp5Flag: 'li_sp5_done'  },
+        { chainId: 'su_qing_afterstory',    stepId: 'su_after_1',   npcId: 'su_qing',           sp5Flag: 'su_sp5_done'  },
+        { chainId: 'lingxue_afterstory',    stepId: 'lx_after_1',   npcId: 'ling_xue',          sp5Flag: 'lx_sp5_done'  },
+        { chainId: 'yan_afterstory',        stepId: 'yan_after_1',  npcId: 'yan_chixing',       sp5Flag: 'yan_sp5_done' },
+        { chainId: 'elder_afterstory',      stepId: 'elder_after_1',npcId: 'mysterious_elder',  sp5Flag: 'elder_sp5_done'},
+    ];
+
+    test.each(afterstoryCases)('$chainId first step requires only SP5 flag + bond level 5', ({ chainId, stepId, npcId, sp5Flag }) => {
+        const chain = chains.chains.find(c => c.id === chainId);
+        expect(chain).toBeDefined();
+        const step = chain.steps.find(s => s.id === stepId);
+        expect(step).toBeDefined();
+        const uc = step.unlockConditions;
+        expect(uc.bondLevels[npcId]).toBe(5);
+        expect(uc.flags[sp5Flag]).toBe(true);
+        expect(Object.keys(uc.flags)).toEqual([sp5Flag]);
+        expect(Object.keys(uc.bondLevels)).toEqual([npcId]);
+        expect(uc.jobs).toBeUndefined();
+    });
+});
+
 // ── enemies referenced by chains exist in enemies.json ────────────────────
 
 describe('chain combat references', () => {

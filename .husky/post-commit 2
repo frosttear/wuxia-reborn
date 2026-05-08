@@ -1,0 +1,42 @@
+# Auto-sync game files (wuxia-reborn/) to backup/pre-restructure after each main commit.
+# Uses git plumbing (no worktree checkout) to avoid Windows path issues.
+# Skips MyPages changes (root-level files) and skips non-main branches.
+
+branch=$(git symbolic-ref --short HEAD 2>/dev/null) || exit 0
+[ "$branch" = "main" ] || exit 0
+
+# Collect wuxia-reborn/ files changed in this commit
+changed=$(git diff-tree --no-commit-id -r --name-only HEAD | grep '^wuxia-reborn/' || true)
+[ -z "$changed" ] && exit 0
+
+# Bail if target branch doesn't exist
+git rev-parse --verify backup/pre-restructure >/dev/null 2>&1 || exit 0
+
+# Use a temporary index to build the new tree without touching the working directory
+tmp_index=$(mktemp) || exit 0
+
+# Load backup/pre-restructure tree into the temp index
+GIT_INDEX_FILE="$tmp_index" git read-tree backup/pre-restructure || { rm -f "$tmp_index"; exit 0; }
+
+# Apply each changed file (with wuxia-reborn/ prefix stripped) into the temp index
+echo "$changed" | while IFS= read -r file; do
+    dest="${file#wuxia-reborn/}"
+    if git cat-file -e "HEAD:$file" 2>/dev/null; then
+        blob=$(git rev-parse "HEAD:$file")
+        GIT_INDEX_FILE="$tmp_index" git update-index --add --cacheinfo 100644,"$blob","$dest"
+    else
+        GIT_INDEX_FILE="$tmp_index" git update-index --remove "$dest" 2>/dev/null || true
+    fi
+done
+
+# Write tree, create commit, advance branch ref
+new_tree=$(GIT_INDEX_FILE="$tmp_index" git write-tree)
+parent=$(git rev-parse backup/pre-restructure)
+commit_msg=$(git log -1 --pretty=%B)
+new_commit=$(git commit-tree "$new_tree" -p "$parent" -m "$commit_msg") || { rm -f "$tmp_index"; exit 0; }
+git update-ref refs/heads/backup/pre-restructure "$new_commit"
+
+rm -f "$tmp_index"
+n=$(echo "$changed" | wc -l | tr -d ' ')
+printf '✓ Synced %s file(s) to backup/pre-restructure\n' "$n"
+exit 0

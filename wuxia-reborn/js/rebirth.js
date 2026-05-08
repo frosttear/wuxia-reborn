@@ -251,6 +251,7 @@ const Rebirth = {
             'mark_rebirth_power', 'mark_afterstory_power', 'mark_hermit_power',
             'wuxiang_sword_mastered',
             'elder_true_form_seen',  // unlocks NPC elevated path choices in subsequent lives
+            'elder_sp5_done',        // 神秘老者·升华线第五章
             // Branch completion flags — passive activates if flag inherited AND bond level met in current life
             'su_qing_mission_path',  // 苏青·济世线 → 天魔HP-20%
             'li_yunshu_family_path', // 李云舒·家族压力线 → 天魔防御-25

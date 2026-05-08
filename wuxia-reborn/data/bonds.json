@@ -1607,6 +1607,10 @@
                   "innerForce": 1,
                   "comprehension": 1
                 },
+                "flags": {
+                  "elder_true_form_seen": true,
+                  "elder_sp5_done": true
+                },
                 "npcAffinity": {
                   "mysterious_elder": 10
                 },
@@ -1627,6 +1631,10 @@
                   "innerForce": 5,
                   "comprehension": 3,
                   "luck": 1
+                },
+                "flags": {
+                  "elder_true_form_seen": true,
+                  "elder_sp5_done": true
                 },
                 "npcAffinity": {
                   "mysterious_elder": 10
