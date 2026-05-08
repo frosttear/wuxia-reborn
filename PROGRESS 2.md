@@ -1,27 +1,6 @@
 # 轮回江湖 — 开发进度
 
-## 当前版本：v0.27.20
-
-### v0.27.20（2026-05-08）
-
-**后日谈解锁条件统一**
-- 所有 NPC 后日谈首节解锁条件统一为「升华线第五章完成」：仅需 bondLevel 5 + 各自 SP5 done flag，移除原有的路线 flag / 跨 NPC bondLevel 门槛等额外条件
-- `li_after_1`：移除 `yan_chixing≥4`、`elder_true_form_seen`、`li_yunshu_family_path`
-- `su_after_1`：移除 `su_qing_mission_path`
-- `lx_after_1`：移除 `lx_blade_path: false`
-- `yan_after_1`：移除 `elder_true_form_seen`
-- `elder_after_1`：`elder_true_form_seen` → `elder_sp5_done`（新增 flag）
-- `bonds.json` 神秘老者 L5 终章两条选择均设置 `elder_true_form_seen` + `elder_sp5_done`
-- `rebirth.js`：`elder_sp5_done` 加入 `PERSIST_FLAGS`
-
-----
-
-### v0.27.19（2026-05-06）
-
-**任务链调整**
-- 「义救灾民」（`hero_path_1`）解锁职业门槛：`swordsman` → `blade_master`（剑豪），与侠名之路定位一致
-
-----
+## 当前版本：v0.27.18
 
 ### v0.27.18（2026-05-06）
 

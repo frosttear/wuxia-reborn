@@ -138,7 +138,7 @@ const TALENTS = [
     {
         id: 'worldline_echo',
         name: '既视感',
-        desc: '世界线回溯后，前世羁绊直接解锁至第3章（跳过前3级好感门槛）',
+        desc: '世界线回溯后，前世羁绊好感大幅提升，无需从零积累即可触发后续章节',
         condition: (char) => char.rebirthCount >= 3
     },
     {
@@ -168,10 +168,13 @@ const TALENTS = [
         condition: (char) => char.attributes.agility >= 22,
     },
     {
-        id: 'serendipity',
-        name: '天赐奇缘',
-        desc: '前世运气超群，江湖奇遇类事件出现概率+25%',
-        condition: (char) => char.attributes.luck >= 18,
+        id: 'time_master',
+        name: '时间管理大师',
+        desc: '深谙时机，羁绊时刻无需耗费岁月——与知己相逢，不必以月份为代价',
+        condition: (char) => {
+            const metCount = Object.keys(char.flags || {}).filter(k => k.startsWith('met_')).length;
+            return metCount >= 6 || (char.rebirthCount || 0) >= 2;
+        },
     },
 ];
 
@@ -243,9 +246,18 @@ const Rebirth = {
 
         // Persist critical meta-flags that must survive rebirth
         const PERSIST_FLAGS = [
-            'lost_to_final_boss', 'zhushi_chain_done', 'truth_assembled', 'mark_hermit',
+            'lost_to_final_boss', 'fought_final_boss', 'zhushi_chain_done', 'truth_assembled', 'mark_hermit',
             'mark_warrior_power', 'mark_wuxiang_power',
-            'mark_rebirth_power', 'mark_afterstory_power', 'mark_hermit_power'
+            'mark_rebirth_power', 'mark_afterstory_power', 'mark_hermit_power',
+            'wuxiang_sword_mastered',
+            'elder_true_form_seen',  // unlocks NPC elevated path choices in subsequent lives
+            'elder_sp5_done',        // 神秘老者·升华线第五章
+            // Branch completion flags — passive activates if flag inherited AND bond level met in current life
+            'su_qing_mission_path',  // 苏青·济世线 → 天魔HP-20%
+            'li_yunshu_family_path', // 李云舒·家族压力线 → 天魔防御-25
+            'yan_sp4_done',          // 燕赤行·特殊羁绊第四章
+            'yan_sp5_done',          // 燕赤行·特殊羁绊第五章
+            'lx_sp4_done',           // 凌雪·特殊羁绊第四章
         ];
         for (const f of PERSIST_FLAGS) {
             if (char.flags[f]) newChar.flags[f] = char.flags[f];
@@ -257,6 +269,15 @@ const Rebirth = {
                 id: 'rebirth_power', name: '轮回之力',
                 desc: '诸世之我的意志共鸣——以所有的自己，对抗设计者',
                 rebirthPower: true
+            });
+        }
+        // Re-grant 无相剑意 passive if mastered in a previous life
+        if (char.flags.wuxiang_sword_mastered) {
+            if (!newChar.passives) newChar.passives = [];
+            newChar.passives.push({
+                id: 'wuxiang_intent', name: '无相剑意',
+                desc: '走遍江湖、读懂六颗心之后自然涌现——敌方意图在你眼中无所遁形',
+                perfectIntentRead: true
             });
         }
 
@@ -293,17 +314,15 @@ const Rebirth = {
         // NPC affinity is NOT inherited — NPCs don't remember previous lives.
         // The 前世记忆 bond choice gives bonuses instead when replaying bond events.
 
-        // 既视感: directly unlock bond levels up to 3 for all inherited NPCs
+        // 既视感: boost affinity only — player still plays all chapters so flag
+        // choices (e.g. li_yunshu_family_path) can trigger special bond lines
         if (newChar.legacyTalents.includes('worldline_echo')) {
             for (const npcId in newChar.inheritedBonds) {
-                const prevLevel = newChar.inheritedBonds[npcId];
-                const grantLevel = Math.min(3, prevLevel);
-                if (grantLevel > 0) {
-                    newChar.bondLevels[npcId] = grantLevel;
-                    // Also set affinity high enough for level 3
-                    const targetAffinity = 70; // enough for most L3 thresholds
-                    if ((newChar.relationships[npcId] || {}).affinity < targetAffinity) {
-                        NPCSystem.applyAffinityChanges(newChar, { [npcId]: targetAffinity - ((newChar.relationships[npcId] || {}).affinity || 0) });
+                if (newChar.inheritedBonds[npcId] > 0) {
+                    const targetAffinity = 70; // enough to skip casual-visit grind
+                    const current = (newChar.relationships[npcId] || {}).affinity || 0;
+                    if (current < targetAffinity) {
+                        NPCSystem.applyAffinityChanges(newChar, { [npcId]: targetAffinity - current });
                     }
                 }
             }
@@ -330,7 +349,7 @@ const Rebirth = {
                 if (level > 0) {
                     const npc = npcs.find(n => n.id === npcId);
                     const npcName = npc ? npc.name : npcId;
-                    const total = bonds[npcId] ? bonds[npcId].length : '?';
+                    const total = bonds[npcId] ? Math.max(...bonds[npcId].map(b => b.level)) : '?';
                     bondLines.push(`  ${npcName}（第 ${level}/${total} 章）`);
                 }
             }

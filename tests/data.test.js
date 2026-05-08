@@ -76,6 +76,40 @@ describe.each(chains.chains)('chain "$id"', (chain) => {
     });
 });
 
+// ── chain-specific unlock condition regressions ────────────────────────────
+
+describe('chain unlock condition regressions', () => {
+    test('hero_path_1 (义救灾民) requires blade_master job', () => {
+        const heroPath = chains.chains.find(c => c.id === 'hero_path');
+        expect(heroPath).toBeDefined();
+        const step = heroPath.steps.find(s => s.id === 'hero_path_1');
+        expect(step).toBeDefined();
+        expect(step.unlockConditions.jobs).toContain('blade_master');
+        expect(step.unlockConditions.jobs).not.toContain('swordsman');
+    });
+
+    const afterstoryCases = [
+        { chainId: 'li_yunshu_afterstory',  stepId: 'li_after_1',   npcId: 'li_yunshu',        sp5Flag: 'li_sp5_done'  },
+        { chainId: 'su_qing_afterstory',    stepId: 'su_after_1',   npcId: 'su_qing',           sp5Flag: 'su_sp5_done'  },
+        { chainId: 'lingxue_afterstory',    stepId: 'lx_after_1',   npcId: 'ling_xue',          sp5Flag: 'lx_sp5_done'  },
+        { chainId: 'yan_afterstory',        stepId: 'yan_after_1',  npcId: 'yan_chixing',       sp5Flag: 'yan_sp5_done' },
+        { chainId: 'elder_afterstory',      stepId: 'elder_after_1',npcId: 'mysterious_elder',  sp5Flag: 'elder_sp5_done'},
+    ];
+
+    test.each(afterstoryCases)('$chainId first step requires only SP5 flag + bond level 5', ({ chainId, stepId, npcId, sp5Flag }) => {
+        const chain = chains.chains.find(c => c.id === chainId);
+        expect(chain).toBeDefined();
+        const step = chain.steps.find(s => s.id === stepId);
+        expect(step).toBeDefined();
+        const uc = step.unlockConditions;
+        expect(uc.bondLevels[npcId]).toBe(5);
+        expect(uc.flags[sp5Flag]).toBe(true);
+        expect(Object.keys(uc.flags)).toEqual([sp5Flag]);
+        expect(Object.keys(uc.bondLevels)).toEqual([npcId]);
+        expect(uc.jobs).toBeUndefined();
+    });
+});
+
 // ── enemies referenced by chains exist in enemies.json ────────────────────
 
 describe('chain combat references', () => {
@@ -148,12 +182,17 @@ describe('bonds.json - NPC bond structure', () => {
     test.each(npcIds)('NPC "%s" has 5 bond chapters', (npcId) => {
         const chapters = bonds[npcId];
         expect(Array.isArray(chapters)).toBe(true);
-        expect(chapters.length).toBe(5);
+        // Conditional alternate-path entries (those with a "conditions" field) are allowed
+        // in addition to the standard 5 chapters.
+        const mainChapters = chapters.filter(c => !c.conditions);
+        expect(mainChapters.length).toBe(5);
     });
 
     test.each(npcIds)('NPC "%s" last chapter has a passive', (npcId) => {
         const chapters = bonds[npcId];
-        const last = chapters[chapters.length - 1];
+        // The last default (non-conditional) chapter must have a passive.
+        const mainChapters = chapters.filter(c => !c.conditions);
+        const last = mainChapters[mainChapters.length - 1];
         expect(last.passive).toBeDefined();
         expect(typeof last.passive.id).toBe('string');
         expect(typeof last.passive.name).toBe('string');
@@ -161,15 +200,19 @@ describe('bonds.json - NPC bond structure', () => {
 
     test.each(npcIds)('NPC "%s" chapters have ascending levels', (npcId) => {
         const chapters = bonds[npcId];
-        for (let i = 0; i < chapters.length; i++) {
-            expect(chapters[i].level).toBe(i + 1);
+        // Only check ascending level order for default (non-conditional) entries.
+        const mainChapters = chapters.filter(c => !c.conditions);
+        for (let i = 0; i < mainChapters.length; i++) {
+            expect(mainChapters[i].level).toBe(i + 1);
         }
     });
 
     test.each(npcIds)('NPC "%s" chapters have ascending minAffinity', (npcId) => {
         const chapters = bonds[npcId];
-        for (let i = 1; i < chapters.length; i++) {
-            expect(chapters[i].minAffinity).toBeGreaterThan(chapters[i - 1].minAffinity);
+        // Only check ascending minAffinity for default (non-conditional) entries.
+        const mainChapters = chapters.filter(c => !c.conditions);
+        for (let i = 1; i < mainChapters.length; i++) {
+            expect(mainChapters[i].minAffinity).toBeGreaterThan(mainChapters[i - 1].minAffinity);
         }
     });
 
