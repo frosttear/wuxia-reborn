@@ -980,6 +980,7 @@
       "level": 5,
       "title": "承重之剑",
       "minAffinity": 85,
+      "noAutoIllustration": true,
       "conditions": {
         "flags": {
           "li_yunshu_family_path": true
@@ -1015,6 +1016,7 @@
                   "agility": 1,
                   "constitution": 1
                 },
+                "illustration": "li-yunshu-special-bond-5",
                 "narrative": "你跟上她。她走路的脚步和她的剑一样，不急不慌，但每一步都踩在它该踩的地方。"
               }
             },
@@ -1027,7 +1029,12 @@
                 }
               },
               "effects": {
+                "attributes": {
+                  "strength": 1,
+                  "agility": 1
+                },
                 "combat": "skilled_bandit",
+                "illustration": "li-yunshu-special-bond-5",
                 "narrative": "你让她先走，自己留下来和那人周旋。等你处置完，追上去，她已经站在书房门口了，手按剑柄，等着你。你们对视了一眼——她没说什么，转身推开了门。"
               }
             }

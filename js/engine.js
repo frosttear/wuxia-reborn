@@ -441,6 +441,7 @@ const Engine = {
                 const gainsStr = this.formatAttrGains(actualGains);
                 const gainsTag = gainsStr ? `　<span class="attr-gains">⬆ ${gainsStr}</span>` : '';
                 const narrative = effects.narrative ? effects.narrative + gainsTag : (gainsTag || '');
+                if (effects.illustration) UI.addIllustration(effects.illustration);
                 if (narrative) UI.addLog(narrative, 'result');
                 if (chainStep) this.completeChainStep(chainStep.chainId, chainStep.stepIdx);
                 if (isNonFinalStep) {
@@ -495,6 +496,7 @@ const Engine = {
         // Complete chain step (non-combat, no attribute effects)
         if (chainStep) this.completeChainStep(chainStep.chainId, chainStep.stepIdx);
         this.applyEffects(effects);
+        if (effects.illustration) UI.addIllustration(effects.illustration);
         if (effects.narrative) UI.addLog(effects.narrative, 'result');
         if (isNonFinalStep) {
             this._showBondStep(bondStep.npcId, bondStep.steps, bondStep.stepIdx + 1, bondStep.level, '');
@@ -519,8 +521,10 @@ const Engine = {
 
         // Detect whether the completed chapter was the special (conditional) variant
         const levelEntries = npcBonds ? npcBonds.filter(b => b.level === level) : [];
-        const isSpecial = levelEntries.length > 1 &&
-            !!levelEntries.find(b => b.conditions && Object.keys(b.conditions).length > 0 && this.checkConditions(b.conditions));
+        const specialChapter = levelEntries.length > 1
+            ? (levelEntries.find(b => b.conditions && Object.keys(b.conditions).length > 0 && this.checkConditions(b.conditions)) || null)
+            : null;
+        const isSpecial = !!specialChapter;
 
         // Record which variant was played in this life
         if (!char.bondVariantsDone) char.bondVariantsDone = {};
@@ -543,8 +547,11 @@ const Engine = {
                     UI.addLog(`✨ 解锁被动【${passive.name}】：${passive.desc}`, 'unlock');
                 }
             }
-            if (isSpecial) UI.addIllustration(`${kebab}-special-bond-${level}`);
-            UI.addIllustration(`${kebab}-ending`);
+            if (isSpecial) {
+                if (!(specialChapter && specialChapter.noAutoIllustration)) UI.addIllustration(`${kebab}-special-bond-${level}`);
+            } else {
+                UI.addIllustration(`${kebab}-ending`);
+            }
         }
     },
 
