@@ -1,6 +1,17 @@
 # 轮回江湖 — 开发进度
 
-## 当前版本：v0.27.21
+## 当前版本：v0.27.22
+
+### v0.27.22（2026-05-09）
+
+**李云舒升华线插画时机 & applyChoice 插画修复**
+- `承重之剑`（special bond 5）：插画改为在 s2（进书房前廊院交锋）结束时显示，而非全部步骤结束后
+- `cover_her` 选项补充 `strength+1 / agility+1` 属性奖励
+- `_completeBond` max 层级：升华/普通插画现在互斥——升华路只显示 `special-bond-N`（或由 step effect 负责），普通路只显示 `ending`
+- `applyChoice` 修复：非战斗路径（有属性 & 无属性两个分支）均补上 `effects.illustration` 显示调用；此前 step effect 中的插画在这两个路径下不生效
+- 新增 `noAutoIllustration` bond chapter 字段，供需要精确控制插画时机的章节使用
+
+----
 
 ### v0.27.21（2026-05-09）
 
