@@ -515,8 +515,19 @@ const Engine = {
         UI.addLog(`💞 与【${npc ? npc.name : npcId}】的羁绊加深！（第${level}章）`, 'unlock');
         const npcBonds = this.state.bonds[npcId];
         const maxLevel = npcBonds ? Math.max(...npcBonds.map(b => b.level)) : 0;
+        const kebab = npcId.replace(/_/g, '-');
+
+        // Detect whether the completed chapter was the special (conditional) variant
+        const levelEntries = npcBonds ? npcBonds.filter(b => b.level === level) : [];
+        const isSpecial = levelEntries.length > 1 &&
+            !!levelEntries.find(b => b.conditions && Object.keys(b.conditions).length > 0 && this.checkConditions(b.conditions));
+
+        // Record which variant was played in this life
+        if (!char.bondVariantsDone) char.bondVariantsDone = {};
+        char.bondVariantsDone[`${npcId}_${level}`] = isSpecial ? 'special' : 'normal';
+
         if (level < maxLevel) {
-            UI.addIllustration(npcId.replace(/_/g, '-') + '-bond-' + level);
+            UI.addIllustration(isSpecial ? `${kebab}-special-bond-${level}` : `${kebab}-bond-${level}`);
         }
         if (level >= maxLevel) {
             const _matching = npcBonds.filter(b => b.level === level);
@@ -532,7 +543,8 @@ const Engine = {
                     UI.addLog(`✨ 解锁被动【${passive.name}】：${passive.desc}`, 'unlock');
                 }
             }
-            UI.addIllustration(npcId.replace(/_/g, '-') + '-ending');
+            if (isSpecial) UI.addIllustration(`${kebab}-special-bond-${level}`);
+            UI.addIllustration(`${kebab}-ending`);
         }
     },
 
@@ -635,10 +647,14 @@ const Engine = {
                 if (this._checkBirthdayAndBoss()) return;
                 UI.renderCharacter(char, this.state.jobs);
             }
-            const lifeTimeLevel = Math.max(
-                (char.lifetimeBondLevels || {})[npcId] || 0,
-                (char.inheritedBonds || {})[npcId] || 0);
-            const prefix = lifeTimeLevel >= bondEvent.level
+            // Variant-aware 世界线记忆: only show prefix if the SAME variant was seen in a prior life
+            const currentVariant = (npcBonds.filter(b => b.level === bondEvent.level).length > 1 &&
+                bondEvent.conditions && Object.keys(bondEvent.conditions).length > 0) ? 'special' : 'normal';
+            const variantKey = `${npcId}_${bondEvent.level}`;
+            const inheritedMatch = (char.inheritedBondVariants || {})[variantKey] === currentVariant
+                && ((char.inheritedBonds || {})[npcId] || 0) >= bondEvent.level;
+            const lifetimeMatch = !!((char.lifetimeBondVariants || {})[`${variantKey}_${currentVariant}`]);
+            const prefix = (inheritedMatch || lifetimeMatch)
                 ? `「世界线记忆」你隐约记得，在另一条时间线上与${npc.name}曾有过这一段故事……\n\n`
                 : '';
             if (bondEvent.steps && bondEvent.steps.length > 0) {
@@ -1861,6 +1877,8 @@ const Engine = {
         if (!char.unlockedIllustrations) char.unlockedIllustrations = [];
         if (!char.lifetimeBondLevels) char.lifetimeBondLevels = {};
         if (!char.lifetimeChainsDone) char.lifetimeChainsDone = [];
+        if (!char.bondVariantsDone) char.bondVariantsDone = {};
+        if (!char.lifetimeBondVariants) char.lifetimeBondVariants = {};
         // For first-life saves, backfill meet_scene flags from met_ flags
         if ((char.rebirthCount || 0) === 0) {
             for (const nid of ['wang_tie', 'li_yunshu', 'mysterious_elder', 'yan_chixing', 'su_qing', 'ling_xue']) {
