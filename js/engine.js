@@ -58,7 +58,7 @@ const Engine = {
         UI.addLog(`【${char.name}】的传奇，从此开始。`, 'system');
         UI.addLog(`生于${mName}，年集15岁，踏入江湖。二十岁生辰日，天魔如约而至。`, 'system');
         if (bBonus) UI.addLog(`✦ 【${bBonus.label}】生于${mName}，${bBonus.tagline}。`, 'unlock');
-        UI.addLog('五年，六十个月。天魔之约，无从逃避。\n\n江湖很大——有人在等你，有事在等你，有些路只走一次。在那一天到来之前，你能留下什么？', 'result');
+        UI.addLog('五年，六十个月。天魔之祸，无从逃避。\n\n江湖很大——有人在等你，有事在等你，有些路只走一次。在那一天到来之前，你能留下什么？', 'result');
         UI.addLog('· 点击【出门探险】推进时间，经历江湖事件\n· 遇见人物后可【拜访】，加深羁绊、解锁故事\n· 有进行中的任务时【任务】按钮会出现\n· 右上角【图鉴】记录你遇见过的人与插图', 'info');
     },
 
@@ -222,9 +222,6 @@ const Engine = {
             if (!this.checkConditions(event.conditions || {})) continue;
 
             let weight = event.weight;
-            if (event.type === '奇遇' && (char.legacyTalents || []).includes('serendipity')) {
-                weight = Math.round(weight * 1.25);
-            }
             if (['奇遇', '机缘'].includes(event.type))  weight += compBonus;
             if (['奇遇', '机缘', '交友'].includes(event.type)) weight += Math.floor(luckBonus / 2);
             if (event.type === '遭遇战') weight = Math.max(1, weight - Math.floor(luckBonus / 2));
@@ -378,7 +375,7 @@ const Engine = {
         const char = this.state.char;
         if ((char.inheritedBonds || {})[npcId] >= level) {
             const nonCombatChoices = (step.choices || []).filter(c => !(c.effects && c.effects.combat));
-            if (nonCombatChoices.length > 0) {
+            if (nonCombatChoices.length > 1) {
                 const merged = { attributes: {}, npcAffinity: {}, flags: {} };
                 for (const c of nonCombatChoices) {
                     const ef = c.effects || {};
@@ -432,48 +429,48 @@ const Engine = {
 
         const isNonFinalStep = bondStep && bondStep.stepIdx < bondStep.steps.length - 1;
 
-        // Log lucky trigger if attributes changed
+        // Attribute effects: apply immediately for non-combat choices;
+        // defer to post-win (merged with enemy winEffects) when combat follows
         if (effects.attributes) {
-            const { luckyTriggered, actualGains } = Character.applyAttributeChanges(this.state.char, effects.attributes);
-            if (luckyTriggered) UI.addLog('✨ 幸运触发！属性收益翻倍！', 'unlock');
-            const effectsCopy = Object.assign({}, effects);
-            delete effectsCopy.attributes;
-            // For last-step bond combats, defer npcAffinity to post-victory so the player sees it as a reward
-            if (bondInfo && effects.combat && effectsCopy.npcAffinity) delete effectsCopy.npcAffinity;
-            this.applyEffects(effectsCopy);
-            const gainsStr = this.formatAttrGains(actualGains);
-            const gainsTag = gainsStr ? `　<span class="attr-gains">⬆ ${gainsStr}</span>` : '';
-            const narrative = effects.narrative ? effects.narrative + gainsTag : (gainsTag || '');
-            if (narrative) UI.addLog(narrative, 'result');
-            if (chainStep && !effects.combat) this.completeChainStep(chainStep.chainId, chainStep.stepIdx);
-            if (!effects.combat && isNonFinalStep) {
-                this._showBondStep(bondStep.npcId, bondStep.steps, bondStep.stepIdx + 1, bondStep.level, '');
-                return;
-            }
             if (!effects.combat) {
+                const { luckyTriggered, actualGains } = Character.applyAttributeChanges(this.state.char, effects.attributes);
+                if (luckyTriggered) UI.addLog('✨ 幸运触发！属性收益×1.5！', 'unlock');
+                const effectsCopy = Object.assign({}, effects);
+                delete effectsCopy.attributes;
+                this.applyEffects(effectsCopy);
+                const gainsStr = this.formatAttrGains(actualGains);
+                const gainsTag = gainsStr ? `　<span class="attr-gains">⬆ ${gainsStr}</span>` : '';
+                const narrative = effects.narrative ? effects.narrative + gainsTag : (gainsTag || '');
+                if (narrative) UI.addLog(narrative, 'result');
+                if (chainStep) this.completeChainStep(chainStep.chainId, chainStep.stepIdx);
+                if (isNonFinalStep) {
+                    this._showBondStep(bondStep.npcId, bondStep.steps, bondStep.stepIdx + 1, bondStep.level, '');
+                    return;
+                }
                 this._checkAndAutoPromote();
                 UI.renderAll(this.state);
                 this.saveGame();
                 return;
             }
-            // Has combat — fall through to combat block (side effects + narrative already applied above)
+            // Has combat: defer attribute rewards to post-win, merged with enemy winEffects
+            this.state.pendingCombatAttrRewards = effects.attributes;
         }
 
         // Combat event → start turn-based combat
         if (effects.combat) {
             const enemy = this.getEnemy(effects.combat);
             if (enemy) {
-                // Only apply side effects and log narrative here if the attribute branch didn't already do it
-                if (!effects.attributes) {
-                    const sideEffects = Object.assign({}, effects);
-                    delete sideEffects.combat;
-                    delete sideEffects.narrative;
-                    delete sideEffects.attributes;
-                    // For last-step bond combats, defer npcAffinity to post-victory
-                    if (bondInfo && sideEffects.npcAffinity) delete sideEffects.npcAffinity;
-                    this.applyEffects(sideEffects);
-                    if (effects.narrative) UI.addLog(effects.narrative, 'result');
-                }
+                // Apply side effects and narrative (runs whether or not attributes were also present)
+                const sideEffects = Object.assign({}, effects);
+                delete sideEffects.combat;
+                delete sideEffects.narrative;
+                delete sideEffects.attributes;
+                // For last-step bond combats, defer npcAffinity to post-victory
+                if (bondInfo && sideEffects.npcAffinity) delete sideEffects.npcAffinity;
+                this.applyEffects(sideEffects);
+                if (effects.illustration) UI.addIllustration(effects.illustration);
+                if (effects.narrative) UI.addLog(effects.narrative, 'result');
+                if (effects.combatIllustration) UI.addIllustration(effects.combatIllustration);
                 if (chainStep) this.state.pendingChainStep = chainStep;
                 if (isNonFinalStep) {
                     this.state.pendingBondStep = {
@@ -517,21 +514,37 @@ const Engine = {
         const npc = this.state.npcs.find(n => n.id === npcId);
         UI.addLog(`💞 与【${npc ? npc.name : npcId}】的羁绊加深！（第${level}章）`, 'unlock');
         const npcBonds = this.state.bonds[npcId];
-        const maxLevel = npcBonds ? npcBonds.length : 0;
+        const maxLevel = npcBonds ? Math.max(...npcBonds.map(b => b.level)) : 0;
+        const kebab = npcId.replace(/_/g, '-');
+
+        // Detect whether the completed chapter was the special (conditional) variant
+        const levelEntries = npcBonds ? npcBonds.filter(b => b.level === level) : [];
+        const isSpecial = levelEntries.length > 1 &&
+            !!levelEntries.find(b => b.conditions && Object.keys(b.conditions).length > 0 && this.checkConditions(b.conditions));
+
+        // Record which variant was played in this life
+        if (!char.bondVariantsDone) char.bondVariantsDone = {};
+        char.bondVariantsDone[`${npcId}_${level}`] = isSpecial ? 'special' : 'normal';
+
         if (level < maxLevel) {
-            UI.addIllustration(npcId.replace(/_/g, '-') + '-bond-' + level);
+            UI.addIllustration(isSpecial ? `${kebab}-special-bond-${level}` : `${kebab}-bond-${level}`);
         }
         if (level >= maxLevel) {
-            const bondChapter = npcBonds.find(b => b.level === level);
+            const _matching = npcBonds.filter(b => b.level === level);
+            const bondChapter = _matching.length > 1
+                ? (_matching.find(b => this.checkConditions(b.conditions || {})) || _matching[_matching.length - 1])
+                : (_matching[0] || null);
             if (bondChapter && bondChapter.passive) {
                 const passive = bondChapter.passive;
                 if (!char.passives) char.passives = [];
                 if (!char.passives.find(p => p.id === passive.id)) {
                     char.passives.push(passive);
+                    if (passive.attributes) Character.applyAttributeChanges(char, passive.attributes);
                     UI.addLog(`✨ 解锁被动【${passive.name}】：${passive.desc}`, 'unlock');
                 }
             }
-            UI.addIllustration(npcId.replace(/_/g, '-') + '-ending');
+            if (isSpecial) UI.addIllustration(`${kebab}-special-bond-${level}`);
+            UI.addIllustration(`${kebab}-ending`);
         }
     },
 
@@ -540,7 +553,7 @@ const Engine = {
         const { char } = this.state;
         if (effects.attributes) {
             const { luckyTriggered, actualGains } = Character.applyAttributeChanges(char, effects.attributes);
-            if (luckyTriggered) UI.addLog('✨ 幸运触发！属性收益翻倍！', 'unlock');
+            if (luckyTriggered) UI.addLog('✨ 幸运触发！属性收益×1.5！', 'unlock');
             UI.addLog(`⬆ ${this.formatAttrGains(actualGains)}`, 'result');
         }
         if (effects.npcAffinity) {
@@ -571,7 +584,7 @@ const Engine = {
             if (!npc) continue;
             const npcBonds = bonds[npcId];
             const currentLevel = (char.bondLevels || {})[npcId] || 0;
-            const bondEvent = Array.isArray(npcBonds) ? npcBonds.find(b => b.level === currentLevel + 1) : null;
+            const bondEvent = Array.isArray(npcBonds) ? npcBonds.filter(b => b.level === currentLevel + 1).find(b => this.checkConditions(b.conditions || {})) : null;
             const affinity = NPCSystem.getAffinity(char, npcId);
             const bondReady = !!(bondEvent &&
                 !((char.bondEventsDone || {})[`${npcId}_${bondEvent.level}`]) &&
@@ -603,7 +616,7 @@ const Engine = {
         }
 
         const currentLevel = char.bondLevels[npcId] || 0;
-        const bondEvent = npcBonds.find(b => b.level === currentLevel + 1);
+        const bondEvent = npcBonds.filter(b => b.level === currentLevel + 1).find(b => this.checkConditions(b.conditions || {}));
         const affinity = NPCSystem.getAffinity(char, npcId);
         const bondReady = !!(bondEvent &&
             !char.bondEventsDone[`${npcId}_${bondEvent.level}`] &&
@@ -625,10 +638,23 @@ const Engine = {
         }
 
         if (bondReady) {
-            const lifeTimeLevel = Math.max(
-                (char.lifetimeBondLevels || {})[npcId] || 0,
-                (char.inheritedBonds || {})[npcId] || 0);
-            const prefix = lifeTimeLevel >= bondEvent.level
+            // Bond events cost 1 month unless the player has 时间管理大师
+            const hasTimeMaster = (char.legacyTalents || []).includes('time_master');
+            if (!hasTimeMaster) {
+                const bondJob = this.getJob(char.job);
+                char.ageMonths++;
+                Character.monthlyHPRegen(char, bondJob);
+                if (this._checkBirthdayAndBoss()) return;
+                UI.renderCharacter(char, this.state.jobs);
+            }
+            // Variant-aware 世界线记忆: only show prefix if the SAME variant was seen in a prior life
+            const currentVariant = (npcBonds.filter(b => b.level === bondEvent.level).length > 1 &&
+                bondEvent.conditions && Object.keys(bondEvent.conditions).length > 0) ? 'special' : 'normal';
+            const variantKey = `${npcId}_${bondEvent.level}`;
+            const inheritedMatch = (char.inheritedBondVariants || {})[variantKey] === currentVariant
+                && ((char.inheritedBonds || {})[npcId] || 0) >= bondEvent.level;
+            const lifetimeMatch = !!((char.lifetimeBondVariants || {})[`${variantKey}_${currentVariant}`]);
+            const prefix = (inheritedMatch || lifetimeMatch)
                 ? `「世界线记忆」你隐约记得，在另一条时间线上与${npc.name}曾有过这一段故事……\n\n`
                 : '';
             if (bondEvent.steps && bondEvent.steps.length > 0) {
@@ -736,7 +762,8 @@ const Engine = {
             shard_ling_xue: '完成「天魔的指令」', truth_assembled: '完成「碎片真相」',
             zhao_defeated_for_wang: '完成「黑鹰寨对峙」',
             wuxiang_echo_felt: '完成「剑意余温」', wuxiang_six_understood: '完成「六人如镜」',
-            lost_to_final_boss: '在最终决战中败北（先完成主线再轮回）',
+            fought_final_boss: '与神秘老者正面交锋过（胜负皆可）',
+            elder_true_form_seen: '曾历容器路径——击败剑魂，被吞噬，由沈玄清救出后重入轮回',
         };
         const lifetimeDone = new Set(char.lifetimeChainsDone || []);
         const result = [];
@@ -911,6 +938,7 @@ const Engine = {
             for (const passive of reward.passives) {
                 if (!char.passives.find(p => p.id === passive.id)) {
                     char.passives.push(passive);
+                    if (passive.attributes) Character.applyAttributeChanges(char, passive.attributes);
                     UI.addLog(`✨ 解锁被动【${passive.name}】：${passive.desc}`, 'unlock');
                 }
             }
@@ -921,7 +949,7 @@ const Engine = {
     allBondsComplete(char) {
         const bonds = this.state.bonds;
         for (const npcId in bonds) {
-            const maxLevel = bonds[npcId].length;
+            const maxLevel = Math.max(...bonds[npcId].map(b => b.level));
             if ((char.bondLevels[npcId] || 0) < maxLevel) return false;
         }
         return true;
@@ -964,6 +992,57 @@ const Engine = {
                 hp:      Math.max(enemy.hp,      Math.round((peak.hp  || 500) * 1.4)),
             };
         }
+        // NPC effects on 天魔 battle
+        if (enemy.isFinalBoss) {
+            const f = char.flags || {};
+            const bl = char.bondLevels || {};
+
+            // 凌雪刀刃线: 拦路，须先过她这关
+            if (f.lx_blade_path && (bl.ling_xue || 0) >= 5 && !f.ling_xue_tianmo_gate_passed) {
+                char.flags.ling_xue_tianmo_gate_passed = true;
+                const gateEnemy = this.getEnemy('ling_xue_blade');
+                if (gateEnemy) {
+                    UI.addLog('【刀刃问道】凌雪以天魔首席弟子的身份出现在你眼前，手按剑柄。「我需要自己找到答案，不能从你这里借。」', 'system');
+                    this.startCombat({
+                        ...gateEnemy,
+                        chainCombat: 'tianmo',
+                        chainCombatNarrative: '',
+                        winNarrative: '「……还没有答案，但我知道去哪里找了。」\n\n她没有死，也没有留下。带着未解决的问题，她独自离开了这条路。\n\n天魔，就在前方。',
+                    }, postNarrative);
+                }
+                return;
+            }
+
+            // Clone enemy to apply NPC debuffs
+            enemy = { ...enemy };
+
+            // 苏青济世线: 天魔 HP -20%
+            if (f.su_qing_mission_path && (bl.su_qing || 0) >= 5) {
+                enemy.hp = Math.round(enemy.hp * 0.8);
+                UI.addLog('【脉诊知敌】苏青整理的噬魂真经诊断文书，让你明晰天魔本源的弱点——天魔气血上限削减两成。', 'unlock');
+            }
+
+            // 李云舒家族压力线: 天魔 defense -25
+            if (f.li_yunshu_family_path && (bl.li_yunshu || 0) >= 5) {
+                enemy.defense = Math.max(0, enemy.defense - 25);
+                UI.addLog('【梅影剑意】李云舒所查到的天魔宫内情，让你对天魔的防御布置了然于胸——天魔防御降低。', 'unlock');
+            }
+
+            // 凌雪自由线: 天魔 attack -25
+            if (!f.lx_blade_path && (bl.ling_xue || 0) >= 5) {
+                enemy.attack = Math.max(0, enemy.attack - 25);
+                UI.addLog('「师父，你输了——不是输给他，是输给你自己。」\n\n凌雪站在天魔面前，那句话如一把刀，刺进了陆无归的心。天魔神情一滞，气机微乱。', 'dialog');
+            }
+
+            // 王铁: 纯叙事内心独白——「为什么要赢」的重量
+            if ((bl.wang_tie || 0) >= 1) {
+                UI.addLog('战前某个瞬间，你想到了王铁。', 'system');
+                UI.addLog('不是因为他说过「为什么要赢」——他没有。他只是在荒坡上蹲着，把酒一口一口倒在地上，把那些名字一个一个说出来：赵四海、刘大炮、马半仙……', 'epilogue');
+                UI.addLog('那块铁牌沉在腰间。「信义」两个字磨平了，但份量一点没减。', 'epilogue');
+                UI.addLog('为什么要赢。不是为了什么大道理——是为了走完他们没走完的路，带着他们没送到的东西，继续往前走。', 'epilogue');
+            }
+        }
+
         const job = this.getJob(char.job);
         const cs = Combat.initState(char, enemy, job);
         cs.postNarrative = postNarrative || '';
@@ -974,6 +1053,15 @@ const Engine = {
             UI.addLog('【羁绊未满】你感到胸中力量空缺……或许，集齐所有羁绊才能撼动此敌。', 'info');
         }
         if (enemy.isFinalBoss || enemy.isHiddenBoss || enemy.isTrueFinalBoss) cs.noFlee = true;
+        // 燕赤行放下执念线: player attack buff for 天魔 battle
+        if (enemy.isFinalBoss) {
+            const f = char.flags || {};
+            const bl = char.bondLevels || {};
+            if (!f.yan_chixing_hatred_path && (bl.yan_chixing || 0) >= 5) {
+                cs.yanBattleBonus = 30;
+                UI.addLog('【含光门三十人】燕赤行低声念出含光门三十个人的名字，一个一个，沉甸甸地落在你肩上，化为力量——攻击提升。', 'unlock');
+            }
+        }
         if (enemy.isTrueFinalBoss && (char.passives || []).some(p => p.rebirthPower)) {
             const MARK_FLAGS = ['mark_warrior_power', 'mark_hermit_power', 'mark_wuxiang_power', 'mark_rebirth_power', 'mark_afterstory_power'];
             const markCount = MARK_FLAGS.filter(m => (char.flags || {})[m]).length;
@@ -1136,8 +1224,15 @@ const Engine = {
         const postBondStep = this.state.pendingBondStep;
         if (postBondStep) this.state.pendingBondStep = null;
 
+        // Capture and clear deferred choice attribute rewards (only applied on win)
+        const pendingCombatAttrs = this.state.pendingCombatAttrRewards || {};
+        this.state.pendingCombatAttrRewards = null;
+
         if (result === 'won') {
-            const rewards = enemy.winEffects || {};
+            const rewards = Object.assign({}, enemy.winEffects || {});
+            for (const [k, v] of Object.entries(pendingCombatAttrs)) {
+                rewards[k] = (rewards[k] || 0) + v;
+            }
 
             // Chain combat: if enemy has chainCombat, immediately fight next enemy
             if (enemy.chainCombat) {
@@ -1165,6 +1260,16 @@ const Engine = {
 
             if (enemy.isTrueFinalBoss) {
                 char.flags.true_final_boss_beaten = true;
+                char.flags.fought_final_boss = true;
+                if (enemy.npcBondLines) {
+                    const NPC_ORDER = ['wang_tie', 'li_yunshu', 'yan_chixing', 'su_qing', 'ling_xue', 'mysterious_elder'];
+                    const bondDmg = Math.round(cs.enemyMaxHp * 0.05);
+                    for (const npcId of NPC_ORDER) {
+                        if ((char.bondLevels[npcId] || 0) >= 5 && enemy.npcBondLines[npcId]) {
+                            UI.addLog(enemy.npcBondLines[npcId].replace('{dmg}', bondDmg), 'win');
+                        }
+                    }
+                }
                 UI.addLog(enemy.winNarrative, 'win');
                 UI.showCombatReturnBtn('won', () => {
                     UI.hideCombatOverlay();
@@ -1231,14 +1336,12 @@ const Engine = {
             if (Object.keys(loseRewards).length > 0) this.applyEffects({ attributes: loseRewards });
             UI.renderCharacter(char, this.state.jobs);
             if (enemy.isTrueFinalBoss) {
-                char.flags.lost_to_final_boss = true;
-                if (!char.flags.zhushi_chain_done || !char.flags.truth_assembled) {
-                    UI.addLog('【提示】击败那个老者需要理解与力量的结合。下一轮回：先通过「碎片真相」任务链看透九百年的棋局，再以「诸世之我」汇聚所有世界线的自己——两者皆备，方可触发最终决战。', 'info');
-                }
-                UI.addIllustration('designer-lose');
+                char.flags.fought_final_boss = true;
+                UI.addLog('力竭。意识开始涣散——', 'system');
+                UI.addLog('然后，腰间的玉牌射出一道冷光。\n\n「这条时间线，还没走到头。」\n\n沈玄清的声音从很远的地方传来。意识重新聚拢，你还站在九百年前的荒野上。', 'epilogue');
                 UI.showCombatReturnBtn('lost', () => {
                     UI.hideCombatOverlay();
-                    this.triggerDeath('true_final_boss');
+                    this.startCombat(enemy, '');
                 });
                 return;
             }
@@ -1401,34 +1504,40 @@ const Engine = {
     triggerFinalBossNow() {
         const { char } = this.state;
         if (!char || this.state.gamePhase !== 'idle') return;
-        const hasTruth  = !!(char.flags && char.flags.truth_assembled);
-        const hasZhushi = !!(char.flags && char.flags.zhushi_chain_done);
-        if (!hasTruth || !hasZhushi) return;
+        if (!this.allBondsComplete(char)) return;
 
-        if (!confirm('【真相与共鸣】你已看透棋局，也已汇聚诸世之力。跳过剩余时间，直接前往那场最终的对决？')) return;
+        if (!confirm('【羁绊汇聚】你与所有同行者都结下了真正的羁绊。跳过剩余时间，直接前往那场最终的对决？')) return;
 
         char.ageMonths = Math.max(char.ageMonths, 240);
         char.flags.boss_triggered = true;
-        // Always go directly to the elder: truth gives understanding, zhushi gives power
-        if (typeof Gallery !== 'undefined') Gallery.unlockIllustration('elder-true-form');
-        UI.addLog('【真相与共鸣】你明白了来龙去脉，也积聚了斩断那道枷锁所需的力量。不需要再绕路——你知道去哪里，也知道去做什么。', 'unlock');
-        const elderEvent = this.state.events.find(e => e.id === 'elder_truth_form_appears');
-        if (elderEvent) this.triggerEvent(elderEvent);
+        UI.addLog('【羁绊汇聚】一切准备就绪——你知道去哪里，也知道该带什么去面对它。', 'unlock');
+        const bossEvent = this.state.events.find(e => e.id === 'hidden_boss_appears');
+        if (bossEvent) this.triggerEvent(bossEvent);
     },
 
     triggerVictory(isTrueEnding) {
         const { char } = this.state;
 
         if (isTrueEnding) {
-            // Defeating 剑魂 always leads directly to the true final boss (沈玄清)
+            // Route based on whether bonds are complete:
+            // true path (all bonds) → elder_truth_form_appears (reveal + 九百年前)
+            // wrong path (missing bonds) → elder_true_form_appears (absorption)
+            const truePath = this.allBondsComplete(char);
             this.state.gamePhase = 'idle';
             UI.updateControls(this.state);
             UI.addLog('剑意化为飞灰，玉牌归于沉寂。', 'win');
             UI.addLog('你以为，一切终于结束了……', 'system');
             setTimeout(() => {
                 this.state.gamePhase = 'idle';
-                const elderEvent = this.state.events.find(e => e.id === 'elder_true_form_appears');
-                if (elderEvent) this.triggerEvent(elderEvent);
+                if (truePath) {
+                    const elderEvent = this.state.events.find(e => e.id === 'elder_truth_form_appears');
+                    if (elderEvent) this.triggerEvent(elderEvent);
+                } else {
+                    char.flags.elder_true_form_seen = true;
+                    if (typeof Gallery !== 'undefined') Gallery.unlockIllustration('elder-true-form');
+                    const elderEvent = this.state.events.find(e => e.id === 'elder_true_form_appears');
+                    if (elderEvent) this.triggerEvent(elderEvent);
+                }
             }, 2500);
             return;
         }
@@ -1443,6 +1552,22 @@ const Engine = {
             this.state.gamePhase = 'victory';   // block player actions during transition
             UI.updateControls(this.state);
             UI.addLog('天魔轰然倒下。江湖归于平静，风也停了。', 'win');
+
+            // 燕赤行放下执念线: 落败后在战场边缘，念出含光门三十人名字
+            const f = char.flags || {};
+            const bl = char.bondLevels || {};
+            if (!f.yan_chixing_hatred_path && (bl.yan_chixing || 0) >= 5) {
+                UI.addLog('战场沉寂了许久。', 'system');
+                UI.addLog('战场边缘，一个沉默的身影。燕赤行不知从何时出现在那里，望着倒下的陆无归，低声念出三十个名字——含光门那些人的名字，一个一个，不急不缓，像是他七年欠下的债，此刻终于还清。', 'epilogue');
+                UI.addLog('他念完了，抬起头，看了你一眼，什么都没说，走了。', 'epilogue');
+            }
+
+            // 李云舒家族线 + 燕赤行放下执念线 cross-NPC easter egg
+            if (f.li_yunshu_family_path && (bl.li_yunshu || 0) >= 5 && !f.yan_chixing_hatred_path && (bl.yan_chixing || 0) >= 5) {
+                UI.addLog('李云舒后来说起母亲和那个人的故事。燕赤行才第一次知道，季沧海能活到今天，有一个叫梅影剑的女人付出过什么代价。', 'epilogue');
+                UI.addLog('无人明说，无人追问。只是一个停顿，和沉默。', 'epilogue');
+            }
+
             UI.addLog('你以为，一切终于结束了……', 'system');
             setTimeout(() => {
                 this.state.gamePhase = 'idle';  // restore before triggering event
@@ -1497,7 +1622,7 @@ const Engine = {
         }
         await UI.epiloguePause(400);
         UI.setEpilogueMode(true);
-        await UI.addEpilogueIllustration('designer-win');
+        await UI.addEpilogueIllustration('jianhun-origin-win');
         await UI.waitForClick();
         await UI.epiloguePause(400);
 
@@ -1561,9 +1686,11 @@ const Engine = {
                 lines: [
                     { text: '【神秘老者 · 长夜将晓】', cls: 'epilogue-title' },
                     { text: '轮回锁断的那一刻，盘踞在他识海里九百年的东西，随之烟消云散。', cls: 'epilogue' },
-                    { text: '你在一间简陋的客房里找到他——脊背已不再挺直，气息也浅，眼神里没有了那种洞察一切的透彻，只剩下一个极度疲倦的老人。', cls: 'epilogue' },
-                    { text: '他没有辩解，也没有解释。只是看着你，开口说：「老夫欠你的，比你以为的多得多。」', cls: 'epilogue-dialogue' },
-                    { text: '你没有答话。这件事的是非曲直，你已经在走完的那条路上想清楚了——有些问题，不需要当面摊开。', cls: 'epilogue' },
+                    { text: '你在一间简陋的客房里找到他——脊背终于不再绷着了，气息也浅，眼神里没有了那种洞察一切的透彻，只剩下一个极度疲倦的老人。', cls: 'epilogue' },
+                    { text: '但那是另一种疲倦。不是被重担压垮，而是重担终于放下了的那种。', cls: 'epilogue' },
+                    { text: '他看着你进来，只是安静地看了一会儿，才开口：「终于。」', cls: 'epilogue-dialogue' },
+                    { text: '「九百年了。」', cls: 'epilogue-dialogue' },
+                    { text: '那两个字里没有悲伤，没有感慨。只是一个事实，说出来之后，连呼吸都轻了。', cls: 'epilogue-win' },
                     { text: '沈微尘是自己找来的。她听见门开的声音，在门口站了很久，才轻声叫了一声：「爹。」', cls: 'epilogue' },
                     { text: '那一声，让他眼里有什么东西——像是熄了很久的火，重新有了一点温度。', cls: 'epilogue-win' },
                     { text: '你悄悄退出去，把门带上。外面天光正好，风里有一点草木的气味。那是他们自己的事了。', cls: 'epilogue' },
@@ -1633,7 +1760,7 @@ const Engine = {
         { text: '开发测试', cls: 'role' },
         { text: 'FrostTear', cls: 'name' },
         { text: '插画生成', cls: 'role' },
-        { text: 'ChatGPT Image 2', cls: 'name' },
+        { text: 'ChatGPT Images 2', cls: 'name' },
         { text: '特别感谢', cls: 'section' },
         { text: '积极测试的朋友们', cls: 'role' },
         { text: '孔局', cls: 'name' },
@@ -1647,7 +1774,7 @@ const Engine = {
         { text: '提供建议和帮助的家人们', cls: 'role' },
         { text: '牛牛（可爱的儿子）', cls: 'name' },
         { text: 'Ayumi（亲爱的老婆）', cls: 'name' },
-        { text: '姐姐（ChatGPT赞助者）', cls: 'name' },
+        { text: '姐姐（协助开通ChatGPT Plus）', cls: 'name' },
         { text: '安安安安遥（聪明的外甥）', cls: 'name' },
         { text: '', cls: 'spacer' },
         { text: '以及', cls: 'role' },
@@ -1712,11 +1839,11 @@ const Engine = {
 玉牌重归平静，但你知道：真正的最终之战，不是天魔——是这枚玉牌里沉睡了千年的东西。`;
                 attrs = { comprehension: 2, strength: 2, reputation: 2, agility: 2 };
             } else {
-                msg = `【生辰】${mName}，${age}岁。最后一年——天魔之约，如期将至。`;
+                msg = `【生辰】${mName}，${age}岁。最后一年——天魔之祸，如期将至。`;
                 attrs = { comprehension: 2, strength: 2, reputation: 2, agility: 2 };
             }
         } else {
-            msg = `【生辰】${mName}，${age}岁。天魔之约还有 ${remaining} 年。`;
+            msg = `【生辰】${mName}，${age}岁。天魔之祸还有 ${remaining} 年。`;
         }
 
         UI.addVisitAgeHeader(char);
@@ -1737,6 +1864,9 @@ const Engine = {
         if (!char.inheritedBonds)  char.inheritedBonds = {};
         if (!char.learnedSkills)   char.learnedSkills = [];
         if (!char.legacyTalents)   char.legacyTalents = [];
+        // Remove retired talent IDs so old saves don't carry dead entries
+        const RETIRED_TALENTS = ['serendipity'];
+        char.legacyTalents = char.legacyTalents.filter(t => !RETIRED_TALENTS.includes(t));
         if (!char.passives)        char.passives = [];
         if (!char.birthMonth)      char.birthMonth = 1;
         if (char.kills === undefined) char.kills = 0;
@@ -1747,6 +1877,8 @@ const Engine = {
         if (!char.unlockedIllustrations) char.unlockedIllustrations = [];
         if (!char.lifetimeBondLevels) char.lifetimeBondLevels = {};
         if (!char.lifetimeChainsDone) char.lifetimeChainsDone = [];
+        if (!char.bondVariantsDone) char.bondVariantsDone = {};
+        if (!char.lifetimeBondVariants) char.lifetimeBondVariants = {};
         // For first-life saves, backfill meet_scene flags from met_ flags
         if ((char.rebirthCount || 0) === 0) {
             for (const nid of ['wang_tie', 'li_yunshu', 'mysterious_elder', 'yan_chixing', 'su_qing', 'ling_xue']) {
@@ -1773,11 +1905,15 @@ const Engine = {
             if (f.boss_triggered)        push('portrait-tianmo');
             if (f.hidden_boss_triggered) { push('tianmo-and-jianhun'); push('portrait-jianhun'); push('tianmo-win'); push('sword-soul-win'); }
             if (f.boss_lost)             push('tianmo-lose');
-            if (f.true_final_boss_beaten) push('designer-win');
-            if (f.lost_to_final_boss)    push('designer-lose');
-            if (f.elder_true_form_seen || f.zhushi_chain_done) push('elder-true-form');
+            if (f.true_final_boss_beaten) push('jianhun-origin-win');
+            if (f.elder_true_form_seen) push('elder-true-form');
             if (f.li_afterstory_done)    push('li-yunshu-afterstory');
+            if (f.li_yunshu_family_path && (bl.li_yunshu || 0) >= 4) push('li-yunshu-special-bond-4');
+            if (f.li_yunshu_family_path && (bl.li_yunshu || 0) >= 5) push('li-yunshu-special-bond-5');
+            if (f.yan_sp4_done && (bl.yan_chixing || 0) >= 5) push('yan-chixing-special-bond-4');
+            if (f.yan_sp5_done && (bl.yan_chixing || 0) >= 5) push('yan-chixing-special-bond-5');
             if (f.su_afterstory_done)    push('su-qing-afterstory');
+            if (f.lx_sp4_done && (bl.ling_xue || 0) >= 5) push('ling-xue-special-bond-5');
             if (f.lx_afterstory_done)    push('ling-xue-afterstory');
             if (f.elder_afterstory_done) push('mysterious-elder-afterstory');
             if (f.yan_afterstory_done)   push('yan-chixing-afterstory');
@@ -1816,7 +1952,7 @@ const Engine = {
             if (typeof GameAudio !== 'undefined') GameAudio.playSFX('rebirth');
             UI.renderAll(this.state);
             const mName = this.BIRTH_MONTH_NAMES[newChar.birthMonth - 1];
-            UI.addLog(`✨ ${newChar.rebirthCount + 1}周目。【${newChar.name}】再度降生。和上一世一样，生于${mName}。天魔之约，依然在候。`, 'system');
+            UI.addLog(`✨ ${newChar.rebirthCount + 1}周目。【${newChar.name}】再度降生。和上一世一样，生于${mName}。天魔之祸，依然在候。`, 'system');
             // Don't persist the rebirth intro logs — they're ephemeral transition entries.
             // Clear the buffer so wuxia_log starts clean for the new life.
             UI.logBuffer = [];
@@ -1878,7 +2014,7 @@ const Engine = {
         if (!char) { alert('没有存档可以导出'); return; }
         this.saveGame();
         const payload = {
-            v: '0.9.7',
+            v: '0.27.17',
             char: JSON.parse(localStorage.getItem('wuxia_save')),
         };
         const encoded = btoa(unescape(encodeURIComponent(JSON.stringify(payload))));

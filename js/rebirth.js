@@ -293,14 +293,21 @@ const Rebirth = {
             mergedBonds[id] = Math.max(mergedBonds[id] || 0, Number(lvl) || 0);
         }
         newChar.lifetimeBondLevels = mergedBonds;
+        // Merge per-life bond variant records into lifetime accumulator
+        const mergedVariants = { ...(char.lifetimeBondVariants || {}) };
+        for (const [key, variant] of Object.entries(char.bondVariantsDone || {})) {
+            mergedVariants[`${key}_${variant}`] = true;
+        }
+        newChar.lifetimeBondVariants = mergedVariants;
         const mergedChains = [...new Set([
             ...(char.lifetimeChainsDone || []),
             ...Object.entries(char.chainProgress || {}).filter(([, v]) => v === 'done').map(([k]) => k)
         ])];
         newChar.lifetimeChainsDone = mergedChains;
 
-        // Inherit bond levels (世界线记忆)
+        // Inherit bond levels and variants (世界线记忆)
         newChar.inheritedBonds = Object.assign({}, char.bondLevels);
+        newChar.inheritedBondVariants = Object.assign({}, char.bondVariantsDone || {});
 
         NPCSystem.initRelationships(newChar, allNpcs);
 
