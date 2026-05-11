@@ -1896,11 +1896,14 @@ const Engine = {
         // Retroactive illustration unlock — always run so new gallery entries are unlocked for old saves
         {
             const f = char.flags || {};
-            const bl = char.bondLevels || {};
+            const bl  = char.bondLevels || {};
+            const lbl = char.lifetimeBondLevels || {};
+            // Use the highest bond level across all lives for retroactive unlock checks
+            const effLvl = id => Math.max(bl[id] || 0, lbl[id] || 0);
             const push = id => { if (!char.unlockedIllustrations.includes(id)) char.unlockedIllustrations.push(id); };
-            for (const npcId of ['wang_tie', 'li_yunshu', 'yan_chixing', 'su_qing', 'ling_xue']) {
+            for (const npcId of ['wang_tie', 'li_yunshu', 'yan_chixing', 'su_qing', 'ling_xue', 'mysterious_elder']) {
                 const h = npcId.replace(/_/g, '-');
-                const lvl = bl[npcId] || 0;
+                const lvl = effLvl(npcId);
                 if (f['met_' + npcId]) push(h + '-meet');
                 if (lvl >= 1) push(h + '-bond-1');
                 if (lvl >= 2) push(h + '-bond-2');
@@ -1915,12 +1918,13 @@ const Engine = {
             if (f.true_final_boss_beaten) push('jianhun-origin-win');
             if (f.elder_true_form_seen) push('elder-true-form');
             if (f.li_afterstory_done)    push('li-yunshu-afterstory');
-            if (f.li_yunshu_family_path && (bl.li_yunshu || 0) >= 4) push('li-yunshu-special-bond-4');
-            if (f.li_yunshu_family_path && (bl.li_yunshu || 0) >= 5) push('li-yunshu-special-bond-5');
-            if (f.yan_sp4_done && (bl.yan_chixing || 0) >= 5) push('yan-chixing-special-bond-4');
-            if (f.yan_sp5_done && (bl.yan_chixing || 0) >= 5) push('yan-chixing-special-bond-5');
+            if (f.li_yunshu_family_path && effLvl('li_yunshu') >= 4) push('li-yunshu-special-bond-4');
+            if (f.li_yunshu_family_path && effLvl('li_yunshu') >= 5) push('li-yunshu-special-bond-5');
+            if (f.yan_sp4_done && effLvl('yan_chixing') >= 4) push('yan-chixing-special-bond-4');
+            if (f.yan_sp5_done && effLvl('yan_chixing') >= 5) push('yan-chixing-special-bond-5');
+            if (f.su_sp5_done  && effLvl('su_qing')    >= 5) push('su-qing-special-bond-5');
             if (f.su_afterstory_done)    push('su-qing-afterstory');
-            if (f.lx_sp4_done && (bl.ling_xue || 0) >= 5) push('ling-xue-special-bond-5');
+            if (f.lx_sp5_done  && effLvl('ling_xue')   >= 5) push('ling-xue-special-bond-5');
             if (f.lx_afterstory_done)    push('ling-xue-afterstory');
             if (f.elder_afterstory_done) push('mysterious-elder-afterstory');
             if (f.yan_afterstory_done)   push('yan-chixing-afterstory');

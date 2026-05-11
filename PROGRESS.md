@@ -1,6 +1,15 @@
 # 轮回江湖 — 开发进度
 
-## 当前版本：v0.27.22
+## 当前版本：v0.27.23
+
+### v0.27.23（2026-05-11）
+
+**插画回溯解锁修复（全NPC）**
+- `mysterious_elder` 补入羁绊循环，旧存档可正常回溯解锁 `meet`、`bond-1~4`、`ending`
+- `yan-chixing-special-bond-4` 等级条件从 `>= 5` 修正为 `>= 4`
+- `ling-xue-special-bond-5` flag 从 `lx_sp4_done` 修正为 `lx_sp5_done`
+
+----
 
 ### v0.27.22（2026-05-09）
 
