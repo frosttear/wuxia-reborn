@@ -457,6 +457,28 @@ const Engine = {
             this.state.pendingCombatAttrRewards = effects.attributes;
         }
 
+        // 九百年前真结局：先走完诸世之我，再战剑魂·本源
+        if (effects.enterTrueEnding) {
+            if (effects.illustration) UI.addIllustration(effects.illustration);
+            if (effects.combatIllustration) UI.addIllustration(effects.combatIllustration);
+            if (effects.narrative) UI.addLog(effects.narrative, 'result');
+            const { char } = this.state;
+            const progress = char.chainProgress && char.chainProgress['zhushi_zhi_wo'];
+            const chainDone = progress === 'done' || char.flags.zhushi_chain_done;
+            if (chainDone) {
+                setTimeout(() => {
+                    const enemy = this.getEnemy('jian_hun_origin');
+                    if (enemy) this.startCombat(enemy, '');
+                }, 600);
+            } else {
+                char.flags.pending_true_final = true;
+                const startStep = typeof progress === 'number' ? progress : 0;
+                this.saveGame();
+                setTimeout(() => this.triggerChainStep('zhushi_zhi_wo', startStep), 600);
+            }
+            return;
+        }
+
         // Combat event → start turn-based combat
         if (effects.combat) {
             const enemy = this.getEnemy(effects.combat);
@@ -863,12 +885,14 @@ const Engine = {
         const step = chain.steps[stepIdx];
         if (!step) return;
 
-        // Advance 1 month
-        const job = this.getJob(char.job);
-        char.ageMonths++;
-        Character.monthlyHPRegen(char, job);
-        if (this._checkBirthdayAndBoss()) return;
-        UI.renderCharacter(char, this.state.jobs);
+        // 九百年前叙事空间内跳过月份推进
+        if (!char.flags.pending_true_final) {
+            const job = this.getJob(char.job);
+            char.ageMonths++;
+            Character.monthlyHPRegen(char, job);
+            if (this._checkBirthdayAndBoss()) return;
+            UI.renderCharacter(char, this.state.jobs);
+        }
 
         const displayEvent = {
             id: step.id,
@@ -916,7 +940,11 @@ const Engine = {
             this.completeChain(chain);
         } else {
             char.chainProgress[chainId] = nextStep;
-            UI.addLog(`📜 【${chain.name}】进度更新——下一节「${chain.steps[nextStep].title}」可在【任务】中继续。`, 'unlock');
+            if (chain.id === 'zhushi_zhi_wo' && char.flags.pending_true_final) {
+                setTimeout(() => this.triggerChainStep(chainId, nextStep), 600);
+            } else {
+                UI.addLog(`📜 【${chain.name}】进度更新——下一节「${chain.steps[nextStep].title}」可在【任务】中继续。`, 'unlock');
+            }
         }
     },
 
@@ -951,6 +979,25 @@ const Engine = {
             }
         }
         UI.renderAll(this.state);
+        // 完成诸世之我后进入剑魂·本源决战（九百年前真结局路线）
+        if (chain.id === 'zhushi_zhi_wo' && char.flags.pending_true_final) {
+            char.flags.pending_true_final = false;
+            const bridgeLines = [
+                { text: '他们一个一个地消散了——不是消失，是融进来了。', cls: 'epilogue' },
+                { text: '每一世没走完的路，每一次走错后留下的东西，每一个此生记得、彼生又忘记的教训，此刻全部落回到你身上，像是某种搁置了太久的债务，终于结清了。', cls: 'epilogue' },
+                { text: '你没有更强大。你只是，终于完整了。', cls: 'epilogue-win' },
+                { text: '────────────────────', cls: 'system' },
+                { text: '你想起了王铁说的那些话，想起了李云舒在城墙上的那个夜晚，想起了燕赤行没想清楚就拔刀的那一刻，想起了苏青说的「你会停下来吗」，想起了凌雪坐在台阶上提着陶壶问你的那个早晨，想起了沈玄清说的「你走过了我这一生都没走过的路」。', cls: 'epilogue' },
+                { text: '力量为何而存——\n\n不是为了我自己。是为了他们。是为了不让那把刀落下来，是为了让那盏灯还能亮着，是为了让那杯水还能被接住。', cls: 'epilogue-win' },
+                { text: '那道力量在你面前停了一下。这是它千年来第一次遇见一个不试图封印它、不试图占有它、只是站在这里、带着整个人间走过来的人。\n\n「来。」', cls: 'epilogue' },
+            ];
+            for (const { text, cls } of bridgeLines) UI.addLog(text, cls);
+            this.saveGame();
+            setTimeout(() => {
+                const enemy = this.getEnemy('jian_hun_origin');
+                if (enemy) this.startCombat(enemy, '');
+            }, 800);
+        }
     },
 
     allBondsComplete(char) {
