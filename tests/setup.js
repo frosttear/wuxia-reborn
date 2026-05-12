@@ -11,6 +11,7 @@ global.localStorage = {
 
 global.UI = {
     addLog: jest.fn(),
+    addLogTypewriter: jest.fn(() => Promise.resolve()),
     renderAll: jest.fn(),
     renderCharacter: jest.fn(),
     updateControls: jest.fn(),

@@ -443,9 +443,9 @@ const Engine = {
                 this.applyEffects(effectsCopy);
                 const gainsStr = this.formatAttrGains(actualGains);
                 const gainsTag = gainsStr ? `　<span class="attr-gains">⬆ ${gainsStr}</span>` : '';
-                const narrative = effects.narrative ? effects.narrative + gainsTag : (gainsTag || '');
                 if (effects.illustration) UI.addIllustration(effects.illustration);
-                if (narrative) UI.addLog(narrative, 'result');
+                if (effects.narrative) UI.addLogTypewriter(effects.narrative, 'result');
+                if (gainsTag) UI.addLog(gainsTag, 'result');
                 if (chainStep) this.completeChainStep(chainStep.chainId, chainStep.stepIdx);
                 if (isNonFinalStep) {
                     this._showBondStep(bondStep.npcId, bondStep.steps, bondStep.stepIdx + 1, bondStep.level, '');
@@ -522,7 +522,7 @@ const Engine = {
         if (chainStep) this.completeChainStep(chainStep.chainId, chainStep.stepIdx);
         this.applyEffects(effects);
         if (effects.illustration) UI.addIllustration(effects.illustration);
-        if (effects.narrative) UI.addLog(effects.narrative, 'result');
+        if (effects.narrative) UI.addLogTypewriter(effects.narrative, 'result');
         if (isNonFinalStep) {
             this._showBondStep(bondStep.npcId, bondStep.steps, bondStep.stepIdx + 1, bondStep.level, '');
             return;
@@ -965,7 +965,7 @@ const Engine = {
             wang_revenge:         'wang-tie-afterstory-ending',
         };
         if (CHAIN_ILLUSTRATIONS[chain.id]) UI.addIllustration(CHAIN_ILLUSTRATIONS[chain.id]);
-        if (reward.narrative) UI.addLog(reward.narrative, 'result');
+        if (reward.narrative) UI.addLogTypewriter(reward.narrative, 'result');
         if (reward.attributes) {
             Character.applyAttributeChanges(char, reward.attributes);
             UI.addLog(`⬆ ${this.formatAttrGains(reward.attributes)}`, 'result');
