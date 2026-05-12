@@ -565,6 +565,7 @@ const UI = {
             }
         }
         if (requirements.minAgeYears) parts.push(`年满${requirements.minAgeYears}岁`);
+        if (requirements.minRebirth) parts.push(`轮回${requirements.minRebirth}次以上`);
         if (requirements.flags) {
             for (const [flag, val] of Object.entries(requirements.flags)) {
                 const label = this.FLAG_NAMES[flag] || flag;
