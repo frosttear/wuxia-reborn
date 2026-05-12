@@ -282,6 +282,15 @@ const UI = {
             constitution: 'at-constitution', innerForce: 'at-inner-force',
             comprehension: 'at-comprehension', luck: 'at-luck', reputation: 'at-reputation'
         };
+        const ATTR_DESC = {
+            strength:      '攻击力来源，影响每次出招伤害',
+            agility:       '影响闪避率与防御力',
+            constitution:  '决定最大气血上限',
+            innerForce:    '提供气盾减伤与技能增幅',
+            comprehension: '加快成长速度（+0.1%/点），影响战斗中敌人意图洞察几率',
+            luck:          '触发属性×1.5收益（上限15%）与战斗闪避',
+            reputation:    '江湖地位，影响人脉与特殊机遇',
+        };
         const attrsEl = document.getElementById('attributes');
         attrsEl.innerHTML = '';
         const attack = Character.getAttackPower(char, job);
@@ -290,7 +299,8 @@ const UI = {
             const val = char.attributes[key] || 0;
             const row = document.createElement('div');
             row.className = `attr-row ${ATTR_COLOR[key] || ''}`;
-            row.innerHTML = `<span class="attr-name">${ATTR_NAMES[key]}</span><span class="attr-val">${val}</span>`;
+            row.title = ATTR_DESC[key] || '';
+            row.innerHTML = `<span class="attr-name">${ATTR_NAMES[key]}</span><span class="attr-val">${val}</span><span class="attr-desc-hint">${ATTR_DESC[key] || ''}</span>`;
             attrsEl.appendChild(row);
         }
         // Combat stats + derived stat effects
@@ -435,7 +445,7 @@ const UI = {
 
         const bonds = state.bonds || {};
         const bondIds = Object.keys(bonds);
-        if (bondIds.length > 0 && bondIds.every(id => ((char.bondLevels || {})[id] || 0) >= bonds[id].length)) {
+        if (bondIds.length > 0 && bondIds.every(id => ((char.bondLevels || {})[id] || 0) >= (bonds[id].length > 0 ? Math.max(...bonds[id].map(b => b.level)) : 0))) {
             items.push({ name: '羁绊之力', effect: '攻+60（对隐藏强敌）' });
         }
 
@@ -555,6 +565,7 @@ const UI = {
             }
         }
         if (requirements.minAgeYears) parts.push(`年满${requirements.minAgeYears}岁`);
+        if (requirements.minRebirth) parts.push(`轮回${requirements.minRebirth}次以上`);
         if (requirements.flags) {
             for (const [flag, val] of Object.entries(requirements.flags)) {
                 const label = this.FLAG_NAMES[flag] || flag;
@@ -659,9 +670,6 @@ const UI = {
 
         const textEl = entry.querySelector('.log-text');
         const text = event.text;
-        let charIdx = 0;
-        let done = false;
-
         const renderChoices = () => {
             if (choices && choices.length > 0) {
                 let unlockIdx = 0;
@@ -679,8 +687,11 @@ const UI = {
                         const unlockTag = choice.requirements
                             ? `<span class="choice-unlock-tag">${this.formatRequirementLabel(choice.requirements, true)}</span>`
                             : '';
+                        const branchTag = choice.label
+                            ? `<span class="choice-branch-tag">${choice.label}</span>`
+                            : '';
                         btn.className = 'choice-btn';
-                        btn.innerHTML = unlockTag
+                        btn.innerHTML = unlockTag + branchTag
                             + `<span class="choice-text">${choice.text}</span>`
                             + (preview ? `<span class="choice-effects">${preview}</span>` : '');
                         btn.onclick = () => {
@@ -698,29 +709,65 @@ const UI = {
             }
         };
 
-        const finishReveal = () => {
-            if (done) return;
-            done = true;
+        const segments = this._segmentText(text);
+        let currentSkip = null;
+        let completedHtml = '';
+
+        const onClick = () => { if (currentSkip) currentSkip(); };
+        entry.addEventListener('click', onClick);
+        entry.style.cursor = 'pointer';
+
+        const finish = () => {
             if (this._revealTimer) { clearTimeout(this._revealTimer); this._revealTimer = null; }
             entry.style.cursor = '';
-            textEl.innerHTML = event.text.replace(/\n/g, '<br>');
+            entry.removeEventListener('click', onClick);
             renderChoices();
-            // Re-scroll after choices panel expands and shrinks the log's visible area
             requestAnimationFrame(() => { this.logEl.scrollTop = this.logEl.scrollHeight; });
         };
 
-        const revealStep = () => {
-            if (charIdx >= text.length) { finishReveal(); return; }
-            charIdx = Math.min(charIdx + 1, text.length);
-            textEl.innerHTML = text.slice(0, charIdx).replace(/\n/g, '<br>');
-            this.logEl.scrollTop = this.logEl.scrollHeight;
-            this._revealTimer = setTimeout(revealStep, 45);
+        const runSegment = (si) => {
+            const seg = segments[si];
+            const isLast = si === segments.length - 1;
+            let charIdx = 0;
+
+            const showHint = () => {
+                completedHtml += (completedHtml ? '<br><br>' : '') + seg.replace(/\n/g, '<br>');
+                textEl.innerHTML = completedHtml;
+                const hint = document.createElement('span');
+                hint.className = 'log-continue-hint';
+                hint.textContent = ' ▼';
+                textEl.appendChild(hint);
+                this.logEl.scrollTop = this.logEl.scrollHeight;
+                currentSkip = () => {
+                    hint.remove();
+                    currentSkip = null;
+                    if (isLast) finish();
+                    else runSegment(si + 1);
+                };
+            };
+
+            currentSkip = () => {
+                if (this._revealTimer) { clearTimeout(this._revealTimer); this._revealTimer = null; }
+                showHint();
+            };
+
+            const revealStep = () => {
+                charIdx = Math.min(charIdx + 1, seg.length);
+                const prefix = completedHtml ? completedHtml + '<br><br>' : '';
+                textEl.innerHTML = prefix + seg.slice(0, charIdx).replace(/\n/g, '<br>');
+                this.logEl.scrollTop = this.logEl.scrollHeight;
+                if (charIdx < seg.length) {
+                    this._revealTimer = setTimeout(revealStep, 45);
+                } else {
+                    this._revealTimer = null;
+                    showHint();
+                }
+            };
+
+            revealStep();
         };
 
-        // Click the event card to skip the animation
-        entry.style.cursor = 'pointer';
-        entry.addEventListener('click', finishReveal);
-        revealStep();
+        runSegment(0);
     },
 
     addLog(text, type) {
@@ -777,67 +824,118 @@ const UI = {
         });
     },
 
-    addLogTypewriter(text, cls) {
-        return new Promise(resolve => {
-            const div = document.createElement('div');
-            div.className = `log-entry log-${cls}`;
-            this.logEl.appendChild(div);
-
-            // Page-break: first line of a new epilogue section anchors to top of log
-            let pinnedScroll = null;
-            if (this._epilogueNextAtTop) {
-                this._epilogueNextAtTop = false;
-                if (this._epilogueSpacerEl) {
-                    this._epilogueSpacerEl.remove();
-                    this._epilogueSpacerEl = null;
+    _segmentText(text, minLen = 70) {
+        const result = [];
+        for (const hard of text.split('▼')) {
+            const paras = hard.split(/\n\n+/).map(p => p.trim()).filter(Boolean);
+            if (!paras.length) continue;
+            let group = [], groupLen = 0;
+            for (const para of paras) {
+                group.push(para);
+                groupLen += para.length;
+                if (groupLen >= minLen) {
+                    result.push(group.join('\n\n'));
+                    group = []; groupLen = 0;
                 }
-                const logRect = this.logEl.getBoundingClientRect();
-                const divRect = div.getBoundingClientRect();
-                const divAbsTop = this.logEl.scrollTop + (divRect.top - logRect.top);
-                pinnedScroll = Math.max(0, divAbsTop - 78);
-                this.logEl.scrollTop = pinnedScroll;
             }
+            if (group.length) result.push(group.join('\n\n'));
+        }
+        return result.length ? result : [text];
+    },
 
-            this.notifyEventTab();
-            this.logBuffer.push({ text, type: cls });
-            if (this.logBuffer.length > 30) this.logBuffer.shift();
+    addLogTypewriter(text, cls) {
+        const segments = this._segmentText(text);
 
-            const scroll = () => {
-                if (pinnedScroll !== null) {
+        const epilogueFlag = this._epilogueNextAtTop;
+        if (epilogueFlag) {
+            this._epilogueNextAtTop = false;
+            if (this._epilogueSpacerEl) {
+                this._epilogueSpacerEl.remove();
+                this._epilogueSpacerEl = null;
+            }
+        }
+
+        this.notifyEventTab();
+        this.logBuffer.push({ text, type: cls });
+        if (this.logBuffer.length > 30) this.logBuffer.shift();
+
+        let pinnedScroll = null;
+
+        return new Promise(outerResolve => {
+            const runSegment = (si) => {
+                if (si >= segments.length) { outerResolve(); return; }
+                if (si > 0) pinnedScroll = null;
+
+                const seg = segments[si];
+                const isLast = si === segments.length - 1;
+
+                const div = document.createElement('div');
+                div.className = `log-entry log-${cls}`;
+                this.logEl.appendChild(div);
+
+                if (si === 0 && epilogueFlag) {
+                    const logRect = this.logEl.getBoundingClientRect();
+                    const divRect = div.getBoundingClientRect();
+                    const divAbsTop = this.logEl.scrollTop + (divRect.top - logRect.top);
+                    pinnedScroll = Math.max(0, divAbsTop - 78);
                     this.logEl.scrollTop = pinnedScroll;
-                } else {
-                    const elBottom = div.offsetTop + div.offsetHeight;
-                    if (elBottom > this.logEl.scrollTop + this.logEl.clientHeight - 8) {
-                        this.logEl.scrollTop = Math.max(this.logEl.scrollTop, elBottom - this.logEl.clientHeight + 16);
+                }
+
+                const scroll = () => {
+                    if (pinnedScroll !== null) {
+                        this.logEl.scrollTop = pinnedScroll;
+                    } else {
+                        const logRect = this.logEl.getBoundingClientRect();
+                        const elRect = div.getBoundingClientRect();
+                        if (elRect.bottom > logRect.bottom - 8) {
+                            this.logEl.scrollTop = this.logEl.scrollHeight;
+                        }
                     }
-                }
+                };
+
+                let tickId = null;
+                let i = 0;
+
+                const next = () => runSegment(si + 1);
+
+                const showHint = () => {
+                    const hint = document.createElement('span');
+                    hint.className = 'log-continue-hint';
+                    hint.textContent = ' ▼';
+                    div.appendChild(hint);
+                    scroll();
+                    this._twSkip = () => {
+                        this._twSkip = null;
+                        hint.remove();
+                        if (isLast) outerResolve();
+                        else next();
+                    };
+                };
+
+                const completeTyping = () => {
+                    clearTimeout(tickId);
+                    div.innerHTML = seg.replace(/\n/g, '<br>');
+                    scroll();
+                    showHint();
+                };
+
+                this._twSkip = completeTyping;
+
+                const tick = () => {
+                    i = Math.min(i + 1, seg.length);
+                    div.innerHTML = seg.slice(0, i).replace(/\n/g, '<br>');
+                    scroll();
+                    if (i < seg.length) {
+                        tickId = setTimeout(tick, 20);
+                    } else {
+                        this._twSkip = null;
+                        showHint();
+                    }
+                };
+                tick();
             };
 
-            let tickId = null;
-            let i = 0;
-
-            const complete = () => {
-                clearTimeout(tickId);
-                this._twSkip = null;
-                div.innerHTML = text.replace(/\n/g, '<br>');
-                scroll();
-                resolve();
-            };
-
-            this._twSkip = complete;
-
-            const tick = () => {
-                i = Math.min(i + 1, text.length);
-                div.innerHTML = text.slice(0, i).replace(/\n/g, '<br>');
-                scroll();
-                if (i < text.length) {
-                    tickId = setTimeout(tick, 20);
-                } else {
-                    this._twSkip = null;
-                    resolve();
-                }
-            };
-            tick();
+            runSegment(0);
         });
     },
 
@@ -1430,13 +1528,15 @@ const UI = {
             this.chainBtn.disabled = busy;
         }
 
-        // Show final boss shortcut only when BOTH 碎片真相 and 诸世之我 are complete
+        // Show final boss shortcut only when all bonds are complete
         const finalBossBtn = document.getElementById('finalBossBtn');
         if (finalBossBtn) {
             const char = state.char;
-            const chainDone = char && char.flags && char.flags.zhushi_chain_done && char.flags.truth_assembled;
+            const bonds = state.bonds || {};
+            const allBondsDone = char && Object.keys(bonds).length > 0 &&
+                Object.entries(bonds).every(([npcId, levels]) => (char.bondLevels || {})[npcId] >= levels.length);
             const bossNotYetFired = char && !(char.flags && char.flags.boss_triggered);
-            finalBossBtn.style.display = (chainDone && bossNotYetFired && !busy) ? '' : 'none';
+            finalBossBtn.style.display = (allBondsDone && bossNotYetFired && !busy) ? '' : 'none';
             finalBossBtn.disabled = busy;
         }
 

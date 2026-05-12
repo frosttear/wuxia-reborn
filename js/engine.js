@@ -164,10 +164,13 @@ const Engine = {
             return;
         }
 
-        // NG+: force an unmet-NPC intro on every explore if any remain this life.
+        // Force an unmet-NPC intro on every explore if any remain this life.
+        // NG+: every month (players already know these characters).
+        // First life: from age 16+ (give the early months some variety first).
         // Birthday months are reserved for the birthday mechanic.
-        // Age gates are waived in NG+ — players already know these characters.
-        if ((char.rebirthCount || 0) > 0 && !char.flags._is_birthday) {
+        // Age gates are waived — we want the meeting to happen regardless.
+        const _ageYearsForMeet = Character.getAgeYears(char);
+        if ((_ageYearsForMeet >= 16 || (char.rebirthCount || 0) > 0) && !char.flags._is_birthday) {
             const unmetPool = this.state.events.filter(ev => {
                 const flags = (ev.conditions || {}).flags || {};
                 const isFirstMeet = Object.entries(flags).some(([k, v]) => k.startsWith('met_') && v === false);
@@ -327,8 +330,8 @@ const Engine = {
         });
         const availableChoices = allChoices.filter(c => !c.locked);
 
-        // Show the event with ALL choices (locked ones rendered grayed-out)
-        UI.showEvent(event, allChoices, this.state);
+        // Show choices: locked ones grayed-out, but hide ones invisible in first life
+        UI.showEvent(event, this._visibleChoices(allChoices), this.state);
 
         const _illustrationMap = {
             elder_true_form_appears: 'elder-true-form',
@@ -404,7 +407,7 @@ const Engine = {
             bondInfo: isLast ? { npcId, level } : null
         };
         this.state.gamePhase = 'choosing';
-        UI.showEvent(displayEvent, allChoices, this.state);
+        UI.showEvent(displayEvent, this._visibleChoices(allChoices), this.state);
         UI.updateControls(this.state);
     },
 
@@ -707,7 +710,7 @@ const Engine = {
                     bondInfo: { npcId, level: bondEvent.level }
                 };
                 this.state.gamePhase = 'choosing';
-                UI.showEvent(displayEvent, allChoices, this.state);
+                UI.showEvent(displayEvent, this._visibleChoices(allChoices), this.state);
                 UI.updateControls(this.state);
             }
         } else {
@@ -910,7 +913,7 @@ const Engine = {
             chainStep: { chainId, stepIdx }
         };
         this.state.gamePhase = 'choosing';
-        UI.showEvent(displayEvent, allChoices, this.state);
+        UI.showEvent(displayEvent, this._visibleChoices(allChoices), this.state);
         UI.updateControls(this.state);
         const chainStepIllustrations = {
             li_after_1:    'li-yunshu-afterstory',
@@ -998,6 +1001,17 @@ const Engine = {
                 if (enemy) this.startCombat(enemy, '');
             }, 800);
         }
+    },
+
+    // Filter out choices that should be invisible (not just locked) in the current life.
+    // Choices with minRebirth requirement are hidden entirely in first life.
+    _visibleChoices(allChoices) {
+        const rebirthCount = (this.state.char && this.state.char.rebirthCount) || 0;
+        return allChoices.filter(c => {
+            if (!c.locked) return true;
+            if (rebirthCount === 0 && c.requirements && (c.requirements.minRebirth || 0) > 0) return false;
+            return true;
+        });
     },
 
     allBondsComplete(char) {
