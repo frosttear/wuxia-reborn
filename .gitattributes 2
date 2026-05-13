@@ -1,2 +1,0 @@
-# Force LF for shell scripts (including Husky hooks) so they run correctly on Windows
-.husky/* text eol=lf
