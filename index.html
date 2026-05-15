@@ -3,19 +3,19 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
-    <title>轮回江湖 v0.27.29</title>
+    <title>轮回江湖 v0.27.30</title>
     <link rel="icon" type="image/png" sizes="64x64" href="assets/logo/favicon-64.png">
     <link rel="apple-touch-icon" sizes="180x180" href="assets/logo/favicon-180.png">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Pinyon+Script&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="css/styles.css?v=0.27.29">
+    <link rel="stylesheet" href="css/styles.css?v=0.27.30">
 </head>
 <body>
 
 <!-- Start Screen -->
 <div id="startScreen" style="display:flex; flex-direction:column; flex:1; align-items:center; justify-content:center; gap:24px;">
-    <img src="assets/logo/logo.jpg?v=0.27.29" class="start-logo" alt="轮回江湖" onerror="retryImg(this,this.src)">
+    <img src="assets/logo/logo.jpg?v=0.27.30" class="start-logo" alt="轮回江湖" onerror="retryImg(this,this.src)">
     <div class="start-sub">武侠 · 轮回 · 文字冒险</div>
     <div class="start-form">
         <div class="start-birth-row">
@@ -53,7 +53,7 @@
 <!-- Game Screen (hidden until start) -->
 <div id="gameScreen" style="display:none; flex-direction:column; flex:1; overflow:hidden;">
     <header class="game-header">
-        <img src="assets/logo/logo-sm.jpg?v=0.27.29" class="game-title-logo" alt="轮回江湖" onerror="retryImg(this,this.src)">
+        <img src="assets/logo/logo-sm.jpg?v=0.27.30" class="game-title-logo" alt="轮回江湖" onerror="retryImg(this,this.src)">
         <div class="header-controls">
             <button id="muteBtn" class="btn-small" style="display:none" onclick="(function(){ const m = GameAudio.toggleMute(); document.getElementById('muteBtn').textContent = m ? '🔇 静音' : '🔊 音效'; })()">🔊 音效</button>
             <button id="galleryBtn" class="btn-small" onclick="Gallery.open()">🖼 图鉴</button>
@@ -216,20 +216,20 @@ function retryImg(el, src) {
 // Synchronous: swap start screen to loading indicator if a save already exists
 if (localStorage.getItem('wuxia_save')) {
     document.getElementById('startScreen').innerHTML = `
-        <img src="assets/logo/logo.jpg?v=0.27.29" class="start-logo" alt="轮回江湖" onerror="retryImg(this,this.src)">
+        <img src="assets/logo/logo.jpg?v=0.27.30" class="start-logo" alt="轮回江湖" onerror="retryImg(this,this.src)">
         <div class="start-sub">武侠 · 轮回 · 文字冒险</div>
         <img src="assets/illustrations/rebirth.jpg" class="loading-illus" alt="">
         <div class="loading-text">读取存档中</div>`;
 }
 </script>
-<script src="js/audio.js?v=0.27.29"></script>
-<script src="js/character.js?v=0.27.29"></script>
-<script src="js/npc.js?v=0.27.29"></script>
-<script src="js/combat.js?v=0.27.29"></script>
-<script src="js/rebirth.js?v=0.27.29"></script>
-<script src="js/engine.js?v=0.27.29"></script>
-<script src="js/gallery.js?v=0.27.29"></script>
-<script src="js/ui.js?v=0.27.29"></script>
+<script src="js/audio.js?v=0.27.30"></script>
+<script src="js/character.js?v=0.27.30"></script>
+<script src="js/npc.js?v=0.27.30"></script>
+<script src="js/combat.js?v=0.27.30"></script>
+<script src="js/rebirth.js?v=0.27.30"></script>
+<script src="js/engine.js?v=0.27.30"></script>
+<script src="js/gallery.js?v=0.27.30"></script>
+<script src="js/ui.js?v=0.27.30"></script>
 <script>
 (async function() {
     await Engine.init();
