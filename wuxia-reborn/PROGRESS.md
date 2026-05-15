@@ -1,6 +1,14 @@
 # 轮回江湖 — 开发进度
 
-## 当前版本：v0.27.27
+## 当前版本：v0.27.28
+
+### v0.27.28（2026-05-15）
+
+**选项打字机等待 & 图鉴解锁修复**
+- 打字机播出期间，下一段羁绊文本不再立即显示；需等待打字完成或点击跳过后才继续（`applyChoice` 改为 async/await）
+- `migrateChar` 追溯解锁李云舒升华线插画时，新增 `bondVariantsDone` / `lifetimeBondVariants` 作为备用判断，修复 v0.27.21 前老存档因 `li_yunshu_family_path` 轮回丢失而导致插画未解锁的问题
+- 更新 Service Worker 缓存版本号（v0.27.17 → v0.27.28），强制重新下载新增插画资源
+- `Engine.init()` 中所有 `data/*.json` 请求改为携带 `?v=` 参数，防止 Service Worker 缓存旧版 `bonds.json` / `chains.json` 导致 `_completeBond` 用错插画 ID（根本原因：缓存中的旧数据无特殊羁绊条目，致 `isSpecial = false`，插画 ID 退化为普通版本）
 
 ### v0.27.27（2026-05-12）
 

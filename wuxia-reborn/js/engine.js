@@ -23,13 +23,16 @@ const Engine = {
     },
 
     async init() {
+        // Use the same version tag as the stylesheet so the SW can't serve stale data files
+        const _ver = (document.querySelector('link[rel=stylesheet]')?.href.match(/v=([^&"]+)/) || [])[1] || '';
+        const _v = _ver ? `?v=${_ver}` : '';
         const [jobs, npcs, events, enemies, bonds, chainsData] = await Promise.all([
-            fetch('data/jobs.json').then(r => r.json()),
-            fetch('data/npcs.json').then(r => r.json()),
-            fetch('data/events.json').then(r => r.json()),
-            fetch('data/enemies.json').then(r => r.json()),
-            fetch('data/bonds.json').then(r => r.json()),
-            fetch('data/chains.json').then(r => r.json())
+            fetch(`data/jobs.json${_v}`).then(r => r.json()),
+            fetch(`data/npcs.json${_v}`).then(r => r.json()),
+            fetch(`data/events.json${_v}`).then(r => r.json()),
+            fetch(`data/enemies.json${_v}`).then(r => r.json()),
+            fetch(`data/bonds.json${_v}`).then(r => r.json()),
+            fetch(`data/chains.json${_v}`).then(r => r.json())
         ]);
         this.state.jobs = jobs;
         this.state.npcs = npcs;
@@ -411,7 +414,7 @@ const Engine = {
         UI.updateControls(this.state);
     },
 
-    applyChoice(choiceIndex) {
+    async applyChoice(choiceIndex) {
         if (this.state.gamePhase !== 'choosing' || !this.state.pendingChoice) return;
         const { event, choices, bondInfo, bondStep, chainStep } = this.state.pendingChoice;
         const choice = choices[choiceIndex];
@@ -444,7 +447,7 @@ const Engine = {
                 const gainsStr = this.formatAttrGains(actualGains);
                 const gainsTag = gainsStr ? `　<span class="attr-gains">⬆ ${gainsStr}</span>` : '';
                 if (effects.illustration) UI.addIllustration(effects.illustration);
-                if (effects.narrative) UI.addLogTypewriter(effects.narrative, 'result');
+                if (effects.narrative) await UI.addLogTypewriter(effects.narrative, 'result');
                 if (gainsTag) UI.addLog(gainsTag, 'result');
                 if (chainStep) this.completeChainStep(chainStep.chainId, chainStep.stepIdx);
                 if (isNonFinalStep) {
@@ -522,7 +525,7 @@ const Engine = {
         if (chainStep) this.completeChainStep(chainStep.chainId, chainStep.stepIdx);
         this.applyEffects(effects);
         if (effects.illustration) UI.addIllustration(effects.illustration);
-        if (effects.narrative) UI.addLogTypewriter(effects.narrative, 'result');
+        if (effects.narrative) await UI.addLogTypewriter(effects.narrative, 'result');
         if (isNonFinalStep) {
             this._showBondStep(bondStep.npcId, bondStep.steps, bondStep.stepIdx + 1, bondStep.level, '');
             return;
@@ -1956,9 +1959,11 @@ const Engine = {
         }
         // Retroactive illustration unlock — always run so new gallery entries are unlocked for old saves
         {
-            const f = char.flags || {};
+            const f   = char.flags || {};
             const bl  = char.bondLevels || {};
             const lbl = char.lifetimeBondLevels || {};
+            const bvd = char.bondVariantsDone || {};
+            const lbv = char.lifetimeBondVariants || {};
             // Use the highest bond level across all lives for retroactive unlock checks
             const effLvl = id => Math.max(bl[id] || 0, lbl[id] || 0);
             const push = id => { if (!char.unlockedIllustrations.includes(id)) char.unlockedIllustrations.push(id); };
@@ -1979,8 +1984,10 @@ const Engine = {
             if (f.true_final_boss_beaten) push('jianhun-origin-win');
             if (f.elder_true_form_seen) push('elder-true-form');
             if (f.li_afterstory_done)    push('li-yunshu-afterstory');
-            if (f.li_yunshu_family_path && effLvl('li_yunshu') >= 4) push('li-yunshu-special-bond-4');
-            if (f.li_yunshu_family_path && effLvl('li_yunshu') >= 5) push('li-yunshu-special-bond-5');
+            // li_yunshu_family_path may have been lost on rebirth in saves from before v0.27.21;
+            // fall back to bondVariantsDone / lifetimeBondVariants as alternative evidence.
+            if (effLvl('li_yunshu') >= 4 && (f.li_yunshu_family_path || lbv['li_yunshu_4_special'] || bvd['li_yunshu_4'] === 'special')) push('li-yunshu-special-bond-4');
+            if (effLvl('li_yunshu') >= 5 && (f.li_yunshu_family_path || lbv['li_yunshu_5_special'] || bvd['li_yunshu_5'] === 'special')) push('li-yunshu-special-bond-5');
             if (f.yan_sp4_done && effLvl('yan_chixing') >= 4) push('yan-chixing-special-bond-4');
             if (f.yan_sp5_done && effLvl('yan_chixing') >= 5) push('yan-chixing-special-bond-5');
             if (f.su_sp5_done  && effLvl('su_qing')    >= 5) push('su-qing-special-bond-5');
