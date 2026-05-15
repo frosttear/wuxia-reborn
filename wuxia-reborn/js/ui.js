@@ -594,8 +594,11 @@ const UI = {
                 const winPct = Combat.calcWinChance(char, enemy, job);
                 const pctColor = winPct >= 70 ? '🟢' : winPct >= 40 ? '🟡' : '🔴';
                 parts.push(`⚔ 与【${eName}】战斗（攻${eff.attack}/防${eff.defense}/血${eff.hp}） ${pctColor}胜率${winPct}%`);
-                const winEffects = enemy.winEffects || {};
-                const rewardParts = Object.entries(winEffects)
+                const combined = Object.assign({}, enemy.winEffects || {});
+                for (const [k, v] of Object.entries(effects.attributes || {})) {
+                    if (v !== 0) combined[k] = (combined[k] || 0) + v;
+                }
+                const rewardParts = Object.entries(combined)
                     .filter(([, v]) => v !== 0)
                     .map(([k, v]) => `${ATTR_NAMES[k] || k}${v > 0 ? '+' : ''}${v}`);
                 if (rewardParts.length > 0) parts.push(`🏆 胜利奖励：${rewardParts.join(' ')}`);
@@ -604,7 +607,7 @@ const UI = {
             }
         }
 
-        if (effects.attributes) {
+        if (effects.attributes && !effects.combat) {
             for (const [k, v] of Object.entries(effects.attributes)) {
                 if (v === 0) continue;
                 const sign = v > 0 ? '+' : '';
