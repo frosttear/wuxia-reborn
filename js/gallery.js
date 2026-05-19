@@ -6,18 +6,17 @@ const GALLERY_DATA = [
     { id: 'wuxiang-unlock',               name: '无相剑意',             hint: '完成「无相剑意」任务链',                   category: 'bosses' },
     { id: 'zhushi-zhi-wo',               name: '诸世共鸣',             hint: '完成「诸世之我」任务链——所有轮回的自己，聚于一念', category: 'bosses' },
     { id: 'truth-shards',                name: '碎片真相·五物对证',    hint: '完成「碎片真相」任务链——将五人的记忆碎片，一一摆在老者面前', category: 'bosses' },
-    { id: 'elder-true-form',              name: '设计者显形',           hint: '首次面对轮回的设计者——沈玄清的真实目的浮出水面', category: 'bosses', secret: true },
+    { id: 'elder-true-form',              name: '剑魂·吞噬',            hint: '以力量击败剑魂，却在胜利的瞬间被那道千年剑意吞噬——余光中，白发身影强行启动了玉佩', category: 'bosses', secret: true },
     // 传说瞬间
+    { id: 'tianmo-win',                   name: '天魔陨落',             hint: '击败天魔，完成二十岁的宿命',                 category: 'bosses'  },
+    { id: 'tianmo-lose',                  name: '魔焰吞噬',             hint: '在天魔降临时力战不敌',                       category: 'bosses'  },
     { id: 'tianmo-and-jianhun',           name: '天魔与剑魂',           hint: '击败天魔后，玉牌碎裂——更古老的存在从碎片中浮现', category: 'bosses' },
     { id: 'sword-soul-win',               name: '斩破剑魂',             hint: '击败千年剑意——剑魂',                       category: 'bosses'  },
     { id: 'sword-soul-lose',              name: '败于剑意',             hint: '在与剑魂的对决中落败',                       category: 'bosses'  },
-    { id: 'designer-win',                 name: '轮回终焉',             hint: '击败轮回的设计者——沈玄清，九百年的操控，化为尘烬', category: 'bosses', secret: true },
-    { id: 'designer-lose',               name: '困于轮回',             hint: '在轮回设计者的最终审判中落败，再度坠入轮回',   category: 'bosses', secret: true },
-    { id: 'tianmo-win',                   name: '天魔陨落',             hint: '击败天魔，完成二十岁的宿命',                 category: 'bosses'  },
-    { id: 'tianmo-lose',                  name: '魔焰吞噬',             hint: '在天魔降临时力战不敌',                       category: 'bosses'  },
+    { id: 'jianhun-origin-win',            name: '九百年前·终结',        hint: '以信念和人间之力，在九百年前终结了剑魂的本源——长夜将尽，曙光初破', category: 'bosses', secret: true },
     // 羁绊情缘 — 王铁
-    { id: 'wang-tie-meet',               name: '王铁·酒馆初识',       hint: '小镇酒馆，初遇独酌的老镖师',               category: 'bonds'   },
-    { id: 'wang-tie-bond-1',             name: '王铁·镖路往事',       hint: '听老镖师讲述三十年走镖旧事，接过传承铁牌', category: 'bonds'   },
+    { id: 'wang-tie-meet',               name: '王铁·酒馆初识',       hint: '小镇酒馆，初遇老镖师，两人对坐共饮',               category: 'bonds'   },
+    { id: 'wang-tie-bond-1',             name: '王铁·镖路往事',       hint: '对坐酒桌，听老镖师讲述三十年走镖旧事，接过传承铁牌', category: 'bonds'   },
     { id: 'wang-tie-bond-2',             name: '王铁·两肋插刀',       hint: '夜道追镖，二人背靠背对抗盗匪',             category: 'bonds'   },
     { id: 'wang-tie-bond-3',             name: '王铁·最后一课',       hint: '老镖师将三十年活命心法倾囊相授',           category: 'bonds'   },
     { id: 'wang-tie-bond-4',             name: '王铁·刀碑',           hint: '城郊荒坡，他在旧弟兄的木桩墓碑前倾诉往事', category: 'bonds'   },
@@ -32,8 +31,10 @@ const GALLERY_DATA = [
     { id: 'li-yunshu-bond-3',            name: '李云舒·月下长谈',     hint: '城墙上的深夜，她说出十五岁那次无法忘却的杀人', category: 'bonds' },
     { id: 'li-yunshu-bond-4',            name: '李云舒·异地之邀',     hint: '秋水剑宗来函相邀三年，她在去留之间两难',   category: 'bonds'   },
     { id: 'li-yunshu-ending',            name: '李云舒·一剑长歌',     hint: '风过时，剑鸣如歌——那是属于两个人的长歌。', category: 'bonds' },
-    { id: 'li-yunshu-afterstory',        name: '李云舒·旧案浮现',     hint: '整理她留下的旧物，发现亡母遗信，旧案重见天日', category: 'bonds' },
-    { id: 'li-yunshu-afterstory-ending', name: '李云舒·母亲的墓前',   hint: '旧案了结后，二人并肩立于李若兰墓前，无声告别', category: 'bonds' },
+    { id: 'li-yunshu-afterstory',        name: '李云舒·她想见那个人',  hint: '季沧海说：你走出那扇门的时候，眼神变了。那就够了。——她第一次听见娘最后说的话', category: 'bonds' },
+    { id: 'li-yunshu-afterstory-ending', name: '李云舒·梅园祭扫',     hint: '梅园旧树根下，她把信放了进去：娘，有人见过你了——你那时候看见的是真的', category: 'bonds' },
+    { id: 'li-yunshu-special-bond-4',   name: '李云舒·梅影旧事',      hint: '旧木盒里，一封没有寄出的信——娘告诉她，那就够了', category: 'bonds', secret: true },
+    { id: 'li-yunshu-special-bond-5',   name: '李云舒·承重之剑',      hint: '她把剑拔了出来——不是对所有人一样，是看清楚了再选择', category: 'bonds', secret: true },
     { id: 'li-yunshu-true-ending',       name: '李云舒·此后同行',      hint: '高台上，她将旧信收进怀里，二人同望远山——第一次，时间是自己的了', category: 'bonds', secret: true },
     // 羁绊情缘 — 燕赤行
     { id: 'yan-chixing-meet',            name: '燕赤行·刀疤剑客',     hint: '演武场边，疤脸冷面男子直接向你发问',       category: 'bonds'   },
@@ -41,17 +42,20 @@ const GALLERY_DATA = [
     { id: 'yan-chixing-bond-2',          name: '燕赤行·铁幕之夜',     hint: '夜巷遭伏，神秘刺客携乌鸦令牌，你赶到共击来人',     category: 'bonds'   },
     { id: 'yan-chixing-bond-3',          name: '燕赤行·疤痕之下',     hint: '河边深夜，他第一次讲述含光门被灭的往事',   category: 'bonds'   },
     { id: 'yan-chixing-bond-4',          name: '燕赤行·血债与谎言',   hint: '季沧海独闯天魔，负伤求见，多年仇恨一朝真相',     category: 'bonds'   },
-    { id: 'yan-chixing-ending',          name: '燕赤行·无名同行',     hint: '夜道同行，他走在前半步，暗处的风雪扑来，他侧身为你挡。', category: 'bonds' },
+    { id: 'yan-chixing-ending',          name: '燕赤行·和解同行',     hint: '季沧海的事了了，他来找你，问了一句「往哪走」——那是他的方式', category: 'bonds' },
+    { id: 'yan-chixing-special-bond-4',  name: '燕赤行·清醒之痛',     hint: '「不是她比我聪明。是我被仇恨堵死了眼睛。」——路边，他把七年的账重新算了一遍', category: 'bonds', secret: true },
+    { id: 'yan-chixing-special-bond-5',  name: '燕赤行·大义选择',     hint: '包袱已经背好，他说：「天魔祸害了江湖数十年。含光门的惨剧，不是第一个，也不会是最后一个。」', category: 'bonds', secret: true },
     { id: 'yan-chixing-afterstory',      name: '燕赤行·含光遗灯·归山', hint: '重返含光山废墟，他拂过墙上每一个名字，手最后停在两个还活着的人的名字上', category: 'bonds' },
-    { id: 'yan-chixing-afterstory-ending', name: '燕赤行·含光遗灯·立碑', hint: '碑背面刻下三十个离去者的名字，留下两格空白——两个活着的人，不该被放进这里', category: 'bonds' },
-    { id: 'yan-chixing-true-ending',       name: '燕赤行·了却前尘',      hint: '山路上轻装而行，他第一次没有什么放不下的',                     category: 'bonds', secret: true },
+    { id: 'yan-chixing-afterstory-ending', name: '燕赤行·含光遗灯·立碑', hint: '他凿了两天，把三十个名字一个不少地刻进石头——两个活着的人的位置，他留空了', category: 'bonds' },
+    { id: 'yan-chixing-true-ending',       name: '燕赤行·游走的灯',      hint: '季沧海留下重建含光门，他选择走遍天下——同一把火，两种走法',   category: 'bonds', secret: true },
     // 羁绊情缘 — 苏青
     { id: 'su-qing-meet',                name: '苏青·顺手之事',       hint: '镇口巧遇，她正蹲身为孩子包扎伤口',         category: 'bonds'   },
     { id: 'su-qing-bond-1',              name: '苏青·山道偶遇',       hint: '她为你疗伤，讲述失踪五年、以身试毒的师父', category: 'bonds'   },
     { id: 'su-qing-bond-2',              name: '苏青·青心草',         hint: '悬崖峭壁，她执意为病童采集青心草',         category: 'bonds'   },
     { id: 'su-qing-bond-3',              name: '苏青·别离之药',       hint: '她收拾药箱准备远行寻师，临走留下一瓶解毒药', category: 'bonds' },
     { id: 'su-qing-bond-4',              name: '苏青·师门寻踪',       hint: '师父被扣押于山寨，营救行动迫在眉睫',       category: 'bonds'   },
-    { id: 'su-qing-ending',              name: '苏青·针灸传心',       hint: '她背对着门口，肩膀轻轻颤着——她的父亲向你深深弯腰。', category: 'bonds' },
+    { id: 'su-qing-ending',              name: '苏青·针灸传心',       hint: '她别过头去，不说话，但肩膀轻轻颤了一下——苏老先生说，她一个人找了五年，这份心比什么针法都值钱。', category: 'bonds' },
+    { id: 'su-qing-special-bond-5',     name: '苏青·悬壶问道',       hint: '师父藏着二十年的记录终于说出口——苏青没有感动，只是平静地把「记录」变成了「诊断」，超过了他', category: 'bonds', secret: true },
     { id: 'su-qing-afterstory',          name: '苏青·济世堂往事·秘方', hint: '师父透露手中藏有天魔解毒药方——是救人之药，还是终结之剑', category: 'bonds' },
     { id: 'su-qing-afterstory-ending',   name: '苏青·济世堂往事·重开', hint: '重新挂起的招牌下，她站在门口，望着落日',    category: 'bonds'   },
     { id: 'su-qing-true-ending',         name: '苏青·问脉道别',         hint: '济世堂里，她把了最后一次脉，叮嘱了一句：以后不用再重来了',      category: 'bonds', secret: true },
@@ -64,6 +68,7 @@ const GALLERY_DATA = [
     { id: 'ling-xue-ending',             name: '凌雪·凌霜剑域',       hint: '冻原风雪中，两把剑并肩而立——不需要回头，也知道彼此不会退。', category: 'bonds' },
     { id: 'ling-xue-afterstory',         name: '凌雪·凌霜化雪·追杀',  hint: '天魔门追杀令至，她看了一眼，平静开口：来了', category: 'bonds' },
     { id: 'ling-xue-afterstory-ending',  name: '凌雪·凌霜化雪·自由',  hint: '追杀令碎成漫天白纸，随风而散——从今天起，我只是凌雪', category: 'bonds' },
+    { id: 'ling-xue-special-bond-5',     name: '凌雪·那一杯水',         hint: '她提着旧陶壶而来，第一次知道，原来自己还是个可以被人这样对待的人', category: 'bonds', secret: true },
     { id: 'ling-xue-true-ending',        name: '凌雪·各走天涯',         hint: '山路拐角，她回头看了一眼，然后转身走进了薄雾里',               category: 'bonds', secret: true },
     // 羁绊情缘 — 神秘老者
     { id: 'mysterious-elder-meet',       name: '神秘老者·月夜现身',    hint: '月黑风高，练功时一位白发老人从黑暗中走来，问：你可知自己肩负着什么？', category: 'bonds' },
@@ -395,6 +400,10 @@ const Gallery = {
 
     _renderReplayList() {
         this._grid.style.display = '';
+        const openGroups = new Set(
+            [...this._grid.querySelectorAll('details.gallery-replay-npc-group[open]')]
+                .map(el => el.dataset.npc)
+        );
         this._grid.innerHTML = '';
 
         const char = (typeof Engine !== 'undefined') && Engine.state && Engine.state.char;
@@ -454,7 +463,8 @@ const Gallery = {
 
             const details = document.createElement('details');
             details.className = 'gallery-replay-npc-group';
-            details.open = true;
+            details.dataset.npc = kebab;
+            details.open = openGroups.has(kebab);
             const summary = document.createElement('summary');
             summary.className = 'gallery-replay-npc-header';
             summary.textContent = displayName;
@@ -478,11 +488,33 @@ const Gallery = {
                 li.onclick = () => this._openReplay('bond', snakeId, lvl, `${displayName}·第${CHAPTER[lvl - 1] || lvl}章`);
                 ul.appendChild(li);
             }
+            // Special (升华) bond entries — shown after normal chapters if unlocked
+            const specialEntries = GALLERY_DATA.filter(d =>
+                d.id.startsWith(kebab + '-special-bond-') && unlockedIlls.includes(d.id)
+            );
+            for (const se of specialEntries) {
+                const spLevel = parseInt(se.id.match(/-special-bond-(\d+)$/)[1]);
+                const li = document.createElement('li');
+                li.className = 'gallery-replay-special';
+                const spSubtitle = se.name.includes('·') ? se.name.split('·').slice(1).join('·') : se.name;
+                li.textContent = `第${CHAPTER[spLevel - 1] || spLevel}章（升华线）- ${spSubtitle}`;
+                li.onclick = () => this._openReplay('bond_special', snakeId, spLevel, se.name, null, 0, se.id);
+                ul.appendChild(li);
+            }
             if (npcChain) {
                 const li = document.createElement('li');
                 li.textContent = npcChain.name;
                 li.onclick = () => this._openReplay('chain', npcChain.id, null, npcChain.name);
                 ul.appendChild(li);
+                const endingIllId = kebab + '-afterstory-ending';
+                const endingMeta = GALLERY_DATA.find(d => d.id === endingIllId);
+                if (endingMeta) {
+                    const li2 = document.createElement('li');
+                    li2.textContent = endingMeta.name.split('·').pop();
+                    const startStep = Math.max(0, npcChain.steps.length - 1);
+                    li2.onclick = () => this._openReplay('chain', npcChain.id, null, endingMeta.name, null, startStep, endingIllId);
+                    ul.appendChild(li2);
+                }
             }
 
             details.appendChild(ul);
@@ -517,7 +549,7 @@ const Gallery = {
         this._grid.appendChild(container);
     },
 
-    _openReplay(type, id, level, title, fromLb) {
+    _openReplay(type, id, level, title, fromLb, startStep = 0, customIllId = null) {
         this._grid.style.display = 'none';
         this._replayTitle.textContent = title || '';
         this._replayLog.innerHTML = '';
@@ -537,45 +569,48 @@ const Gallery = {
                 this._replayToLb.style.display = 'none';
             }
         }
-        this._runReplay(type, id, level, token);
+        this._runReplay(type, id, level, token, startStep, customIllId);
     },
 
-    _splitParagraphs(text, maxLen = 100) {
-        const raw = text.split(/(?<=[。！？])/);
-        // Reattach leading closing-quote chars to the preceding sentence
-        const parts = [];
-        for (const p of raw) {
-            if (!p) continue;
-            const m = p.match(/^[」』）)\]》]+/);
-            if (m && parts.length > 0) {
-                parts[parts.length - 1] += m[0];
-                const rest = p.slice(m[0].length);
-                if (rest) parts.push(rest);
-            } else {
-                parts.push(p);
+    _segmentText(text, minLen = 70) {
+        const result = [];
+        for (const hard of text.split('▼')) {
+            const paras = hard.split(/\n\n+/).map(p => p.trim()).filter(Boolean);
+            if (!paras.length) continue;
+            let group = [], groupLen = 0;
+            for (const para of paras) {
+                group.push(para);
+                groupLen += para.length;
+                if (groupLen >= minLen) {
+                    result.push(group.join('\n\n'));
+                    group = []; groupLen = 0;
+                }
             }
+            if (group.length) result.push(group.join('\n\n'));
         }
-        const chunks = [];
-        let cur = '';
-        for (const p of parts) {
-            if (!p) continue;
-            if (cur.length > 0 && cur.length + p.length > maxLen) { chunks.push(cur); cur = p; }
-            else cur += p;
-        }
-        if (cur) chunks.push(cur);
-        return chunks.length > 1 ? chunks : [text];
+        return result.length ? result : [text];
     },
 
-    _runReplay(type, id, level, token) {
+    _runReplay(type, id, level, token, startStep = 0, customIllId = null) {
         const bonds  = ((typeof Engine !== 'undefined') && Engine.state && Engine.state.bonds)  || {};
         const chains = ((typeof Engine !== 'undefined') && Engine.state && Engine.state.chains) || [];
 
         let steps = [];
         let completionNarrative = null;
 
-        if (type === 'bond') {
+        if (type === 'bond' || type === 'bond_normal' || type === 'bond_special') {
             const levelArr = bonds[id] || [];
-            const levelData = levelArr.find(b => b.level === level);
+            const matching = levelArr.filter(b => b.level === level);
+            let levelData;
+            if (type === 'bond_special') {
+                levelData = matching.find(b => Object.keys(b.conditions || {}).length > 0) || matching[0] || null;
+            } else if (type === 'bond_normal') {
+                levelData = matching[matching.length - 1] || null;
+            } else {
+                levelData = matching.length > 1
+                    ? (matching.find(b => (typeof Engine !== 'undefined') && Engine.checkConditions(b.conditions || {})) || matching[matching.length - 1])
+                    : (matching[0] || null);
+            }
             steps = (levelData && levelData.steps) || [];
         } else if (type === 'meet') {
             const events = ((typeof Engine !== 'undefined') && Engine.state && Engine.state.events) || [];
@@ -583,24 +618,27 @@ const Gallery = {
             if (ev) steps = [{ text: ev.text, choices: ev.choices || [] }];
         } else {
             const chain = chains.find(c => c.id === id);
-            steps = (chain && chain.steps) || [];
+            steps = ((chain && chain.steps) || []).slice(startStep);
             if (chain && chain.completionReward && chain.completionReward.narrative) {
                 completionNarrative = chain.completionReward.narrative;
             }
         }
 
         // Derive illustration ID
-        let illId = null;
-        if (type === 'bond') {
-            const maxLevel = (bonds[id] || []).length;
-            illId = level >= maxLevel
-                ? id.replace(/_/g, '-') + '-ending'
-                : id.replace(/_/g, '-') + '-bond-' + level;
-        } else if (type === 'meet') {
-            illId = MEET_ILL_IDS[id] || null;
-        } else {
-            const kebab = id.replace(/_/g, '-');
-            if (GALLERY_DATA.find(d => d.id === kebab)) illId = kebab;
+        let illId = customIllId || null;
+        if (!illId) {
+            if (type === 'bond' || type === 'bond_normal') {
+                const bondArr = bonds[id] || [];
+                const maxLevel = bondArr.length > 0 ? Math.max(...bondArr.map(b => b.level)) : 0;
+                illId = level >= maxLevel
+                    ? id.replace(/_/g, '-') + '-ending'
+                    : id.replace(/_/g, '-') + '-bond-' + level;
+            } else if (type === 'meet') {
+                illId = MEET_ILL_IDS[id] || null;
+            } else {
+                const kebab = id.replace(/_/g, '-');
+                if (GALLERY_DATA.find(d => d.id === kebab)) illId = kebab;
+            }
         }
 
         // Build ordered list of {text, cls} items to stream
@@ -613,17 +651,17 @@ const Gallery = {
             // Skip step if ALL choices are combat (pure combat gate, no story text worth showing)
             if (choices.length > 0 && combatChoices.length === choices.length) continue;
 
-            if (step.text) this._splitParagraphs(step.text).forEach(t => items.push({ text: t, cls: 'narrative' }));
+            if (step.text) this._segmentText(step.text).forEach(t => items.push({ text: t, cls: 'narrative' }));
 
             const nonCombat = choices.filter(c => !(c.effects && c.effects.combat));
             for (const choice of nonCombat) {
                 items.push({ text: choice.text, cls: 'choice' });
                 const narr = choice.effects && choice.effects.narrative;
-                if (narr) this._splitParagraphs(narr).forEach(t => items.push({ text: t, cls: 'narrative' }));
+                if (narr) this._segmentText(narr).forEach(t => items.push({ text: t, cls: 'narrative' }));
             }
         }
 
-        if (completionNarrative) this._splitParagraphs(completionNarrative).forEach(t => items.push({ text: t, cls: 'narrative' }));
+        if (completionNarrative) this._segmentText(completionNarrative).forEach(t => items.push({ text: t, cls: 'narrative' }));
         // Illustration appears after all text so the reader finishes the story first
         if (illId) items.push({ cls: 'illustration', illId });
         items.push({ text: '── 回想结束 ──', cls: 'sep' });
@@ -631,9 +669,10 @@ const Gallery = {
         const log = this._replayLog;
 
         const scrollIntoView = (el) => {
-            const elBottom = el.offsetTop + el.offsetHeight;
-            if (elBottom > log.scrollTop + log.clientHeight - 8) {
-                log.scrollTop = Math.max(log.scrollTop, elBottom - log.clientHeight + 16);
+            const logRect = log.getBoundingClientRect();
+            const elRect = el.getBoundingClientRect();
+            if (elRect.bottom > logRect.bottom - 8) {
+                log.scrollTop = log.scrollHeight;
             }
         };
 
@@ -654,6 +693,10 @@ const Gallery = {
                 blank.className = 'log-replay-narrative';
                 blank.innerHTML = '&nbsp;';
                 log.appendChild(blank);
+                const spacer = document.createElement('div');
+                spacer.style.cssText = 'height:32px;flex-shrink:0;';
+                log.appendChild(spacer);
+                log.scrollTop = log.scrollHeight;
                 this._replaySkip = null;
                 return;
             }
@@ -675,26 +718,91 @@ const Gallery = {
             else p.className = 'log-replay-narrative';
             log.appendChild(p);
 
-            let j = 0;
-            this._replaySkip = () => {
-                cancelTick();
+            // sep: appear instantly, advance on next tick
+            if (cls === 'sep') {
                 p.textContent = text;
-                scrollIntoView(p);
-                this._replaySkip = null;
-                advance(i + 1);
-            };
-            const tick = () => {
-                if (token !== this._replaySeq) return;
-                p.textContent = text.slice(0, ++j);
-                if (j > 1) scrollIntoView(p);
-                if (j < text.length) {
-                    tickId = setTimeout(tick, 28);
-                } else {
+                this._replaySkip = () => advance(i + 1);
+                tickId = setTimeout(() => advance(i + 1), 0);
+                return;
+            }
+
+            if (cls === 'narrative') {
+                const subParas = text.split('\n\n');
+                const cumPos = [];
+                let pos = 0;
+                for (const sp of subParas) { cumPos.push(pos); pos += sp.length + 2; }
+                let curParaIdx = 0;
+                let curP = p;
+
+                const updateRender = (j) => {
+                    let pi = 0;
+                    while (pi < subParas.length - 1 && j >= cumPos[pi + 1]) pi++;
+                    while (curParaIdx < pi) {
+                        curP.textContent = subParas[curParaIdx];
+                        curParaIdx++;
+                        curP = document.createElement('p');
+                        curP.className = 'log-replay-narrative';
+                        log.appendChild(curP);
+                    }
+                    const posInPara = Math.min(j - cumPos[pi], subParas[pi].length);
+                    curP.textContent = subParas[pi].slice(0, Math.max(0, posInPara));
+                };
+
+                const finalizeAll = () => {
+                    while (curParaIdx < subParas.length - 1) {
+                        curP.textContent = subParas[curParaIdx];
+                        curParaIdx++;
+                        curP = document.createElement('p');
+                        curP.className = 'log-replay-narrative';
+                        log.appendChild(curP);
+                    }
+                    curP.textContent = subParas[subParas.length - 1];
+                };
+
+                const showHint = () => {
+                    finalizeAll();
+                    const hint = document.createElement('span');
+                    hint.className = 'gallery-replay-continue-hint';
+                    hint.textContent = ' ▼';
+                    curP.appendChild(hint);
+                    scrollIntoView(curP);
+                    this._replaySkip = () => { hint.remove(); advance(i + 1); };
+                };
+
+                let j = 0;
+                this._replaySkip = () => { cancelTick(); showHint(); };
+
+                const tick = () => {
+                    if (token !== this._replaySeq) return;
+                    updateRender(++j);
+                    if (j > 1) scrollIntoView(curP);
+                    if (j < text.length) { tickId = setTimeout(tick, 28); }
+                    else { showHint(); }
+                };
+                tick();
+            } else {
+                // choice: auto-advance after typing
+                let j = 0;
+                this._replaySkip = () => {
+                    cancelTick();
+                    p.textContent = text;
+                    scrollIntoView(p);
                     this._replaySkip = () => advance(i + 1);
-                    tickId = setTimeout(() => advance(i + 1), 400);
-                }
-            };
-            tick();
+                    tickId = setTimeout(() => advance(i + 1), 200);
+                };
+                const tick = () => {
+                    if (token !== this._replaySeq) return;
+                    p.textContent = text.slice(0, ++j);
+                    if (j > 1) scrollIntoView(p);
+                    if (j < text.length) {
+                        tickId = setTimeout(tick, 28);
+                    } else {
+                        this._replaySkip = () => advance(i + 1);
+                        tickId = setTimeout(() => advance(i + 1), 200);
+                    }
+                };
+                tick();
+            }
         };
 
         this._replayLog.onclick = () => {
@@ -772,7 +880,14 @@ const Gallery = {
             const chains = (typeof Engine !== 'undefined') && Engine.state && Engine.state.chains || [];
             const chain = chains.find(c => c.id === chainId);
             if (!chain) return null;
-            return { type: 'chain', id: chainId, level: null, title: chain.name };
+            const isEnding = id.endsWith('-afterstory-ending');
+            if (isEnding) {
+                const startStep = Math.max(0, chain.steps.length - 1);
+                const endingMeta = GALLERY_DATA.find(d => d.id === id);
+                const title = endingMeta ? endingMeta.name : chain.name;
+                return { type: 'chain', id: chainId, level: null, title, startStep, customIllId: id };
+            }
+            return { type: 'chain', id: chainId, level: null, title: chain.name, startStep: 0, customIllId: null };
         }
         let m;
         if ((m = id.match(/^(.+)-meet$/))) {
@@ -792,17 +907,28 @@ const Gallery = {
             const npcSnake = npcKebab.replace(/-/g, '_');
             const portrait = GALLERY_DATA.find(d => d.id === `portrait-${npcKebab}`);
             const npcName = portrait ? portrait.name : npcKebab;
-            return { type: 'bond', id: npcSnake, level, title: `${npcName} · 第${CHAPTER[level - 1] || level}章` };
+            return { type: 'bond_normal', id: npcSnake, level, title: `${npcName} · 第${CHAPTER[level - 1] || level}章` };
+        }
+        if ((m = id.match(/^(.+)-special-bond-(\d+)$/))) {
+            const npcKebab = m[1];
+            const level = parseInt(m[2]);
+            const npcSnake = npcKebab.replace(/-/g, '_');
+            const portrait = GALLERY_DATA.find(d => d.id === `portrait-${npcKebab}`);
+            const npcName = portrait ? portrait.name : npcKebab;
+            const bondMeta = GALLERY_DATA.find(d => d.id === id);
+            const title = bondMeta ? bondMeta.name : `${npcName}·升华`;
+            return { type: 'bond_special', id: npcSnake, level, title, startStep: 0, customIllId: id };
         }
         if ((m = id.match(/^(.+)-ending$/))) {
             const npcKebab = m[1];
             const npcSnake = npcKebab.replace(/-/g, '_');
             const bonds = (typeof Engine !== 'undefined') && Engine.state && Engine.state.bonds || {};
-            const maxLevel = (bonds[npcSnake] || []).length;
+            const npcBondArr = bonds[npcSnake] || [];
+            const maxLevel = npcBondArr.length > 0 ? Math.max(...npcBondArr.map(b => b.level)) : 0;
             if (!maxLevel) return null;
             const portrait = GALLERY_DATA.find(d => d.id === `portrait-${npcKebab}`);
             const npcName = portrait ? portrait.name : npcKebab;
-            return { type: 'bond', id: npcSnake, level: maxLevel, title: `${npcName} · 第${CHAPTER[maxLevel - 1] || maxLevel}章` };
+            return { type: 'bond_normal', id: npcSnake, level: maxLevel, title: `${npcName} · 第${CHAPTER[maxLevel - 1] || maxLevel}章` };
         }
         return null;
     },
@@ -833,7 +959,7 @@ const Gallery = {
                     for (const btn of this._tabsEl.querySelectorAll('.gallery-tab')) {
                         btn.classList.toggle('active', btn.dataset.cat === 'replay');
                     }
-                    this._openReplay(info.type, info.id, info.level, info.title, { id: meta.id, category: meta.category });
+                    this._openReplay(info.type, info.id, info.level, info.title, { id: meta.id, category: meta.category }, info.startStep || 0, info.customIllId || null);
                 };
             } else {
                 replayBtn.style.display = 'none';
