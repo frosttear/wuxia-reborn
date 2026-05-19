@@ -797,7 +797,6 @@ const Engine = {
             shard_ling_xue: '完成「天魔的指令」', truth_assembled: '完成「碎片真相」',
             zhao_defeated_for_wang: '完成「黑鹰寨对峙」',
             wuxiang_echo_felt: '完成「剑意余温」', wuxiang_six_understood: '完成「六人如镜」',
-            fought_final_boss: '曾被剑魂吞噬——神秘老者出手干预，强行送回时间线',
             elder_true_form_seen: '曾历容器路径——击败剑魂，被吞噬，由沈玄清救出后重入轮回',
         };
         const lifetimeDone = new Set(char.lifetimeChainsDone || []);
@@ -1331,7 +1330,6 @@ const Engine = {
 
             if (enemy.isTrueFinalBoss) {
                 char.flags.true_final_boss_beaten = true;
-                char.flags.fought_final_boss = true;
                 if (enemy.npcBondLines) {
                     const NPC_ORDER = ['wang_tie', 'li_yunshu', 'yan_chixing', 'su_qing', 'ling_xue', 'mysterious_elder'];
                     const bondDmg = Math.round(cs.enemyMaxHp * 0.05);
@@ -1407,7 +1405,6 @@ const Engine = {
             if (Object.keys(loseRewards).length > 0) this.applyEffects({ attributes: loseRewards });
             UI.renderCharacter(char, this.state.jobs);
             if (enemy.isTrueFinalBoss) {
-                char.flags.fought_final_boss = true;
                 UI.addLog('力竭。意识开始涣散——', 'system');
                 UI.addLog('然后，腰间的玉牌射出一道冷光。\n\n「这条时间线，还没走到头。」\n\n沈玄清的声音从很远的地方传来。意识重新聚拢，你还站在九百年前的荒野上。', 'epilogue');
                 UI.showCombatReturnBtn('lost', () => {
