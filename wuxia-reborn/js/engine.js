@@ -797,7 +797,7 @@ const Engine = {
             shard_ling_xue: '完成「天魔的指令」', truth_assembled: '完成「碎片真相」',
             zhao_defeated_for_wang: '完成「黑鹰寨对峙」',
             wuxiang_echo_felt: '完成「剑意余温」', wuxiang_six_understood: '完成「六人如镜」',
-            fought_final_boss: '与神秘老者正面交锋过（胜负皆可）',
+            fought_final_boss: '曾被剑魂吞噬——神秘老者出手干预，强行送回时间线',
             elder_true_form_seen: '曾历容器路径——击败剑魂，被吞噬，由沈玄清救出后重入轮回',
         };
         const lifetimeDone = new Set(char.lifetimeChainsDone || []);
