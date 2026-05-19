@@ -15,7 +15,7 @@ const GALLERY_DATA = [
     { id: 'sword-soul-lose',              name: '败于剑意',             hint: '在与剑魂的对决中落败',                       category: 'bosses'  },
     { id: 'jianhun-origin-win',            name: '九百年前·终结',        hint: '以信念和人间之力，在九百年前终结了剑魂的本源——长夜将尽，曙光初破', category: 'bosses', secret: true },
     // 羁绊情缘 — 王铁
-    { id: 'wang-tie-meet',               name: '王铁·酒馆初识',       hint: '小镇酒馆，初遇老镖师，两人对坐共饮',               category: 'bonds'   },
+    { id: 'wang-tie-meet',               name: '王铁·酒馆初识',       hint: '小镇酒馆，初遇独酌的老镖师',               category: 'bonds'   },
     { id: 'wang-tie-bond-1',             name: '王铁·镖路往事',       hint: '对坐酒桌，听老镖师讲述三十年走镖旧事，接过传承铁牌', category: 'bonds'   },
     { id: 'wang-tie-bond-2',             name: '王铁·两肋插刀',       hint: '夜道追镖，二人背靠背对抗盗匪',             category: 'bonds'   },
     { id: 'wang-tie-bond-3',             name: '王铁·最后一课',       hint: '老镖师将三十年活命心法倾囊相授',           category: 'bonds'   },
