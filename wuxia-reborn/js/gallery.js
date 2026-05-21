@@ -941,7 +941,8 @@ const Gallery = {
         const meta = GALLERY_DATA.find(d => d.id === id) || { name: id, hint: '', category: 'bosses' };
         const hqSrc = meta.src || `assets/illustrations/${id}.jpg`;
         const img = el.querySelector('.gallery-lb-img');
-        img.onerror = null;  // prevent stale handler from firing on the next load
+        img.onerror = null;  // prevent stale handler from firing when src is cleared
+        img.src = '';  // clear stale image before progressive load starts
         loadProgressiveImg(img, hqSrc, 'assets/illustrations/placeholder.svg', { skipThumb: true });
         el.querySelector('.gallery-lb-name').textContent = meta.name;
         el.querySelector('.gallery-lb-category').textContent = CATEGORY_LABELS[meta.category] || '';
