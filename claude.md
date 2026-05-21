@@ -24,7 +24,7 @@ fix: combat return button disabled after battle ends
 
 ## Versioning
 
-Bump the version on every commit that changes code or content. Update version strings in `index.html` (all `?v=X.X.X` cache busters), `sw.js` (`CACHE_NAME`), `README.md` (title line), and `PROGRESS.md` (current version line).
+Bump the version on every commit that changes code or content. Update version strings in `index.html` (all `?v=X.X.X` cache busters), `sw.js` (`CACHE_NAME`), `README.md` (title line), `PROGRESS.md` (current version line), and `js/engine.js` (`exportSave` → `v:` field).
 
 Version bump rules — use judgment:
 - **Minor patch** (x.x.**N+1**): bug fixes, UI tweaks, copy changes, small balance adjustments
@@ -55,7 +55,7 @@ Rules:
 
 ## Illustration Generation
 
-Illustrations are AI-generated via ChatGPT Image 2. Prompts are stored in `scripts/generate-illustrations.mjs` for reference (the script itself targets AI Horde and is no longer actively used for generation).
+Illustrations are AI-generated via ChatGPT Images 2. Prompts are stored in `scripts/generate-illustrations.mjs` for reference (the script itself targets AI Horde and is no longer actively used for generation).
 
 **When to run:** Whenever new gallery entries are added to `js/gallery.js` (new `id` fields in `GALLERY_DATA`), add matching entries with prompts to the `ILLUSTRATIONS` array in the script, then run it.
 

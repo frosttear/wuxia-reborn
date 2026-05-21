@@ -24,7 +24,7 @@
     "name": "游侠",
     "description": "浪迹江湖的游侠，以武会友，行侠仗义，初窥武道门径。",
     "branch": "wudao",
-    "requirements": { "strength": 12 },
+    "requirements": { "strength": 14 },
     "baseAttack": 7,
     "baseDefense": 3,
     "hpBonus": 15,
@@ -52,7 +52,7 @@
     "name": "剑客",
     "description": "专精剑术的江湖剑客，出剑如风，攻守兼备。",
     "branch": "wudao",
-    "requirements": { "strength": 18, "agility": 12 },
+    "requirements": { "strength": 24, "agility": 18 },
     "baseAttack": 14,
     "baseDefense": 6,
     "hpBonus": 45,
@@ -84,11 +84,47 @@
     "unlockText": "你的剑术已臻化境，跻身剑客之列。"
   },
   {
+    "id": "blade_master",
+    "name": "剑豪",
+    "description": "技艺精湛的江湖剑道高手，刀锋所指，所向披靡——声名虽未传遍天下，但剑意已入化境。",
+    "branch": "wudao",
+    "requirements": { "strength": 32, "agility": 22, "innerForce": 14 },
+    "baseAttack": 19,
+    "baseDefense": 9,
+    "hpBonus": 62,
+    "activeSkill": {
+      "id": "twin_slash",
+      "name": "双刃裂空",
+      "desc": "气力并发，连斩两刀，破敌防御",
+      "momentumCost": 4,
+      "type": "multi",
+      "hits": 2,
+      "power": 1.1
+    },
+    "skills": [
+      {
+        "id": "blade_mastery",
+        "name": "剑道精研",
+        "desc": "剑法精熟入骨，攻击力+12",
+        "branch": "wudao",
+        "bonuses": { "attack": 12, "defense": 0 }
+      },
+      {
+        "id": "iron_guard",
+        "name": "铁围剑防",
+        "desc": "以剑格挡化势，防御力+7",
+        "branch": "wudao",
+        "bonuses": { "attack": 0, "defense": 7 }
+      }
+    ],
+    "unlockText": "你的剑道修为已臻高手之列，晋升剑豪！"
+  },
+  {
     "id": "hero",
     "name": "剑侠",
     "description": "声名远播的江湖剑侠，武艺超群，剑行天下。",
     "branch": "wudao",
-    "requirements": { "strength": 26, "agility": 15, "reputation": 18 },
+    "requirements": { "strength": 42, "agility": 28, "reputation": 30 },
     "requiredFlags": { "hero_recognized": true },
     "baseAttack": 23,
     "baseDefense": 11,
@@ -125,7 +161,7 @@
     "name": "剑宗",
     "description": "达到剑道极境的宗师，人剑合一，剑意通天。",
     "branch": "wudao",
-    "requirements": { "strength": 36, "innerForce": 18, "agility": 20, "reputation": 25 },
+    "requirements": { "strength": 54, "innerForce": 30, "agility": 34, "reputation": 40 },
     "requiredFlags": { "sword_legacy": true },
     "baseAttack": 40,
     "baseDefense": 19,

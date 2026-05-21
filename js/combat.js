@@ -27,12 +27,13 @@ const Combat = {
     // ── Scaled enemy stats ──────────────────────────────────────────────────
     getEffectiveStats(enemy, char) {
         const tier = Math.max(0, Character.getAgeYears(char) - 15);
+        const rebirth = char.rebirthCount || 0;
         const hpScale = enemy.hpScale != null ? enemy.hpScale : 0.15;
-        const hp = Math.round((enemy.hp || 80) * (1 + tier * hpScale));
+        const hp = Math.round((enemy.hp || 80) * (1 + tier * hpScale) * (1 + rebirth * 0.12));
         const innerForce = enemy.innerForce || 0;
         return {
-            attack:  enemy.attack  + tier * (enemy.attackScale  || 0),
-            defense: enemy.defense + tier * (enemy.defenseScale || 0),
+            attack:  enemy.attack  + tier * (enemy.attackScale  || 0) + Math.floor(rebirth * 2.5),
+            defense: enemy.defense + tier * (enemy.defenseScale || 0) + Math.floor(rebirth * 1.5),
             hp,
             innerForce,
             qiShield: innerForce >= 35 ? Math.floor(innerForce / 8) : 0
@@ -92,7 +93,8 @@ const Combat = {
             // 天魔威压遮蔽，识破上限60%；剑魂神意难测，上限50%；普通对手上限80%
             const intentCap = enemy.id === 'sword_soul' ? 0.50
                             : enemy.id === 'tianmo'      ? 0.60 : 0.80;
-            const accurateChance = Math.min(intentCap, 0.80 * Math.log(1 + playerComp / (enemyComp + 20)));
+            const intentBonus0 = (char.passives || []).reduce((s, p) => s + (p.combatIntentBonus || 0), 0);
+            const accurateChance = Math.min(intentCap, 0.80 * Math.log(1 + playerComp / (enemyComp + 20)) + intentBonus0);
             if (Math.random() < accurateChance) {
                 cs.enemyIntentHint = this._getIntentHint(enemy, firstAction);
                 cs.enemyIntentType = 'accurate';
@@ -108,6 +110,17 @@ const Combat = {
     _enemyChooseAction(cs) {
         const hpPct = cs.enemyHp / cs.enemyMaxHp;
         return Math.random() < (hpPct < 0.35 ? 0.55 : 0.45) ? 'heavy' : 'swift';
+    },
+
+    // ── Win condition: 0 HP or winHpThreshold reached ────────────────────────
+    _isEnemyDefeated(cs) {
+        if (cs.enemyHp <= 0) return true;
+        const threshold = cs.enemy.winHpThreshold;
+        if (threshold && cs.enemyHp <= cs.enemyMaxHp * threshold) {
+            cs.thresholdWin = true;
+            return true;
+        }
+        return false;
     },
 
     // ── Inner-force combat bonus (relative advantage) ──────────────────────
@@ -137,6 +150,7 @@ const Combat = {
         let playerAtk = Character.getAttackPower(char, job);
         if (cs.allBondsBonus) playerAtk += 60;
         if (cs.rebirthPowerBonus) playerAtk += cs.rebirthPowerBonus.atk;
+        if (cs.yanBattleBonus) playerAtk += cs.yanBattleBonus;
         let playerDef = Character.getDefensePower(char, job);
         if (cs.rebirthPowerBonus) playerDef += cs.rebirthPowerBonus.def;
         const qiShield  = Character.getQiShield(char);       // flat reduction per hit
@@ -182,6 +196,7 @@ const Combat = {
             const skillFires  = activeSkill
                 && action !== 'defend'
                 && action !== 'parry'
+                && action !== 'focus'
                 && cs.playerMomentum >= activeSkill.momentumCost
                 && cs.skillCooldown === 0;
 
@@ -218,7 +233,7 @@ const Combat = {
                     if (sk.type === 'stun') cs.enemyStunned = true;
                     lines.push(`【<b style="color:#f4c430">${sk.name}</b>】对方损失 <b>${dmg}</b> 气血（剩余 ${Math.max(0, cs.enemyHp)}）。${stunNote}${ampNote}`);
                 }
-                if (cs.enemyHp <= 0) { result = 'won'; combatOver = true; }
+                if (this._isEnemyDefeated(cs)) { result = 'won'; combatOver = true; }
 
             } else if (action === 'strike') {
                 const lv    = 1 + (Math.random() - 0.5) * (char.attributes.luck / 100);
@@ -232,7 +247,7 @@ const Combat = {
                 cs.playerMomentum = Math.min(5, cs.playerMomentum + 2);
                 const pd = this._pick(this.STANCE_ATTACK_DESCS.strike);
                 lines.push(`${pd}${isCrit ? '【<b>会心一击</b>】' : ''}，对方损失 <b>${dmg}</b> 气血（剩余 ${Math.max(0, cs.enemyHp)}）。`);
-                if (cs.enemyHp <= 0) { result = 'won'; combatOver = true; }
+                if (this._isEnemyDefeated(cs)) { result = 'won'; combatOver = true; }
 
             } else if (action === 'defend') {
                 if (swiftAnticipated) {
@@ -330,7 +345,7 @@ const Combat = {
                         const skillNote = skillName ? `【<b style="color:#e07b39">${skillName}</b>】` : '';
                         lines.push(`${cs.enemy.name}${skillNote}${this._pick(this.ENEMY_HEAVY_DESCS)}——你【${counterLabel}】！${counterText}，你承受 <b>${parryDmg}</b> 点冲击。`);
                         if (char.hp <= 0) { result = 'lost'; combatOver = true; }
-                        if (!combatOver && cs.enemyHp <= 0) { result = 'won'; combatOver = true; }
+                        if (!combatOver && this._isEnemyDefeated(cs)) { result = 'won'; combatOver = true; }
                         // Break: successful parry disrupts enemy skill charge
                         if (!combatOver) {
                             const breakAmt = Math.min(2, cs.enemyMomentum);
@@ -429,6 +444,19 @@ const Combat = {
             }
         }
 
+        // ── Per-round passive healing (e.g. 青心丹药) ────────────────────────────
+        if (!combatOver) {
+            const healPassive = (char.passives || []).find(p => p.combatHealPctPerRound);
+            if (healPassive) {
+                const hpMax = Character.getHPMax(char, job);
+                const healAmt = Math.max(1, Math.floor(hpMax * healPassive.combatHealPctPerRound));
+                const before = char.hp;
+                Character.healHP(char, healAmt, job);
+                const actual = char.hp - before;
+                if (actual > 0) lines.push(`【<b>${healPassive.name}</b>】药力流转，恢复 <b>${actual}</b> 气血（剩余 ${char.hp}）。`);
+            }
+        }
+
         // ── Preview enemy's NEXT action (accuracy = f(playerComp / enemyComp)) ────
         // Cap: 普通对手80%，天魔60%（威压遮蔽），剑魂50%（神意难测）；无相剑意→百分百洞察
         if (combatOver) {
@@ -446,7 +474,8 @@ const Combat = {
                 const enemyComp     = cs.enemyComp;
                 const intentCap = cs.enemy.id === 'sword_soul' ? 0.50
                                 : cs.enemy.id === 'tianmo'      ? 0.60 : 0.80;
-                const accurateChance = Math.min(intentCap, 0.80 * Math.log(1 + playerComp / (enemyComp + 20)));
+                const intentBonus = (char.passives || []).reduce((s, p) => s + (p.combatIntentBonus || 0), 0);
+                const accurateChance = Math.min(intentCap, 0.80 * Math.log(1 + playerComp / (enemyComp + 20)) + intentBonus);
                 if (Math.random() < accurateChance) {
                     cs.enemyIntentHint = this._getIntentHint(cs.enemy, next);
                     cs.enemyIntentType = 'accurate';
@@ -473,7 +502,7 @@ const Combat = {
     // ── Action preview for UI ────────────────────────────────────────────────
     // Returns estimated values for each action button display
     getActionPreview(cs, char, job) {
-        const playerAtk = Character.getAttackPower(char, job) + (cs.allBondsBonus ? 60 : 0);
+        const playerAtk = Character.getAttackPower(char, job) + (cs.allBondsBonus ? 60 : 0) + (cs.yanBattleBonus || 0);
         const playerDef = Character.getDefensePower(char, job);
         const qiShield  = Character.getQiShield(char);
         const innerAmp  = this._effectiveSkillAmp(char.attributes.innerForce || 0, cs.enemyInnerForce)
