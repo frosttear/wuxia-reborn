@@ -370,7 +370,6 @@
         }
 
         .history-item {
-            position: relative;
             background: #f7f8fd;
             border: 1.5px solid #ececf8;
             border-radius: 8px;
@@ -378,37 +377,12 @@
             margin-bottom: 10px;
         }
 
-        .btn-delete {
-            position: absolute;
-            top: 8px;
-            right: 8px;
-            width: 20px;
-            height: 20px;
-            border: none;
-            background: none;
-            color: #c0c0d8;
-            font-size: 16px;
-            line-height: 1;
-            cursor: pointer;
-            padding: 0;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            border-radius: 4px;
-            transition: color 0.2s, background 0.2s;
-        }
-
-        .btn-delete:hover {
-            color: #e94560;
-            background: rgba(233, 69, 96, 0.08);
-        }
 
         .history-item-meta {
             display: flex;
             align-items: baseline;
             gap: 10px;
             margin-bottom: 8px;
-            padding-right: 24px;
         }
 
         .history-item-prompt {
@@ -566,7 +540,10 @@
         <div class="history-section" id="historySection" style="display:none">
             <div class="history-header">
                 <span class="history-title" data-i18n="historyLabel">Generation History</span>
-                <button class="history-clear-btn" onclick="clearHistory()" data-i18n="historyClear">Clear All</button>
+                <div style="display:flex;gap:6px">
+                    <button class="history-clear-btn" id="btnClearExpired" onclick="clearExpired()" data-i18n="historyClearExpired">Clear Expired</button>
+                    <button class="history-clear-btn" onclick="clearHistory()" data-i18n="historyClear">Clear History</button>
+                </div>
             </div>
             <div id="historyList"></div>
         </div>
@@ -606,8 +583,8 @@
                 historyClear: 'Clear All',
                 historyEmpty: 'No history yet',
                 historyDownload: 'Download',
-                historyDelete: 'Delete',
-                historyExpired: 'Expired'
+                historyExpired: 'Expired',
+                historyClearExpired: 'Clear Expired'
             },
             zh: {
                 title: '音乐生成器',
@@ -641,8 +618,8 @@
                 historyClear: '清空',
                 historyEmpty: '暂无历史记录',
                 historyDownload: '下载',
-                historyDelete: '删除',
-                historyExpired: '已过期'
+                historyExpired: '已过期',
+                historyClearExpired: '清除过期'
             }
         };
 
@@ -757,15 +734,15 @@
             renderHistory();
         }
 
-        function deleteFromHistory(index) {
-            const entries = loadHistory();
-            entries.splice(index, 1);
-            saveHistory(entries);
+        function clearHistory() {
+            localStorage.removeItem(HISTORY_KEY);
             renderHistory();
         }
 
-        function clearHistory() {
-            localStorage.removeItem(HISTORY_KEY);
+        function clearExpired() {
+            const now = Date.now();
+            const entries = loadHistory().filter(e => (now - new Date(e.timestamp).getTime()) <= 24 * 3600 * 1000);
+            saveHistory(entries);
             renderHistory();
         }
 
@@ -814,7 +791,6 @@
                         ${expired ? `<span class="history-expired-badge">${t('historyExpired')}</span>` : ''}
                         <span class="history-item-time">${formatTimestamp(e.timestamp)}</span>
                     </div>
-                    <button class="btn-delete" onclick="deleteFromHistory(${i})" title="${t('historyDelete')}">&#x2715;</button>
                     <audio controls src="${e.url}"></audio>
                     <div class="history-item-actions">
                         <button class="history-action-btn btn-download" onclick="downloadEntry('${e.url}','song_${new Date(e.timestamp).toISOString().slice(0,19).replace(/[-:T]/g,'')}.${e.format||'mp3'}',this)">${t('historyDownload')}</button>
