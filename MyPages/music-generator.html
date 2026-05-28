@@ -754,6 +754,21 @@
             renderHistory();
         }
 
+        async function downloadEntry(url, filename) {
+            try {
+                const resp = await fetch(url);
+                const blob = await resp.blob();
+                const blobUrl = URL.createObjectURL(blob);
+                const a = document.createElement('a');
+                a.href = blobUrl;
+                a.download = filename;
+                a.click();
+                setTimeout(() => URL.revokeObjectURL(blobUrl), 10000);
+            } catch {
+                window.open(url, '_blank');
+            }
+        }
+
         function formatTimestamp(iso) {
             const d = new Date(iso);
             return d.toLocaleDateString() + ' ' + d.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
@@ -778,7 +793,7 @@
                     </div>
                     <audio controls src="${e.url}"></audio>
                     <div class="history-item-actions">
-                        <a class="history-action-btn btn-download" href="${e.url}" download="song_${i}.${e.format || 'mp3'}">${t('historyDownload')}</a>
+                        <button class="history-action-btn btn-download" onclick="downloadEntry('${e.url}','song_${i}.${e.format||'mp3'}')">${t('historyDownload')}</button>
                         <button class="history-action-btn btn-delete" onclick="deleteFromHistory(${i})">${t('historyDelete')}</button>
                     </div>
                 </div>`;
@@ -834,10 +849,6 @@
                     const fmt = formatSelect.value;
                     addToHistory(audioUrl, promptInput.value.trim(), fmt);
                     showStatus(t('successMusic'), 'success');
-                    const link = document.createElement('a');
-                    link.href = audioUrl;
-                    link.download = `song_${new Date().toISOString().slice(0,19).replace(/[-:]/g,'')}.${fmt}`;
-                    link.click();
                 } else if (data.data?.status === 1) {
                     showStatus(t('inProgress'), 'info');
                 } else {
