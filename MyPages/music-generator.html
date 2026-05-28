@@ -754,19 +754,8 @@
             renderHistory();
         }
 
-        async function downloadEntry(url, filename) {
-            try {
-                const resp = await fetch(url);
-                const blob = await resp.blob();
-                const blobUrl = URL.createObjectURL(blob);
-                const a = document.createElement('a');
-                a.href = blobUrl;
-                a.download = filename;
-                a.click();
-                setTimeout(() => URL.revokeObjectURL(blobUrl), 10000);
-            } catch {
-                window.open(url, '_blank');
-            }
+        function downloadEntry(url) {
+            window.open(url, '_blank');
         }
 
         function formatTimestamp(iso) {
@@ -793,7 +782,7 @@
                     </div>
                     <audio controls src="${e.url}"></audio>
                     <div class="history-item-actions">
-                        <button class="history-action-btn btn-download" onclick="downloadEntry('${e.url}','song_${i}.${e.format||'mp3'}')">${t('historyDownload')}</button>
+                        <button class="history-action-btn btn-download" onclick="downloadEntry('${e.url}')">${t('historyDownload')}</button>
                         <button class="history-action-btn btn-delete" onclick="deleteFromHistory(${i})">${t('historyDelete')}</button>
                     </div>
                 </div>`;
