@@ -761,7 +761,10 @@
             renderHistory();
         }
 
-        async function downloadEntry(url, filename) {
+        async function downloadEntry(url, filename, btn) {
+            const orig = btn.innerHTML;
+            btn.disabled = true;
+            btn.innerHTML = '<div class="spinner" style="width:12px;height:12px;border-width:2px"></div>';
             try {
                 const resp = await fetch(url);
                 const blob = await resp.blob();
@@ -774,8 +777,10 @@
                 document.body.removeChild(a);
                 setTimeout(() => URL.revokeObjectURL(blobUrl), 10000);
             } catch {
-                // CORS blocked — fall back to new tab
                 window.open(url, '_blank');
+            } finally {
+                btn.disabled = false;
+                btn.innerHTML = orig;
             }
         }
 
@@ -803,7 +808,7 @@
                     </div>
                     <div class="history-player-row">
                         <audio controls src="${e.url}"></audio>
-                        <button class="btn-download-inline" onclick="downloadEntry('${e.url}','song_${new Date(e.timestamp).toISOString().slice(0,19).replace(/[-:T]/g,'')}.${e.format||'mp3'}')" title="${t('historyDownload')}">&#x2193;</button>
+                        <button class="btn-download-inline" onclick="downloadEntry('${e.url}','song_${new Date(e.timestamp).toISOString().slice(0,19).replace(/[-:T]/g,'')}.${e.format||'mp3'}',this)" title="${t('historyDownload')}">&#x2193;</button>
                     </div>
                     <button class="btn-delete" onclick="deleteFromHistory(${i})">${t('historyDelete')}</button>
                 </div>`;
