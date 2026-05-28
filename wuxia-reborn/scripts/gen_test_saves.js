@@ -16,15 +16,21 @@ function metFlags(npcs = ALL_NPCS) {
 }
 
 // bondLevels, relationships, and bondEventsDone for all NPCs at given level
-function bondsMax(npcs = ALL_NPCS, level = 5) {
+// perNpcLevel: override individual NPC cap, e.g. { mysterious_elder: 4 }
+function bondsMax(npcs = ALL_NPCS, level = 5, perNpcLevel = {}) {
     const bl = {}, rel = {}, bed = {};
     for (const id of npcs) {
-        bl[id] = level;
+        const lvl = perNpcLevel[id] !== undefined ? perNpcLevel[id] : level;
+        bl[id] = lvl;
         rel[id] = { affinity: 95 + Math.floor(Math.random() * 5), metAt: 180 };
-        for (let l = 1; l <= level; l++) bed[`${id}_${l}`] = true;
+        for (let l = 1; l <= lvl; l++) bed[`${id}_${l}`] = true;
     }
     return { bondLevels: bl, relationships: rel, bondEventsDone: bed };
 }
+
+// Bond-5 event for mysterious_elder ("一线天命") requires specific end-game conditions;
+// cap at 4 for mid-game test saves.
+const ELDER_MID = { mysterious_elder: 4 };
 
 // Fields that every save must have (v0.22+)
 function baseFields(overrides = {}) {
@@ -49,7 +55,7 @@ function baseFields(overrides = {}) {
 // Match game's btoa(unescape(encodeURIComponent(JSON.stringify(payload))))
 // For ASCII JSON (JSON.stringify escapes Unicode to \uXXXX), Buffer utf8 = identity.
 function encodeChar(char) {
-    const payload = { v: '0.9.7', char };
+    const payload = { v: '0.27.17', char };
     return Buffer.from(JSON.stringify(payload)).toString('base64');
 }
 
@@ -61,15 +67,17 @@ const saves = [
     // 第2周目开局，刚失去沈玄清之战，任务面板应显示「诸世之我」Step 1
     // ─────────────────────────────────────────────────────────────────────
     {
-        label: 'A: 首败沈玄清 · 诸世之我任务解锁',
-        note: '第2周目刚开始，「诸世之我」Step 0「轮回回声」应出现在任务面板',
+        label: 'A: 首败沈玄清 · 诸世之我任务面板',
+        note: '第2周目刚开始，「诸世之我」Step 0「轮回回声」应出现在任务面板（锁定状态，需推进到20岁再次触发结局才可解锁）',
         char: {
             ...baseFields({
                 peakCombatStats: { atk: 28, def: 18, hp: 485 },
-                lifetimeBondLevels: { wang_tie:5, li_yunshu:5, mysterious_elder:5, yan_chixing:5, ling_xue:5, su_qing:5 },
+                lifetimeBondLevels: { wang_tie:5, li_yunshu:5, mysterious_elder:4, yan_chixing:5, ling_xue:5, su_qing:5 },
                 lifetimeChainsDone: ['wang_revenge', 'hero_path', 'wuxiang_sword'],
                 unlockedIllustrations: [
-                    ...ALL_BOND_IDS.flatMap(k => [`${k}-meet`,`${k}-bond-1`,`${k}-bond-2`,`${k}-bond-3`,`${k}-bond-4`,`${k}-ending`]),
+                    ...ALL_BOND_IDS.flatMap(k => k === 'mysterious-elder'
+                        ? [`${k}-meet`,`${k}-bond-1`,`${k}-bond-2`,`${k}-bond-3`,`${k}-bond-4`]
+                        : [`${k}-meet`,`${k}-bond-1`,`${k}-bond-2`,`${k}-bond-3`,`${k}-bond-4`,`${k}-ending`]),
                     'rebirth', 'wuxiang-unlock', 'portrait-tianmo',
                     'tianmo-and-jianhun', 'portrait-jianhun', 'tianmo-win',
                 ],
@@ -90,8 +98,8 @@ const saves = [
                 wuxiang_sword_mastered: true, wuxiang_echo_felt: true,
                 wuxiang_six_understood: true, wuxiang_mastered: true,
             },
-            ...bondsMax(),
-            inheritedBonds: { wang_tie:5, li_yunshu:5, mysterious_elder:5, yan_chixing:5, ling_xue:5, su_qing:5 },
+            ...bondsMax(ALL_NPCS, 5, ELDER_MID),
+            inheritedBonds: { wang_tie:5, li_yunshu:5, mysterious_elder:4, yan_chixing:5, ling_xue:5, su_qing:5 },
         }
     },
 
@@ -105,10 +113,12 @@ const saves = [
         char: {
             ...baseFields({
                 peakCombatStats: { atk: 38, def: 24, hp: 640 },
-                lifetimeBondLevels: { wang_tie:5, li_yunshu:5, mysterious_elder:5, yan_chixing:5, ling_xue:5, su_qing:5 },
+                lifetimeBondLevels: { wang_tie:5, li_yunshu:5, mysterious_elder:4, yan_chixing:5, ling_xue:5, su_qing:5 },
                 lifetimeChainsDone: ['wang_revenge', 'hero_path', 'wuxiang_sword', 'li_yunshu_afterstory'],
                 unlockedIllustrations: [
-                    ...ALL_BOND_IDS.flatMap(k => [`${k}-meet`,`${k}-bond-1`,`${k}-bond-2`,`${k}-bond-3`,`${k}-bond-4`,`${k}-ending`]),
+                    ...ALL_BOND_IDS.flatMap(k => k === 'mysterious-elder'
+                        ? [`${k}-meet`,`${k}-bond-1`,`${k}-bond-2`,`${k}-bond-3`,`${k}-bond-4`]
+                        : [`${k}-meet`,`${k}-bond-1`,`${k}-bond-2`,`${k}-bond-3`,`${k}-bond-4`,`${k}-ending`]),
                     'li-yunshu-afterstory', 'rebirth', 'wuxiang-unlock', 'portrait-tianmo',
                     'tianmo-and-jianhun', 'portrait-jianhun', 'tianmo-win',
                 ],
@@ -134,8 +144,8 @@ const saves = [
                 mark_warrior_power: true,
                 mark_wuxiang_power: true,
             },
-            ...bondsMax(),
-            inheritedBonds: { wang_tie:5, li_yunshu:5, mysterious_elder:5, yan_chixing:5, ling_xue:5, su_qing:5 },
+            ...bondsMax(ALL_NPCS, 5, ELDER_MID),
+            inheritedBonds: { wang_tie:5, li_yunshu:5, mysterious_elder:4, yan_chixing:5, ling_xue:5, su_qing:5 },
         }
     },
 
@@ -182,6 +192,7 @@ const saves = [
                 hidden_boss_triggered: true,
                 hidden_boss_beaten: true,
                 elder_true_form_seen: true,
+                elder_sp5_done: true,
                 wuxiang_sword_mastered: true, wuxiang_echo_felt: true,
                 wuxiang_six_understood: true, wuxiang_mastered: true,
                 li_afterstory_done: true,
@@ -209,10 +220,12 @@ const saves = [
         char: {
             ...baseFields({
                 peakCombatStats: { atk: 42, def: 26, hp: 680 },
-                lifetimeBondLevels: { wang_tie:5, li_yunshu:5, mysterious_elder:5, yan_chixing:5, ling_xue:5, su_qing:5 },
+                lifetimeBondLevels: { wang_tie:5, li_yunshu:5, mysterious_elder:4, yan_chixing:5, ling_xue:5, su_qing:5 },
                 lifetimeChainsDone: ['wang_revenge', 'hero_path', 'wuxiang_sword'],
                 unlockedIllustrations: [
-                    ...ALL_BOND_IDS.flatMap(k => [`${k}-meet`,`${k}-bond-1`,`${k}-bond-2`,`${k}-bond-3`,`${k}-bond-4`,`${k}-ending`]),
+                    ...ALL_BOND_IDS.flatMap(k => k === 'mysterious-elder'
+                        ? [`${k}-meet`,`${k}-bond-1`,`${k}-bond-2`,`${k}-bond-3`,`${k}-bond-4`]
+                        : [`${k}-meet`,`${k}-bond-1`,`${k}-bond-2`,`${k}-bond-3`,`${k}-bond-4`,`${k}-ending`]),
                     'rebirth', 'wuxiang-unlock', 'portrait-tianmo',
                 ],
                 passives: [
@@ -233,8 +246,8 @@ const saves = [
                 wuxiang_sword_mastered: true, wuxiang_echo_felt: true,
                 wuxiang_six_understood: true, wuxiang_mastered: true,
             },
-            ...bondsMax(),
-            inheritedBonds: { wang_tie:5, li_yunshu:5, mysterious_elder:5, yan_chixing:5, ling_xue:5, su_qing:5 },
+            ...bondsMax(ALL_NPCS, 5, ELDER_MID),
+            inheritedBonds: { wang_tie:5, li_yunshu:5, mysterious_elder:4, yan_chixing:5, ling_xue:5, su_qing:5 },
         }
     },
 ];
