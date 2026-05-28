@@ -1,0 +1,604 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Music Generator</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #eef2ff 0%, #fdf4ff 100%);
+            color: #1e1e3a;
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+        }
+
+        .container {
+            background-color: #ffffff;
+            border-radius: 12px;
+            padding: 36px;
+            width: 100%;
+            max-width: 700px;
+            box-shadow: 0 8px 40px rgba(108, 80, 200, 0.12);
+            position: relative;
+        }
+
+        .header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 28px;
+        }
+
+        h1 {
+            font-size: 24px;
+            font-weight: 700;
+            background: linear-gradient(135deg, #e94560 0%, #7c4dff 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .lang-toggle {
+            display: flex;
+            border: 1.5px solid #d0c8f0;
+            border-radius: 6px;
+            overflow: hidden;
+            flex-shrink: 0;
+        }
+
+        .lang-btn {
+            padding: 5px 12px;
+            font-size: 12px;
+            font-weight: 600;
+            cursor: pointer;
+            border: none;
+            background: transparent;
+            color: #9090b0;
+            transition: background 0.2s, color 0.2s;
+        }
+
+        .lang-btn.active {
+            background: linear-gradient(135deg, #e94560, #7c4dff);
+            color: #fff;
+        }
+
+        .lang-btn:not(.active):hover {
+            background: #f0eeff;
+            color: #5c40cc;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        label {
+            display: block;
+            font-size: 13px;
+            color: #7070a0;
+            margin-bottom: 7px;
+            font-weight: 600;
+            letter-spacing: 0.02em;
+        }
+
+        input[type="text"],
+        textarea,
+        select {
+            width: 100%;
+            padding: 11px 14px;
+            background-color: #f7f8fd;
+            color: #1e1e3a;
+            border: 1.5px solid #dcdcf0;
+            border-radius: 6px;
+            font-size: 14px;
+            font-family: "Segoe UI", sans-serif;
+            transition: border-color 0.25s, background 0.25s;
+        }
+
+        input[type="text"]:focus,
+        textarea:focus,
+        select:focus {
+            outline: none;
+            border-color: #e94560;
+            background-color: #fff;
+        }
+
+        input::placeholder,
+        textarea::placeholder {
+            color: #b0b0c8;
+        }
+
+        textarea {
+            resize: vertical;
+            min-height: 160px;
+            font-family: "Segoe UI", sans-serif;
+        }
+
+        .checkbox-group {
+            display: flex;
+            align-items: center;
+            gap: 24px;
+            margin: 18px 0;
+            flex-wrap: wrap;
+        }
+
+        .checkbox-item {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        input[type="checkbox"] {
+            width: 17px;
+            height: 17px;
+            cursor: pointer;
+            accent-color: #e94560;
+        }
+
+        .checkbox-item label {
+            margin: 0;
+            cursor: pointer;
+            color: #6060a0;
+            font-size: 13px;
+        }
+
+        .audio-settings {
+            display: grid;
+            grid-template-columns: 1fr 1fr 1fr;
+            gap: 10px;
+            margin-top: 10px;
+        }
+
+        .audio-settings select {
+            padding: 9px 10px;
+            font-size: 13px;
+        }
+
+        .button-group {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 14px;
+            margin-top: 24px;
+        }
+
+        button {
+            padding: 13px 20px;
+            border: none;
+            border-radius: 7px;
+            font-size: 14px;
+            font-weight: 700;
+            cursor: pointer;
+            transition: opacity 0.25s, transform 0.15s, box-shadow 0.25s;
+        }
+
+        button:disabled {
+            opacity: 0.55;
+            cursor: not-allowed;
+        }
+
+        button:not(:disabled):active {
+            transform: scale(0.97);
+        }
+
+        .generate-btn {
+            background: linear-gradient(135deg, #e94560 0%, #c0304a 100%);
+            color: white;
+            box-shadow: 0 3px 14px rgba(233, 69, 96, 0.28);
+        }
+
+        .generate-btn:hover:not(:disabled) {
+            box-shadow: 0 5px 20px rgba(233, 69, 96, 0.40);
+            opacity: 0.92;
+        }
+
+        .lyrics-btn {
+            background: linear-gradient(135deg, #16c79a 0%, #0ea57e 100%);
+            color: white;
+            box-shadow: 0 3px 14px rgba(22, 199, 154, 0.25);
+        }
+
+        .lyrics-btn:hover:not(:disabled) {
+            box-shadow: 0 5px 20px rgba(22, 199, 154, 0.38);
+            opacity: 0.92;
+        }
+
+        .status {
+            margin-top: 18px;
+            padding: 11px 14px;
+            border-radius: 6px;
+            font-size: 13px;
+            min-height: 20px;
+            display: flex;
+            align-items: center;
+        }
+
+        .status.success {
+            background-color: rgba(22, 199, 154, 0.12);
+            color: #0c9e73;
+            border: 1px solid rgba(22, 199, 154, 0.3);
+        }
+
+        .status.error {
+            background-color: rgba(233, 69, 96, 0.1);
+            color: #c82040;
+            border: 1px solid rgba(233, 69, 96, 0.25);
+        }
+
+        .status.info {
+            background-color: rgba(124, 77, 255, 0.09);
+            color: #6030cc;
+            border: 1px solid rgba(124, 77, 255, 0.2);
+        }
+
+        .status.loading {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            background-color: rgba(124, 77, 255, 0.09);
+            color: #6030cc;
+            border: 1px solid rgba(124, 77, 255, 0.2);
+        }
+
+        .spinner {
+            width: 13px;
+            height: 13px;
+            border: 2px solid rgba(124, 77, 255, 0.25);
+            border-top-color: #7c4dff;
+            border-radius: 50%;
+            animation: spin 0.75s linear infinite;
+            flex-shrink: 0;
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+
+        @media (max-width: 600px) {
+            .container {
+                padding: 22px 18px;
+            }
+
+            .button-group {
+                grid-template-columns: 1fr;
+            }
+
+            .audio-settings {
+                grid-template-columns: 1fr;
+            }
+
+            .checkbox-group {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 12px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1 data-i18n="title">Music Generator</h1>
+            <div class="lang-toggle">
+                <button class="lang-btn" id="btnEn" onclick="setLocale('en')">EN</button>
+                <button class="lang-btn" id="btnZh" onclick="setLocale('zh')">中文</button>
+            </div>
+        </div>
+
+        <div class="form-group">
+            <label for="apiKey" data-i18n="apiKeyLabel">API Key:</label>
+            <input type="text" id="apiKey" data-i18n-placeholder="apiKeyPlaceholder" placeholder="Enter your Minimax API key">
+        </div>
+
+        <div class="form-group">
+            <label for="prompt" data-i18n="promptLabel">Prompt:</label>
+            <input type="text" id="prompt" data-i18n-placeholder="promptPlaceholder" placeholder="Describe the music style you want to generate">
+        </div>
+
+        <div class="form-group">
+            <label for="lyrics" data-i18n="lyricsLabel">Lyrics:</label>
+            <textarea id="lyrics" data-i18n-placeholder="lyricsPlaceholder" placeholder="Enter lyrics or leave empty to generate automatically"></textarea>
+        </div>
+
+        <div class="checkbox-group">
+            <div class="checkbox-item">
+                <input type="checkbox" id="autoLyrics">
+                <label for="autoLyrics" data-i18n="autoLyrics">Auto Lyrics</label>
+            </div>
+            <div class="checkbox-item">
+                <input type="checkbox" id="instrumental">
+                <label for="instrumental" data-i18n="instrumental">Instrumental</label>
+            </div>
+        </div>
+
+        <div class="form-group">
+            <label data-i18n="audioSettings">Audio Settings:</label>
+            <div class="audio-settings">
+                <select id="sampleRate">
+                    <option value="16000">16000 Hz</option>
+                    <option value="24000">24000 Hz</option>
+                    <option value="32000">32000 Hz</option>
+                    <option value="44100" selected>44100 Hz</option>
+                </select>
+                <select id="bitrate">
+                    <option value="32">32 kbps</option>
+                    <option value="64">64 kbps</option>
+                    <option value="128">128 kbps</option>
+                    <option value="256" selected>256 kbps</option>
+                </select>
+                <select id="format">
+                    <option value="mp3" selected>MP3</option>
+                    <option value="wav">WAV</option>
+                    <option value="pcm">PCM</option>
+                </select>
+            </div>
+        </div>
+
+        <div class="button-group">
+            <button class="generate-btn" id="generateBtn" data-i18n="generateBtn">Generate Music</button>
+            <button class="lyrics-btn" id="lyricsBtn" data-i18n="lyricsBtn">Generate Lyrics</button>
+        </div>
+
+        <div class="status" id="status"></div>
+    </div>
+
+    <script>
+        const translations = {
+            en: {
+                title: 'Music Generator',
+                apiKeyLabel: 'API Key:',
+                apiKeyPlaceholder: 'Enter your Minimax API key',
+                promptLabel: 'Prompt:',
+                promptPlaceholder: 'Describe the music style you want to generate',
+                lyricsLabel: 'Lyrics:',
+                lyricsPlaceholder: 'Enter lyrics or leave empty to generate automatically',
+                autoLyrics: 'Auto Lyrics',
+                instrumental: 'Instrumental',
+                audioSettings: 'Audio Settings:',
+                generateBtn: 'Generate Music',
+                lyricsBtn: 'Generate Lyrics',
+                errNoApiKey: 'Please enter API key',
+                errNoPrompt: 'Please enter style prompt',
+                loadingMusic: 'Generating music...',
+                loadingLyrics: 'Generating lyrics...',
+                successMusic: 'Music generated successfully!',
+                successLyrics: 'Lyrics generated successfully!',
+                inProgress: 'Music generation in progress...',
+                taskSubmitted: 'Task submitted: ',
+                failed: 'Failed: ',
+                error: 'Error: '
+            },
+            zh: {
+                title: '音乐生成器',
+                apiKeyLabel: 'API 密钥:',
+                apiKeyPlaceholder: '请输入您的 Minimax API 密钥',
+                promptLabel: '提示词:',
+                promptPlaceholder: '描述您想生成的音乐风格',
+                lyricsLabel: '歌词:',
+                lyricsPlaceholder: '输入歌词，或留空以自动生成',
+                autoLyrics: '自动生成歌词',
+                instrumental: '纯音乐',
+                audioSettings: '音频设置:',
+                generateBtn: '生成音乐',
+                lyricsBtn: '生成歌词',
+                errNoApiKey: '请输入 API 密钥',
+                errNoPrompt: '请输入风格提示词',
+                loadingMusic: '正在生成音乐...',
+                loadingLyrics: '正在生成歌词...',
+                successMusic: '音乐生成成功！',
+                successLyrics: '歌词生成成功！',
+                inProgress: '音乐生成中，请稍候...',
+                taskSubmitted: '任务已提交: ',
+                failed: '失败: ',
+                error: '错误: '
+            }
+        };
+
+        let locale = (navigator.language || navigator.userLanguage || 'en').toLowerCase().startsWith('zh') ? 'zh' : 'en';
+
+        function t(key) {
+            return translations[locale][key] || translations.en[key] || key;
+        }
+
+        function applyLocale() {
+            document.documentElement.lang = locale === 'zh' ? 'zh-CN' : 'en';
+            document.title = t('title');
+
+            document.querySelectorAll('[data-i18n]').forEach(el => {
+                el.textContent = t(el.dataset.i18n);
+            });
+            document.querySelectorAll('[data-i18n-placeholder]').forEach(el => {
+                el.placeholder = t(el.dataset.i18nPlaceholder);
+            });
+
+            document.getElementById('btnEn').classList.toggle('active', locale === 'en');
+            document.getElementById('btnZh').classList.toggle('active', locale === 'zh');
+        }
+
+        function setLocale(lang) {
+            locale = lang;
+            applyLocale();
+        }
+
+        const apiKeyInput = document.getElementById('apiKey');
+        const promptInput = document.getElementById('prompt');
+        const lyricsInput = document.getElementById('lyrics');
+        const autoLyricsCheck = document.getElementById('autoLyrics');
+        const instrumentalCheck = document.getElementById('instrumental');
+        const sampleRateSelect = document.getElementById('sampleRate');
+        const bitrateSelect = document.getElementById('bitrate');
+        const formatSelect = document.getElementById('format');
+        const generateBtn = document.getElementById('generateBtn');
+        const lyricsBtn = document.getElementById('lyricsBtn');
+        const statusDiv = document.getElementById('status');
+
+        instrumentalCheck.addEventListener('change', () => {
+            lyricsInput.disabled = instrumentalCheck.checked;
+            autoLyricsCheck.disabled = instrumentalCheck.checked;
+        });
+
+        function showStatus(message, type = 'info') {
+            statusDiv.textContent = message;
+            statusDiv.className = `status ${type}`;
+        }
+
+        function showLoadingStatus(message) {
+            statusDiv.innerHTML = `<div class="spinner"></div>${message}`;
+            statusDiv.className = 'status loading';
+        }
+
+        async function callMinimaxApi(endpoint, payload, apiKey) {
+            try {
+                const response = await fetch(endpoint, {
+                    method: 'POST',
+                    headers: {
+                        'Authorization': `Bearer ${apiKey}`,
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify(payload)
+                });
+
+                const data = await response.json();
+
+                return {
+                    success: response.ok,
+                    statusCode: response.status,
+                    data: data,
+                    error: response.ok ? null : `HTTP ${response.status}`
+                };
+            } catch (error) {
+                return {
+                    success: false,
+                    error: error.message
+                };
+            }
+        }
+
+        generateBtn.addEventListener('click', async () => {
+            if (!apiKeyInput.value.trim()) {
+                showStatus(t('errNoApiKey'), 'error');
+                return;
+            }
+            if (!promptInput.value.trim()) {
+                showStatus(t('errNoPrompt'), 'error');
+                return;
+            }
+
+            generateBtn.disabled = true;
+            lyricsBtn.disabled = true;
+            showLoadingStatus(t('loadingMusic'));
+
+            const payload = {
+                model: 'music-2.6',
+                prompt: promptInput.value.trim(),
+                audio_setting: {
+                    sample_rate: parseInt(sampleRateSelect.value),
+                    bitrate: parseInt(bitrateSelect.value) * 1000,
+                    format: formatSelect.value
+                },
+                output_format: 'url'
+            };
+
+            if (lyricsInput.value.trim() && !instrumentalCheck.checked) {
+                payload.lyrics = lyricsInput.value.trim();
+            }
+
+            if (instrumentalCheck.checked) {
+                payload.is_instrumental = true;
+                if (!lyricsInput.value.trim()) {
+                    payload.lyrics_optimizer = true;
+                }
+            }
+
+            if (autoLyricsCheck.checked && !lyricsInput.value.trim()) {
+                payload.lyrics_optimizer = true;
+            }
+
+            const result = await callMinimaxApi(
+                'https://api.minimaxi.com/v1/music_generation',
+                payload,
+                apiKeyInput.value.trim()
+            );
+
+            generateBtn.disabled = false;
+            lyricsBtn.disabled = false;
+
+            if (result.success) {
+                const data = result.data;
+                if (data.data?.status === 2 && data.data?.audio) {
+                    showStatus(t('successMusic'), 'success');
+                    const audioUrl = data.data.audio;
+
+                    const link = document.createElement('a');
+                    link.href = audioUrl;
+                    link.download = `song_${new Date().toISOString().slice(0, 19).replace(/[-:]/g, '')}.mp3`;
+                    link.click();
+                } else if (data.data?.status === 1) {
+                    showStatus(t('inProgress'), 'info');
+                } else {
+                    const errMsg = data.base_resp?.err_msg || 'Unknown error';
+                    showStatus(t('failed') + errMsg, 'error');
+                }
+            } else {
+                const errMsg = result.data?.base_resp?.err_msg || result.error;
+                showStatus(t('error') + errMsg, 'error');
+            }
+        });
+
+        lyricsBtn.addEventListener('click', async () => {
+            if (!apiKeyInput.value.trim()) {
+                showStatus(t('errNoApiKey'), 'error');
+                return;
+            }
+            if (!promptInput.value.trim()) {
+                showStatus(t('errNoPrompt'), 'error');
+                return;
+            }
+
+            generateBtn.disabled = true;
+            lyricsBtn.disabled = true;
+            showLoadingStatus(t('loadingLyrics'));
+
+            const payload = {
+                mode: 'write_full_song',
+                prompt: promptInput.value.trim()
+            };
+
+            const result = await callMinimaxApi(
+                'https://api.minimaxi.com/v1/lyrics_generation',
+                payload,
+                apiKeyInput.value.trim()
+            );
+
+            generateBtn.disabled = false;
+            lyricsBtn.disabled = false;
+
+            if (result.success) {
+                const data = result.data;
+                if (data.lyrics) {
+                    lyricsInput.value = data.lyrics;
+                    showStatus(t('successLyrics'), 'success');
+                } else if (data.task_id) {
+                    showStatus(t('taskSubmitted') + data.task_id, 'info');
+                } else {
+                    const errMsg = data.base_resp?.err_msg || 'Unknown error';
+                    showStatus(t('failed') + errMsg, 'error');
+                }
+            } else {
+                const errMsg = result.data?.base_resp?.err_msg || result.error;
+                showStatus(t('error') + errMsg, 'error');
+            }
+        });
+
+        applyLocale();
+    </script>
+</body>
+</html>
