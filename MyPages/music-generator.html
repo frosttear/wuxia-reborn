@@ -29,7 +29,6 @@
             width: 100%;
             max-width: 700px;
             box-shadow: 0 8px 40px rgba(108, 80, 200, 0.12);
-            position: relative;
         }
 
         .header {
@@ -119,43 +118,89 @@
 
         textarea {
             resize: vertical;
-            min-height: 160px;
+            min-height: 140px;
             font-family: "Segoe UI", sans-serif;
         }
 
-        .checkbox-group {
+        /* Mode selector */
+        .mode-selector {
             display: flex;
-            align-items: center;
-            gap: 24px;
-            margin: 18px 0;
-            flex-wrap: wrap;
+            border: 1.5px solid #d0c8f0;
+            border-radius: 8px;
+            overflow: hidden;
         }
 
-        .checkbox-item {
-            display: flex;
-            align-items: center;
-            gap: 8px;
-        }
-
-        input[type="checkbox"] {
-            width: 17px;
-            height: 17px;
-            cursor: pointer;
-            accent-color: #e94560;
-        }
-
-        .checkbox-item label {
-            margin: 0;
-            cursor: pointer;
-            color: #6060a0;
+        .mode-btn {
+            flex: 1;
+            padding: 10px 8px;
+            border: none;
+            border-right: 1px solid #d0c8f0;
+            background: transparent;
+            color: #9090b0;
             font-size: 13px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: background 0.2s, color 0.2s;
+            line-height: 1.3;
         }
 
+        .mode-btn:last-child {
+            border-right: none;
+        }
+
+        .mode-btn.active {
+            background: linear-gradient(135deg, #e94560, #7c4dff);
+            color: #fff;
+        }
+
+        .mode-btn:not(.active):hover {
+            background: #f0eeff;
+            color: #5c40cc;
+        }
+
+        /* Lyrics section */
+        .lyrics-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 7px;
+        }
+
+        .lyrics-header label {
+            margin: 0;
+        }
+
+        .lyrics-gen-btn {
+            padding: 5px 14px;
+            background: linear-gradient(135deg, #16c79a 0%, #0ea57e 100%);
+            color: white;
+            border: none;
+            border-radius: 5px;
+            font-size: 12px;
+            font-weight: 700;
+            cursor: pointer;
+            box-shadow: 0 2px 8px rgba(22, 199, 154, 0.25);
+            transition: opacity 0.2s, transform 0.15s;
+        }
+
+        .lyrics-gen-btn:hover:not(:disabled) {
+            opacity: 0.88;
+        }
+
+        .lyrics-gen-btn:not(:disabled):active {
+            transform: scale(0.97);
+        }
+
+        .lyrics-gen-btn:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+
+        /* Audio settings */
         .audio-settings {
             display: grid;
             grid-template-columns: 1fr 1fr 1fr;
             gap: 10px;
-            margin-top: 10px;
         }
 
         .audio-settings select {
@@ -163,36 +208,20 @@
             font-size: 13px;
         }
 
-        .button-group {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 14px;
+        /* Generate button */
+        .generate-btn {
+            width: 100%;
             margin-top: 24px;
-        }
-
-        button {
-            padding: 13px 20px;
+            padding: 14px 20px;
             border: none;
             border-radius: 7px;
-            font-size: 14px;
+            font-size: 15px;
             font-weight: 700;
             cursor: pointer;
-            transition: opacity 0.25s, transform 0.15s, box-shadow 0.25s;
-        }
-
-        button:disabled {
-            opacity: 0.55;
-            cursor: not-allowed;
-        }
-
-        button:not(:disabled):active {
-            transform: scale(0.97);
-        }
-
-        .generate-btn {
             background: linear-gradient(135deg, #e94560 0%, #c0304a 100%);
             color: white;
             box-shadow: 0 3px 14px rgba(233, 69, 96, 0.28);
+            transition: opacity 0.25s, transform 0.15s, box-shadow 0.25s;
         }
 
         .generate-btn:hover:not(:disabled) {
@@ -200,19 +229,18 @@
             opacity: 0.92;
         }
 
-        .lyrics-btn {
-            background: linear-gradient(135deg, #16c79a 0%, #0ea57e 100%);
-            color: white;
-            box-shadow: 0 3px 14px rgba(22, 199, 154, 0.25);
+        .generate-btn:not(:disabled):active {
+            transform: scale(0.98);
         }
 
-        .lyrics-btn:hover:not(:disabled) {
-            box-shadow: 0 5px 20px rgba(22, 199, 154, 0.38);
-            opacity: 0.92;
+        .generate-btn:disabled {
+            opacity: 0.55;
+            cursor: not-allowed;
         }
 
+        /* Status */
         .status {
-            margin-top: 18px;
+            margin-top: 16px;
             padding: 11px 14px;
             border-radius: 6px;
             font-size: 13px;
@@ -267,18 +295,13 @@
                 padding: 22px 18px;
             }
 
-            .button-group {
-                grid-template-columns: 1fr;
-            }
-
             .audio-settings {
                 grid-template-columns: 1fr;
             }
 
-            .checkbox-group {
-                flex-direction: column;
-                align-items: flex-start;
-                gap: 12px;
+            .mode-btn {
+                font-size: 12px;
+                padding: 9px 4px;
             }
         }
     </style>
@@ -304,19 +327,20 @@
         </div>
 
         <div class="form-group">
-            <label for="lyrics" data-i18n="lyricsLabel">Lyrics:</label>
-            <textarea id="lyrics" data-i18n-placeholder="lyricsPlaceholder" placeholder="Enter lyrics or leave empty to generate automatically"></textarea>
+            <label data-i18n="modeLabel">Mode:</label>
+            <div class="mode-selector">
+                <button class="mode-btn active" data-mode="auto" onclick="setMode('auto')" data-i18n="modeAuto">Auto Lyrics</button>
+                <button class="mode-btn" data-mode="review" onclick="setMode('review')" data-i18n="modeReview">Edit Lyrics</button>
+                <button class="mode-btn" data-mode="instrumental" onclick="setMode('instrumental')" data-i18n="modeInstrumental">Instrumental</button>
+            </div>
         </div>
 
-        <div class="checkbox-group">
-            <div class="checkbox-item">
-                <input type="checkbox" id="autoLyrics">
-                <label for="autoLyrics" data-i18n="autoLyrics">Auto Lyrics</label>
+        <div class="form-group" id="lyricsSection" style="display:none">
+            <div class="lyrics-header">
+                <label for="lyrics" data-i18n="lyricsLabel">Lyrics:</label>
+                <button class="lyrics-gen-btn" id="lyricsBtn" data-i18n="lyricsBtn">Generate Lyrics</button>
             </div>
-            <div class="checkbox-item">
-                <input type="checkbox" id="instrumental">
-                <label for="instrumental" data-i18n="instrumental">Instrumental</label>
-            </div>
+            <textarea id="lyrics" data-i18n-placeholder="lyricsPlaceholder" placeholder="Click 'Generate Lyrics' or type directly"></textarea>
         </div>
 
         <div class="form-group">
@@ -342,10 +366,7 @@
             </div>
         </div>
 
-        <div class="button-group">
-            <button class="generate-btn" id="generateBtn" data-i18n="generateBtn">Generate Music</button>
-            <button class="lyrics-btn" id="lyricsBtn" data-i18n="lyricsBtn">Generate Lyrics</button>
-        </div>
+        <button class="generate-btn" id="generateBtn" data-i18n="generateBtn">Generate Music</button>
 
         <div class="status" id="status"></div>
     </div>
@@ -358,19 +379,23 @@
                 apiKeyPlaceholder: 'Enter your Minimax API key',
                 promptLabel: 'Prompt:',
                 promptPlaceholder: 'Describe the music style you want to generate',
+                modeLabel: 'Mode:',
+                modeAuto: 'Auto Lyrics',
+                modeReview: 'Edit Lyrics',
+                modeInstrumental: 'Instrumental',
                 lyricsLabel: 'Lyrics:',
-                lyricsPlaceholder: 'Enter lyrics or leave empty to generate automatically',
-                autoLyrics: 'Auto Lyrics',
-                instrumental: 'Instrumental',
+                lyricsPlaceholder: "Click 'Generate Lyrics' or type directly",
                 audioSettings: 'Audio Settings:',
                 generateBtn: 'Generate Music',
                 lyricsBtn: 'Generate Lyrics',
                 errNoApiKey: 'Please enter API key',
                 errNoPrompt: 'Please enter style prompt',
+                errNoLyrics: 'Please generate or enter lyrics first',
                 loadingMusic: 'Generating music...',
                 loadingLyrics: 'Generating lyrics...',
                 successMusic: 'Music generated successfully!',
-                successLyrics: 'Lyrics generated successfully!',
+                confirmLyrics: 'This will make an API call to generate lyrics. Continue?',
+                successLyrics: 'Lyrics generated — review and edit before generating music.',
                 inProgress: 'Music generation in progress...',
                 taskSubmitted: 'Task submitted: ',
                 failed: 'Failed: ',
@@ -380,21 +405,25 @@
                 title: '音乐生成器',
                 apiKeyLabel: 'API 密钥:',
                 apiKeyPlaceholder: '请输入您的 Minimax API 密钥',
-                promptLabel: '提示词:',
+                promptLabel: '风格描述:',
                 promptPlaceholder: '描述您想生成的音乐风格',
+                modeLabel: '生成模式:',
+                modeAuto: '自动生成歌词',
+                modeReview: '预览并编辑歌词',
+                modeInstrumental: '纯音乐',
                 lyricsLabel: '歌词:',
-                lyricsPlaceholder: '输入歌词，或留空以自动生成',
-                autoLyrics: '自动生成歌词',
-                instrumental: '纯音乐',
+                lyricsPlaceholder: '点击「生成歌词」，或直接输入',
                 audioSettings: '音频设置:',
                 generateBtn: '生成音乐',
                 lyricsBtn: '生成歌词',
                 errNoApiKey: '请输入 API 密钥',
-                errNoPrompt: '请输入风格提示词',
+                errNoPrompt: '请输入风格描述',
+                errNoLyrics: '请先生成或输入歌词',
                 loadingMusic: '正在生成音乐...',
                 loadingLyrics: '正在生成歌词...',
                 successMusic: '音乐生成成功！',
-                successLyrics: '歌词生成成功！',
+                confirmLyrics: '将调用 API 生成歌词，确认继续？',
+                successLyrics: '歌词已生成，请确认或编辑后再生成音乐。',
                 inProgress: '音乐生成中，请稍候...',
                 taskSubmitted: '任务已提交: ',
                 failed: '失败: ',
@@ -402,7 +431,8 @@
             }
         };
 
-        let locale = (navigator.language || navigator.userLanguage || 'en').toLowerCase().startsWith('zh') ? 'zh' : 'en';
+        let locale = (navigator.language || 'en').toLowerCase().startsWith('zh') ? 'zh' : 'en';
+        let mode = 'auto';
 
         function t(key) {
             return translations[locale][key] || translations.en[key] || key;
@@ -411,14 +441,12 @@
         function applyLocale() {
             document.documentElement.lang = locale === 'zh' ? 'zh-CN' : 'en';
             document.title = t('title');
-
             document.querySelectorAll('[data-i18n]').forEach(el => {
                 el.textContent = t(el.dataset.i18n);
             });
             document.querySelectorAll('[data-i18n-placeholder]').forEach(el => {
                 el.placeholder = t(el.dataset.i18nPlaceholder);
             });
-
             document.getElementById('btnEn').classList.toggle('active', locale === 'en');
             document.getElementById('btnZh').classList.toggle('active', locale === 'zh');
         }
@@ -428,22 +456,25 @@
             applyLocale();
         }
 
-        const apiKeyInput = document.getElementById('apiKey');
-        const promptInput = document.getElementById('prompt');
-        const lyricsInput = document.getElementById('lyrics');
-        const autoLyricsCheck = document.getElementById('autoLyrics');
-        const instrumentalCheck = document.getElementById('instrumental');
+        function setMode(m) {
+            mode = m;
+            document.querySelectorAll('.mode-btn').forEach(btn => {
+                btn.classList.toggle('active', btn.dataset.mode === m);
+            });
+            document.getElementById('lyricsSection').style.display = m === 'review' ? 'block' : 'none';
+            statusDiv.className = 'status';
+            statusDiv.textContent = '';
+        }
+
+        const apiKeyInput   = document.getElementById('apiKey');
+        const promptInput   = document.getElementById('prompt');
+        const lyricsInput   = document.getElementById('lyrics');
         const sampleRateSelect = document.getElementById('sampleRate');
         const bitrateSelect = document.getElementById('bitrate');
-        const formatSelect = document.getElementById('format');
-        const generateBtn = document.getElementById('generateBtn');
-        const lyricsBtn = document.getElementById('lyricsBtn');
-        const statusDiv = document.getElementById('status');
-
-        instrumentalCheck.addEventListener('change', () => {
-            lyricsInput.disabled = instrumentalCheck.checked;
-            autoLyricsCheck.disabled = instrumentalCheck.checked;
-        });
+        const formatSelect  = document.getElementById('format');
+        const generateBtn   = document.getElementById('generateBtn');
+        const lyricsBtn     = document.getElementById('lyricsBtn');
+        const statusDiv     = document.getElementById('status');
 
         function showStatus(message, type = 'info') {
             statusDiv.textContent = message;
@@ -455,45 +486,34 @@
             statusDiv.className = 'status loading';
         }
 
-        async function callMinimaxApi(endpoint, payload, apiKey) {
+        function setBusy(busy) {
+            generateBtn.disabled = busy;
+            lyricsBtn.disabled = busy;
+        }
+
+        async function callApi(endpoint, payload) {
             try {
                 const response = await fetch(endpoint, {
                     method: 'POST',
                     headers: {
-                        'Authorization': `Bearer ${apiKey}`,
+                        'Authorization': `Bearer ${apiKeyInput.value.trim()}`,
                         'Content-Type': 'application/json'
                     },
                     body: JSON.stringify(payload)
                 });
-
                 const data = await response.json();
-
-                return {
-                    success: response.ok,
-                    statusCode: response.status,
-                    data: data,
-                    error: response.ok ? null : `HTTP ${response.status}`
-                };
-            } catch (error) {
-                return {
-                    success: false,
-                    error: error.message
-                };
+                return { success: response.ok, data, error: response.ok ? null : `HTTP ${response.status}` };
+            } catch (err) {
+                return { success: false, error: err.message };
             }
         }
 
         generateBtn.addEventListener('click', async () => {
-            if (!apiKeyInput.value.trim()) {
-                showStatus(t('errNoApiKey'), 'error');
-                return;
-            }
-            if (!promptInput.value.trim()) {
-                showStatus(t('errNoPrompt'), 'error');
-                return;
-            }
+            if (!apiKeyInput.value.trim()) { showStatus(t('errNoApiKey'), 'error'); return; }
+            if (!promptInput.value.trim()) { showStatus(t('errNoPrompt'), 'error'); return; }
+            if (mode === 'review' && !lyricsInput.value.trim()) { showStatus(t('errNoLyrics'), 'error'); return; }
 
-            generateBtn.disabled = true;
-            lyricsBtn.disabled = true;
+            setBusy(true);
             showLoadingStatus(t('loadingMusic'));
 
             const payload = {
@@ -507,94 +527,57 @@
                 output_format: 'url'
             };
 
-            if (lyricsInput.value.trim() && !instrumentalCheck.checked) {
+            if (mode === 'auto') {
+                payload.lyrics_optimizer = true;
+            } else if (mode === 'instrumental') {
+                payload.is_instrumental = true;
+            } else {
                 payload.lyrics = lyricsInput.value.trim();
             }
 
-            if (instrumentalCheck.checked) {
-                payload.is_instrumental = true;
-                if (!lyricsInput.value.trim()) {
-                    payload.lyrics_optimizer = true;
-                }
-            }
-
-            if (autoLyricsCheck.checked && !lyricsInput.value.trim()) {
-                payload.lyrics_optimizer = true;
-            }
-
-            const result = await callMinimaxApi(
-                'https://api.minimaxi.com/v1/music_generation',
-                payload,
-                apiKeyInput.value.trim()
-            );
-
-            generateBtn.disabled = false;
-            lyricsBtn.disabled = false;
+            const result = await callApi('https://api.minimaxi.com/v1/music_generation', payload);
+            setBusy(false);
 
             if (result.success) {
                 const data = result.data;
                 if (data.data?.status === 2 && data.data?.audio) {
                     showStatus(t('successMusic'), 'success');
-                    const audioUrl = data.data.audio;
-
                     const link = document.createElement('a');
-                    link.href = audioUrl;
-                    link.download = `song_${new Date().toISOString().slice(0, 19).replace(/[-:]/g, '')}.mp3`;
+                    link.href = data.data.audio;
+                    link.download = `song_${new Date().toISOString().slice(0,19).replace(/[-:]/g,'')}.mp3`;
                     link.click();
                 } else if (data.data?.status === 1) {
                     showStatus(t('inProgress'), 'info');
                 } else {
-                    const errMsg = data.base_resp?.err_msg || 'Unknown error';
-                    showStatus(t('failed') + errMsg, 'error');
+                    showStatus(t('failed') + (data.base_resp?.err_msg || 'Unknown error'), 'error');
                 }
             } else {
-                const errMsg = result.data?.base_resp?.err_msg || result.error;
-                showStatus(t('error') + errMsg, 'error');
+                showStatus(t('error') + (result.data?.base_resp?.err_msg || result.error), 'error');
             }
         });
 
         lyricsBtn.addEventListener('click', async () => {
-            if (!apiKeyInput.value.trim()) {
-                showStatus(t('errNoApiKey'), 'error');
-                return;
-            }
-            if (!promptInput.value.trim()) {
-                showStatus(t('errNoPrompt'), 'error');
-                return;
-            }
+            if (!apiKeyInput.value.trim()) { showStatus(t('errNoApiKey'), 'error'); return; }
+            if (!promptInput.value.trim()) { showStatus(t('errNoPrompt'), 'error'); return; }
+            if (!confirm(t('confirmLyrics'))) return;
 
-            generateBtn.disabled = true;
-            lyricsBtn.disabled = true;
+            setBusy(true);
             showLoadingStatus(t('loadingLyrics'));
 
-            const payload = {
+            const result = await callApi('https://api.minimaxi.com/v1/lyrics_generation', {
                 mode: 'write_full_song',
                 prompt: promptInput.value.trim()
-            };
+            });
+            setBusy(false);
 
-            const result = await callMinimaxApi(
-                'https://api.minimaxi.com/v1/lyrics_generation',
-                payload,
-                apiKeyInput.value.trim()
-            );
-
-            generateBtn.disabled = false;
-            lyricsBtn.disabled = false;
-
-            if (result.success) {
-                const data = result.data;
-                if (data.lyrics) {
-                    lyricsInput.value = data.lyrics;
-                    showStatus(t('successLyrics'), 'success');
-                } else if (data.task_id) {
-                    showStatus(t('taskSubmitted') + data.task_id, 'info');
-                } else {
-                    const errMsg = data.base_resp?.err_msg || 'Unknown error';
-                    showStatus(t('failed') + errMsg, 'error');
-                }
+            if (result.success && result.data.lyrics) {
+                lyricsInput.value = result.data.lyrics;
+                showStatus(t('successLyrics'), 'success');
+            } else if (result.success && result.data.task_id) {
+                showStatus(t('taskSubmitted') + result.data.task_id, 'info');
             } else {
                 const errMsg = result.data?.base_resp?.err_msg || result.error;
-                showStatus(t('error') + errMsg, 'error');
+                showStatus((result.success ? t('failed') : t('error')) + errMsg, 'error');
             }
         });
 
