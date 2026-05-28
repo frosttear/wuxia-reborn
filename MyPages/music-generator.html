@@ -400,6 +400,26 @@
             flex-shrink: 0;
         }
 
+        .history-expired-badge {
+            font-size: 11px;
+            font-weight: 600;
+            color: #c08000;
+            background: rgba(255, 180, 0, 0.12);
+            border: 1px solid rgba(255, 180, 0, 0.35);
+            border-radius: 4px;
+            padding: 1px 6px;
+            flex-shrink: 0;
+        }
+
+        .history-item.expired {
+            opacity: 0.65;
+        }
+
+        .history-item.expired audio {
+            pointer-events: none;
+            filter: grayscale(1);
+        }
+
         .history-item audio {
             width: 100%;
             height: 32px;
@@ -571,7 +591,8 @@
                 historyClear: 'Clear All',
                 historyEmpty: 'No history yet',
                 historyDownload: 'Download',
-                historyDelete: 'Delete'
+                historyDelete: 'Delete',
+                historyExpired: 'Expired'
             },
             zh: {
                 title: '音乐生成器',
@@ -605,7 +626,8 @@
                 historyClear: '清空',
                 historyEmpty: '暂无历史记录',
                 historyDownload: '下载',
-                historyDelete: '删除'
+                historyDelete: '删除',
+                historyExpired: '已过期'
             }
         };
 
@@ -744,10 +766,14 @@
             section.style.display = entries.length ? 'block' : 'none';
             if (!entries.length) { list.innerHTML = ''; return; }
 
-            list.innerHTML = entries.map((e, i) => `
-                <div class="history-item">
+            const now = Date.now();
+            list.innerHTML = entries.map((e, i) => {
+                const expired = (now - new Date(e.timestamp).getTime()) > 24 * 3600 * 1000;
+                return `
+                <div class="history-item${expired ? ' expired' : ''}">
                     <div class="history-item-meta">
                         <span class="history-item-prompt" title="${e.prompt.replace(/"/g,'&quot;')}">${e.prompt}</span>
+                        ${expired ? `<span class="history-expired-badge">${t('historyExpired')}</span>` : ''}
                         <span class="history-item-time">${formatTimestamp(e.timestamp)}</span>
                     </div>
                     <audio controls src="${e.url}"></audio>
@@ -755,8 +781,8 @@
                         <a class="history-action-btn btn-download" href="${e.url}" download="song_${i}.${e.format || 'mp3'}">${t('historyDownload')}</a>
                         <button class="history-action-btn btn-delete" onclick="deleteFromHistory(${i})">${t('historyDelete')}</button>
                     </div>
-                </div>
-            `).join('');
+                </div>`;
+            }).join('');
 
             // re-apply i18n for static labels in history header
             document.querySelectorAll('[data-i18n]').forEach(el => {
