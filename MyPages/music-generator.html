@@ -805,7 +805,11 @@
         }
         // ─────────────────────────────────────────────────────────
 
-        apiKeyInput.addEventListener('input', () => setFieldError(apiKeyInput, false));
+        apiKeyInput.value = localStorage.getItem('musicgen_apikey') || '';
+        apiKeyInput.addEventListener('input', () => {
+            setFieldError(apiKeyInput, false);
+            localStorage.setItem('musicgen_apikey', apiKeyInput.value.trim());
+        });
 
         generateBtn.addEventListener('click', async () => {
             if (!apiKeyInput.value.trim()) {
