@@ -761,8 +761,22 @@
             renderHistory();
         }
 
-        function downloadEntry(url) {
-            window.open(url, '_blank');
+        async function downloadEntry(url, filename) {
+            try {
+                const resp = await fetch(url);
+                const blob = await resp.blob();
+                const blobUrl = URL.createObjectURL(blob);
+                const a = document.createElement('a');
+                a.href = blobUrl;
+                a.download = filename;
+                document.body.appendChild(a);
+                a.click();
+                document.body.removeChild(a);
+                setTimeout(() => URL.revokeObjectURL(blobUrl), 10000);
+            } catch {
+                // CORS blocked — fall back to new tab
+                window.open(url, '_blank');
+            }
         }
 
         function formatTimestamp(iso) {
@@ -789,7 +803,7 @@
                     </div>
                     <div class="history-player-row">
                         <audio controls src="${e.url}"></audio>
-                        <button class="btn-download-inline" onclick="downloadEntry('${e.url}')" title="${t('historyDownload')}">&#x2193;</button>
+                        <button class="btn-download-inline" onclick="downloadEntry('${e.url}','song_${new Date(e.timestamp).toISOString().slice(0,19).replace(/[-:T]/g,'')}.${e.format||'mp3'}')" title="${t('historyDownload')}">&#x2193;</button>
                     </div>
                     <button class="btn-delete" onclick="deleteFromHistory(${i})">${t('historyDelete')}</button>
                 </div>`;
