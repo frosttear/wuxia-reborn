@@ -420,49 +420,56 @@
             filter: grayscale(1);
         }
 
-        .history-item audio {
-            width: 100%;
-            height: 32px;
-            margin-bottom: 8px;
-            border-radius: 4px;
-        }
-
-        .history-item-actions {
+        .history-player-row {
             display: flex;
+            align-items: center;
             gap: 8px;
+            margin-bottom: 8px;
         }
 
-        .history-action-btn {
+        .history-player-row audio {
             flex: 1;
-            padding: 5px 0;
+            height: 36px;
+            min-width: 0;
+        }
+
+        .btn-download-inline {
+            flex-shrink: 0;
+            width: 36px;
+            height: 36px;
+            border: 1.5px solid #d0c8f0;
+            border-radius: 6px;
+            background: transparent;
+            color: #7c4dff;
+            font-size: 16px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: background 0.2s, border-color 0.2s;
+        }
+
+        .btn-download-inline:hover {
+            background: rgba(124, 77, 255, 0.08);
+            border-color: #7c4dff;
+        }
+
+        .btn-delete {
+            width: 100%;
+            padding: 4px 0;
             border-radius: 5px;
             font-size: 12px;
             font-weight: 600;
             cursor: pointer;
-            border: 1.5px solid;
-            transition: opacity 0.2s;
-            text-align: center;
-            text-decoration: none;
-        }
-
-        .history-action-btn:hover { opacity: 0.75; }
-
-        .btn-download {
-            border-color: #7c4dff;
-            color: #7c4dff;
-            background: rgba(124, 77, 255, 0.06);
-        }
-
-        .btn-delete {
-            border-color: #dcdcf0;
+            border: 1.5px solid #dcdcf0;
             color: #9090b0;
             background: transparent;
+            transition: border-color 0.2s, color 0.2s;
         }
 
         .btn-delete:hover {
-            border-color: #e94560 !important;
-            color: #e94560 !important;
-            opacity: 1 !important;
+            border-color: #e94560;
+            color: #e94560;
         }
 
         @media (max-width: 600px) {
@@ -780,11 +787,11 @@
                         ${expired ? `<span class="history-expired-badge">${t('historyExpired')}</span>` : ''}
                         <span class="history-item-time">${formatTimestamp(e.timestamp)}</span>
                     </div>
-                    <audio controls src="${e.url}"></audio>
-                    <div class="history-item-actions">
-                        <button class="history-action-btn btn-download" onclick="downloadEntry('${e.url}')">${t('historyDownload')}</button>
-                        <button class="history-action-btn btn-delete" onclick="deleteFromHistory(${i})">${t('historyDelete')}</button>
+                    <div class="history-player-row">
+                        <audio controls src="${e.url}"></audio>
+                        <button class="btn-download-inline" onclick="downloadEntry('${e.url}')" title="${t('historyDownload')}">&#x2193;</button>
                     </div>
+                    <button class="btn-delete" onclick="deleteFromHistory(${i})">${t('historyDelete')}</button>
                 </div>`;
             }).join('');
 
