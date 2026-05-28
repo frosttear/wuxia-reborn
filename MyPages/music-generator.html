@@ -197,15 +197,50 @@
         }
 
         /* Audio settings */
+        .audio-toggle {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            background: none;
+            border: none;
+            cursor: pointer;
+            padding: 0;
+            font-size: 13px;
+            color: #7070a0;
+            font-weight: 600;
+            letter-spacing: 0.02em;
+        }
+
+        .audio-toggle:hover {
+            color: #5c40cc;
+        }
+
+        .toggle-arrow {
+            font-size: 10px;
+            transition: transform 0.2s;
+            display: inline-block;
+        }
+
+        .toggle-arrow.open {
+            transform: rotate(90deg);
+        }
+
         .audio-settings {
             display: grid;
             grid-template-columns: 1fr 1fr 1fr;
             gap: 10px;
+            margin-top: 8px;
         }
 
         .audio-settings select {
             padding: 9px 10px;
             font-size: 13px;
+        }
+
+        /* Field error state */
+        .field-error {
+            border-color: #e94560 !important;
+            background-color: rgba(233, 69, 96, 0.05) !important;
         }
 
         /* Generate button */
@@ -344,8 +379,11 @@
         </div>
 
         <div class="form-group">
-            <label data-i18n="audioSettings">Audio Settings:</label>
-            <div class="audio-settings">
+            <button class="audio-toggle" id="audioToggle" onclick="toggleAudio()">
+                <span class="toggle-arrow" id="audioArrow">▶</span>
+                <span data-i18n="audioSettings">Audio Settings</span>
+            </button>
+            <div class="audio-settings" id="audioPanel" style="display:none">
                 <select id="sampleRate">
                     <option value="16000">16000 Hz</option>
                     <option value="24000">24000 Hz</option>
@@ -385,10 +423,11 @@
                 modeInstrumental: 'Instrumental',
                 lyricsLabel: 'Lyrics:',
                 lyricsPlaceholder: "Click 'Generate Lyrics' or type directly",
-                audioSettings: 'Audio Settings:',
+                audioSettings: 'Audio Settings',
                 generateBtn: 'Generate Music',
                 lyricsBtn: 'Generate Lyrics',
                 errNoApiKey: 'Please enter API key',
+                errInvalidKey: 'API key invalid or unauthorized',
                 errNoPrompt: 'Please enter style prompt',
                 errNoLyrics: 'Please generate or enter lyrics first',
                 loadingMusic: 'Generating music...',
@@ -413,10 +452,11 @@
                 modeInstrumental: '纯音乐',
                 lyricsLabel: '歌词:',
                 lyricsPlaceholder: '点击「生成歌词」，或直接输入',
-                audioSettings: '音频设置:',
+                audioSettings: '音频设置',
                 generateBtn: '生成音乐',
                 lyricsBtn: '生成歌词',
                 errNoApiKey: '请输入 API 密钥',
+                errInvalidKey: 'API 密钥无效或未授权',
                 errNoPrompt: '请输入风格描述',
                 errNoLyrics: '请先生成或输入歌词',
                 loadingMusic: '正在生成音乐...',
@@ -466,6 +506,18 @@
             statusDiv.textContent = '';
         }
 
+        function toggleAudio() {
+            const panel = document.getElementById('audioPanel');
+            const arrow = document.getElementById('audioArrow');
+            const open = panel.style.display !== 'none';
+            panel.style.display = open ? 'none' : 'grid';
+            arrow.classList.toggle('open', !open);
+        }
+
+        function setFieldError(input, hasError) {
+            input.classList.toggle('field-error', hasError);
+        }
+
         const apiKeyInput   = document.getElementById('apiKey');
         const promptInput   = document.getElementById('prompt');
         const lyricsInput   = document.getElementById('lyrics');
@@ -502,14 +554,20 @@
                     body: JSON.stringify(payload)
                 });
                 const data = await response.json();
-                return { success: response.ok, data, error: response.ok ? null : `HTTP ${response.status}` };
+                return { success: response.ok, status: response.status, data, error: response.ok ? null : `HTTP ${response.status}` };
             } catch (err) {
-                return { success: false, error: err.message };
+                return { success: false, status: 0, error: err.message };
             }
         }
 
+        apiKeyInput.addEventListener('input', () => setFieldError(apiKeyInput, false));
+
         generateBtn.addEventListener('click', async () => {
-            if (!apiKeyInput.value.trim()) { showStatus(t('errNoApiKey'), 'error'); return; }
+            if (!apiKeyInput.value.trim()) {
+                setFieldError(apiKeyInput, true);
+                showStatus(t('errNoApiKey'), 'error');
+                return;
+            }
             if (!promptInput.value.trim()) { showStatus(t('errNoPrompt'), 'error'); return; }
             if (mode === 'review' && !lyricsInput.value.trim()) { showStatus(t('errNoLyrics'), 'error'); return; }
 
@@ -552,12 +610,21 @@
                     showStatus(t('failed') + (data.base_resp?.err_msg || 'Unknown error'), 'error');
                 }
             } else {
-                showStatus(t('error') + (result.data?.base_resp?.err_msg || result.error), 'error');
+                if (result.status === 401) {
+                    setFieldError(apiKeyInput, true);
+                    showStatus(t('errInvalidKey'), 'error');
+                } else {
+                    showStatus(t('error') + (result.data?.base_resp?.err_msg || result.error), 'error');
+                }
             }
         });
 
         lyricsBtn.addEventListener('click', async () => {
-            if (!apiKeyInput.value.trim()) { showStatus(t('errNoApiKey'), 'error'); return; }
+            if (!apiKeyInput.value.trim()) {
+                setFieldError(apiKeyInput, true);
+                showStatus(t('errNoApiKey'), 'error');
+                return;
+            }
             if (!promptInput.value.trim()) { showStatus(t('errNoPrompt'), 'error'); return; }
             if (!confirm(t('confirmLyrics'))) return;
 
@@ -575,6 +642,9 @@
                 showStatus(t('successLyrics'), 'success');
             } else if (result.success && result.data.task_id) {
                 showStatus(t('taskSubmitted') + result.data.task_id, 'info');
+            } else if (result.status === 401) {
+                setFieldError(apiKeyInput, true);
+                showStatus(t('errInvalidKey'), 'error');
             } else {
                 const errMsg = result.data?.base_resp?.err_msg || result.error;
                 showStatus((result.success ? t('failed') : t('error')) + errMsg, 'error');
