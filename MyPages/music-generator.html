@@ -718,7 +718,7 @@
                 const response = await fetch(endpoint, {
                     method: 'POST',
                     headers: {
-                        'Authorization': `Bearer ${apiKeyInput.value.trim()}`,
+                        'Authorization': `Bearer ${realApiKey}`,
                         'Content-Type': 'application/json'
                     },
                     body: JSON.stringify(payload)
@@ -842,10 +842,24 @@
         }
         // ─────────────────────────────────────────────────────────
 
-        apiKeyInput.value = localStorage.getItem('musicgen_apikey') || '';
+        let realApiKey = localStorage.getItem('musicgen_apikey') || '';
+
+        function maskApiKey(key) {
+            if (!key || key.length < 12) return key;
+            return key.slice(0, 6) + '...' + key.slice(-6);
+        }
+
+        apiKeyInput.value = maskApiKey(realApiKey);
+        apiKeyInput.addEventListener('focus', () => {
+            apiKeyInput.value = realApiKey;
+        });
+        apiKeyInput.addEventListener('blur', () => {
+            realApiKey = apiKeyInput.value.trim();
+            localStorage.setItem('musicgen_apikey', realApiKey);
+            apiKeyInput.value = maskApiKey(realApiKey);
+        });
         apiKeyInput.addEventListener('input', () => {
             setFieldError(apiKeyInput, false);
-            localStorage.setItem('musicgen_apikey', apiKeyInput.value.trim());
         });
 
         promptInput.value = localStorage.getItem('musicgen_prompt') || '';
@@ -862,7 +876,7 @@
         if (savedMode) setMode(savedMode);
 
         generateBtn.addEventListener('click', async () => {
-            if (!apiKeyInput.value.trim()) {
+            if (!realApiKey) {
                 setFieldError(apiKeyInput, true);
                 showStatus(t('errNoApiKey'), 'error');
                 return;
@@ -918,7 +932,7 @@
         });
 
         lyricsBtn.addEventListener('click', async () => {
-            if (!apiKeyInput.value.trim()) {
+            if (!realApiKey) {
                 setFieldError(apiKeyInput, true);
                 showStatus(t('errNoApiKey'), 'error');
                 return;
