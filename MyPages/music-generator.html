@@ -498,7 +498,10 @@
         </div>
 
         <div class="form-group">
-            <label for="prompt" data-i18n="promptLabel">Prompt:</label>
+            <div class="lyrics-header">
+                <label for="prompt" data-i18n="promptLabel">Prompt:</label>
+                <button class="lyrics-gen-btn" style="background:linear-gradient(135deg,#7c4dff 0%,#5c30cc 100%);box-shadow:0 2px 8px rgba(124,77,255,0.25)" onclick="copyPrompt(this)" data-i18n="copyPromptBtn">Copy Prompt</button>
+            </div>
             <textarea id="prompt" data-i18n-placeholder="promptPlaceholder" placeholder="Describe the music style you want to generate" style="min-height:80px"></textarea>
         </div>
 
@@ -578,6 +581,7 @@
                 audioSettings: 'Audio Settings',
                 generateBtn: 'Generate Music',
                 lyricsBtn: 'Generate Lyrics',
+                copyPromptBtn: 'Copy Prompt',
                 errNoApiKey: 'Please enter API key',
                 errInvalidKey: 'API key invalid or unauthorized',
                 errNoPrompt: 'Please enter style prompt',
@@ -615,6 +619,7 @@
                 audioSettings: '音频设置',
                 generateBtn: '生成音乐',
                 lyricsBtn: '生成歌词',
+                copyPromptBtn: '复制提示词',
                 errNoApiKey: '请输入 API 密钥',
                 errInvalidKey: 'API 密钥无效或未授权',
                 errNoPrompt: '请输入风格描述',
@@ -763,6 +768,26 @@
             renderHistory();
         }
 
+        async function copyPrompt(btn) {
+            const text = promptInput.value.trim();
+            if (!text) return;
+            try {
+                await navigator.clipboard.writeText(text);
+            } catch {
+                const ta = document.createElement('textarea');
+                ta.value = text;
+                ta.style.position = 'fixed';
+                ta.style.opacity = '0';
+                document.body.appendChild(ta);
+                ta.select();
+                document.execCommand('copy');
+                document.body.removeChild(ta);
+            }
+            const orig = btn.textContent;
+            btn.textContent = t('historyCopied');
+            setTimeout(() => { btn.textContent = orig; }, 1500);
+        }
+
         async function copyUrl(url, btn) {
             try {
                 await navigator.clipboard.writeText(url);
@@ -884,6 +909,7 @@
             if (!promptInput.value.trim()) { showStatus(t('errNoPrompt'), 'error'); return; }
             if (mode === 'review' && !lyricsInput.value.trim()) { showStatus(t('errNoLyrics'), 'error'); return; }
 
+            localStorage.setItem('musicgen_prompt', promptInput.value);
             setBusy(true);
             showLoadingStatus(t('loadingMusic'));
 
@@ -939,6 +965,7 @@
             }
             if (!promptInput.value.trim()) { showStatus(t('errNoPrompt'), 'error'); return; }
             if (!confirm(t('confirmLyrics'))) return;
+            localStorage.setItem('musicgen_prompt', promptInput.value);
 
             const origLyricsLabel = lyricsBtn.innerHTML;
             lyricsBtn.innerHTML = '<div class="spinner" style="width:11px;height:11px;border-width:2px;border-color:rgba(255,255,255,0.3);border-top-color:#fff;display:inline-block;vertical-align:middle"></div>';
