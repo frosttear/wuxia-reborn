@@ -602,7 +602,9 @@
                 historyShare: 'Copy Link',
                 historyCopied: 'Copied!',
                 historyExpired: 'Expired',
-                historyClearExpired: 'Clear Expired'
+                historyClearExpired: 'Clear Expired',
+                historyLoadedPrompt: 'Loaded prompt from history.',
+                historyLoadedPromptLyrics: 'Loaded prompt and lyrics from history.'
             },
             zh: {
                 title: '音乐生成器',
@@ -640,7 +642,9 @@
                 historyShare: '复制链接',
                 historyCopied: '已复制！',
                 historyExpired: '已过期',
-                historyClearExpired: '清除过期'
+                historyClearExpired: '清除过期',
+                historyLoadedPrompt: '已从历史记录载入提示词。',
+                historyLoadedPromptLyrics: '已从历史记录载入提示词和歌词。'
             }
         };
 
@@ -748,12 +752,32 @@
             localStorage.setItem(HISTORY_KEY, JSON.stringify(entries));
         }
 
-        function addToHistory(url, prompt, format) {
+        function addToHistory(url, prompt, format, lyrics = '') {
             const entries = loadHistory();
-            entries.unshift({ url, prompt, format, timestamp: new Date().toISOString() });
+            entries.unshift({ url, prompt, format, lyrics, timestamp: new Date().toISOString() });
             if (entries.length > HISTORY_MAX) entries.length = HISTORY_MAX;
             saveHistory(entries);
             renderHistory();
+        }
+
+        function loadHistoryEntry(index, event) {
+            if (event?.target?.closest('.history-action-btn, audio')) return;
+
+            const entries = loadHistory();
+            const entry = entries[index];
+            if (!entry) return;
+
+            promptInput.value = entry.prompt || '';
+            localStorage.setItem('musicgen_prompt', promptInput.value);
+
+            lyricsInput.value = entry.lyrics || '';
+            localStorage.setItem('musicgen_lyrics', lyricsInput.value);
+
+            if (entry.lyrics) {
+                setMode('review');
+            }
+
+            showStatus(entry.lyrics ? t('historyLoadedPromptLyrics') : t('historyLoadedPrompt'), 'info');
         }
 
         function clearHistory() {
@@ -846,7 +870,7 @@
             list.innerHTML = entries.map((e, i) => {
                 const expired = (now - new Date(e.timestamp).getTime()) > 24 * 3600 * 1000;
                 return `
-                <div class="history-item${expired ? ' expired' : ''}">
+                <div class="history-item${expired ? ' expired' : ''}" data-history-index="${i}">
                     <div class="history-item-meta">
                         <span class="history-item-prompt" title="${e.prompt.replace(/"/g,'&quot;')}">${e.prompt}</span>
                         ${expired ? `<span class="history-expired-badge">${t('historyExpired')}</span>` : ''}
@@ -859,6 +883,13 @@
                     </div>
                 </div>`;
             }).join('');
+
+            list.querySelectorAll('.history-item').forEach(item => {
+                item.addEventListener('click', (event) => {
+                    const index = Number(item.dataset.historyIndex);
+                    loadHistoryEntry(index, event);
+                });
+            });
 
             // re-apply i18n for static labels in history header
             document.querySelectorAll('[data-i18n]').forEach(el => {
@@ -940,7 +971,8 @@
                 if (data.data?.status === 2 && data.data?.audio) {
                     const audioUrl = data.data.audio;
                     const fmt = formatSelect.value;
-                    addToHistory(audioUrl, promptInput.value.trim(), fmt);
+                    const lyricsForHistory = mode === 'review' ? lyricsInput.value.trim() : '';
+                    addToHistory(audioUrl, promptInput.value.trim(), fmt, lyricsForHistory);
                     showStatus(t('successMusic'), 'success');
                 } else if (data.data?.status === 1) {
                     showStatus(t('inProgress'), 'info');
