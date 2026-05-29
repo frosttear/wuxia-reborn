@@ -775,6 +775,9 @@
 
             if (entry.lyrics) {
                 setMode('review');
+                setTimeout(() => {
+                    document.getElementById('lyricsSection').scrollIntoView({ behavior: 'smooth', block: 'center' });
+                }, 100);
             }
 
             showStatus(entry.lyrics ? t('historyLoadedPromptLyrics') : t('historyLoadedPrompt'), 'info');
@@ -971,7 +974,13 @@
                 if (data.data?.status === 2 && data.data?.audio) {
                     const audioUrl = data.data.audio;
                     const fmt = formatSelect.value;
-                    const lyricsForHistory = mode === 'review' ? lyricsInput.value.trim() : '';
+                    let lyricsForHistory = '';
+                    if (mode === 'review') {
+                        lyricsForHistory = lyricsInput.value.trim();
+                    }
+                    if (!lyricsForHistory && data.data?.lyrics) {
+                        lyricsForHistory = data.data.lyrics;
+                    }
                     addToHistory(audioUrl, promptInput.value.trim(), fmt, lyricsForHistory);
                     showStatus(t('successMusic'), 'success');
                 } else if (data.data?.status === 1) {
