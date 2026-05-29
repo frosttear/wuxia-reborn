@@ -79,7 +79,7 @@ const saves = [
                         ? [`${k}-meet`,`${k}-bond-1`,`${k}-bond-2`,`${k}-bond-3`,`${k}-bond-4`]
                         : [`${k}-meet`,`${k}-bond-1`,`${k}-bond-2`,`${k}-bond-3`,`${k}-bond-4`,`${k}-ending`]),
                     'rebirth', 'wuxiang-unlock', 'portrait-tianmo',
-                    'tianmo-and-jianhun', 'portrait-jianhun', 'tianmo-win',
+                    'tianmo-and-jianhun', 'portrait-jianhun', 'tianmo-win', 'sword-soul-win',
                 ],
             }),
             name: '独孤宸', ageMonths: 183,
@@ -120,7 +120,7 @@ const saves = [
                         ? [`${k}-meet`,`${k}-bond-1`,`${k}-bond-2`,`${k}-bond-3`,`${k}-bond-4`]
                         : [`${k}-meet`,`${k}-bond-1`,`${k}-bond-2`,`${k}-bond-3`,`${k}-bond-4`,`${k}-ending`]),
                     'li-yunshu-afterstory', 'rebirth', 'wuxiang-unlock', 'portrait-tianmo',
-                    'tianmo-and-jianhun', 'portrait-jianhun', 'tianmo-win',
+                    'tianmo-and-jianhun', 'portrait-jianhun', 'tianmo-win', 'sword-soul-win',
                 ],
                 passives: [
                     { id: 'wuxiang_intent', name: '无相剑意', desc: '敌方意图在你眼中无所遁形', perfectIntentRead: true }
@@ -128,7 +128,7 @@ const saves = [
             }),
             name: '独孤宸', ageMonths: 204,
             job: 'hero', unlockedJobs: ['nobody','wanderer','swordsman','hero'],
-            rebirthCount: 2, kills: 14,
+            rebirthCount: 2, kills: 15,
             attributes: { strength:40, agility:34, constitution:28, innerForce:26, comprehension:28, luck:18, reputation:24 },
             hp: 640,
             legacyTalents: ['sword_heart', 'qi_flow', 'battle_hardened', 'lucky_star', 'destiny_mark'],
@@ -139,6 +139,7 @@ const saves = [
                 boss_triggered: true,
                 hidden_boss_triggered: true,
                 hidden_boss_beaten: true,
+                hero_recognized: true,
                 wuxiang_sword_mastered: true, wuxiang_echo_felt: true,
                 wuxiang_six_understood: true, wuxiang_mastered: true,
                 mark_warrior_power: true,
@@ -170,8 +171,9 @@ const saves = [
                         `${k}-meet`,`${k}-bond-1`,`${k}-bond-2`,`${k}-bond-3`,`${k}-bond-4`,`${k}-ending`,
                         `${k}-afterstory`,`${k}-afterstory-ending`,
                     ]),
+                    'li-yunshu-afterstory',
                     'rebirth', 'wuxiang-unlock', 'elder-true-form', 'portrait-tianmo',
-                    'tianmo-and-jianhun', 'portrait-jianhun', 'tianmo-win', 'tianmo-lose',
+                    'tianmo-and-jianhun', 'portrait-jianhun', 'tianmo-win', 'tianmo-lose', 'sword-soul-win',
                 ],
                 passives: [
                     { id: 'wuxiang_intent', name: '无相剑意', desc: '敌方意图在你眼中无所遁形', perfectIntentRead: true },
@@ -193,6 +195,8 @@ const saves = [
                 hidden_boss_beaten: true,
                 elder_true_form_seen: true,
                 elder_sp5_done: true,
+                hero_recognized: true,
+                sword_legacy: true,
                 wuxiang_sword_mastered: true, wuxiang_echo_felt: true,
                 wuxiang_six_understood: true, wuxiang_mastered: true,
                 li_afterstory_done: true,
@@ -227,6 +231,7 @@ const saves = [
                         ? [`${k}-meet`,`${k}-bond-1`,`${k}-bond-2`,`${k}-bond-3`,`${k}-bond-4`]
                         : [`${k}-meet`,`${k}-bond-1`,`${k}-bond-2`,`${k}-bond-3`,`${k}-bond-4`,`${k}-ending`]),
                     'rebirth', 'wuxiang-unlock', 'portrait-tianmo',
+                    'tianmo-and-jianhun', 'portrait-jianhun', 'sword-soul-win',
                 ],
                 passives: [
                     { id: 'wuxiang_intent', name: '无相剑意', desc: '敌方意图在你眼中无所遁形', perfectIntentRead: true }
@@ -241,7 +246,7 @@ const saves = [
             chainProgress: { wuxiang_sword: 'done' },
             flags: {
                 ...metFlags(),
-                boss_triggered: true,
+                hero_recognized: true,
                 jade_tablet_awakened: true,
                 wuxiang_sword_mastered: true, wuxiang_echo_felt: true,
                 wuxiang_six_understood: true, wuxiang_mastered: true,
