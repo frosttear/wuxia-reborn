@@ -453,6 +453,18 @@
             background: rgba(124, 77, 255, 0.06);
         }
 
+        .btn-share {
+            border-color: #16c79a;
+            color: #0c9e73;
+            background: rgba(22, 199, 154, 0.07);
+        }
+
+        .btn-share.copied {
+            border-color: #16c79a;
+            color: #fff;
+            background: #16c79a;
+        }
+
 
         @media (max-width: 600px) {
             .container {
@@ -487,7 +499,7 @@
 
         <div class="form-group">
             <label for="prompt" data-i18n="promptLabel">Prompt:</label>
-            <input type="text" id="prompt" data-i18n-placeholder="promptPlaceholder" placeholder="Describe the music style you want to generate">
+            <textarea id="prompt" data-i18n-placeholder="promptPlaceholder" placeholder="Describe the music style you want to generate" style="min-height:80px"></textarea>
         </div>
 
         <div class="form-group">
@@ -583,6 +595,8 @@
                 historyClear: 'Clear All',
                 historyEmpty: 'No history yet',
                 historyDownload: 'Download',
+                historyShare: 'Copy Link',
+                historyCopied: 'Copied!',
                 historyExpired: 'Expired',
                 historyClearExpired: 'Clear Expired'
             },
@@ -618,6 +632,8 @@
                 historyClear: '清空',
                 historyEmpty: '暂无历史记录',
                 historyDownload: '下载',
+                historyShare: '复制链接',
+                historyCopied: '已复制！',
                 historyExpired: '已过期',
                 historyClearExpired: '清除过期'
             }
@@ -651,6 +667,7 @@
 
         function setMode(m) {
             mode = m;
+            localStorage.setItem('musicgen_mode', m);
             document.querySelectorAll('.mode-btn').forEach(btn => {
                 btn.classList.toggle('active', btn.dataset.mode === m);
             });
@@ -746,6 +763,25 @@
             renderHistory();
         }
 
+        async function copyUrl(url, btn) {
+            try {
+                await navigator.clipboard.writeText(url);
+            } catch {
+                const ta = document.createElement('textarea');
+                ta.value = url;
+                ta.style.position = 'fixed';
+                ta.style.opacity = '0';
+                document.body.appendChild(ta);
+                ta.select();
+                document.execCommand('copy');
+                document.body.removeChild(ta);
+            }
+            const orig = btn.textContent;
+            btn.textContent = t('historyCopied');
+            btn.classList.add('copied');
+            setTimeout(() => { btn.textContent = orig; btn.classList.remove('copied'); }, 1500);
+        }
+
         async function downloadEntry(url, filename, btn) {
             const orig = btn.innerHTML;
             btn.disabled = true;
@@ -794,6 +830,7 @@
                     <audio controls src="${e.url}"></audio>
                     <div class="history-item-actions">
                         <button class="history-action-btn btn-download" onclick="downloadEntry('${e.url}','song_${new Date(e.timestamp).toISOString().slice(0,19).replace(/[-:T]/g,'')}.${e.format||'mp3'}',this)">${t('historyDownload')}</button>
+                        <button class="history-action-btn btn-share" onclick="copyUrl('${e.url}',this)">${t('historyShare')}</button>
                     </div>
                 </div>`;
             }).join('');
@@ -810,6 +847,19 @@
             setFieldError(apiKeyInput, false);
             localStorage.setItem('musicgen_apikey', apiKeyInput.value.trim());
         });
+
+        promptInput.value = localStorage.getItem('musicgen_prompt') || '';
+        promptInput.addEventListener('input', () => {
+            localStorage.setItem('musicgen_prompt', promptInput.value);
+        });
+
+        lyricsInput.value = localStorage.getItem('musicgen_lyrics') || '';
+        lyricsInput.addEventListener('input', () => {
+            localStorage.setItem('musicgen_lyrics', lyricsInput.value);
+        });
+
+        const savedMode = localStorage.getItem('musicgen_mode');
+        if (savedMode) setMode(savedMode);
 
         generateBtn.addEventListener('click', async () => {
             if (!apiKeyInput.value.trim()) {
@@ -876,6 +926,8 @@
             if (!promptInput.value.trim()) { showStatus(t('errNoPrompt'), 'error'); return; }
             if (!confirm(t('confirmLyrics'))) return;
 
+            const origLyricsLabel = lyricsBtn.innerHTML;
+            lyricsBtn.innerHTML = '<div class="spinner" style="width:11px;height:11px;border-width:2px;border-color:rgba(255,255,255,0.3);border-top-color:#fff;display:inline-block;vertical-align:middle"></div>';
             setBusy(true);
             showLoadingStatus(t('loadingLyrics'));
 
@@ -884,9 +936,11 @@
                 prompt: promptInput.value.trim()
             });
             setBusy(false);
+            lyricsBtn.innerHTML = origLyricsLabel;
 
             if (result.success && result.data.lyrics) {
                 lyricsInput.value = result.data.lyrics;
+                localStorage.setItem('musicgen_lyrics', result.data.lyrics);
                 showStatus(t('successLyrics'), 'success');
             } else if (result.success && result.data.task_id) {
                 showStatus(t('taskSubmitted') + result.data.task_id, 'info');
