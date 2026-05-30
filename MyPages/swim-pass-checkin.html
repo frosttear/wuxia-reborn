@@ -369,7 +369,6 @@
         }
 
         .bars,
-        .day-list,
         .record-list {
             display: flex;
             flex-direction: column;
@@ -377,7 +376,6 @@
         }
 
         .bar-row,
-        .day-row,
         .record-item {
             padding: 14px 16px;
             border-radius: 18px;
@@ -386,7 +384,6 @@
         }
 
         .bar-header,
-        .day-header,
         .record-top {
             display: flex;
             align-items: center;
@@ -426,6 +423,155 @@
             background: rgba(255, 255, 255, 0.7);
             border: 1px dashed rgba(23, 50, 77, 0.12);
         }
+
+        .history-details {
+            border-radius: 20px;
+            background: rgba(255, 255, 255, 0.56);
+            border: 1px solid rgba(23, 50, 77, 0.08);
+            padding: 8px 10px 10px;
+        }
+
+        .history-details summary {
+            list-style: none;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 12px;
+            cursor: pointer;
+            padding: 10px 8px;
+            user-select: none;
+        }
+
+        .history-details summary::-webkit-details-marker {
+            display: none;
+        }
+
+        .history-summary-main {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-weight: 700;
+        }
+
+        .history-chevron {
+            color: var(--muted);
+            transition: transform 0.18s ease;
+        }
+
+        .history-details[open] .history-chevron {
+            transform: rotate(90deg);
+        }
+
+        .history-summary-note {
+            color: var(--muted);
+            font-size: 13px;
+        }
+
+        .history-body {
+            padding: 6px 6px 2px;
+        }
+
+        .heatmap-card {
+            padding: 16px;
+            border-radius: 18px;
+            background: rgba(255, 255, 255, 0.82);
+            border: 1px solid rgba(23, 50, 77, 0.08);
+        }
+
+        .heatmap-header {
+            display: flex;
+            align-items: baseline;
+            justify-content: space-between;
+            gap: 12px;
+            margin-bottom: 12px;
+        }
+
+        .heatmap-caption {
+            color: var(--muted);
+            font-size: 13px;
+        }
+
+        .heatmap-weekdays,
+        .heatmap-grid {
+            display: grid;
+            grid-template-columns: repeat(7, minmax(0, 1fr));
+            gap: 8px;
+        }
+
+        .heatmap-weekdays {
+            margin-bottom: 8px;
+        }
+
+        .heatmap-weekdays span {
+            text-align: center;
+            color: var(--muted);
+            font-size: 12px;
+            font-weight: 700;
+        }
+
+        .heatmap-day,
+        .heatmap-empty {
+            min-height: 62px;
+            border-radius: 14px;
+        }
+
+        .heatmap-empty {
+            background: rgba(255, 255, 255, 0.35);
+            border: 1px dashed rgba(23, 50, 77, 0.05);
+        }
+
+        .heatmap-day {
+            border: 1px solid rgba(20, 153, 198, 0.08);
+            padding: 8px;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+        }
+
+        .heatmap-day.level-0 { background: rgba(217, 244, 251, 0.34); }
+        .heatmap-day.level-1 { background: rgba(164, 227, 242, 0.58); }
+        .heatmap-day.level-2 { background: rgba(101, 207, 231, 0.72); }
+        .heatmap-day.level-3 { background: rgba(20, 153, 198, 0.84); color: #fff; }
+        .heatmap-day.level-4 { background: rgba(13, 111, 154, 0.92); color: #fff; }
+
+        .heatmap-day-number {
+            font-size: 13px;
+            font-weight: 800;
+        }
+
+        .heatmap-day-count {
+            align-self: flex-end;
+            font-size: 12px;
+            font-weight: 700;
+            opacity: 0.92;
+        }
+
+        .heatmap-legend {
+            margin-top: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: flex-end;
+            gap: 8px;
+            color: var(--muted);
+            font-size: 12px;
+        }
+
+        .heatmap-legend-scale {
+            display: flex;
+            gap: 6px;
+        }
+
+        .heatmap-legend-chip {
+            width: 16px;
+            height: 16px;
+            border-radius: 6px;
+        }
+
+        .heatmap-legend-chip.level-0 { background: rgba(217, 244, 251, 0.34); }
+        .heatmap-legend-chip.level-1 { background: rgba(164, 227, 242, 0.58); }
+        .heatmap-legend-chip.level-2 { background: rgba(101, 207, 231, 0.72); }
+        .heatmap-legend-chip.level-3 { background: rgba(20, 153, 198, 0.84); }
+        .heatmap-legend-chip.level-4 { background: rgba(13, 111, 154, 0.92); }
 
         .record-meta {
             display: flex;
@@ -599,26 +745,38 @@
                     <div class="panel-title-row">
                         <div>
                             <h2>历史记录</h2>
-                            <p class="panel-intro">按月份或人物过滤，查看和删除已记录的打卡。</p>
+                            <p class="panel-intro">默认折叠，按需展开后可按月份或人物过滤并删除记录。</p>
                         </div>
                     </div>
 
-                    <div class="history-controls">
-                        <div class="field">
-                            <label for="history-month">月份筛选</label>
-                            <input id="history-month" type="month">
-                        </div>
-                        <div class="field">
-                            <label for="history-person">人物筛选</label>
-                            <select id="history-person"></select>
-                        </div>
-                        <div class="field" style="justify-content: end;">
-                            <label>&nbsp;</label>
-                            <button class="danger-btn" type="button" id="clear-history-filters-btn">清空筛选</button>
-                        </div>
-                    </div>
+                    <details class="history-details">
+                        <summary>
+                            <div class="history-summary-main">
+                                <span class="history-chevron">▶</span>
+                                <span>展开历史记录</span>
+                            </div>
+                            <span class="history-summary-note" id="history-summary-note">当前共 0 条记录</span>
+                        </summary>
 
-                    <div class="record-list" id="record-list"></div>
+                        <div class="history-body">
+                            <div class="history-controls">
+                                <div class="field">
+                                    <label for="history-month">月份筛选</label>
+                                    <input id="history-month" type="month">
+                                </div>
+                                <div class="field">
+                                    <label for="history-person">人物筛选</label>
+                                    <select id="history-person"></select>
+                                </div>
+                                <div class="field" style="justify-content: end;">
+                                    <label>&nbsp;</label>
+                                    <button class="danger-btn" type="button" id="clear-history-filters-btn">清空筛选</button>
+                                </div>
+                            </div>
+
+                            <div class="record-list" id="record-list"></div>
+                        </div>
+                    </details>
                     <p class="footer-note">数据只存于当前浏览器。更换设备或清理站点存储后需要重新导入。</p>
                 </section>
             </div>
@@ -628,7 +786,7 @@
                     <div class="panel-title-row">
                         <div>
                             <h2>月度统计</h2>
-                            <p class="panel-intro">看本月用了几次、哪几天打卡，以及各人物的使用分布。</p>
+                            <p class="panel-intro">看本月用了几次、人物分布，以及整月使用热力图。</p>
                         </div>
                     </div>
 
@@ -650,8 +808,8 @@
                     <div class="section-subtitle">人物分布</div>
                     <div class="bars" id="person-bars"></div>
 
-                    <div class="section-subtitle">日期分布</div>
-                    <div class="day-list" id="day-list"></div>
+                    <div class="section-subtitle">月记录热力图</div>
+                    <div id="month-heatmap"></div>
                 </section>
 
                 <section class="panel">
@@ -697,10 +855,11 @@
             clearNoteBtn: document.getElementById("clear-note-btn"),
             historyMonth: document.getElementById("history-month"),
             historyPerson: document.getElementById("history-person"),
+            historySummaryNote: document.getElementById("history-summary-note"),
             clearHistoryFiltersBtn: document.getElementById("clear-history-filters-btn"),
             recordList: document.getElementById("record-list"),
             personBars: document.getElementById("person-bars"),
-            dayList: document.getElementById("day-list"),
+            monthHeatmap: document.getElementById("month-heatmap"),
             monthTotalCount: document.getElementById("month-total-count"),
             monthActiveDays: document.getElementById("month-active-days"),
             monthActivePeople: document.getElementById("month-active-people"),
@@ -802,6 +961,39 @@
                 day: "2-digit",
                 weekday: "short"
             }).format(date);
+        }
+
+        function formatMonthLabel(month) {
+            if (!month) {
+                return "当前月份";
+            }
+
+            const [year, mon] = month.split("-");
+            if (!year || !mon) {
+                return month;
+            }
+            return `${year} 年 ${Number(mon)} 月`;
+        }
+
+        function heatLevel(count, maxCount) {
+            if (!count) {
+                return 0;
+            }
+            if (maxCount <= 1) {
+                return 2;
+            }
+
+            const ratio = count / maxCount;
+            if (ratio >= 0.95) {
+                return 4;
+            }
+            if (ratio >= 0.66) {
+                return 3;
+            }
+            if (ratio >= 0.33) {
+                return 2;
+            }
+            return 1;
         }
 
         function escapeHtml(text) {
@@ -1037,6 +1229,7 @@
             const personEntries = [...personCountMap.entries()].sort((a, b) => b[1] - a[1]);
             const dayEntries = [...dayCountMap.entries()].sort((a, b) => a[0].localeCompare(b[0]));
             const maxPersonCount = personEntries[0]?.[1] || 1;
+            const maxDayCount = dayEntries.reduce((max, [, count]) => Math.max(max, count), 0);
 
             elements.monthTotalCount.textContent = String(monthRecords.length);
             elements.monthActiveDays.textContent = String(dayEntries.length);
@@ -1057,16 +1250,63 @@
                 }).join("")
                 : '<div class="empty">这个月份还没有记录。</div>';
 
-            elements.dayList.innerHTML = dayEntries.length
-                ? dayEntries.map(([day, count]) => `
-                    <div class="day-row">
-                        <div class="day-header">
-                            <strong>${formatDay(day)}</strong>
-                            <span>${count} 次</span>
-                        </div>
+            if (!monthRecords.length) {
+                elements.monthHeatmap.innerHTML = '<div class="empty">这个月份还没有热力图记录。</div>';
+                return;
+            }
+
+            const [year, mon] = month.split("-").map(Number);
+            const firstDay = new Date(year, mon - 1, 1);
+            const daysInMonth = new Date(year, mon, 0).getDate();
+            const leadingEmpty = (firstDay.getDay() + 6) % 7;
+            const cells = [];
+
+            for (let index = 0; index < leadingEmpty; index += 1) {
+                cells.push('<div class="heatmap-empty" aria-hidden="true"></div>');
+            }
+
+            for (let day = 1; day <= daysInMonth; day += 1) {
+                const dayKey = `${month}-${String(day).padStart(2, "0")}`;
+                const count = dayCountMap.get(dayKey) || 0;
+                const level = heatLevel(count, maxDayCount);
+                const title = `${formatDay(dayKey)}：${count} 次`;
+                cells.push(`
+                    <div class="heatmap-day level-${level}" title="${escapeHtml(title)}">
+                        <span class="heatmap-day-number">${day}</span>
+                        <span class="heatmap-day-count">${count ? `${count} 次` : ""}</span>
                     </div>
-                `).join("")
-                : '<div class="empty">还没有日期分布可展示。</div>';
+                `);
+            }
+
+            elements.monthHeatmap.innerHTML = `
+                <div class="heatmap-card">
+                    <div class="heatmap-header">
+                        <strong>${formatMonthLabel(month)}</strong>
+                        <span class="heatmap-caption">颜色越深，当天打卡次数越多</span>
+                    </div>
+                    <div class="heatmap-weekdays">
+                        <span>一</span>
+                        <span>二</span>
+                        <span>三</span>
+                        <span>四</span>
+                        <span>五</span>
+                        <span>六</span>
+                        <span>日</span>
+                    </div>
+                    <div class="heatmap-grid">${cells.join("")}</div>
+                    <div class="heatmap-legend">
+                        <span>少</span>
+                        <div class="heatmap-legend-scale">
+                            <span class="heatmap-legend-chip level-0"></span>
+                            <span class="heatmap-legend-chip level-1"></span>
+                            <span class="heatmap-legend-chip level-2"></span>
+                            <span class="heatmap-legend-chip level-3"></span>
+                            <span class="heatmap-legend-chip level-4"></span>
+                        </div>
+                        <span>多</span>
+                    </div>
+                </div>
+            `;
         }
 
         function renderHistoryFilters() {
@@ -1084,6 +1324,10 @@
                 const personMatches = state.historyPerson === "all" || record.person === state.historyPerson;
                 return monthMatches && personMatches;
             });
+
+            elements.historySummaryNote.textContent = state.records.length
+                ? `当前共 ${state.records.length} 条记录，筛选后 ${filtered.length} 条`
+                : "当前共 0 条记录";
 
             elements.recordList.innerHTML = filtered.length
                 ? filtered.map((record) => `
