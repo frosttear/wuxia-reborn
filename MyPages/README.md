@@ -8,6 +8,7 @@ A collection of static HTML pages hosted on GitHub Pages.
 
 | Page | Description |
 |------|-------------|
+| **[游泳年卡打卡台账](swim-pass-checkin.html)** | A local-first static tracker for swim pass check-ins, people, and monthly usage counts |
 | **[Async/Await Thread Switching Pitfall](Async%3AAwait%20Thread%20Switching%20Pitfall.html)** | Interactive presentation about common async/await pitfalls |
 | **[棒球 (Baseball)](Baseball.html)** | A baseball game built with Scratch & TurboWarp |
 | **[飞翔的小鸟 (Flying Bird)](FlyingBird_mobile.html)** | Mobile-friendly Flappy Bird style game |
