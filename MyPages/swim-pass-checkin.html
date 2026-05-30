@@ -679,7 +679,7 @@
         const state = {
             people: [],
             records: [],
-            selectedPerson: "",
+            selectedPeople: [],
             statsMonth: "",
             historyMonth: "",
             historyPerson: "all"
@@ -830,15 +830,17 @@
             }
 
             if (state.people.includes(normalized)) {
-                state.selectedPerson = normalized;
+                if (!state.selectedPeople.includes(normalized)) {
+                    state.selectedPeople = [...state.selectedPeople, normalized];
+                }
                 elements.newPersonInput.value = "";
-                setStatus(elements.checkinStatus, `${normalized} 已存在，已切换为当前人物。`, "");
+                setStatus(elements.checkinStatus, `${normalized} 已存在，已加入当前勾选。`, "");
                 render();
                 return true;
             }
 
             state.people = [normalized, ...state.people];
-            state.selectedPerson = normalized;
+            state.selectedPeople = [...state.selectedPeople, normalized];
             elements.newPersonInput.value = "";
             saveData();
             setStatus(elements.checkinStatus, `已新增人物：${normalized}`, "");
@@ -848,11 +850,11 @@
 
         function saveRecord() {
             const datetime = elements.checkinDatetime.value;
-            const person = state.selectedPerson;
+            const people = state.selectedPeople;
             const note = elements.checkinNote.value.trim();
 
-            if (!person) {
-                setStatus(elements.checkinStatus, "请先选择一个人物。", "error");
+            if (!people.length) {
+                setStatus(elements.checkinStatus, "请先选择至少一个人物。", "error");
                 return;
             }
 
@@ -867,13 +869,16 @@
                 return;
             }
 
+            const timestampSeed = Date.now();
+            const newRecords = people.map((person, index) => ({
+                id: `${timestampSeed}-${index}-${Math.random().toString(16).slice(2, 8)}`,
+                person,
+                datetime,
+                note
+            }));
+
             state.records = sortRecordsDesc([
-                {
-                    id: `${Date.now()}-${Math.random().toString(16).slice(2, 8)}`,
-                    person,
-                    datetime,
-                    note
-                },
+                ...newRecords,
                 ...state.records
             ]);
             saveData();
@@ -881,7 +886,7 @@
             elements.checkinNote.value = "";
             state.statsMonth = monthValueOf(datetime);
             state.historyMonth = state.statsMonth;
-            setStatus(elements.checkinStatus, `${person} 的打卡已保存。`, "");
+            setStatus(elements.checkinStatus, `${people.join("、")} 的打卡已保存。`, "");
             render();
         }
 
@@ -943,7 +948,7 @@
                         datetime: String(record.datetime),
                         note: typeof record.note === "string" ? record.note : ""
                     })));
-                    state.selectedPerson = state.people[0] || "";
+                    state.selectedPeople = state.people.length ? [state.people[0]] : [];
                     saveData();
                     setStatus(elements.maintenanceStatus, "导入成功，数据已覆盖当前内容。", "");
                     render();
@@ -963,7 +968,7 @@
             const data = defaultData();
             state.people = data.people;
             state.records = data.records;
-            state.selectedPerson = data.people[0];
+            state.selectedPeople = data.people.length ? [data.people[0]] : [];
             state.statsMonth = monthValueOf(new Date());
             state.historyMonth = "";
             state.historyPerson = "all";
@@ -986,7 +991,7 @@
             }
 
             elements.personChipList.innerHTML = state.people.map((person) => {
-                const activeClass = person === state.selectedPerson ? " active" : "";
+                const activeClass = state.selectedPeople.includes(person) ? " active" : "";
                 return `<button class="person-chip${activeClass}" type="button" data-person="${escapeHtml(person)}">${escapeHtml(person)}</button>`;
             }).join("");
         }
@@ -1119,8 +1124,19 @@
                 if (!target) {
                     return;
                 }
-                state.selectedPerson = target.dataset.person;
-                setStatus(elements.checkinStatus, `当前人物：${state.selectedPerson}`, "");
+                const person = target.dataset.person;
+                if (state.selectedPeople.includes(person)) {
+                    state.selectedPeople = state.selectedPeople.filter((item) => item !== person);
+                } else {
+                    state.selectedPeople = [...state.selectedPeople, person];
+                }
+                setStatus(
+                    elements.checkinStatus,
+                    state.selectedPeople.length
+                        ? `当前已勾选：${state.selectedPeople.join("、")}`
+                        : "当前没有勾选人物。",
+                    ""
+                );
                 renderPeople();
             });
 
@@ -1189,7 +1205,7 @@
             const data = loadData();
             state.people = data.people;
             state.records = sortRecordsDesc(data.records);
-            state.selectedPerson = state.people[0] || "";
+            state.selectedPeople = state.people.length ? [state.people[0]] : [];
             state.statsMonth = monthValueOf(new Date());
             state.historyMonth = "";
             state.historyPerson = "all";
