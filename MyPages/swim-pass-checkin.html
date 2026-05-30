@@ -368,6 +368,63 @@
             margin-top: 8px;
         }
 
+        .stats-toolbar {
+            display: flex;
+            flex-wrap: wrap;
+            align-items: end;
+            justify-content: space-between;
+            gap: 12px;
+            margin-bottom: 18px;
+        }
+
+        .stats-toolbar-main {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 12px;
+            flex: 1;
+        }
+
+        .segmented-control {
+            display: inline-flex;
+            padding: 4px;
+            border-radius: 999px;
+            background: rgba(217, 244, 251, 0.78);
+            border: 1px solid rgba(20, 153, 198, 0.16);
+            gap: 4px;
+        }
+
+        .segment-btn {
+            border: none;
+            background: transparent;
+            color: var(--accent-strong);
+            padding: 10px 14px;
+            border-radius: 999px;
+            font-weight: 700;
+            cursor: pointer;
+        }
+
+        .segment-btn.active {
+            background: linear-gradient(135deg, var(--accent), var(--accent-strong));
+            color: #fff;
+            box-shadow: 0 8px 18px rgba(20, 153, 198, 0.18);
+        }
+
+        .stats-period-controls {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 12px;
+            align-items: end;
+        }
+
+        .stats-period-controls .field {
+            margin-bottom: 0;
+            min-width: 180px;
+        }
+
+        .stats-period-controls[hidden] {
+            display: none;
+        }
+
         .bars,
         .record-list {
             display: flex;
@@ -573,6 +630,39 @@
         .heatmap-legend-chip.level-3 { background: rgba(20, 153, 198, 0.84); }
         .heatmap-legend-chip.level-4 { background: rgba(13, 111, 154, 0.92); }
 
+        .year-grid {
+            display: grid;
+            grid-template-columns: repeat(4, minmax(0, 1fr));
+            gap: 10px;
+        }
+
+        .year-month-cell {
+            min-height: 96px;
+            border-radius: 16px;
+            border: 1px solid rgba(20, 153, 198, 0.08);
+            padding: 12px;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+        }
+
+        .year-month-cell.level-0 { background: rgba(217, 244, 251, 0.34); }
+        .year-month-cell.level-1 { background: rgba(164, 227, 242, 0.58); }
+        .year-month-cell.level-2 { background: rgba(101, 207, 231, 0.72); }
+        .year-month-cell.level-3 { background: rgba(20, 153, 198, 0.84); color: #fff; }
+        .year-month-cell.level-4 { background: rgba(13, 111, 154, 0.92); color: #fff; }
+
+        .year-month-name {
+            font-size: 14px;
+            font-weight: 800;
+        }
+
+        .year-month-count {
+            font-size: 13px;
+            font-weight: 700;
+            align-self: flex-end;
+        }
+
         .record-meta {
             display: flex;
             flex-wrap: wrap;
@@ -642,6 +732,10 @@
                 grid-template-columns: 1fr;
             }
 
+            .year-grid {
+                grid-template-columns: repeat(2, minmax(0, 1fr));
+            }
+
             .hero-actions {
                 flex-direction: column;
                 align-items: stretch;
@@ -671,7 +765,6 @@
                 <div class="hero-actions">
                     <a class="link-btn" href="#checkin-panel">立即打卡</a>
                     <button class="secondary-btn" type="button" id="set-now-btn">时间设为现在</button>
-                    <button class="ghost-btn" type="button" id="export-btn">导出 JSON</button>
                 </div>
             </div>
 
@@ -715,8 +808,8 @@
                             <input id="checkin-datetime" type="datetime-local">
                         </div>
                         <div class="field">
-                            <label for="stats-month">统计月份</label>
-                            <input id="stats-month" type="month">
+                            <label>已选人物</label>
+                            <input type="text" id="selected-people-display" value="" readonly>
                         </div>
                     </div>
 
@@ -786,21 +879,42 @@
                     <div class="panel-title-row">
                         <div>
                             <h2>月度统计</h2>
-                            <p class="panel-intro">看本月用了几次、人物分布，以及整月使用热力图。</p>
+                            <p class="panel-intro">支持月视图和年视图切换，快速查看整月或全年使用强度。</p>
+                        </div>
+                    </div>
+
+                    <div class="stats-toolbar">
+                        <div class="stats-toolbar-main">
+                            <div class="segmented-control" id="stats-view-toggle">
+                                <button class="segment-btn active" type="button" data-stats-view="month">月视图</button>
+                                <button class="segment-btn" type="button" data-stats-view="year">年视图</button>
+                            </div>
+                            <div class="stats-period-controls" id="stats-month-controls">
+                                <div class="field">
+                                    <label for="stats-month">统计月份</label>
+                                    <input id="stats-month" type="month">
+                                </div>
+                            </div>
+                            <div class="stats-period-controls" id="stats-year-controls" hidden>
+                                <div class="field">
+                                    <label for="stats-year">统计年份</label>
+                                    <input id="stats-year" type="number" min="2000" max="2100" step="1">
+                                </div>
+                            </div>
                         </div>
                     </div>
 
                     <div class="mini-stats">
                         <div class="mini-card">
-                            打卡次数
+                            <span id="stats-total-label">打卡次数</span>
                             <strong id="month-total-count">0</strong>
                         </div>
                         <div class="mini-card">
-                            打卡天数
+                            <span id="stats-active-label">打卡天数</span>
                             <strong id="month-active-days">0</strong>
                         </div>
                         <div class="mini-card">
-                            涉及人物
+                            <span id="stats-people-label">涉及人物</span>
                             <strong id="month-active-people">0</strong>
                         </div>
                     </div>
@@ -816,11 +930,12 @@
                     <div class="panel-title-row">
                         <div>
                             <h2>数据维护</h2>
-                            <p class="panel-intro">导出备份，或者一键清空重新开始。</p>
+                            <p class="panel-intro">导入和导出放在一起，备份和恢复更顺手。</p>
                         </div>
                     </div>
 
                     <div class="hero-actions">
+                        <button class="ghost-btn" type="button" id="export-btn">导出 JSON</button>
                         <button class="secondary-btn" type="button" id="import-btn">导入 JSON</button>
                         <button class="danger-btn" type="button" id="reset-btn">清空全部数据</button>
                     </div>
@@ -838,14 +953,21 @@
             people: [],
             records: [],
             selectedPeople: [],
+            statsView: "month",
             statsMonth: "",
+            statsYear: "",
             historyMonth: "",
             historyPerson: "all"
         };
 
         const elements = {
             checkinDatetime: document.getElementById("checkin-datetime"),
+            selectedPeopleDisplay: document.getElementById("selected-people-display"),
+            statsViewToggle: document.getElementById("stats-view-toggle"),
             statsMonth: document.getElementById("stats-month"),
+            statsYear: document.getElementById("stats-year"),
+            statsMonthControls: document.getElementById("stats-month-controls"),
+            statsYearControls: document.getElementById("stats-year-controls"),
             personChipList: document.getElementById("person-chip-list"),
             newPersonInput: document.getElementById("new-person-input"),
             addPersonBtn: document.getElementById("add-person-btn"),
@@ -860,6 +982,9 @@
             recordList: document.getElementById("record-list"),
             personBars: document.getElementById("person-bars"),
             monthHeatmap: document.getElementById("month-heatmap"),
+            statsTotalLabel: document.getElementById("stats-total-label"),
+            statsActiveLabel: document.getElementById("stats-active-label"),
+            statsPeopleLabel: document.getElementById("stats-people-label"),
             monthTotalCount: document.getElementById("month-total-count"),
             monthActiveDays: document.getElementById("month-active-days"),
             monthActivePeople: document.getElementById("month-active-people"),
@@ -973,6 +1098,14 @@
                 return month;
             }
             return `${year} 年 ${Number(mon)} 月`;
+        }
+
+        function yearValueOf(dateLike) {
+            const date = new Date(dateLike);
+            if (Number.isNaN(date.getTime())) {
+                return "";
+            }
+            return String(date.getFullYear());
         }
 
         function heatLevel(count, maxCount) {
@@ -1176,6 +1309,10 @@
             return state.records.filter((record) => monthValueOf(record.datetime) === month);
         }
 
+        function getYearRecords(year) {
+            return state.records.filter((record) => yearValueOf(record.datetime) === String(year));
+        }
+
         function renderPeople() {
             if (!state.people.length) {
                 elements.personChipList.innerHTML = "<button class=\"person-chip\" disabled>请先新增人物</button>";
@@ -1186,6 +1323,10 @@
                 const activeClass = state.selectedPeople.includes(person) ? " active" : "";
                 return `<button class="person-chip${activeClass}" type="button" data-person="${escapeHtml(person)}">${escapeHtml(person)}</button>`;
             }).join("");
+
+            elements.selectedPeopleDisplay.value = state.selectedPeople.length
+                ? state.selectedPeople.join("、")
+                : "当前没有勾选人物";
         }
 
         function renderSummary() {
@@ -1216,23 +1357,32 @@
 
         function renderMonthStats() {
             const month = state.statsMonth || monthValueOf(new Date());
-            const monthRecords = getMonthRecords(month);
+            const year = state.statsYear || yearValueOf(new Date());
+            const records = state.statsView === "year"
+                ? getYearRecords(year)
+                : getMonthRecords(month);
             const personCountMap = new Map();
-            const dayCountMap = new Map();
+            const timeCountMap = new Map();
 
-            for (const record of monthRecords) {
+            for (const record of records) {
                 personCountMap.set(record.person, (personCountMap.get(record.person) || 0) + 1);
-                const dayKey = record.datetime.slice(0, 10);
-                dayCountMap.set(dayKey, (dayCountMap.get(dayKey) || 0) + 1);
+                const key = state.statsView === "year"
+                    ? monthValueOf(record.datetime)
+                    : record.datetime.slice(0, 10);
+                timeCountMap.set(key, (timeCountMap.get(key) || 0) + 1);
             }
 
             const personEntries = [...personCountMap.entries()].sort((a, b) => b[1] - a[1]);
-            const dayEntries = [...dayCountMap.entries()].sort((a, b) => a[0].localeCompare(b[0]));
+            const timeEntries = [...timeCountMap.entries()].sort((a, b) => a[0].localeCompare(b[0]));
             const maxPersonCount = personEntries[0]?.[1] || 1;
-            const maxDayCount = dayEntries.reduce((max, [, count]) => Math.max(max, count), 0);
+            const maxTimeCount = timeEntries.reduce((max, [, count]) => Math.max(max, count), 0);
 
-            elements.monthTotalCount.textContent = String(monthRecords.length);
-            elements.monthActiveDays.textContent = String(dayEntries.length);
+            elements.statsTotalLabel.textContent = state.statsView === "year" ? "全年打卡" : "打卡次数";
+            elements.statsActiveLabel.textContent = state.statsView === "year" ? "活跃月份" : "打卡天数";
+            elements.statsPeopleLabel.textContent = "涉及人物";
+
+            elements.monthTotalCount.textContent = String(records.length);
+            elements.monthActiveDays.textContent = String(timeEntries.length);
             elements.monthActivePeople.textContent = String(personEntries.length);
 
             elements.personBars.innerHTML = personEntries.length
@@ -1248,16 +1398,53 @@
                         </div>
                     `;
                 }).join("")
-                : '<div class="empty">这个月份还没有记录。</div>';
+                : `<div class="empty">这个${state.statsView === "year" ? "年份" : "月份"}还没有记录。</div>`;
 
-            if (!monthRecords.length) {
-                elements.monthHeatmap.innerHTML = '<div class="empty">这个月份还没有热力图记录。</div>';
+            if (!records.length) {
+                elements.monthHeatmap.innerHTML = `<div class="empty">这个${state.statsView === "year" ? "年份" : "月份"}还没有热力图记录。</div>`;
                 return;
             }
 
-            const [year, mon] = month.split("-").map(Number);
-            const firstDay = new Date(year, mon - 1, 1);
-            const daysInMonth = new Date(year, mon, 0).getDate();
+            if (state.statsView === "year") {
+                const cells = [];
+                for (let monthIndex = 1; monthIndex <= 12; monthIndex += 1) {
+                    const monthKey = `${year}-${String(monthIndex).padStart(2, "0")}`;
+                    const count = timeCountMap.get(monthKey) || 0;
+                    const level = heatLevel(count, maxTimeCount);
+                    cells.push(`
+                        <div class="year-month-cell level-${level}" title="${year}年${monthIndex}月：${count} 次">
+                            <span class="year-month-name">${monthIndex} 月</span>
+                            <span class="year-month-count">${count ? `${count} 次` : ""}</span>
+                        </div>
+                    `);
+                }
+
+                elements.monthHeatmap.innerHTML = `
+                    <div class="heatmap-card">
+                        <div class="heatmap-header">
+                            <strong>${year} 年年度热力图</strong>
+                            <span class="heatmap-caption">颜色越深，月份累计打卡次数越多</span>
+                        </div>
+                        <div class="year-grid">${cells.join("")}</div>
+                        <div class="heatmap-legend">
+                            <span>少</span>
+                            <div class="heatmap-legend-scale">
+                                <span class="heatmap-legend-chip level-0"></span>
+                                <span class="heatmap-legend-chip level-1"></span>
+                                <span class="heatmap-legend-chip level-2"></span>
+                                <span class="heatmap-legend-chip level-3"></span>
+                                <span class="heatmap-legend-chip level-4"></span>
+                            </div>
+                            <span>多</span>
+                        </div>
+                    </div>
+                `;
+                return;
+            }
+
+            const [monthYear, mon] = month.split("-").map(Number);
+            const firstDay = new Date(monthYear, mon - 1, 1);
+            const daysInMonth = new Date(monthYear, mon, 0).getDate();
             const leadingEmpty = (firstDay.getDay() + 6) % 7;
             const cells = [];
 
@@ -1267,8 +1454,8 @@
 
             for (let day = 1; day <= daysInMonth; day += 1) {
                 const dayKey = `${month}-${String(day).padStart(2, "0")}`;
-                const count = dayCountMap.get(dayKey) || 0;
-                const level = heatLevel(count, maxDayCount);
+                const count = timeCountMap.get(dayKey) || 0;
+                const level = heatLevel(count, maxTimeCount);
                 const title = `${formatDay(dayKey)}：${count} 次`;
                 cells.push(`
                     <div class="heatmap-day level-${level}" title="${escapeHtml(title)}">
@@ -1350,7 +1537,15 @@
 
         function renderInputs() {
             elements.statsMonth.value = state.statsMonth;
+            elements.statsYear.value = state.statsYear;
             elements.historyMonth.value = state.historyMonth;
+
+            elements.statsMonthControls.hidden = state.statsView !== "month";
+            elements.statsYearControls.hidden = state.statsView !== "year";
+
+            elements.statsViewToggle.querySelectorAll("[data-stats-view]").forEach((button) => {
+                button.classList.toggle("active", button.dataset.statsView === state.statsView);
+            });
         }
 
         function render() {
@@ -1406,6 +1601,20 @@
                 renderMonthStats();
             });
 
+            elements.statsYear.addEventListener("change", (event) => {
+                state.statsYear = event.target.value || yearValueOf(new Date());
+                renderMonthStats();
+            });
+
+            elements.statsViewToggle.addEventListener("click", (event) => {
+                const target = event.target.closest("[data-stats-view]");
+                if (!target) {
+                    return;
+                }
+                state.statsView = target.dataset.statsView;
+                render();
+            });
+
             elements.historyMonth.addEventListener("change", (event) => {
                 state.historyMonth = event.target.value;
                 renderRecords();
@@ -1450,7 +1659,9 @@
             state.people = data.people;
             state.records = sortRecordsDesc(data.records);
             state.selectedPeople = state.people.length ? [state.people[0]] : [];
+            state.statsView = "month";
             state.statsMonth = monthValueOf(new Date());
+            state.statsYear = yearValueOf(new Date());
             state.historyMonth = "";
             state.historyPerson = "all";
             elements.checkinDatetime.value = nowLocalInputValue();
