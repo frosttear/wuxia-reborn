@@ -891,8 +891,25 @@
                             </div>
                             <div class="stats-period-controls" id="stats-month-controls">
                                 <div class="field">
-                                    <label for="stats-month">统计月份</label>
-                                    <input id="stats-month" type="month">
+                                    <label for="stats-month-year">统计年份</label>
+                                    <input id="stats-month-year" type="number" min="2000" max="2100" step="1">
+                                </div>
+                                <div class="field">
+                                    <label for="stats-month-number">统计月份</label>
+                                    <select id="stats-month-number">
+                                        <option value="01">1 月</option>
+                                        <option value="02">2 月</option>
+                                        <option value="03">3 月</option>
+                                        <option value="04">4 月</option>
+                                        <option value="05">5 月</option>
+                                        <option value="06">6 月</option>
+                                        <option value="07">7 月</option>
+                                        <option value="08">8 月</option>
+                                        <option value="09">9 月</option>
+                                        <option value="10">10 月</option>
+                                        <option value="11">11 月</option>
+                                        <option value="12">12 月</option>
+                                    </select>
                                 </div>
                             </div>
                             <div class="stats-period-controls" id="stats-year-controls" hidden>
@@ -964,7 +981,8 @@
             checkinDatetime: document.getElementById("checkin-datetime"),
             selectedPeopleDisplay: document.getElementById("selected-people-display"),
             statsViewToggle: document.getElementById("stats-view-toggle"),
-            statsMonth: document.getElementById("stats-month"),
+            statsMonthYear: document.getElementById("stats-month-year"),
+            statsMonthNumber: document.getElementById("stats-month-number"),
             statsYear: document.getElementById("stats-year"),
             statsMonthControls: document.getElementById("stats-month-controls"),
             statsYearControls: document.getElementById("stats-year-controls"),
@@ -1106,6 +1124,21 @@
                 return "";
             }
             return String(date.getFullYear());
+        }
+
+        function monthNumberOf(monthValue) {
+            if (!monthValue || !monthValue.includes("-")) {
+                return "01";
+            }
+
+            const [, month] = monthValue.split("-");
+            return month || "01";
+        }
+
+        function buildMonthValue(year, monthNumber) {
+            const normalizedYear = String(year || yearValueOf(new Date()));
+            const normalizedMonth = String(monthNumber || "01").padStart(2, "0");
+            return `${normalizedYear}-${normalizedMonth}`;
         }
 
         function heatLevel(count, maxCount) {
@@ -1536,7 +1569,8 @@
         }
 
         function renderInputs() {
-            elements.statsMonth.value = state.statsMonth;
+            elements.statsMonthYear.value = yearValueOf(`${state.statsMonth}-01`);
+            elements.statsMonthNumber.value = monthNumberOf(state.statsMonth);
             elements.statsYear.value = state.statsYear;
             elements.historyMonth.value = state.historyMonth;
 
@@ -1596,10 +1630,16 @@
                 setStatus(elements.checkinStatus, "备注已清空。", "");
             });
 
-            elements.statsMonth.addEventListener("change", (event) => {
-                state.statsMonth = event.target.value || monthValueOf(new Date());
+            const handleStatsMonthChange = () => {
+                state.statsMonth = buildMonthValue(
+                    elements.statsMonthYear.value,
+                    elements.statsMonthNumber.value
+                );
                 renderMonthStats();
-            });
+            };
+
+            elements.statsMonthYear.addEventListener("change", handleStatsMonthChange);
+            elements.statsMonthNumber.addEventListener("change", handleStatsMonthChange);
 
             elements.statsYear.addEventListener("change", (event) => {
                 state.statsYear = event.target.value || yearValueOf(new Date());
