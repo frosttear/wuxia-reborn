@@ -711,6 +711,9 @@
         const generateBtn   = document.getElementById('generateBtn');
         const lyricsBtn     = document.getElementById('lyricsBtn');
         const statusDiv     = document.getElementById('status');
+        const INFLIGHT_KEY  = 'musicgen_inflight';
+
+        let generationInFlight = localStorage.getItem(INFLIGHT_KEY) === '1';
 
         function showStatus(message, type = 'info') {
             statusDiv.textContent = message;
@@ -727,10 +730,21 @@
             lyricsBtn.disabled = busy;
         }
 
+        if (generationInFlight) {
+            showStatus(t('inProgress'), 'info');
+        }
+
+        document.addEventListener('visibilitychange', () => {
+            if (document.hidden && generationInFlight) {
+                showStatus(t('inProgress'), 'info');
+            }
+        });
+
         async function callApi(endpoint, payload, method = 'POST') {
             try {
                 const fetchOptions = {
                     method,
+                    keepalive: true,
                     headers: {
                         'Authorization': `Bearer ${realApiKey}`,
                         'Content-Type': 'application/json'
@@ -755,22 +769,6 @@
 
         function sleep(ms) {
             return new Promise(resolve => setTimeout(resolve, ms));
-        }
-
-        async function queryMusicTask(taskId) {
-            const endpoints = [
-                { endpoint: 'https://api.minimaxi.com/v1/query/music_generation', method: 'POST', payload: { task_id: taskId } },
-                { endpoint: 'https://api.minimaxi.com/v1/music_generation/query', method: 'POST', payload: { task_id: taskId } },
-                { endpoint: `https://api.minimaxi.com/v1/music_generation?task_id=${encodeURIComponent(taskId)}`, method: 'GET' }
-            ];
-
-            for (const item of endpoints) {
-                const result = await callApi(item.endpoint, item.payload, item.method);
-                if (result.success) return result;
-                if (result.status !== 404) return result;
-            }
-
-            return { success: false, status: 404, error: 'No supported task query endpoint found' };
         }
 
         // ── History ──────────────────────────────────────────────
@@ -1094,6 +1092,8 @@
             if (mode === 'review' && !lyricsInput.value.trim()) { showStatus(t('errNoLyrics'), 'error'); return; }
 
             localStorage.setItem('musicgen_prompt', promptInput.value);
+            generationInFlight = true;
+            localStorage.setItem(INFLIGHT_KEY, '1');
             setBusy(true);
             showLoadingStatus(t('loadingMusic'));
 
@@ -1119,6 +1119,8 @@
             let result = await callApi('https://api.minimaxi.com/v1/music_generation', payload);
             
             if (!result.success) {
+                generationInFlight = false;
+                localStorage.removeItem(INFLIGHT_KEY);
                 setBusy(false);
                 if (result.status === 401) {
                     setFieldError(apiKeyInput, true);
@@ -1130,37 +1132,8 @@
             }
 
             let data = result.data;
-            const initialStatus = data?.data?.status;
-            const taskId = data?.data?.task_id || data?.task_id;
-
-            if (initialStatus === 1 && taskId) {
-                let pollCount = 0;
-                const initialDelay = 60000;
-                const pollInterval = 20000;
-                const maxPolls = 120;
-                showStatus(t('taskSubmitted') + taskId, 'info');
-
-                await sleep(initialDelay);
-                showLoadingStatus(t('loadingMusic') + ' (60s)');
-
-                while (pollCount < maxPolls) {
-                    await sleep(pollInterval);
-                    pollCount++;
-                    const elapsed = 60 + pollCount * 20;
-                    showLoadingStatus(t('loadingMusic') + ` (${elapsed}s)`);
-
-                    const pollResult = await queryMusicTask(taskId);
-                    if (!pollResult.success) {
-                        setBusy(false);
-                        showStatus(t('error') + (pollResult.data?.base_resp?.err_msg || pollResult.error), 'error');
-                        return;
-                    }
-
-                    data = pollResult.data;
-                    if (data?.data?.status !== 1) break;
-                }
-            }
-            
+            generationInFlight = false;
+            localStorage.removeItem(INFLIGHT_KEY);
             setBusy(false);
 
             if (data?.data?.status === 2 && data?.data?.audio) {
@@ -1176,7 +1149,7 @@
                 addToHistory(audioUrl, promptInput.value.trim(), fmt, lyricsForHistory);
                 showStatus(t('successMusic'), 'success');
             } else if (data?.data?.status === 1) {
-                showStatus(t('failed') + 'Timeout waiting for music generation', 'error');
+                showStatus(t('inProgress'), 'info');
             } else {
                 showStatus(t('failed') + (data?.base_resp?.err_msg || 'Unknown error'), 'error');
             }
