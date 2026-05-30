@@ -857,13 +857,109 @@
             setTimeout(() => { btn.textContent = orig; btn.classList.remove('copied'); }, 1500);
         }
 
+        function createID3v2Tag(title, lyrics) {
+            if (!lyrics) return null;
+            
+            const enc = new TextEncoder();
+            const frames = [];
+            
+            const createTextFrame = (frameId, text) => {
+                const textBytes = enc.encode(text);
+                const frame = new Uint8Array(11 + textBytes.length);
+                frame.set(enc.encode(frameId), 0);
+                const size = 1 + textBytes.length;
+                frame[4] = (size >> 8) & 0xFF;
+                frame[5] = size & 0xFF;
+                frame[6] = 0;
+                frame[7] = 0;
+                frame[8] = 0;
+                frame[9] = 0;
+                frame.set(textBytes, 10);
+                return frame;
+            };
+            
+            const createUSLTFrame = (lyrics) => {
+                const lyricsBytes = enc.encode(lyrics);
+                const contentSize = 4 + lyricsBytes.length + 1;
+                const frame = new Uint8Array(10 + contentSize);
+                frame.set(enc.encode('USLT'), 0);
+                frame[4] = (contentSize >> 8) & 0xFF;
+                frame[5] = contentSize & 0xFF;
+                frame[6] = 0;
+                frame[7] = 0;
+                frame[8] = 0;
+                frame[9] = 3;
+                frame.set(enc.encode('eng\0'), 10);
+                frame.set(lyricsBytes, 14);
+                return frame;
+            };
+            
+            frames.push(createTextFrame('TIT2', title || 'Generated Music'));
+            frames.push(createTextFrame('TPE1', 'Music Generator'));
+            frames.push(createUSLTFrame(lyrics));
+            
+            const frameData = frames.reduce((acc, frame) => acc.concat(Array.from(frame)), []);
+            const frameBytes = new Uint8Array(frameData);
+            
+            const tagSize = frameBytes.length;
+            const synchsafeSize = new Uint8Array([
+                (tagSize >> 21) & 0x7F,
+                (tagSize >> 14) & 0x7F,
+                (tagSize >> 7) & 0x7F,
+                tagSize & 0x7F
+            ]);
+            
+            const id3Header = new Uint8Array(10);
+            id3Header.set(enc.encode('ID3'), 0);
+            id3Header[3] = 4;
+            id3Header[4] = 0;
+            id3Header[5] = 0;
+            id3Header.set(synchsafeSize, 6);
+            
+            const tag = new Uint8Array(id3Header.length + frameBytes.length);
+            tag.set(id3Header, 0);
+            tag.set(frameBytes, id3Header.length);
+            
+            return tag;
+        }
+
+        function prependID3Tag(audioBuffer, title, lyrics) {
+            const id3Tag = createID3v2Tag(title, lyrics);
+            if (!id3Tag) return new Uint8Array(audioBuffer);
+            
+            const audioData = new Uint8Array(audioBuffer);
+            let audioStart = 0;
+            
+            if (audioData.length > 3 && String.fromCharCode(audioData[0], audioData[1], audioData[2]) === 'ID3') {
+                const size = ((audioData[6] & 0x7f) << 21) | ((audioData[7] & 0x7f) << 14) | ((audioData[8] & 0x7f) << 7) | (audioData[9] & 0x7f);
+                audioStart = 10 + size;
+            }
+            
+            const result = new Uint8Array(id3Tag.length + audioData.length - audioStart);
+            result.set(id3Tag, 0);
+            result.set(audioData.subarray(audioStart), id3Tag.length);
+            
+            return result;
+        }
+
         async function downloadEntry(url, filename, btn) {
             const orig = btn.innerHTML;
             btn.disabled = true;
             btn.innerHTML = '<div class="spinner" style="width:12px;height:12px;border-width:2px"></div>';
             try {
                 const resp = await fetch(url);
-                const blob = await resp.blob();
+                let blob = await resp.blob();
+                
+                if (filename.endsWith('.mp3')) {
+                    const entries = loadHistory();
+                    const entry = entries.find(e => e.url === url);
+                    if (entry && entry.lyrics) {
+                        const arrayBuffer = await blob.arrayBuffer();
+                        const taggedBuffer = prependID3Tag(arrayBuffer, filename.replace('.mp3', ''), entry.lyrics);
+                        blob = new Blob([taggedBuffer], { type: 'audio/mpeg' });
+                    }
+                }
+                
                 const blobUrl = URL.createObjectURL(blob);
                 const a = document.createElement('a');
                 a.href = blobUrl;
