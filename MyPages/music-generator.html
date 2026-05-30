@@ -1136,7 +1136,7 @@
             if (initialStatus === 1 && taskId) {
                 let pollCount = 0;
                 const initialDelay = 60000;
-                const pollInterval = 5000;
+                const pollInterval = 20000;
                 const maxPolls = 120;
                 showStatus(t('taskSubmitted') + taskId, 'info');
 
@@ -1146,7 +1146,7 @@
                 while (pollCount < maxPolls) {
                     await sleep(pollInterval);
                     pollCount++;
-                    const elapsed = 60 + pollCount * 5;
+                    const elapsed = 60 + pollCount * 20;
                     showLoadingStatus(t('loadingMusic') + ` (${elapsed}s)`);
 
                     const pollResult = await queryMusicTask(taskId);
