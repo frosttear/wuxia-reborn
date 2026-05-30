@@ -727,21 +727,50 @@
             lyricsBtn.disabled = busy;
         }
 
-        async function callApi(endpoint, payload) {
+        async function callApi(endpoint, payload, method = 'POST') {
             try {
-                const response = await fetch(endpoint, {
-                    method: 'POST',
+                const fetchOptions = {
+                    method,
                     headers: {
                         'Authorization': `Bearer ${realApiKey}`,
                         'Content-Type': 'application/json'
-                    },
-                    body: JSON.stringify(payload)
-                });
-                const data = await response.json();
+                    }
+                };
+                if (method !== 'GET' && payload !== undefined) {
+                    fetchOptions.body = JSON.stringify(payload);
+                }
+
+                const response = await fetch(endpoint, fetchOptions);
+                let data = {};
+                try {
+                    data = await response.json();
+                } catch {
+                    data = {};
+                }
                 return { success: response.ok, status: response.status, data, error: response.ok ? null : `HTTP ${response.status}` };
             } catch (err) {
                 return { success: false, status: 0, error: err.message };
             }
+        }
+
+        function sleep(ms) {
+            return new Promise(resolve => setTimeout(resolve, ms));
+        }
+
+        async function queryMusicTask(taskId) {
+            const endpoints = [
+                { endpoint: 'https://api.minimaxi.com/v1/query/music_generation', method: 'POST', payload: { task_id: taskId } },
+                { endpoint: 'https://api.minimaxi.com/v1/music_generation/query', method: 'POST', payload: { task_id: taskId } },
+                { endpoint: `https://api.minimaxi.com/v1/music_generation?task_id=${encodeURIComponent(taskId)}`, method: 'GET' }
+            ];
+
+            for (const item of endpoints) {
+                const result = await callApi(item.endpoint, item.payload, item.method);
+                if (result.success) return result;
+                if (result.status !== 404) return result;
+            }
+
+            return { success: false, status: 404, error: 'No supported task query endpoint found' };
         }
 
         // ── History ──────────────────────────────────────────────
@@ -1101,22 +1130,29 @@
             }
 
             let data = result.data;
-            
-            let pollCount = 0;
-            const maxPolls = 180;
-            const pollInterval = 2000;
-            
-            while (data?.data?.status === 1 && pollCount < maxPolls) {
-                await new Promise(resolve => setTimeout(resolve, pollInterval));
-                pollCount++;
-                showLoadingStatus(t('loadingMusic') + ` (${pollCount * 2}s)`);
-                result = await callApi('https://api.minimaxi.com/v1/music_generation', payload);
-                if (result.success) {
-                    data = result.data;
-                } else {
-                    setBusy(false);
-                    showStatus(t('error') + (result.error), 'error');
-                    return;
+            const initialStatus = data?.data?.status;
+            const taskId = data?.data?.task_id || data?.task_id;
+
+            if (initialStatus === 1 && taskId) {
+                let pollCount = 0;
+                const maxPolls = 180;
+                const pollInterval = 2000;
+                showStatus(t('taskSubmitted') + taskId, 'info');
+
+                while (pollCount < maxPolls) {
+                    await sleep(pollInterval);
+                    pollCount++;
+                    showLoadingStatus(t('loadingMusic') + ` (${pollCount * 2}s)`);
+
+                    const pollResult = await queryMusicTask(taskId);
+                    if (!pollResult.success) {
+                        setBusy(false);
+                        showStatus(t('error') + (pollResult.data?.base_resp?.err_msg || pollResult.error), 'error');
+                        return;
+                    }
+
+                    data = pollResult.data;
+                    if (data?.data?.status !== 1) break;
                 }
             }
             
