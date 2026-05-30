@@ -517,8 +517,10 @@
         <div class="form-group" id="lyricsSection" style="display:none">
             <div class="lyrics-header">
                 <label for="lyrics" data-i18n="lyricsLabel">Lyrics:</label>
-                <button class="lyrics-gen-btn" id="lyricsBtn" data-i18n="lyricsBtn">Generate Lyrics</button>
-                <button class="lyrics-gen-btn" style="background:linear-gradient(135deg,#7c4dff 0%,#5c30cc 100%);box-shadow:0 2px 8px rgba(124,77,255,0.25)" onclick="copyLyrics(this)" data-i18n="copyLyricsBtn">Copy Lyrics</button>
+                <div style="display:flex;gap:8px">
+                    <button class="lyrics-gen-btn" id="lyricsBtn" data-i18n="lyricsBtn">Generate Lyrics</button>
+                    <button class="lyrics-gen-btn" style="background:linear-gradient(135deg,#7c4dff 0%,#5c30cc 100%);box-shadow:0 2px 8px rgba(124,77,255,0.25)" onclick="copyLyrics(this)" data-i18n="copyLyricsBtn">Copy Lyrics</button>
+                </div>
             </div>
             <textarea id="lyrics" data-i18n-placeholder="lyricsPlaceholder" placeholder="Click 'Generate Lyrics' or type directly"></textarea>
         </div>
