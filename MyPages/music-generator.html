@@ -158,6 +158,40 @@
             color: #5c40cc;
         }
 
+        .tool-tabs {
+            display: flex;
+            border: 1.5px solid #d0c8f0;
+            border-radius: 8px;
+            overflow: hidden;
+        }
+
+        .tool-tab-btn {
+            flex: 1;
+            padding: 10px 8px;
+            border: none;
+            border-right: 1px solid #d0c8f0;
+            background: transparent;
+            color: #9090b0;
+            font-size: 13px;
+            font-weight: 700;
+            cursor: pointer;
+            transition: background 0.2s, color 0.2s;
+        }
+
+        .tool-tab-btn:last-child {
+            border-right: none;
+        }
+
+        .tool-tab-btn.active {
+            background: linear-gradient(135deg, #e94560, #7c4dff);
+            color: #fff;
+        }
+
+        .tool-tab-btn:not(.active):hover {
+            background: #f0eeff;
+            color: #5c40cc;
+        }
+
         /* Lyrics section */
         .lyrics-header {
             display: flex;
@@ -503,6 +537,15 @@
         </div>
 
         <div class="form-group">
+            <div class="tool-tabs">
+                <button class="tool-tab-btn active" id="tabGenerate" onclick="setToolTab('generate')" data-i18n="tabGenerate">Music Generator</button>
+                <button class="tool-tab-btn" id="tabLrcTool" onclick="setToolTab('lrc')" data-i18n="tabLrcTool">MP3 to LRC</button>
+            </div>
+        </div>
+
+        <div id="generatePanel">
+
+        <div class="form-group">
             <div class="lyrics-header">
                 <label for="prompt" data-i18n="promptLabel">Prompt:</label>
                 <button class="lyrics-gen-btn" style="background:linear-gradient(135deg,#7c4dff 0%,#5c30cc 100%);box-shadow:0 2px 8px rgba(124,77,255,0.25)" onclick="copyPrompt(this)" data-i18n="copyPromptBtn">Copy Prompt</button>
@@ -570,6 +613,32 @@
             </div>
             <div id="historyList"></div>
         </div>
+
+        </div>
+
+        <div id="lrcToolPanel" style="display:none">
+            <div class="form-group">
+                <label for="lrcAudioUrl" data-i18n="lrcAudioUrlLabel">Audio URL (optional):</label>
+                <input type="text" id="lrcAudioUrl" data-i18n-placeholder="lrcAudioUrlPlaceholder" placeholder="Paste generated MP3 URL">
+            </div>
+
+            <div class="form-group">
+                <label for="lrcAudioFile" data-i18n="lrcAudioFileLabel">Or upload audio file:</label>
+                <input type="file" id="lrcAudioFile" accept="audio/*">
+            </div>
+
+            <button class="generate-btn" id="analyzeLrcBtn" data-i18n="analyzeLrcBtn" style="margin-top:0">Generate LRC</button>
+
+            <div class="form-group" style="margin-top:16px">
+                <label for="lrcOutput" data-i18n="lrcOutputLabel">LRC Preview:</label>
+                <textarea id="lrcOutput" readonly style="min-height:180px" data-i18n-placeholder="lrcOutputPlaceholder" placeholder="LRC content will appear here"></textarea>
+            </div>
+
+            <div class="history-item-actions" style="margin-top:10px">
+                <button class="history-action-btn btn-download" id="downloadLrcBtn" disabled data-i18n="historyDownloadLrc">Download LRC</button>
+                <button class="history-action-btn btn-download" id="downloadJsonBtn" disabled data-i18n="downloadTimelineJson">Download Timeline JSON</button>
+            </div>
+        </div>
     </div>
 
     <script>
@@ -578,6 +647,8 @@
                 title: 'Music Generator',
                 apiKeyLabel: 'API Key:',
                 apiKeyPlaceholder: 'Enter your Minimax API key',
+                tabGenerate: 'Music Generator',
+                tabLrcTool: 'MP3 to LRC',
                 promptLabel: 'Prompt:',
                 promptPlaceholder: 'Describe the music style you want to generate',
                 modeLabel: 'Mode:',
@@ -618,12 +689,24 @@
                 historyLoadedPromptLyrics: 'Loaded prompt and lyrics from history.',
                 historyLrcUnavailable: 'LRC not available for this song yet.',
                 historyPreparingLrc: 'Preparing LRC...',
-                historyLrcPrepareFailed: 'Failed to prepare LRC: '
+                historyLrcPrepareFailed: 'Failed to prepare LRC: ',
+                lrcAudioUrlLabel: 'Audio URL (optional):',
+                lrcAudioUrlPlaceholder: 'Paste generated MP3 URL',
+                lrcAudioFileLabel: 'Or upload audio file:',
+                analyzeLrcBtn: 'Generate LRC',
+                lrcOutputLabel: 'LRC Preview:',
+                lrcOutputPlaceholder: 'LRC content will appear here',
+                downloadTimelineJson: 'Download Timeline JSON',
+                errNeedAudioInput: 'Please provide an audio URL or upload an audio file.',
+                loadingLrc: 'Analyzing audio and building LRC...',
+                successLrcReady: 'LRC is ready. You can download LRC or timeline JSON.'
             },
             zh: {
                 title: '音乐生成器',
                 apiKeyLabel: 'API 密钥:',
                 apiKeyPlaceholder: '请输入您的 Minimax API 密钥',
+                tabGenerate: '音乐生成器',
+                tabLrcTool: 'MP3 转 LRC',
                 promptLabel: '风格描述:',
                 promptPlaceholder: '描述您想生成的音乐风格',
                 copyLyricsBtn: '复制歌词',
@@ -664,12 +747,25 @@
                 historyLoadedPromptLyrics: '已从历史记录载入提示词和歌词。',
                 historyLrcUnavailable: '该歌曲暂时没有可下载的 LRC。',
                 historyPreparingLrc: '正在准备 LRC...',
-                historyLrcPrepareFailed: 'LRC 准备失败：'
+                historyLrcPrepareFailed: 'LRC 准备失败：',
+                lrcAudioUrlLabel: '音频链接（可选）:',
+                lrcAudioUrlPlaceholder: '粘贴已生成的 MP3 链接',
+                lrcAudioFileLabel: '或上传音频文件:',
+                analyzeLrcBtn: '生成 LRC',
+                lrcOutputLabel: 'LRC 预览:',
+                lrcOutputPlaceholder: '这里会显示生成的 LRC 内容',
+                downloadTimelineJson: '下载时间轴 JSON',
+                errNeedAudioInput: '请提供音频链接或上传音频文件。',
+                loadingLrc: '正在分析音频并生成 LRC...',
+                successLrcReady: 'LRC 已生成，可下载 LRC 或时间轴 JSON。'
             }
         };
 
         let locale = (navigator.language || 'en').toLowerCase().startsWith('zh') ? 'zh' : 'en';
         let mode = 'auto';
+        let currentToolTab = localStorage.getItem('musicgen_tooltab') || 'generate';
+        let latestLrcText = '';
+        let latestLrcStructure = null;
 
         function t(key) {
             return translations[locale][key] || translations.en[key] || key;
@@ -705,6 +801,17 @@
             statusDiv.textContent = '';
         }
 
+        function setToolTab(tab) {
+            currentToolTab = tab === 'lrc' ? 'lrc' : 'generate';
+            localStorage.setItem('musicgen_tooltab', currentToolTab);
+            document.getElementById('tabGenerate').classList.toggle('active', currentToolTab === 'generate');
+            document.getElementById('tabLrcTool').classList.toggle('active', currentToolTab === 'lrc');
+            document.getElementById('generatePanel').style.display = currentToolTab === 'generate' ? 'block' : 'none';
+            document.getElementById('lrcToolPanel').style.display = currentToolTab === 'lrc' ? 'block' : 'none';
+            statusDiv.className = 'status';
+            statusDiv.textContent = '';
+        }
+
         function toggleAudio() {
             const panel = document.getElementById('audioPanel');
             const arrow = document.getElementById('audioArrow');
@@ -725,6 +832,12 @@
         const formatSelect  = document.getElementById('format');
         const generateBtn   = document.getElementById('generateBtn');
         const lyricsBtn     = document.getElementById('lyricsBtn');
+        const analyzeLrcBtn = document.getElementById('analyzeLrcBtn');
+        const downloadLrcBtn = document.getElementById('downloadLrcBtn');
+        const downloadJsonBtn = document.getElementById('downloadJsonBtn');
+        const lrcAudioUrlInput = document.getElementById('lrcAudioUrl');
+        const lrcAudioFileInput = document.getElementById('lrcAudioFile');
+        const lrcOutput = document.getElementById('lrcOutput');
         const statusDiv     = document.getElementById('status');
         const INFLIGHT_KEY  = 'musicgen_inflight';
 
@@ -743,6 +856,7 @@
         function setBusy(busy) {
             generateBtn.disabled = busy;
             lyricsBtn.disabled = busy;
+            analyzeLrcBtn.disabled = busy;
         }
 
         if (generationInFlight) {
@@ -1122,11 +1236,102 @@
             return lines.join('\n');
         }
 
-        async function fetchStructuredLyrics(audioUrl) {
-            return await callApi('https://api.minimaxi.com/v1/music_cover_preprocess', {
+        async function fetchStructuredLyrics(audioInput) {
+            const payload = {
                 model: 'music-cover',
-                audio_url: audioUrl
+                ...(typeof audioInput === 'string'
+                    ? { audio_url: audioInput }
+                    : audioInput)
+            };
+            return await callApi('https://api.minimaxi.com/v1/music_cover_preprocess', payload);
+        }
+
+        function buildLrcFromPreprocess(preData, promptHint = '') {
+            const entry = {
+                prompt: promptHint || 'Uploaded Audio',
+                lyrics: preData?.lyrics || '',
+                formattedLyrics: preData?.formatted_lyrics || '',
+                structureResult: preData?.structure_result || '',
+                audioDuration: Number(preData?.audio_duration || 0)
+            };
+            return buildSimpleLrc(entry);
+        }
+
+        function readFileAsBase64(file) {
+            return new Promise((resolve, reject) => {
+                const reader = new FileReader();
+                reader.onload = () => {
+                    const result = String(reader.result || '');
+                    const base64 = result.includes(',') ? result.split(',')[1] : result;
+                    resolve(base64);
+                };
+                reader.onerror = () => reject(new Error('Failed to read file'));
+                reader.readAsDataURL(file);
             });
+        }
+
+        async function analyzeStandaloneLrc() {
+            if (!realApiKey) {
+                setFieldError(apiKeyInput, true);
+                showStatus(t('errNoApiKey'), 'error');
+                return;
+            }
+
+            const audioUrl = lrcAudioUrlInput.value.trim();
+            const file = lrcAudioFileInput.files?.[0] || null;
+            if (!audioUrl && !file) {
+                showStatus(t('errNeedAudioInput'), 'error');
+                return;
+            }
+
+            setBusy(true);
+            showLoadingStatus(t('loadingLrc'));
+            lrcOutput.value = '';
+
+            try {
+                let pre;
+                if (file) {
+                    const base64 = await readFileAsBase64(file);
+                    pre = await fetchStructuredLyrics({ audio_base64: base64 });
+                } else {
+                    pre = await fetchStructuredLyrics(audioUrl);
+                }
+
+                if (!pre.success) {
+                    if (pre.status === 401) {
+                        setFieldError(apiKeyInput, true);
+                        showStatus(t('errInvalidKey'), 'error');
+                    } else {
+                        const err = pre.status === 0
+                            ? t('errRequestInterrupted')
+                            : getApiErrorInfo(pre.data, pre.error).detail;
+                        showStatus(t('error') + err, 'error');
+                    }
+                    return;
+                }
+
+                const apiError = getApiErrorInfo(pre.data);
+                if (apiError.statusCode && apiError.statusCode !== 0) {
+                    showStatus(t('failed') + apiError.detail, 'error');
+                    return;
+                }
+
+                latestLrcStructure = pre.data || {};
+                latestLrcText = buildLrcFromPreprocess(pre.data, audioUrl || file?.name || 'Uploaded Audio');
+                if (!latestLrcText.trim()) {
+                    showStatus(t('historyLrcUnavailable'), 'info');
+                    return;
+                }
+
+                lrcOutput.value = latestLrcText;
+                downloadLrcBtn.disabled = false;
+                downloadJsonBtn.disabled = false;
+                showStatus(t('successLrcReady'), 'success');
+            } catch (err) {
+                showStatus(t('error') + (err?.message || String(err)), 'error');
+            } finally {
+                setBusy(false);
+            }
         }
 
         function downloadTextFile(text, filename, mime = 'text/plain;charset=utf-8') {
@@ -1293,8 +1498,26 @@
             localStorage.setItem('musicgen_lyrics', lyricsInput.value);
         });
 
+        lrcAudioUrlInput.addEventListener('input', () => {
+            latestLrcText = '';
+            latestLrcStructure = null;
+            lrcOutput.value = '';
+            downloadLrcBtn.disabled = true;
+            downloadJsonBtn.disabled = true;
+        });
+
+        lrcAudioFileInput.addEventListener('change', () => {
+            latestLrcText = '';
+            latestLrcStructure = null;
+            lrcOutput.value = '';
+            downloadLrcBtn.disabled = true;
+            downloadJsonBtn.disabled = true;
+        });
+
         const savedMode = localStorage.getItem('musicgen_mode');
         if (savedMode) setMode(savedMode);
+
+        setToolTab(currentToolTab);
 
         generateBtn.addEventListener('click', async () => {
             if (!realApiKey) {
@@ -1439,6 +1662,20 @@
                 const errMsg = result.data?.base_resp?.err_msg || result.error;
                 showStatus((result.success ? t('failed') : t('error')) + errMsg, 'error');
             }
+        });
+
+        analyzeLrcBtn.addEventListener('click', analyzeStandaloneLrc);
+
+        downloadLrcBtn.addEventListener('click', () => {
+            if (!latestLrcText.trim()) return;
+            const baseName = `lrc_${new Date().toISOString().slice(0,19).replace(/[-:T]/g,'')}`;
+            downloadTextFile(latestLrcText, `${baseName}.lrc`, 'text/plain;charset=utf-8');
+        });
+
+        downloadJsonBtn.addEventListener('click', () => {
+            if (!latestLrcStructure) return;
+            const baseName = `timeline_${new Date().toISOString().slice(0,19).replace(/[-:T]/g,'')}`;
+            downloadTextFile(JSON.stringify(latestLrcStructure, null, 2), `${baseName}.json`, 'application/json;charset=utf-8');
         });
 
         applyLocale();
