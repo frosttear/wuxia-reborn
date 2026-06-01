@@ -1530,6 +1530,11 @@
             setTimeout(() => URL.revokeObjectURL(blobUrl), 10000);
         }
 
+        function downloadLrcFile(text, filename) {
+            // Use a generic binary mime type so browsers keep the explicit .lrc extension.
+            downloadTextFile(text, filename, 'application/octet-stream');
+        }
+
         async function downloadLrcEntry(index, btn) {
             const entries = loadHistory();
             let entry = entries[index];
@@ -1563,7 +1568,7 @@
                     return;
                 }
                 const baseName = `song_${new Date(entry.timestamp).toISOString().slice(0,19).replace(/[-:T]/g,'')}`;
-                downloadTextFile(lrc, `${baseName}.lrc`, 'text/plain;charset=utf-8');
+                downloadLrcFile(lrc, `${baseName}.lrc`);
             } finally {
                 btn.disabled = false;
                 btn.textContent = orig;
@@ -1857,7 +1862,7 @@
         downloadLrcBtn.addEventListener('click', () => {
             if (!latestLrcText.trim()) return;
             const baseName = latestLrcBaseName || `lrc_${new Date().toISOString().slice(0,19).replace(/[-:T]/g,'')}`;
-            downloadTextFile(latestLrcText, `${baseName}.lrc`, 'text/plain;charset=utf-8');
+            downloadLrcFile(latestLrcText, `${baseName}.lrc`);
         });
 
         downloadJsonBtn.addEventListener('click', () => {
