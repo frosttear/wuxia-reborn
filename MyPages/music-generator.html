@@ -345,6 +345,54 @@
             border: 1px solid rgba(124, 77, 255, 0.2);
         }
 
+        .progress-box {
+            margin-top: 12px;
+            padding: 10px 12px;
+            border-radius: 8px;
+            border: 1px solid rgba(124, 77, 255, 0.2);
+            background: rgba(124, 77, 255, 0.06);
+        }
+
+        .progress-text {
+            font-size: 12px;
+            color: #6030cc;
+            margin-bottom: 7px;
+            font-weight: 600;
+            display: flex;
+            justify-content: space-between;
+            gap: 8px;
+        }
+
+        .progress-bar {
+            width: 100%;
+            height: 10px;
+            border-radius: 999px;
+            background: #e7e2ff;
+            overflow: hidden;
+        }
+
+        .progress-fill {
+            width: 0%;
+            height: 100%;
+            background: linear-gradient(135deg, #e94560 0%, #7c4dff 100%);
+            transition: width 0.2s ease;
+        }
+
+        .progress-fill.processing {
+            background-size: 26px 26px;
+            background-image: linear-gradient(
+                135deg,
+                rgba(255, 255, 255, 0.25) 25%,
+                transparent 25%,
+                transparent 50%,
+                rgba(255, 255, 255, 0.25) 50%,
+                rgba(255, 255, 255, 0.25) 75%,
+                transparent 75%,
+                transparent
+            ), linear-gradient(135deg, #e94560 0%, #7c4dff 100%);
+            animation: progressStripe 0.8s linear infinite;
+        }
+
         .spinner {
             width: 13px;
             height: 13px;
@@ -357,6 +405,11 @@
 
         @keyframes spin {
             to { transform: rotate(360deg); }
+        }
+
+        @keyframes progressStripe {
+            from { background-position: 0 0, 0 0; }
+            to { background-position: 26px 0, 0 0; }
         }
 
         /* History */
@@ -601,8 +654,6 @@
 
         <button class="generate-btn" id="generateBtn" data-i18n="generateBtn">Generate Music</button>
 
-        <div class="status" id="status"></div>
-
         <div class="history-section" id="historySection" style="display:none">
             <div class="history-header">
                 <span class="history-title" data-i18n="historyLabel">Generation History</span>
@@ -629,6 +680,16 @@
 
             <button class="generate-btn" id="analyzeLrcBtn" data-i18n="analyzeLrcBtn" style="margin-top:0">Generate LRC</button>
 
+            <div class="progress-box" id="lrcProgressBox" style="display:none">
+                <div class="progress-text">
+                    <span id="lrcProgressLabel">-</span>
+                    <span id="lrcProgressPercent">0%</span>
+                </div>
+                <div class="progress-bar">
+                    <div class="progress-fill" id="lrcProgressFill"></div>
+                </div>
+            </div>
+
             <div class="form-group" style="margin-top:16px">
                 <label for="lrcOutput" data-i18n="lrcOutputLabel">LRC Preview:</label>
                 <textarea id="lrcOutput" readonly style="min-height:180px" data-i18n-placeholder="lrcOutputPlaceholder" placeholder="LRC content will appear here"></textarea>
@@ -639,6 +700,8 @@
                 <button class="history-action-btn btn-download" id="downloadJsonBtn" disabled data-i18n="downloadTimelineJson">Download Timeline JSON</button>
             </div>
         </div>
+
+        <div class="status" id="status"></div>
     </div>
 
     <script>
@@ -699,7 +762,10 @@
                 downloadTimelineJson: 'Download Timeline JSON',
                 errNeedAudioInput: 'Please provide an audio URL or upload an audio file.',
                 loadingLrc: 'Analyzing audio and building LRC...',
-                successLrcReady: 'LRC is ready. You can download LRC or timeline JSON.'
+                successLrcReady: 'LRC is ready. You can download LRC or timeline JSON.',
+                lrcProgressReading: 'Reading local file',
+                lrcProgressUploading: 'Uploading file',
+                lrcProgressProcessing: 'Processing on server'
             },
             zh: {
                 title: '音乐生成器',
@@ -757,7 +823,10 @@
                 downloadTimelineJson: '下载时间轴 JSON',
                 errNeedAudioInput: '请提供音频链接或上传音频文件。',
                 loadingLrc: '正在分析音频并生成 LRC...',
-                successLrcReady: 'LRC 已生成，可下载 LRC 或时间轴 JSON。'
+                successLrcReady: 'LRC 已生成，可下载 LRC 或时间轴 JSON。',
+                lrcProgressReading: '正在读取本地文件',
+                lrcProgressUploading: '正在上传文件',
+                lrcProgressProcessing: '服务器处理中'
             }
         };
 
@@ -838,6 +907,10 @@
         const lrcAudioUrlInput = document.getElementById('lrcAudioUrl');
         const lrcAudioFileInput = document.getElementById('lrcAudioFile');
         const lrcOutput = document.getElementById('lrcOutput');
+        const lrcProgressBox = document.getElementById('lrcProgressBox');
+        const lrcProgressLabel = document.getElementById('lrcProgressLabel');
+        const lrcProgressPercent = document.getElementById('lrcProgressPercent');
+        const lrcProgressFill = document.getElementById('lrcProgressFill');
         const statusDiv     = document.getElementById('status');
         const INFLIGHT_KEY  = 'musicgen_inflight';
 
@@ -857,6 +930,23 @@
             generateBtn.disabled = busy;
             lyricsBtn.disabled = busy;
             analyzeLrcBtn.disabled = busy;
+        }
+
+        function resetLrcProgress() {
+            lrcProgressBox.style.display = 'none';
+            lrcProgressLabel.textContent = '-';
+            lrcProgressPercent.textContent = '0%';
+            lrcProgressFill.style.width = '0%';
+            lrcProgressFill.classList.remove('processing');
+        }
+
+        function setLrcProgress(percent, label, processing = false) {
+            const safePercent = Math.max(0, Math.min(100, Number(percent) || 0));
+            lrcProgressBox.style.display = 'block';
+            lrcProgressLabel.textContent = label;
+            lrcProgressPercent.textContent = `${safePercent}%`;
+            lrcProgressFill.style.width = `${safePercent}%`;
+            lrcProgressFill.classList.toggle('processing', processing);
         }
 
         if (generationInFlight) {
@@ -1236,13 +1326,62 @@
             return lines.join('\n');
         }
 
-        async function fetchStructuredLyrics(audioInput) {
+        function callApiWithXhr(endpoint, payload, options = {}) {
+            const onUploadProgress = options.onUploadProgress;
+            return new Promise((resolve) => {
+                const xhr = new XMLHttpRequest();
+                xhr.open('POST', endpoint, true);
+                xhr.setRequestHeader('Authorization', `Bearer ${realApiKey}`);
+                xhr.setRequestHeader('Content-Type', 'application/json');
+                xhr.responseType = 'text';
+
+                if (typeof onUploadProgress === 'function' && xhr.upload) {
+                    xhr.upload.onprogress = (event) => {
+                        if (event.lengthComputable) {
+                            onUploadProgress(event.loaded, event.total);
+                        }
+                    };
+                }
+
+                xhr.onerror = () => {
+                    resolve({ success: false, status: 0, error: 'Network error' });
+                };
+
+                xhr.onload = () => {
+                    let data = {};
+                    try {
+                        data = xhr.responseText ? JSON.parse(xhr.responseText) : {};
+                    } catch {
+                        data = {};
+                    }
+                    resolve({
+                        success: xhr.status >= 200 && xhr.status < 300,
+                        status: xhr.status,
+                        data,
+                        error: xhr.status >= 200 && xhr.status < 300 ? null : `HTTP ${xhr.status}`
+                    });
+                };
+
+                try {
+                    xhr.send(JSON.stringify(payload));
+                } catch (err) {
+                    resolve({ success: false, status: 0, error: err.message || 'Send failed' });
+                }
+            });
+        }
+
+        async function fetchStructuredLyrics(audioInput, options = {}) {
             const payload = {
                 model: 'music-cover',
                 ...(typeof audioInput === 'string'
                     ? { audio_url: audioInput }
                     : audioInput)
             };
+            if (typeof options.onUploadProgress === 'function') {
+                return await callApiWithXhr('https://api.minimaxi.com/v1/music_cover_preprocess', payload, {
+                    onUploadProgress: options.onUploadProgress
+                });
+            }
             return await callApi('https://api.minimaxi.com/v1/music_cover_preprocess', payload);
         }
 
@@ -1257,9 +1396,14 @@
             return buildSimpleLrc(entry);
         }
 
-        function readFileAsBase64(file) {
+        function readFileAsBase64(file, onProgress) {
             return new Promise((resolve, reject) => {
                 const reader = new FileReader();
+                reader.onprogress = (event) => {
+                    if (typeof onProgress === 'function' && event.lengthComputable) {
+                        onProgress(event.loaded, event.total);
+                    }
+                };
                 reader.onload = () => {
                     const result = String(reader.result || '');
                     const base64 = result.includes(',') ? result.split(',')[1] : result;
@@ -1287,13 +1431,32 @@
             setBusy(true);
             showLoadingStatus(t('loadingLrc'));
             lrcOutput.value = '';
+            resetLrcProgress();
 
             try {
                 let pre;
                 if (file) {
-                    const base64 = await readFileAsBase64(file);
-                    pre = await fetchStructuredLyrics({ audio_base64: base64 });
+                    setLrcProgress(1, t('lrcProgressReading'));
+                    const base64 = await readFileAsBase64(file, (loaded, total) => {
+                        const pct = Math.max(1, Math.min(30, Math.floor((loaded / total) * 30)));
+                        setLrcProgress(pct, t('lrcProgressReading'));
+                    });
+
+                    setLrcProgress(35, t('lrcProgressUploading'));
+                    pre = await fetchStructuredLyrics({ audio_base64: base64 }, {
+                        onUploadProgress: (loaded, total) => {
+                            const ratio = total > 0 ? (loaded / total) : 0;
+                            if (ratio >= 1) {
+                                setLrcProgress(92, t('lrcProgressProcessing'), true);
+                                return;
+                            }
+                            const pct = 35 + Math.floor(ratio * 55);
+                            setLrcProgress(Math.max(35, Math.min(90, pct)), t('lrcProgressUploading'));
+                        }
+                    });
+                    setLrcProgress(92, t('lrcProgressProcessing'), true);
                 } else {
+                    setLrcProgress(92, t('lrcProgressProcessing'), true);
                     pre = await fetchStructuredLyrics(audioUrl);
                 }
 
@@ -1326,6 +1489,7 @@
                 lrcOutput.value = latestLrcText;
                 downloadLrcBtn.disabled = false;
                 downloadJsonBtn.disabled = false;
+                setLrcProgress(100, t('successLrcReady'));
                 showStatus(t('successLrcReady'), 'success');
             } catch (err) {
                 showStatus(t('error') + (err?.message || String(err)), 'error');
@@ -1504,6 +1668,7 @@
             lrcOutput.value = '';
             downloadLrcBtn.disabled = true;
             downloadJsonBtn.disabled = true;
+            resetLrcProgress();
         });
 
         lrcAudioFileInput.addEventListener('change', () => {
@@ -1512,6 +1677,7 @@
             lrcOutput.value = '';
             downloadLrcBtn.disabled = true;
             downloadJsonBtn.disabled = true;
+            resetLrcProgress();
         });
 
         const savedMode = localStorage.getItem('musicgen_mode');
