@@ -447,6 +447,11 @@
 
         .history-action-btn:hover { opacity: 0.75; }
 
+        .history-action-btn:disabled {
+            opacity: 0.45;
+            cursor: not-allowed;
+        }
+
         .btn-download {
             border-color: #7c4dff;
             color: #7c4dff;
@@ -588,6 +593,7 @@
                 copyLyricsBtn: 'Copy Lyrics',
                 errNoApiKey: 'Please enter API key',
                 errInvalidKey: 'API key invalid or unauthorized',
+                errRequestInterrupted: 'Request interrupted by browser or network. Please retry.',
                 errNoPrompt: 'Please enter style prompt',
                 errNoLyrics: 'Please generate or enter lyrics first',
                 loadingMusic: 'Generating music...',
@@ -603,12 +609,16 @@
                 historyClear: 'Clear All',
                 historyEmpty: 'No history yet',
                 historyDownload: 'Download',
+                historyDownloadLrc: 'Download LRC',
                 historyShare: 'Copy Link',
                 historyCopied: 'Copied!',
                 historyExpired: 'Expired',
                 historyClearExpired: 'Clear Expired',
                 historyLoadedPrompt: 'Loaded prompt from history.',
-                historyLoadedPromptLyrics: 'Loaded prompt and lyrics from history.'
+                historyLoadedPromptLyrics: 'Loaded prompt and lyrics from history.',
+                historyLrcUnavailable: 'LRC not available for this song yet.',
+                historyPreparingLrc: 'Preparing LRC...',
+                historyLrcPrepareFailed: 'Failed to prepare LRC: '
             },
             zh: {
                 title: '音乐生成器',
@@ -629,6 +639,7 @@
                 copyPromptBtn: '复制提示词',
                 errNoApiKey: '请输入 API 密钥',
                 errInvalidKey: 'API 密钥无效或未授权',
+                errRequestInterrupted: '请求被浏览器或网络中断，请重试。',
                 errNoPrompt: '请输入风格描述',
                 errNoLyrics: '请先生成或输入歌词',
                 loadingMusic: '正在生成音乐...',
@@ -644,12 +655,16 @@
                 historyClear: '清空',
                 historyEmpty: '暂无历史记录',
                 historyDownload: '下载',
+                historyDownloadLrc: '下载 LRC',
                 historyShare: '复制链接',
                 historyCopied: '已复制！',
                 historyExpired: '已过期',
                 historyClearExpired: '清除过期',
                 historyLoadedPrompt: '已从历史记录载入提示词。',
-                historyLoadedPromptLyrics: '已从历史记录载入提示词和歌词。'
+                historyLoadedPromptLyrics: '已从历史记录载入提示词和歌词。',
+                historyLrcUnavailable: '该歌曲暂时没有可下载的 LRC。',
+                historyPreparingLrc: '正在准备 LRC...',
+                historyLrcPrepareFailed: 'LRC 准备失败：'
             }
         };
 
@@ -767,8 +782,31 @@
             }
         }
 
+        function getApiErrorInfo(data, fallback = 'Unknown error') {
+            const base = data?.base_resp || {};
+            const statusCode = base.status_code;
+            const statusMsg = base.status_msg || base.err_msg;
+            const traceId = data?.trace_id || data?.data?.trace_id;
+            const message = statusMsg || fallback;
+            return {
+                statusCode,
+                traceId,
+                message,
+                detail: traceId ? `${message} (trace_id: ${traceId})` : message
+            };
+        }
+
         function sleep(ms) {
             return new Promise(resolve => setTimeout(resolve, ms));
+        }
+
+        async function callMusicGenerationWithRetry(payload) {
+            let result = await callApi('https://api.minimaxi.com/v1/music_generation', payload);
+            if (!result.success && result.status === 0) {
+                await sleep(1200);
+                result = await callApi('https://api.minimaxi.com/v1/music_generation', payload);
+            }
+            return result;
         }
 
         // ── History ──────────────────────────────────────────────
@@ -786,10 +824,32 @@
 
         function addToHistory(url, prompt, format, lyrics = '') {
             const entries = loadHistory();
-            entries.unshift({ url, prompt, format, lyrics, timestamp: new Date().toISOString() });
+            const id = `h_${Date.now()}_${Math.random().toString(36).slice(2, 8)}`;
+            entries.unshift({
+                id,
+                url,
+                prompt,
+                format,
+                lyrics,
+                formattedLyrics: '',
+                structureResult: '',
+                audioDuration: 0,
+                timestamp: new Date().toISOString()
+            });
             if (entries.length > HISTORY_MAX) entries.length = HISTORY_MAX;
             saveHistory(entries);
             renderHistory();
+            return id;
+        }
+
+        function updateHistoryEntryById(id, patch) {
+            const entries = loadHistory();
+            const idx = entries.findIndex(e => e.id === id);
+            if (idx < 0) return false;
+            entries[idx] = { ...entries[idx], ...patch };
+            saveHistory(entries);
+            renderHistory();
+            return true;
         }
 
         function loadHistoryEntry(index, event) {
@@ -971,6 +1031,156 @@
             return result;
         }
 
+        function toLrcTimestamp(seconds) {
+            const s = Number(seconds || 0);
+            const mm = String(Math.floor(Math.max(0, s) / 60)).padStart(2, '0');
+            const ss = String(Math.floor(Math.max(0, s) % 60)).padStart(2, '0');
+            const xx = String(Math.floor((Math.max(0, s) % 1) * 100)).padStart(2, '0');
+            return `${mm}:${ss}.${xx}`;
+        }
+
+        function normalizeSectionLabel(label) {
+            return String(label || '')
+                .toLowerCase()
+                .replace(/\[[^\]]*\]/g, '')
+                .replace(/\d+/g, '')
+                .replace(/[^a-z]/g, '');
+        }
+
+        function parseLyricsBlocks(formattedLyrics, fallbackLyrics) {
+            const source = (formattedLyrics || fallbackLyrics || '').trim();
+            if (!source) return [];
+            const lines = source.split(/\r?\n/);
+            const blocks = [];
+            let current = null;
+
+            for (const raw of lines) {
+                const line = raw.trim();
+                if (!line) continue;
+                const tag = line.match(/^\[(.+?)\]$/);
+                if (tag) {
+                    if (current && current.lines.length) blocks.push(current);
+                    current = { label: normalizeSectionLabel(tag[1]), lines: [] };
+                } else {
+                    if (!current) current = { label: 'verse', lines: [] };
+                    current.lines.push(line);
+                }
+            }
+            if (current && current.lines.length) blocks.push(current);
+            return blocks;
+        }
+
+        function buildSimpleLrc(entry) {
+            let structure = entry.structureResult;
+            if (typeof structure === 'string') {
+                try {
+                    structure = JSON.parse(structure);
+                } catch {
+                    structure = null;
+                }
+            }
+
+            const segments = Array.isArray(structure?.segments)
+                ? structure.segments
+                    .map(seg => ({
+                        start: Number(seg.start || 0),
+                        label: normalizeSectionLabel(seg.label)
+                    }))
+                    .sort((a, b) => a.start - b.start)
+                : [];
+
+            const blocks = parseLyricsBlocks(entry.formattedLyrics, entry.lyrics);
+            if (!blocks.length) return '';
+
+            const used = new Array(segments.length).fill(false);
+            const lines = [
+                `[ti:${entry.prompt || 'Generated Song'}]`,
+                '[ar:MiniMax Music Generator]',
+                '[by:music-generator]'
+            ];
+
+            if (!segments.length) {
+                const total = Number(entry.audioDuration || 0);
+                const step = blocks.length > 0
+                    ? Math.max(6, total > 0 ? total / blocks.length : 10)
+                    : 10;
+                for (let i = 0; i < blocks.length; i++) {
+                    const stamp = toLrcTimestamp(i * step);
+                    lines.push(`[${stamp}]${blocks[i].lines.join(' / ')}`);
+                }
+                return lines.join('\n');
+            }
+
+            for (const block of blocks) {
+                let idx = segments.findIndex((seg, i) => !used[i] && (seg.label === block.label || seg.label.startsWith(block.label) || block.label.startsWith(seg.label)));
+                if (idx < 0) idx = used.findIndex(v => !v);
+                if (idx < 0) break;
+                used[idx] = true;
+                lines.push(`[${toLrcTimestamp(segments[idx].start)}]${block.lines.join(' / ')}`);
+            }
+
+            return lines.join('\n');
+        }
+
+        async function fetchStructuredLyrics(audioUrl) {
+            return await callApi('https://api.minimaxi.com/v1/music_cover_preprocess', {
+                model: 'music-cover',
+                audio_url: audioUrl
+            });
+        }
+
+        function downloadTextFile(text, filename, mime = 'text/plain;charset=utf-8') {
+            const blob = new Blob([text], { type: mime });
+            const blobUrl = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = blobUrl;
+            a.download = filename;
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+            setTimeout(() => URL.revokeObjectURL(blobUrl), 10000);
+        }
+
+        async function downloadLrcEntry(index, btn) {
+            const entries = loadHistory();
+            let entry = entries[index];
+            if (!entry) return;
+
+            const orig = btn.textContent;
+            btn.disabled = true;
+            btn.textContent = '...';
+            try {
+                const hasPreprocessData = !!(entry.structureResult || entry.formattedLyrics);
+                if (!hasPreprocessData && entry.url) {
+                    showStatus(t('historyPreparingLrc'), 'info');
+                    const pre = await fetchStructuredLyrics(entry.url);
+                    if (pre.success) {
+                        updateHistoryEntryById(entry.id, {
+                            formattedLyrics: pre.data?.formatted_lyrics || '',
+                            structureResult: pre.data?.structure_result || '',
+                            audioDuration: Number(pre.data?.audio_duration || 0)
+                        });
+                        const refreshedEntries = loadHistory();
+                        entry = refreshedEntries.find(e => e.id === entry.id) || entry;
+                    } else {
+                        const preErr = getApiErrorInfo(pre.data, pre.error).detail;
+                        showStatus(t('historyLrcPrepareFailed') + preErr, 'error');
+                    }
+                }
+
+                const lrc = buildSimpleLrc(entry);
+                if (!lrc.trim()) {
+                    showStatus(t('historyLrcUnavailable'), 'info');
+                    return;
+                }
+                const baseName = `song_${new Date(entry.timestamp).toISOString().slice(0,19).replace(/[-:T]/g,'')}`;
+                downloadTextFile(lrc, `${baseName}.lrc`, 'text/plain;charset=utf-8');
+            } finally {
+                btn.disabled = false;
+                btn.textContent = orig;
+            }
+        }
+
         async function downloadEntry(url, filename, btn) {
             const orig = btn.innerHTML;
             btn.disabled = true;
@@ -1020,6 +1230,9 @@
             const now = Date.now();
             list.innerHTML = entries.map((e, i) => {
                 const expired = (now - new Date(e.timestamp).getTime()) > 24 * 3600 * 1000;
+                const canBuildLrc = !!(e.structureResult || e.formattedLyrics || e.lyrics);
+                const canFetchLrc = !expired;
+                const canDownloadLrc = canBuildLrc || canFetchLrc;
                 return `
                 <div class="history-item${expired ? ' expired' : ''}" data-history-index="${i}">
                     <div class="history-item-meta">
@@ -1030,6 +1243,7 @@
                     <audio controls src="${e.url}"></audio>
                     <div class="history-item-actions">
                         <button class="history-action-btn btn-download" onclick="downloadEntry('${e.url}','song_${new Date(e.timestamp).toISOString().slice(0,19).replace(/[-:T]/g,'')}.${e.format||'mp3'}',this)">${t('historyDownload')}</button>
+                        <button class="history-action-btn btn-download" ${canDownloadLrc ? '' : 'disabled'} onclick="downloadLrcEntry(${i},this)">${t('historyDownloadLrc')}</button>
                         <button class="history-action-btn btn-share" onclick="copyUrl('${e.url}',this)">${t('historyShare')}</button>
                     </div>
                 </div>`;
@@ -1116,7 +1330,7 @@
                 payload.lyrics = lyricsInput.value.trim();
             }
 
-            let result = await callApi('https://api.minimaxi.com/v1/music_generation', payload);
+            let result = await callMusicGenerationWithRetry(payload);
             
             if (!result.success) {
                 generationInFlight = false;
@@ -1126,8 +1340,17 @@
                     setFieldError(apiKeyInput, true);
                     showStatus(t('errInvalidKey'), 'error');
                 } else {
-                    showStatus(t('error') + (result.data?.base_resp?.err_msg || result.error), 'error');
+                    const finalErr = result.status === 0
+                        ? t('errRequestInterrupted')
+                        : getApiErrorInfo(result.data, result.error).detail;
+                    showStatus(t('error') + finalErr, 'error');
                 }
+                console.warn('[music_generation] request failed', {
+                    status: result.status,
+                    error: result.error,
+                    data: result.data,
+                    hidden: document.hidden
+                });
                 return;
             }
 
@@ -1135,6 +1358,17 @@
             generationInFlight = false;
             localStorage.removeItem(INFLIGHT_KEY);
             setBusy(false);
+
+            const apiError = getApiErrorInfo(data);
+            if (apiError.statusCode && apiError.statusCode !== 0) {
+                showStatus(t('failed') + apiError.detail, 'error');
+                console.warn('[music_generation] api returned error', {
+                    statusCode: apiError.statusCode,
+                    traceId: apiError.traceId,
+                    data
+                });
+                return;
+            }
 
             if (data?.data?.status === 2 && data?.data?.audio) {
                 const audioUrl = data.data.audio;
@@ -1146,12 +1380,27 @@
                 if (!lyricsForHistory && data.data?.lyrics) {
                     lyricsForHistory = data.data.lyrics;
                 }
-                addToHistory(audioUrl, promptInput.value.trim(), fmt, lyricsForHistory);
+                const entryId = addToHistory(audioUrl, promptInput.value.trim(), fmt, lyricsForHistory);
+
+                // Best-effort enrichment: parse generated audio for structured lyrics/timeline.
+                fetchStructuredLyrics(audioUrl).then(pre => {
+                    if (pre.success) {
+                        updateHistoryEntryById(entryId, {
+                            formattedLyrics: pre.data?.formatted_lyrics || '',
+                            structureResult: pre.data?.structure_result || ''
+                        });
+                    } else {
+                        console.warn('[music_cover_preprocess] failed', pre);
+                    }
+                }).catch(err => {
+                    console.warn('[music_cover_preprocess] failed', err);
+                });
+
                 showStatus(t('successMusic'), 'success');
             } else if (data?.data?.status === 1) {
                 showStatus(t('inProgress'), 'info');
             } else {
-                showStatus(t('failed') + (data?.base_resp?.err_msg || 'Unknown error'), 'error');
+                showStatus(t('failed') + getApiErrorInfo(data).detail, 'error');
             }
         });
 
