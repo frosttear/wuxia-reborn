@@ -835,6 +835,7 @@
         let currentToolTab = localStorage.getItem('musicgen_tooltab') || 'generate';
         let latestLrcText = '';
         let latestLrcStructure = null;
+        let latestLrcBaseName = '';
 
         function t(key) {
             return translations[locale][key] || translations.en[key] || key;
@@ -947,6 +948,23 @@
             lrcProgressPercent.textContent = `${safePercent}%`;
             lrcProgressFill.style.width = `${safePercent}%`;
             lrcProgressFill.classList.toggle('processing', processing);
+        }
+
+        function sanitizeFilenameBase(name) {
+            const trimmed = String(name || '').trim();
+            const noExt = trimmed.replace(/\.[^.]+$/, '');
+            const safe = noExt.replace(/[\\/:*?"<>|]/g, '_').replace(/\s+/g, ' ').trim();
+            return safe || `lrc_${new Date().toISOString().slice(0,19).replace(/[-:T]/g,'')}`;
+        }
+
+        function inferBaseNameFromUrl(url) {
+            try {
+                const u = new URL(url);
+                const lastPart = decodeURIComponent(u.pathname.split('/').pop() || '');
+                return sanitizeFilenameBase(lastPart || 'audio');
+            } catch {
+                return sanitizeFilenameBase('audio');
+            }
         }
 
         if (generationInFlight) {
@@ -1436,6 +1454,7 @@
             try {
                 let pre;
                 if (file) {
+                    latestLrcBaseName = sanitizeFilenameBase(file.name);
                     setLrcProgress(1, t('lrcProgressReading'));
                     const base64 = await readFileAsBase64(file, (loaded, total) => {
                         const pct = Math.max(1, Math.min(30, Math.floor((loaded / total) * 30)));
@@ -1456,6 +1475,7 @@
                     });
                     setLrcProgress(92, t('lrcProgressProcessing'), true);
                 } else {
+                    latestLrcBaseName = inferBaseNameFromUrl(audioUrl);
                     setLrcProgress(92, t('lrcProgressProcessing'), true);
                     pre = await fetchStructuredLyrics(audioUrl);
                 }
@@ -1665,6 +1685,7 @@
         lrcAudioUrlInput.addEventListener('input', () => {
             latestLrcText = '';
             latestLrcStructure = null;
+            latestLrcBaseName = '';
             lrcOutput.value = '';
             downloadLrcBtn.disabled = true;
             downloadJsonBtn.disabled = true;
@@ -1674,6 +1695,7 @@
         lrcAudioFileInput.addEventListener('change', () => {
             latestLrcText = '';
             latestLrcStructure = null;
+            latestLrcBaseName = '';
             lrcOutput.value = '';
             downloadLrcBtn.disabled = true;
             downloadJsonBtn.disabled = true;
@@ -1834,14 +1856,14 @@
 
         downloadLrcBtn.addEventListener('click', () => {
             if (!latestLrcText.trim()) return;
-            const baseName = `lrc_${new Date().toISOString().slice(0,19).replace(/[-:T]/g,'')}`;
+            const baseName = latestLrcBaseName || `lrc_${new Date().toISOString().slice(0,19).replace(/[-:T]/g,'')}`;
             downloadTextFile(latestLrcText, `${baseName}.lrc`, 'text/plain;charset=utf-8');
         });
 
         downloadJsonBtn.addEventListener('click', () => {
             if (!latestLrcStructure) return;
-            const baseName = `timeline_${new Date().toISOString().slice(0,19).replace(/[-:T]/g,'')}`;
-            downloadTextFile(JSON.stringify(latestLrcStructure, null, 2), `${baseName}.json`, 'application/json;charset=utf-8');
+            const baseName = latestLrcBaseName || `timeline_${new Date().toISOString().slice(0,19).replace(/[-:T]/g,'')}`;
+            downloadTextFile(JSON.stringify(latestLrcStructure, null, 2), `${baseName}.timeline.json`, 'application/json;charset=utf-8');
         });
 
         applyLocale();
