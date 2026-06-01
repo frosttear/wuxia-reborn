@@ -1268,26 +1268,38 @@
         }
 
         function parseLyricsBlocks(formattedLyrics, fallbackLyrics) {
-            const source = (formattedLyrics || fallbackLyrics || '').trim();
-            if (!source) return [];
-            const lines = source.split(/\r?\n/);
-            const blocks = [];
-            let current = null;
+            const parseSource = (sourceText) => {
+                const source = String(sourceText || '').trim();
+                if (!source) return [];
+                const lines = source.split(/\r?\n/);
+                const blocks = [];
+                let current = null;
 
-            for (const raw of lines) {
-                const line = raw.trim();
-                if (!line) continue;
-                const tag = line.match(/^\[(.+?)\]$/);
-                if (tag) {
-                    if (current && current.lines.length) blocks.push(current);
-                    current = { label: normalizeSectionLabel(tag[1]), lines: [] };
-                } else {
-                    if (!current) current = { label: 'verse', lines: [] };
-                    current.lines.push(line);
+                for (const raw of lines) {
+                    const line = raw.trim();
+                    if (!line) continue;
+                    const tag = line.match(/^\[(.+?)\]$/);
+                    if (tag) {
+                        if (current && current.lines.length) blocks.push(current);
+                        current = { label: normalizeSectionLabel(tag[1]), lines: [] };
+                    } else {
+                        if (!current) current = { label: 'verse', lines: [] };
+                        current.lines.push(line);
+                    }
                 }
-            }
-            if (current && current.lines.length) blocks.push(current);
-            return blocks;
+                if (current && current.lines.length) blocks.push(current);
+                return blocks;
+            };
+
+            const countLines = (blocks) => blocks.reduce((n, b) => n + b.lines.length, 0);
+
+            const formattedBlocks = parseSource(formattedLyrics);
+            const fallbackBlocks = parseSource(fallbackLyrics);
+            if (!formattedBlocks.length) return fallbackBlocks;
+            if (!fallbackBlocks.length) return formattedBlocks;
+
+            // Prefer the source with more lyric lines to avoid partial/truncated LRC output.
+            return countLines(formattedBlocks) >= countLines(fallbackBlocks) ? formattedBlocks : fallbackBlocks;
         }
 
         function buildSimpleLrc(entry) {
@@ -1312,6 +1324,9 @@
             const blocks = parseLyricsBlocks(entry.formattedLyrics, entry.lyrics);
             if (!blocks.length) return '';
 
+            const flatLines = blocks.flatMap(block => block.lines.map(text => ({ label: block.label, text })));
+            if (!flatLines.length) return '';
+
             const used = new Array(segments.length).fill(false);
             const lines = [
                 `[ti:${entry.prompt || 'Generated Song'}]`,
@@ -1321,22 +1336,40 @@
 
             if (!segments.length) {
                 const total = Number(entry.audioDuration || 0);
-                const step = blocks.length > 0
-                    ? Math.max(6, total > 0 ? total / blocks.length : 10)
-                    : 10;
-                for (let i = 0; i < blocks.length; i++) {
+                const step = Math.max(2, total > 0 ? total / flatLines.length : 4);
+                for (let i = 0; i < flatLines.length; i++) {
                     const stamp = toLrcTimestamp(i * step);
-                    lines.push(`[${stamp}]${blocks[i].lines.join(' / ')}`);
+                    lines.push(`[${stamp}]${flatLines[i].text}`);
                 }
                 return lines.join('\n');
             }
 
+            const total = Number(entry.audioDuration || 0);
+            const avgLineStep = Math.max(2, total > 0 ? total / flatLines.length : 4);
+            let cursor = 0;
+
             for (const block of blocks) {
                 let idx = segments.findIndex((seg, i) => !used[i] && (seg.label === block.label || seg.label.startsWith(block.label) || block.label.startsWith(seg.label)));
                 if (idx < 0) idx = used.findIndex(v => !v);
-                if (idx < 0) break;
-                used[idx] = true;
-                lines.push(`[${toLrcTimestamp(segments[idx].start)}]${block.lines.join(' / ')}`);
+
+                let blockStart = idx >= 0 ? Number(segments[idx].start || 0) : cursor;
+                if (idx >= 0) used[idx] = true;
+                if (blockStart < cursor) blockStart = cursor;
+
+                let lineStep = avgLineStep;
+                if (idx >= 0) {
+                    const nextSeg = segments.slice(idx + 1).find(seg => Number(seg.start || 0) > blockStart);
+                    if (nextSeg) {
+                        const span = Math.max(avgLineStep * block.lines.length, Number(nextSeg.start || 0) - blockStart);
+                        lineStep = Math.max(1.5, span / Math.max(1, block.lines.length));
+                    }
+                }
+
+                for (let i = 0; i < block.lines.length; i++) {
+                    lines.push(`[${toLrcTimestamp(blockStart + i * lineStep)}]${block.lines[i]}`);
+                }
+
+                cursor = blockStart + block.lines.length * lineStep;
             }
 
             return lines.join('\n');
