@@ -1,0 +1,534 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>Animated SVG Candle</title>
+  <link rel="manifest" href="manifest.json">
+  <meta name="mobile-web-app-capable" content="yes">
+  <meta name="theme-color" content="#1a1a2e">
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; outline: none; }
+    body {
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      background: #1a1a2e;
+      font-family: Georgia, serif;
+    }
+    :focus { outline: none !important; box-shadow: none !important; }
+    ::selection { background: transparent; }
+    .candle-container { position: relative; }
+    .flame-group { transform-origin: 100px 115px; }
+    .flame-group:hover path { filter: brightness(1.15); }
+    svg { display: block; outline: none; border: none; user-select: none; -webkit-user-select: none; }
+    text { fill: #c9a96e; font-size: 14px; text-anchor: middle; }
+    .hint { fill: #666; font-size: 12px; font-family: sans-serif; }
+
+    @keyframes blowGust {
+      0%   { transform: rotate(0deg)   scaleY(1);    opacity: 1; }
+      12%  { transform: rotate(32deg)  scaleY(1.08); opacity: 1; }
+      25%  { transform: rotate(-18deg) scaleY(0.95); opacity: 0.95; }
+      38%  { transform: rotate(40deg)  scaleY(0.75); opacity: 0.85; }
+      50%  { transform: rotate(-22deg) scaleY(0.55); opacity: 0.7; }
+      62%  { transform: rotate(44deg)  scaleY(0.3);  opacity: 0.45; }
+      74%  { transform: rotate(-12deg) scaleY(0.12); opacity: 0.2; }
+      85%  { transform: rotate(38deg)  scaleY(0.04); opacity: 0.08; }
+      94%  { transform: rotate(28deg)  scaleY(0);   opacity: 0; }
+      100% { transform: rotate(30deg)  scaleY(0);   opacity: 0; }
+    }
+    .blowing { animation: blowGust 0.85s ease-in forwards; }
+
+    .btn {
+      padding: 10px 28px;
+      min-width: 160px;
+      background: transparent;
+      border: 1.5px solid #c9a96e;
+      color: #c9a96e;
+      font-family: Georgia, serif;
+      font-size: 14px;
+      letter-spacing: 2px;
+      cursor: pointer;
+      transition: background 0.25s, color 0.25s;
+      text-transform: uppercase;
+      touch-action: manipulation;
+    }
+    .btn:hover { background: #c9a96e; color: #1a1a2e; }
+    .btn:active { opacity: 0.75; }
+    .mic-btn {
+      padding: 8px 20px;
+      min-width: 160px;
+      background: transparent;
+      border: 1px solid #555;
+      color: #555;
+      font-family: Georgia, serif;
+      font-size: 12px;
+      letter-spacing: 1px;
+      cursor: pointer;
+      transition: border-color 0.25s, color 0.25s;
+      text-transform: uppercase;
+      touch-action: manipulation;
+    }
+    .mic-btn.active {
+      border-color: #c9a96e;
+      color: #c9a96e;
+    }
+    .mic-btn:hover { opacity: 0.7; }
+    .mic-error {
+      color: #c04040;
+      font-size: 10px;
+      font-family: sans-serif;
+      letter-spacing: 0.5px;
+      min-height: 14px;
+    }
+    .eye-btn {
+      background: transparent;
+      border: 1px solid #444;
+      border-radius: 4px;
+      cursor: pointer;
+      padding: 4px 6px;
+      line-height: 1;
+      position: fixed;
+      top: 16px;
+      right: 16px;
+    }
+    .eye-btn svg { width: 18px; height: 18px; display: block; }
+    .eye-btn:hover { border-color: #c9a96e; }
+
+    .controls {
+      position: relative;
+      width: 200px;
+      min-height: 190px;
+    }
+    .btn, .mic-btn, .mic-error, .vol-wrap, .refresh-btn {
+      position: absolute;
+      left: 50%;
+      transform: translateX(-50%);
+    }
+    .btn      { top: 0; }
+    .mic-btn  { top: 56px; }
+    .mic-error { top: 106px; }
+    .vol-wrap { top: 126px; }
+    .refresh-btn { top: 175px; }
+
+    .btn {
+      padding: 10px 28px;
+      min-width: 160px;
+      background: transparent;
+      border: 1.5px solid #c9a96e;
+      color: #c9a96e;
+      font-family: Georgia, serif;
+      font-size: 14px;
+      letter-spacing: 2px;
+      cursor: pointer;
+      transition: background 0.25s, color 0.25s;
+      text-transform: uppercase;
+      touch-action: manipulation;
+    }
+    .btn:hover { background: #c9a96e; color: #1a1a2e; }
+    .btn:active { opacity: 0.75; }
+    .mic-btn {
+      padding: 8px 20px;
+      min-width: 160px;
+      background: transparent;
+      border: 1px solid #555;
+      color: #555;
+      font-family: Georgia, serif;
+      font-size: 12px;
+      letter-spacing: 1px;
+      cursor: pointer;
+      transition: border-color 0.25s, color 0.25s;
+      text-transform: uppercase;
+      touch-action: manipulation;
+    }
+    .mic-btn.active {
+      border-color: #c9a96e;
+      color: #c9a96e;
+    }
+    .mic-btn:hover { opacity: 0.7; }
+    .mic-error {
+      color: #c04040;
+      font-size: 10px;
+      font-family: sans-serif;
+      letter-spacing: 0.5px;
+      white-space: nowrap;
+    }
+    .eye-btn {
+      background: transparent;
+      border: 1px solid #444;
+      border-radius: 4px;
+      cursor: pointer;
+      padding: 4px 6px;
+      line-height: 1;
+      position: fixed;
+      top: 16px;
+      right: 16px;
+    }
+    .eye-btn svg { width: 18px; height: 18px; display: block; }
+    .eye-btn:hover { border-color: #c9a96e; }
+
+    .extra-controls { display: none; }
+    .vol-wrap {
+      display: none;
+      align-items: center;
+      gap: 10px;
+    }
+    .vol-wrap.visible { display: flex; }
+    .vol-label { color: #555; font-size: 11px; font-family: sans-serif; letter-spacing: 1px; text-transform: uppercase; }
+    .vol-bar-bg {
+      width: 100px;
+      height: 4px;
+      background: #333;
+      border-radius: 2px;
+      overflow: hidden;
+    }
+    .vol-bar-fill {
+      height: 100%;
+      width: 0%;
+      background: #c9a96e;
+      border-radius: 2px;
+      transition: width 0.05s linear;
+    }
+    .vol-threshold {
+      position: absolute;
+      width: 2px;
+      height: 4px;
+      background: #c00;
+      border-radius: 1px;
+    }
+
+    .refresh-btn {
+      padding: 6px 16px;
+      background: transparent;
+      border: 1px solid #444;
+      color: #555;
+      font-family: sans-serif;
+      font-size: 10px;
+      letter-spacing: 1px;
+      cursor: pointer;
+      text-transform: uppercase;
+    }
+    .refresh-btn:hover { border-color: #888; color: #888; }
+  </style>
+</head>
+<body>
+
+<div class="candle-container" id="candleContainer">
+  <svg id="candleSvg" tabindex="-1" width="200" height="340" viewBox="0 0 200 340" xmlns="http://www.w3.org/2000/svg"></svg>
+</div>
+
+<!-- Eye button: top-right, toggles extra debug controls -->
+<button class="eye-btn" id="eyeBtn" title="Show debug">
+  <svg viewBox="0 0 24 24" fill="none" stroke="#c9a96e" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+    <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/>
+    <circle cx="12" cy="12" r="3"/>
+    <line x1="1" y1="1" x2="23" y2="23" id="eyeSlash"/>
+  </svg>
+</button>
+
+<div class="controls">
+  <button class="btn" id="btn" style="display:none">Blow out</button>
+  <button class="mic-btn" id="micBtn">Enable Mic</button>
+  <div class="mic-error" id="micError"></div>
+  <button class="refresh-btn" id="refreshBtn" style="display:none">Refresh</button>
+  <div class="vol-wrap" id="volWrap">
+    <span class="vol-label">Vol</span>
+    <div class="vol-bar-bg" style="position:relative">
+      <div class="vol-bar-fill" id="volBar"></div>
+      <div class="vol-threshold" id="volThreshold" style="left:31.4%"></div>
+    </div>
+  </div>
+</div>
+
+<script>
+  const candleSvg = document.getElementById('candleSvg');
+
+  const SVG_TEMPLATE = `
+    <defs>
+      <linearGradient id="candleGrad" x1="0%" y1="0%" x2="100%" y2="0%">
+        <stop offset="0%" style="stop-color:#e8d5b0"/>
+        <stop offset="40%" style="stop-color:#fff8e7"/>
+        <stop offset="100%" style="stop-color:#c9a96e"/>
+      </linearGradient>
+      <linearGradient id="flameGrad" x1="0%" y1="100%" x2="0%" y2="0%">
+        <stop offset="0%" style="stop-color:#ff6600"/>
+        <stop offset="40%" style="stop-color:#ffcc00"/>
+        <stop offset="100%" style="stop-color:#fff7aa"/>
+      </linearGradient>
+      <filter id="glow">
+        <feGaussianBlur stdDeviation="3" result="blur"/>
+        <feMerge>
+          <feMergeNode in="blur"/>
+          <feMergeNode in="SourceGraphic"/>
+        </feMerge>
+      </filter>
+    </defs>
+
+    <rect x="60" y="130" width="80" height="180" rx="6" ry="6" fill="url(#candleGrad)"/>
+    <path d="M65 140 Q63 160 65 180" stroke="#c9a96e" stroke-width="1.5" fill="none" opacity="0.5"/>
+    <path d="M130 140 Q132 155 130 175" stroke="#c9a96e" stroke-width="1.5" fill="none" opacity="0.5"/>
+
+    <line x1="100" y1="130" x2="100" y2="110" stroke="#333" stroke-width="2" stroke-linecap="round"/>
+
+    <g class="flame-group" id="flameGroup">
+      <ellipse cx="100" cy="90" rx="20" ry="25" fill="#ffcc00" opacity="0.3">
+        <animate attributeName="rx" values="20;22;20" dur="0.3s" repeatCount="indefinite"/>
+        <animate attributeName="ry" values="25;27;25" dur="0.3s" repeatCount="indefinite"/>
+      </ellipse>
+
+      <path id="flamePath" d="M100 115 Q88 100 92 80 Q96 60 100 45 Q104 60 108 80 Q112 100 100 115" fill="url(#flameGrad)" filter="url(#glow)">
+        <animate attributeName="d"
+          values="
+            M100 115 Q88 100 92 80 Q96 60 100 45 Q104 60 108 80 Q112 100 100 115;
+            M100 115 Q86 102 90 82 Q95 58 100 43 Q105 58 110 82 Q114 102 100 115;
+            M100 115 Q90 98 94 78 Q98 62 100 47 Q102 62 106 78 Q110 98 100 115;
+            M100 115 Q87 101 91 81 Q95 59 100 44 Q105 59 109 81 Q113 101 100 115;
+            M100 115 Q88 100 92 80 Q96 60 100 45 Q104 60 108 80 Q112 100 100 115"
+          dur="0.4s" repeatCount="indefinite"/>
+        <animate attributeName="d"
+          values="
+            M100 115 Q88 100 92 80 Q96 60 100 45 Q104 60 108 80 Q112 100 100 115;
+            M100 115 Q89 101 93 81 Q97 61 100 46 Q103 61 107 81 Q111 101 100 115;
+            M100 115 Q88 100 92 80 Q96 60 100 45 Q104 60 108 80 Q112 100 100 115"
+          dur="1.2s" repeatCount="indefinite"/>
+      </path>
+
+      <path d="M100 110 Q94 98 96 85 Q98 72 100 62 Q102 72 104 85 Q106 98 100 110" fill="#fff7aa" opacity="0.9">
+        <animate attributeName="d"
+          values="
+            M100 110 Q94 98 96 85 Q98 72 100 62 Q102 72 104 85 Q106 98 100 110;
+            M100 110 Q95 99 97 86 Q99 73 100 63 Q101 73 103 86 Q105 99 100 110;
+            M100 110 Q94 98 96 85 Q98 72 100 62 Q102 72 104 85 Q106 98 100 110"
+          dur="0.5s" repeatCount="indefinite"/>
+      </path>
+    </g>
+
+    <g id="smoke" opacity="0">
+      <circle cx="100" cy="42" r="5" fill="#ccc">
+        <animate attributeName="cy" values="42;-20" dur="2s" repeatCount="indefinite"/>
+        <animate attributeName="cx" values="100;115;128;140" dur="2s" repeatCount="indefinite"/>
+        <animate attributeName="r" values="5;8;3" dur="2s" repeatCount="indefinite"/>
+        <animate attributeName="opacity" values="0.8;0" dur="2s" repeatCount="indefinite"/>
+      </circle>
+      <circle cx="98" cy="42" r="4" fill="#bbb">
+        <animate attributeName="cy" values="42;-20" dur="2.4s" repeatCount="indefinite" begin="0.2s"/>
+        <animate attributeName="cx" values="98;110;122;135" dur="2.4s" repeatCount="indefinite" begin="0.2s"/>
+        <animate attributeName="r" values="4;7;2" dur="2.4s" repeatCount="indefinite" begin="0.2s"/>
+        <animate attributeName="opacity" values="0.7;0" dur="2.4s" repeatCount="indefinite" begin="0.2s"/>
+      </circle>
+      <circle cx="103" cy="42" r="4.5" fill="#ccc">
+        <animate attributeName="cy" values="42;-20" dur="2.1s" repeatCount="indefinite" begin="0.1s"/>
+        <animate attributeName="cx" values="103;118;130;142" dur="2.1s" repeatCount="indefinite" begin="0.1s"/>
+        <animate attributeName="r" values="4.5;7.5;2" dur="2.1s" repeatCount="indefinite" begin="0.1s"/>
+        <animate attributeName="opacity" values="0.75;0" dur="2.1s" repeatCount="indefinite" begin="0.1s"/>
+      </circle>
+      <circle cx="96" cy="42" r="3.5" fill="#aaa">
+        <animate attributeName="cy" values="42;-20" dur="1.9s" repeatCount="indefinite" begin="0.35s"/>
+        <animate attributeName="cx" values="96;108;120;132" dur="1.9s" repeatCount="indefinite" begin="0.35s"/>
+        <animate attributeName="r" values="3.5;6;2" dur="1.9s" repeatCount="indefinite" begin="0.35s"/>
+        <animate attributeName="opacity" values="0.65;0" dur="1.9s" repeatCount="indefinite" begin="0.35s"/>
+      </circle>
+      <circle cx="105" cy="42" r="3" fill="#bbb">
+        <animate attributeName="cy" values="42;-20" dur="2.2s" repeatCount="indefinite" begin="0.5s"/>
+        <animate attributeName="cx" values="105;120;132;144" dur="2.2s" repeatCount="indefinite" begin="0.5s"/>
+        <animate attributeName="r" values="3;5.5;1.5" dur="2.2s" repeatCount="indefinite" begin="0.5s"/>
+        <animate attributeName="opacity" values="0.6;0" dur="2.2s" repeatCount="indefinite" begin="0.5s"/>
+      </circle>
+    </g>
+
+    <ellipse cx="100" cy="310" rx="55" ry="12" fill="#8b7355"/>
+    <ellipse cx="100" cy="308" rx="50" ry="10" fill="#a08060"/>
+  `;
+
+  candleSvg.innerHTML = SVG_TEMPLATE;
+
+  candleSvg.addEventListener('mousedown', e => e.preventDefault());
+
+  let isLit = true;
+
+  const btn = document.getElementById('btn');
+  btn.addEventListener('click', function() {
+    const flameGroup = document.getElementById('flameGroup');
+
+    if (!isLit) {
+      relight(flameGroup);
+      return;
+    }
+
+    blowOut(flameGroup);
+  });
+
+  function blowOut(flameGroup) {
+    if (!isLit) return;
+    isLit = false;
+
+    const smoke = document.getElementById('smoke');
+    flameGroup.classList.add('blowing');
+
+    setTimeout(() => {
+      flameGroup.style.visibility = 'hidden';
+      smoke.style.opacity = '1';
+      btn.textContent = 'Relight';
+      btn.style.display = 'block';
+      btn.style.opacity = '';
+    }, 880);
+  }
+
+  function relight(flameGroup) {
+    flameGroup.classList.remove('blowing');
+    flameGroup.style.visibility = 'visible';
+    flameGroup.style.opacity = '';
+    flameGroup.style.animation = 'none';
+    flameGroup.offsetHeight;
+    flameGroup.style.animation = '';
+
+    const smoke = document.getElementById('smoke');
+    smoke.style.opacity = '0';
+    btn.textContent = 'Blow out';
+    btn.style.display = extraVisible ? 'block' : 'none';
+    isLit = true;
+  }
+
+  // --- Microphone ---
+  const micBtn = document.getElementById('micBtn');
+  const micError = document.getElementById('micError');
+  const volWrap = document.getElementById('volWrap');
+  const volBar = document.getElementById('volBar');
+  let audioCtx = null;
+  let analyser = null;
+  let micStream = null;
+  let micActive = false;
+  let rafId = null;
+
+  micBtn.addEventListener('click', async () => {
+    if (micActive) {
+      stopMic();
+      return;
+    }
+
+    // Try to find any available getUserMedia implementation
+    const legacyConstraints = { audio: true };
+    let getMedia = null;
+
+    if (navigator.mediaDevices?.getUserMedia) {
+      getMedia = () => navigator.mediaDevices.getUserMedia(legacyConstraints);
+    } else if (navigator.getUserMedia) {
+      getMedia = () => new Promise((res, rej) =>
+        navigator.getUserMedia(legacyConstraints, res, rej)
+      );
+    } else if (navigator.webkitGetUserMedia) {
+      getMedia = () => new Promise((res, rej) =>
+        navigator.webkitGetUserMedia(legacyConstraints, res, rej)
+      );
+    }
+
+    if (!getMedia) {
+      micError.textContent = 'Microphone API not supported in this browser';
+      return;
+    }
+
+    try {
+      const stream = await getMedia();
+      micStream = stream;
+      audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+      const source = audioCtx.createMediaStreamSource(stream);
+      analyser = audioCtx.createAnalyser();
+      analyser.fftSize = 256;
+      source.connect(analyser);
+
+      micActive = true;
+      micBtn.textContent = 'Mic On';
+      micBtn.style.display = extraVisible ? 'inline-block' : 'none';
+      volWrap.style.display = extraVisible ? 'flex' : 'none';
+      volWrap.classList.add('visible');
+      volWrap.style.cursor = 'pointer';
+      volWrap.title = 'Click to stop mic';
+      volWrap.onclick = stopMic;
+      micError.textContent = '';
+
+      const data = new Uint8Array(analyser.frequencyBinCount);
+
+      function detectBlow() {
+        analyser.getByteFrequencyData(data);
+        let sum = 0;
+        for (let i = 0; i < data.length; i++) sum += data[i];
+        let avg = sum / data.length;
+
+        volBar.style.width = Math.round((avg / 255) * 100) + '%';
+
+        if (isLit && avg > 80) {
+          blowOut(document.getElementById('flameGroup'));
+        }
+
+        rafId = requestAnimationFrame(detectBlow);
+      }
+      detectBlow();
+    } catch (err) {
+      let msg = 'Mic Denied';
+      if (err.name === 'NotAllowedError' || err.name === 'PermissionDeniedError') {
+        msg = 'Safari blocked — allow mic in Settings > Safari > Mic & Camera';
+      } else if (err.name === 'NotFoundError' || err.name === 'DevicesNotFoundError') {
+        msg = 'No microphone found on this device';
+      } else if (err.name === 'NotReadableError') {
+        msg = 'Mic already in use by another app';
+      } else if (err.name === 'AbortError') {
+        msg = 'Mic access aborted';
+      } else {
+        msg = err.message || 'Microphone access error';
+      }
+      if (micStream) { micStream.getTracks().forEach(t => t.stop()); micStream = null; }
+      micBtn.textContent = 'Enable Mic';
+      micError.textContent = msg;
+      micActive = false;
+    }
+  });
+
+  function stopMic() {
+    if (rafId) cancelAnimationFrame(rafId);
+    if (audioCtx) audioCtx.close();
+    if (micStream) { micStream.getTracks().forEach(t => t.stop()); micStream = null; }
+    micActive = false;
+    micBtn.style.display = extraVisible ? 'inline-block' : 'none';
+    micBtn.textContent = 'Enable Mic';
+    micBtn.classList.remove('active');
+    volWrap.classList.remove('visible');
+    volWrap.style.display = 'none';
+    volWrap.style.cursor = '';
+    volWrap.title = '';
+    volWrap.onclick = null;
+    micError.textContent = '';
+  }
+
+  document.getElementById('refreshBtn').addEventListener('click', () => location.reload());
+
+  // --- Eye button toggle extra debug controls ---
+  const eyeBtn = document.getElementById('eyeBtn');
+  const refreshBtn = document.getElementById('refreshBtn');
+  const eyeSlash = document.getElementById('eyeSlash');
+  let extraVisible = false;
+
+  eyeBtn.addEventListener('click', () => {
+    extraVisible = !extraVisible;
+    refreshBtn.style.display = extraVisible ? 'block' : 'none';
+    eyeSlash.style.display = extraVisible ? 'none' : '';
+    eyeBtn.title = extraVisible ? 'Hide debug' : 'Show debug';
+    // Sync Blow out button visibility
+    if (isLit) {
+      btn.style.display = extraVisible ? 'block' : 'none';
+    }
+    // Sync Mic On visibility
+    if (micActive) {
+      micBtn.style.display = extraVisible ? 'inline-block' : 'none';
+    }
+    // Sync Vol bar visibility
+    if (micActive) {
+      volWrap.style.display = extraVisible ? 'flex' : 'none';
+    }
+  });
+
+</script>
+
+</body>
+</html>
