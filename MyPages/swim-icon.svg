@@ -1,0 +1,28 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 180 180">
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#1499c6"/>
+      <stop offset="100%" stop-color="#0d6f9a"/>
+    </linearGradient>
+  </defs>
+  <rect width="180" height="180" rx="40" fill="url(#bg)"/>
+  <!-- freestyle swimmer – horizontal, face-down, on the wave line -->
+  <g fill="#fff" stroke="#fff" stroke-linecap="round" stroke-linejoin="round">
+    <!-- head (turned to breathe, just above waterline) -->
+    <circle cx="54" cy="96" r="10" fill="#fff" stroke="none"/>
+    <!-- torso – horizontal on the wave -->
+    <path d="M62 100 L120 98" stroke-width="10" fill="none"/>
+    <!-- leading arm – reaching straight forward -->
+    <path d="M62 100 L16 98" stroke-width="6" fill="none"/>
+    <!-- recovery arm – arching over from shoulder -->
+    <path d="M72 98 Q82 62 108 78" stroke-width="6" fill="none"/>
+    <!-- upper leg – kick down -->
+    <path d="M120 98 L142 110" stroke-width="6" fill="none"/>
+    <!-- lower leg – kick up -->
+    <path d="M120 98 L146 94" stroke-width="6" fill="none"/>
+  </g>
+  <!-- water waves -->
+  <path d="M16 104 Q38 92 60 104 Q82 116 104 104 Q126 92 148 104 Q158 110 166 106" stroke="rgba(255,255,255,0.55)" stroke-width="4" stroke-linecap="round" fill="none"/>
+  <path d="M16 120 Q38 108 60 120 Q82 132 104 120 Q126 108 148 120 Q158 126 166 122" stroke="rgba(255,255,255,0.35)" stroke-width="3.5" stroke-linecap="round" fill="none"/>
+  <path d="M16 136 Q38 124 60 136 Q82 148 104 136 Q126 124 148 136 Q158 142 166 138" stroke="rgba(255,255,255,0.2)" stroke-width="3" stroke-linecap="round" fill="none"/>
+</svg>

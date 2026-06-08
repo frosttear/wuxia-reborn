@@ -1,0 +1,16 @@
+{
+  "name": "游泳年卡打卡台账",
+  "short_name": "游泳打卡",
+  "start_url": "./swim-pass-checkin.html",
+  "display": "standalone",
+  "background_color": "#e8f7fb",
+  "theme_color": "#1499c6",
+  "icons": [
+    {
+      "src": "./swim-icon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "any"
+    }
+  ]
+}

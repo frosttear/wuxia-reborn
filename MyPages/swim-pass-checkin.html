@@ -4,6 +4,13 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>游泳年卡打卡台账</title>
+    <link rel="icon" type="image/svg+xml" href="swim-icon.svg">
+    <link rel="apple-touch-icon" href="swim-icon.svg">
+    <link rel="manifest" href="swim-manifest.json">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="apple-mobile-web-app-title" content="游泳打卡">
+    <meta name="theme-color" content="#1499c6">
     <style>
         :root {
             --bg-top: #e8f7fb;
@@ -713,6 +720,29 @@
             }
         }
 
+        .toast {
+            position: fixed;
+            top: 24px;
+            left: 50%;
+            transform: translateX(-50%) translateY(-120%);
+            z-index: 9999;
+            padding: 14px 28px;
+            border-radius: 999px;
+            font-weight: 700;
+            font-size: 15px;
+            color: #fff;
+            background: linear-gradient(135deg, #1499c6, #0d6f9a);
+            box-shadow: 0 8px 32px rgba(20, 153, 198, 0.35);
+            pointer-events: none;
+            opacity: 0;
+            transition: transform 0.4s cubic-bezier(0.22, 1, 0.36, 1), opacity 0.4s ease;
+        }
+
+        .toast.show {
+            transform: translateX(-50%) translateY(0);
+            opacity: 1;
+        }
+
         @media (max-width: 720px) {
             body {
                 padding: 18px 12px 32px;
@@ -1176,6 +1206,23 @@
             target.className = `status${type ? ` ${type}` : ""}`;
         }
 
+        let toastTimer = null;
+        function showToast(message, duration = 2500) {
+            let el = document.getElementById("global-toast");
+            if (!el) {
+                el = document.createElement("div");
+                el.id = "global-toast";
+                el.className = "toast";
+                document.body.appendChild(el);
+            }
+            el.textContent = message;
+            clearTimeout(toastTimer);
+            requestAnimationFrame(() => {
+                el.classList.add("show");
+                toastTimer = setTimeout(() => { el.classList.remove("show"); }, duration);
+            });
+        }
+
         function sortRecordsDesc(records) {
             return [...records].sort((left, right) => new Date(right.datetime) - new Date(left.datetime));
         }
@@ -1245,6 +1292,7 @@
             state.statsMonth = monthValueOf(datetime);
             state.historyMonth = state.statsMonth;
             setStatus(elements.checkinStatus, `${people.join("、")} 的打卡已保存。`, "");
+            showToast(`✅ ${people.join("、")} 打卡成功！`);
             render();
         }
 
