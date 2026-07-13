@@ -1,0 +1,1322 @@
+"use strict";
+
+function drawBackground() {
+  drawWorldBackground();
+}
+
+function drawHeader() {
+  ctx.fillStyle = "#fff4c5";
+  text("弹药防线", 18, 24, 18, "#fff4c5", "left");
+  text(`第 ${currentStageNumber()} 关 · ${currentStageWave()}/${WAVES_PER_STAGE} 波`,
+    18, 52, 12, "#9ac4a2", "left", 800);
+
+  drawCoin(168, 38, 12);
+  fillRound(181, 20, 78, 36, 18, "#fff4c5");
+  strokeRound(181, 20, 78, 36, 18, "#17231c", 2);
+  text(String(state.coins), 220, 38, 17, "#17231c");
+
+  text(`城墙 ${state.wallHealth}/${WALL_MAX_HP}`, 275, 61, 8,
+    state.wallHealth > 0 ? "#9ac4a2" : "#ff8874");
+  text("基地", 315, 61, 8, "#9ac4a2");
+  for (let i = 0; i < HOME_MAX_HP; i++) {
+    drawHeart(340 + i * 11, 61, 4.4, i < state.lives ? "#ee5a48" : "#4d5b52");
+  }
+}
+
+function drawCoin(x, y, r) {
+  ctx.save();
+  ctx.translate(x, y);
+  ctx.fillStyle = "#ffc43d";
+  ctx.strokeStyle = "#9a5a1b";
+  ctx.lineWidth = 2.2;
+  ctx.beginPath();
+  for (let i = 0; i < 12; i++) {
+    const angle = -Math.PI / 2 + i * Math.PI / 6;
+    const radius = i % 2 ? r * 0.9 : r;
+    const px = Math.cos(angle) * radius;
+    const py = Math.sin(angle) * radius;
+    if (i === 0) ctx.moveTo(px, py);
+    else ctx.lineTo(px, py);
+  }
+  ctx.closePath();
+  ctx.fill();
+  ctx.stroke();
+  ctx.strokeStyle = "#d68521";
+  ctx.lineWidth = 2;
+  ctx.beginPath();
+  ctx.moveTo(-3, -5);
+  ctx.lineTo(3, -1);
+  ctx.lineTo(-2, 5);
+  ctx.stroke();
+  ctx.restore();
+}
+
+function drawHeart(x, y, size, color) {
+  ctx.save();
+  ctx.translate(x, y);
+  ctx.fillStyle = color;
+  ctx.beginPath();
+  ctx.moveTo(0, size * 0.85);
+  ctx.bezierCurveTo(-size * 1.4, 0, -size, -size, 0, -size * 0.2);
+  ctx.bezierCurveTo(size, -size, size * 1.4, 0, 0, size * 0.85);
+  ctx.fill();
+  ctx.restore();
+}
+
+function drawBelt() {
+  if (state.beltEvent === "jam") {
+    ctx.fillStyle = "rgba(168,70,59,0.2)";
+    ctx.fillRect(BELT.x, BELT.y, BELT.w, BELT.h);
+  }
+}
+
+function drawBeltStatus() {
+  fillRound(BELT.x + 31, BELT.y + 9, 86, 24, 12, "rgba(23,35,28,0.76)");
+  text(`弹药线 LV.${state.productionLevel}`, BELT.x + BELT.w / 2, BELT.y + 21, 11, "#fff4c5");
+  const priorityLabels = { balanced: "均衡", bullet: "子弹优先", shell: "炮弹优先" };
+  const repairWorker = activeBeltRepairWorker();
+  const beltLabel = repairWorker?.state === "repairingBelt"
+    ? `维修 ${Math.max(0, repairWorker.wait).toFixed(1)}s`
+    : repairWorker ? "工人赶来" : "调度维修";
+  fillRound(BELT.x + 25, BELT.y + 39, 98, 22, 11,
+    state.beltEvent === "jam" ? "#a8463b" : "rgba(255,244,197,0.9)");
+  text(state.beltEvent === "jam" ? beltLabel : priorityLabels[state.priority],
+    BELT.x + BELT.w / 2, BELT.y + 50, 10,
+    state.beltEvent === "jam" ? "#fff4c5" : "#17231c");
+
+  if (state.beltEvent && state.beltEvent !== "jam") {
+    const labels = { overload: "超载生产", supply: "补给爆发", rare: "稀有补给" };
+    text(labels[state.beltEvent], BELT.x + BELT.w / 2, BELT.y + 74, 10, "#fff4c5");
+  }
+}
+
+function drawRoad() {
+  if (state.flash > 0) {
+    ctx.fillStyle = `rgba(238,90,72,${state.flash * 0.08})`;
+    ctx.fillRect(ROAD.x, ROAD.y, ROAD.w, ROAD.h);
+  }
+}
+
+function drawDefenseRows() {
+  fillRound(237, 82, 82, 18, 9, "rgba(23,35,28,0.84)");
+  text(`炮弹 ${totalAmmo("shell")}/${state.cannonCount * state.cannonMagCapacity}`, 278, 91, 9,
+    totalAmmo("shell") > 0 ? "#d8a3ff" : "#ff8874");
+  fillRound(324, 82, 82, 18, 9, "rgba(23,35,28,0.84)");
+  text(`子弹 ${totalAmmo("bullet")}/${state.gunnerCount * state.gunnerMagCapacity}`, 365, 91, 9,
+    totalAmmo("bullet") > 0 ? "#ffc43d" : "#ff8874");
+}
+
+function drawAmmo(ammo) {
+  const meta = ammoMeta[ammo.kind];
+  const depth = beltDepthScale(ammo.y);
+  const wobble = Math.sin(ammo.pulse) * 0.025;
+  const special = ammo.kind !== "bullet" && ammo.kind !== "shell";
+
+  ctx.save();
+  ctx.translate(ammo.x, ammo.y + 1);
+  ctx.scale(depth, depth);
+  ctx.fillStyle = "rgba(8,16,12,0.38)";
+  ctx.beginPath();
+  ctx.ellipse(2, 0, meta.family === "shell" ? 11 : 13, meta.family === "shell" ? 3.8 : 3.2, -0.08, 0, Math.PI * 2);
+  ctx.fill();
+  ctx.restore();
+
+  ctx.save();
+  ctx.translate(ammo.x, ammo.y);
+  ctx.scale(depth, depth * 0.86);
+  ctx.translate(0, -ammo.r);
+  ctx.rotate(ammo.spin + wobble);
+  if (special) {
+    ctx.shadowColor = meta.color;
+    ctx.shadowBlur = 8;
+  }
+  if (meta.family === "shell") {
+    const shellGradient = ctx.createLinearGradient(-ammo.r, 0, ammo.r, 0);
+    shellGradient.addColorStop(0, "#392847");
+    shellGradient.addColorStop(0.22, meta.color);
+    shellGradient.addColorStop(0.7, meta.color);
+    shellGradient.addColorStop(1, "#33243f");
+    ctx.fillStyle = shellGradient;
+    ctx.strokeStyle = "#382345";
+    ctx.lineWidth = 2.2;
+    ctx.beginPath();
+    ctx.moveTo(0, -ammo.r * 1.35);
+    ctx.quadraticCurveTo(ammo.r * 0.82, -ammo.r * 0.68, ammo.r * 0.68, ammo.r * 0.78);
+    ctx.lineTo(ammo.r * 0.5, ammo.r);
+    ctx.lineTo(-ammo.r * 0.5, ammo.r);
+    ctx.lineTo(-ammo.r * 0.68, ammo.r * 0.78);
+    ctx.quadraticCurveTo(-ammo.r * 0.82, -ammo.r * 0.68, 0, -ammo.r * 1.35);
+    ctx.closePath();
+    ctx.fill();
+    ctx.stroke();
+    ctx.fillStyle = "#dca63b";
+    ctx.fillRect(-ammo.r * 0.7, ammo.r * 0.2, ammo.r * 1.4, ammo.r * 0.34);
+    ctx.fillStyle = "rgba(255,255,255,0.62)";
+    ctx.fillRect(-ammo.r * 0.32, -ammo.r * 0.92, 2.2, ammo.r * 1.25);
+    ctx.fillStyle = "#1c261f";
+    for (const direction of [-1, 1]) {
+      ctx.beginPath();
+      ctx.moveTo(direction * ammo.r * 0.35, ammo.r * 0.72);
+      ctx.lineTo(direction * ammo.r * 0.92, ammo.r * 1.1);
+      ctx.lineTo(direction * ammo.r * 0.42, ammo.r * 1.05);
+      ctx.closePath();
+      ctx.fill();
+    }
+    if (ammo.kind === "fire") {
+      ctx.fillStyle = "#ffe36a";
+      ctx.beginPath();
+      ctx.moveTo(0, -ammo.r * 0.78);
+      ctx.lineTo(4, -ammo.r * 0.25);
+      ctx.lineTo(0, ammo.r * 0.05);
+      ctx.lineTo(-4, -ammo.r * 0.25);
+      ctx.closePath();
+      ctx.fill();
+    } else if (ammo.kind === "he") {
+      ctx.strokeStyle = "#42351a";
+      ctx.lineWidth = 1.6;
+      ctx.beginPath();
+      ctx.moveTo(-4, -3);
+      ctx.lineTo(4, 5);
+      ctx.moveTo(4, -3);
+      ctx.lineTo(-4, 5);
+      ctx.stroke();
+    }
+  } else {
+    ctx.strokeStyle = "#5f3a16";
+    ctx.lineWidth = 1.7;
+    for (let i = -1; i <= 1; i++) {
+      const x = i * 6;
+      const bulletGradient = ctx.createLinearGradient(x - 3, 0, x + 3, 0);
+      bulletGradient.addColorStop(0, "#9b5d1d");
+      bulletGradient.addColorStop(0.45, "#ffd45a");
+      bulletGradient.addColorStop(1, "#8d531a");
+      ctx.fillStyle = bulletGradient;
+      roundedRect(x - 2.7, -ammo.r * 0.62, 5.4, ammo.r * 1.55, 1.8);
+      ctx.fill();
+      ctx.stroke();
+      ctx.fillStyle = meta.color;
+      ctx.beginPath();
+      ctx.moveTo(x - 2.5, -ammo.r * 0.62);
+      ctx.lineTo(x, -ammo.r);
+      ctx.lineTo(x + 2.5, -ammo.r * 0.62);
+      ctx.closePath();
+      ctx.fill();
+      ctx.stroke();
+      ctx.fillStyle = "#6d431c";
+      ctx.fillRect(x - 3, ammo.r * 0.72, 6, 2.4);
+    }
+    if (ammo.kind === "ice") {
+      ctx.strokeStyle = "#d9f7ff";
+      ctx.lineWidth = 1;
+      ctx.beginPath();
+      ctx.moveTo(-9, -1);
+      ctx.lineTo(9, -1);
+      ctx.moveTo(0, -7);
+      ctx.lineTo(0, 5);
+      ctx.stroke();
+    }
+  }
+  ctx.restore();
+}
+
+function drawDepot() {
+  ctx.save();
+  ctx.translate(DEPOT.x, DEPOT.y);
+  fillRound(-38, -25, 76, 24, 5, "rgba(16,27,21,0.92)");
+  strokeRound(-38, -25, 76, 24, 5, "#0b1711", 2);
+  ctx.fillStyle = "#d0a13b";
+  ctx.fillRect(-1, -22, 2, 17);
+  ctx.fillStyle = "#ffc43d";
+  ctx.beginPath();
+  ctx.moveTo(-29, -18);
+  ctx.lineTo(-25, -22);
+  ctx.lineTo(-21, -18);
+  ctx.lineTo(-22, -9);
+  ctx.lineTo(-28, -9);
+  ctx.closePath();
+  ctx.fill();
+  ctx.fillStyle = "#a66bd0";
+  ctx.beginPath();
+  ctx.moveTo(22, -21);
+  ctx.lineTo(28, -16);
+  ctx.lineTo(27, -9);
+  ctx.lineTo(21, -9);
+  ctx.lineTo(20, -16);
+  ctx.closePath();
+  ctx.fill();
+  text(String(stockTotal("bullet")), -10, -13, 11, "#ffc43d");
+  text(String(stockTotal("shell")), 13, -13, 11, "#d8a3ff");
+  ctx.restore();
+}
+
+function drawWorker(worker) {
+  const walking = worker.state === "delivering" ||
+    worker.state === "toRepair" ||
+    worker.state === "toBeltRepair" ||
+    worker.state === "returning";
+  const bob = walking ? Math.sin(worker.step) * 2 : 0;
+  ctx.save();
+  ctx.translate(worker.x, worker.y + bob);
+  const facingLeft = worker.state === "returning" || worker.state === "toBeltRepair";
+  ctx.scale(facingLeft ? -1 : 1, 1);
+
+  ctx.fillStyle = "rgba(10,18,13,0.34)";
+  ctx.beginPath();
+  ctx.ellipse(2, 18, 13, 4.5, 0, 0, Math.PI * 2);
+  ctx.fill();
+  ctx.strokeStyle = "#17231c";
+  ctx.lineWidth = 2.3;
+  const roleColors = { porter: "#365f7a", loader: "#a3663d", dispatcher: "#3c7b69", mechanic: "#8b7539" };
+  const roleLights = { porter: "#6fa5c4", loader: "#d6965d", dispatcher: "#69b99c", mechanic: "#c4a951" };
+  const roleMarks = { porter: "速", loader: "装", dispatcher: "调", mechanic: "修" };
+
+  const stride = walking ? Math.sin(worker.step) * 3 : 0;
+  ctx.beginPath();
+  ctx.moveTo(-5, 11);
+  ctx.lineTo(-6 - stride, 19);
+  ctx.lineTo(-10 - stride, 20);
+  ctx.moveTo(5, 11);
+  ctx.lineTo(6 + stride, 19);
+  ctx.lineTo(10 + stride, 20);
+  ctx.stroke();
+
+  ctx.fillStyle = "#4a4c42";
+  roundedRect(-10, -4, 20, 19, 5);
+  ctx.fill();
+  ctx.stroke();
+  ctx.fillStyle = roleColors[worker.role] || "#365f7a";
+  roundedRect(-8, -2, 16, 15, 4);
+  ctx.fill();
+  ctx.fillStyle = roleLights[worker.role] || "#6fa5c4";
+  ctx.fillRect(-6, 0, 3, 10);
+  fillRound(-5, 4, 10, 8, 3, "rgba(20,31,25,0.62)");
+  text(roleMarks[worker.role] || "", 0, 8, 6, "#fff4c5");
+
+  ctx.fillStyle = "#ffd09b";
+  ctx.beginPath();
+  ctx.arc(0, -12, 7, 0, Math.PI * 2);
+  ctx.fill();
+  ctx.stroke();
+  ctx.fillStyle = "#40563a";
+  ctx.beginPath();
+  ctx.arc(0, -15, 8, Math.PI, Math.PI * 2);
+  ctx.lineTo(9, -13);
+  ctx.lineTo(-9, -13);
+  ctx.closePath();
+  ctx.fill();
+  ctx.stroke();
+  ctx.fillStyle = roleLights[worker.role] || "#6fa5c4";
+  ctx.fillRect(-5, -19, 10, 3);
+  ctx.fillStyle = "#253029";
+  ctx.beginPath();
+  ctx.arc(3, -12, 1.2, 0, Math.PI * 2);
+  ctx.fill();
+
+  if (worker.carrying && ammoMeta[worker.carrying].family === "bullet") {
+    ctx.save();
+    ctx.translate(13, 1);
+    ctx.rotate(-0.16);
+    fillRound(-3, -11, 12, 20, 3, "#6f4a2b");
+    strokeRound(-3, -11, 12, 20, 3, "#17231c", 2);
+    ctx.fillStyle = ammoMeta[worker.carrying].color;
+    for (let i = 0; i < 3; i++) ctx.fillRect(0 + i * 3, -8 + i, 2, 12);
+    ctx.restore();
+    ctx.strokeStyle = "#17231c";
+    ctx.beginPath();
+    ctx.moveTo(7, -1);
+    ctx.lineTo(15, 1);
+    ctx.stroke();
+  } else if (worker.carrying) {
+    ctx.save();
+    ctx.translate(14, -1);
+    ctx.rotate(0.2);
+    const cargoColor = ammoMeta[worker.carrying].color;
+    ctx.fillStyle = cargoColor;
+    ctx.strokeStyle = "#17231c";
+    ctx.lineWidth = 2;
+    ctx.beginPath();
+    ctx.moveTo(0, -12);
+    ctx.lineTo(7, -5);
+    ctx.lineTo(5, 9);
+    ctx.lineTo(-5, 9);
+    ctx.lineTo(-7, -5);
+    ctx.closePath();
+    ctx.fill();
+    ctx.stroke();
+    ctx.fillStyle = "#ffc43d";
+    ctx.fillRect(-5, 1, 10, 3);
+    ctx.restore();
+    ctx.strokeStyle = "#17231c";
+    ctx.beginPath();
+    ctx.moveTo(7, -1);
+    ctx.lineTo(14, 1);
+    ctx.stroke();
+  } else if (worker.state === "toRepair" || worker.state === "repairing" ||
+      worker.state === "toBeltRepair" || worker.state === "repairingBelt") {
+    ctx.save();
+    ctx.translate(13, 0);
+    const repairing = worker.state === "repairing" || worker.state === "repairingBelt";
+    ctx.rotate(repairing ? Math.sin(worker.step) * 0.45 - 0.3 : -0.55);
+    ctx.strokeStyle = "#17231c";
+    ctx.lineWidth = 3;
+    ctx.beginPath();
+    ctx.moveTo(0, 8);
+    ctx.lineTo(0, -7);
+    ctx.stroke();
+    ctx.fillStyle = "#c6c8bd";
+    ctx.fillRect(-7, -11, 14, 5);
+    ctx.fillStyle = "#d09a32";
+    ctx.fillRect(-2, 7, 4, 4);
+    ctx.restore();
+  }
+  ctx.restore();
+}
+
+function drawRepairProgress() {
+  for (const worker of state.workers) {
+    if (worker.state === "repairingBelt") {
+      const duration = worker.repairDuration || beltRepairDuration();
+      const remaining = clamp(worker.wait, 0, duration);
+      const progress = 1 - remaining / duration;
+      const y = BELT_REPAIR_POINT.y - 46;
+      fillRound(BELT_REPAIR_POINT.x - 31, y, 62, 17, 5, "rgba(23,35,28,0.9)");
+      text(`修产线 ${remaining.toFixed(1)}s`, BELT_REPAIR_POINT.x, y + 7, 8, "#fff4c5");
+      fillRound(BELT_REPAIR_POINT.x - 28, y + 13, 56, 3, 1.5, "#3b4b42");
+      fillRound(BELT_REPAIR_POINT.x - 28, y + 13, 56 * progress, 3, 1.5, "#65d18a");
+      continue;
+    }
+    if (worker.state !== "repairing" || !worker.targetDefense) continue;
+    const position = defensePosition(worker.targetDefense);
+    const remaining = clamp(worker.wait, 0, DEFENSE_REPAIR_DURATION);
+    const progress = 1 - remaining / DEFENSE_REPAIR_DURATION;
+    const y = position.y - 62;
+    fillRound(position.x - 28, y, 56, 17, 5, "rgba(23,35,28,0.9)");
+    text(`${worker.targetDefense.kind === "wall" ? "修墙" : "维修"} ${remaining.toFixed(1)}s`,
+      position.x, y + 7, 8, "#fff4c5");
+    fillRound(position.x - 25, y + 13, 50, 3, 1.5, "#3b4b42");
+    fillRound(position.x - 25, y + 13, 50 * progress, 3, 1.5, "#65d18a");
+  }
+}
+
+function enemyPalette(enemy) {
+  const hit = enemy.hit > 0;
+  const palettes = {
+    grunt: { body: "#4d9287", light: "#6fc4b5", dark: "#27584f", accent: "#d55f4d" },
+    runner: { body: "#2b8c82", light: "#5dd2c3", dark: "#174f4b", accent: "#f0b83f" },
+    tank: { body: "#596558", light: "#87917b", dark: "#303a33", accent: "#ba7543" },
+    saboteur: { body: "#a76c3f", light: "#d49a58", dark: "#563923", accent: "#ffd34e" },
+    boss: { body: "#914653", light: "#c36a72", dark: "#40202a", accent: "#ffbd48" }
+  };
+  const palette = palettes[enemy.type] || palettes.grunt;
+  return hit ? { ...palette, body: "#fff1bf", light: "#fff9dc" } : palette;
+}
+
+function drawEnemyLegs(type, palette, phase) {
+  const stride = Math.sin(phase) * (type === "runner" ? 5 : 2.5);
+  ctx.strokeStyle = "#15211b";
+  ctx.lineWidth = type === "tank" || type === "boss" ? 6 : 4;
+  ctx.beginPath();
+  ctx.moveTo(-7, 7);
+  ctx.lineTo(-9 - stride, 20);
+  ctx.lineTo(-14 - stride, 22);
+  ctx.moveTo(7, 7);
+  ctx.lineTo(9 + stride, 20);
+  ctx.lineTo(14 + stride, 22);
+  ctx.stroke();
+  ctx.strokeStyle = palette.dark;
+  ctx.lineWidth = type === "tank" || type === "boss" ? 3 : 2;
+  ctx.beginPath();
+  ctx.moveTo(-8, 8);
+  ctx.lineTo(-10 - stride, 18);
+  ctx.moveTo(8, 8);
+  ctx.lineTo(10 + stride, 18);
+  ctx.stroke();
+}
+
+function drawGruntEnemy(palette) {
+  fillRound(-13, -10, 26, 23, 7, palette.body);
+  strokeRound(-13, -10, 26, 23, 7, "#17231c", 2.5);
+  fillRound(-10, 0, 20, 8, 2, palette.dark);
+  ctx.fillStyle = palette.light;
+  ctx.beginPath();
+  ctx.arc(0, -17, 9, 0, Math.PI * 2);
+  ctx.fill();
+  ctx.stroke();
+  ctx.fillStyle = palette.accent;
+  ctx.beginPath();
+  ctx.moveTo(-10, -19);
+  ctx.lineTo(-6, -27);
+  ctx.lineTo(1, -23);
+  ctx.lineTo(7, -28);
+  ctx.lineTo(11, -18);
+  ctx.closePath();
+  ctx.fill();
+  ctx.stroke();
+  ctx.fillStyle = "#ffe486";
+  ctx.fillRect(-5, -18, 3, 2);
+  ctx.fillRect(3, -18, 3, 2);
+}
+
+function drawRunnerEnemy(palette, phase) {
+  ctx.save();
+  ctx.rotate(Math.sin(phase) * 0.05);
+  fillRound(-9, -11, 18, 23, 6, palette.body);
+  strokeRound(-9, -11, 18, 23, 6, "#17231c", 2.5);
+  ctx.fillStyle = palette.light;
+  ctx.beginPath();
+  ctx.arc(0, -18, 8, 0, Math.PI * 2);
+  ctx.fill();
+  ctx.stroke();
+  ctx.fillStyle = palette.accent;
+  ctx.fillRect(-9, -21, 18, 5);
+  ctx.fillStyle = "#17231c";
+  ctx.fillRect(-6, -20, 4, 2);
+  ctx.fillRect(2, -20, 4, 2);
+  ctx.strokeStyle = palette.accent;
+  ctx.lineWidth = 3;
+  ctx.beginPath();
+  ctx.moveTo(-7, -7);
+  ctx.lineTo(-18, -1);
+  ctx.lineTo(-23, -7);
+  ctx.stroke();
+  ctx.restore();
+}
+
+function drawTankEnemy(palette) {
+  ctx.fillStyle = palette.dark;
+  ctx.strokeStyle = "#17231c";
+  ctx.lineWidth = 2.5;
+  ctx.beginPath();
+  ctx.arc(-17, -4, 9, 0, Math.PI * 2);
+  ctx.arc(17, -4, 9, 0, Math.PI * 2);
+  ctx.fill();
+  ctx.stroke();
+  fillRound(-18, -13, 36, 28, 7, palette.body);
+  strokeRound(-18, -13, 36, 28, 7, "#17231c", 3);
+  fillRound(-15, -8, 30, 11, 2, palette.light);
+  ctx.fillStyle = "#3b453d";
+  ctx.fillRect(-12, -5, 24, 5);
+  ctx.fillStyle = palette.light;
+  ctx.beginPath();
+  ctx.arc(0, -21, 9, 0, Math.PI * 2);
+  ctx.fill();
+  ctx.stroke();
+  fillRound(-10, -25, 20, 7, 2, palette.dark);
+  ctx.fillStyle = "#ffb54d";
+  ctx.fillRect(-5, -22, 10, 2);
+  ctx.fillStyle = palette.accent;
+  ctx.fillRect(-4, 5, 8, 7);
+}
+
+function drawSaboteurEnemy(palette) {
+  ctx.fillStyle = "#3b3025";
+  ctx.strokeStyle = "#17231c";
+  ctx.lineWidth = 2.5;
+  roundedRect(-17, -9, 13, 24, 4);
+  ctx.fill();
+  ctx.stroke();
+  fillRound(-11, -11, 24, 25, 6, palette.body);
+  strokeRound(-11, -11, 24, 25, 6, "#17231c", 2.5);
+  ctx.fillStyle = palette.dark;
+  ctx.beginPath();
+  ctx.moveTo(-11, -17);
+  ctx.quadraticCurveTo(0, -31, 11, -17);
+  ctx.lineTo(8, -11);
+  ctx.lineTo(-8, -11);
+  ctx.closePath();
+  ctx.fill();
+  ctx.stroke();
+  ctx.fillStyle = "#202a24";
+  ctx.beginPath();
+  ctx.arc(0, -17, 6, 0, Math.PI * 2);
+  ctx.fill();
+  ctx.fillStyle = palette.accent;
+  ctx.beginPath();
+  ctx.moveTo(-5, -2);
+  ctx.lineTo(0, -10);
+  ctx.lineTo(3, -5);
+  ctx.lineTo(8, -12);
+  ctx.lineTo(5, 2);
+  ctx.closePath();
+  ctx.fill();
+  ctx.fillStyle = "#ef6a4a";
+  ctx.beginPath();
+  ctx.arc(-10, -4, 2.5, 0, Math.PI * 2);
+  ctx.fill();
+}
+
+function drawBossEnemy(palette, shielded) {
+  ctx.fillStyle = palette.dark;
+  ctx.strokeStyle = "#17231c";
+  ctx.lineWidth = 3;
+  ctx.beginPath();
+  ctx.moveTo(-22, -10);
+  ctx.lineTo(-28, 20);
+  ctx.lineTo(0, 13);
+  ctx.lineTo(28, 20);
+  ctx.lineTo(22, -10);
+  ctx.closePath();
+  ctx.fill();
+  ctx.stroke();
+  ctx.fillStyle = palette.light;
+  ctx.beginPath();
+  ctx.arc(-21, -7, 11, 0, Math.PI * 2);
+  ctx.arc(21, -7, 11, 0, Math.PI * 2);
+  ctx.fill();
+  ctx.stroke();
+  fillRound(-21, -16, 42, 32, 8, palette.body);
+  strokeRound(-21, -16, 42, 32, 8, "#17231c", 3);
+  fillRound(-15, -8, 30, 15, 3, palette.dark);
+  ctx.fillStyle = palette.accent;
+  ctx.beginPath();
+  ctx.arc(0, -1, 6, 0, Math.PI * 2);
+  ctx.fill();
+  ctx.stroke();
+  ctx.fillStyle = palette.light;
+  ctx.beginPath();
+  ctx.arc(0, -25, 11, 0, Math.PI * 2);
+  ctx.fill();
+  ctx.stroke();
+  ctx.fillStyle = palette.dark;
+  ctx.beginPath();
+  ctx.moveTo(-12, -27);
+  ctx.lineTo(-19, -35);
+  ctx.lineTo(-7, -32);
+  ctx.lineTo(0, -38);
+  ctx.lineTo(7, -32);
+  ctx.lineTo(19, -35);
+  ctx.lineTo(12, -27);
+  ctx.closePath();
+  ctx.fill();
+  ctx.stroke();
+  ctx.fillStyle = "#ffd36a";
+  ctx.fillRect(-6, -26, 12, 3);
+  if (shielded) {
+    ctx.strokeStyle = "rgba(102,217,255,0.82)";
+    ctx.lineWidth = 2;
+    ctx.beginPath();
+    ctx.ellipse(0, -7, 32, 38, 0, 0, Math.PI * 2);
+    ctx.stroke();
+  }
+}
+
+function drawEnemyWeapon(enemy) {
+  if (enemy.movement !== "attacking" &&
+      enemy.movement !== "attackingDefense" &&
+      enemy.movement !== "attackingHome") return;
+  ctx.save();
+  ctx.translate(enemy.type === "boss" ? 23 : 15, -1);
+  ctx.rotate(-0.9 + Math.sin(enemy.phase * 1.6) * 0.42);
+  ctx.strokeStyle = "#17231c";
+  ctx.lineWidth = enemy.type === "boss" ? 5 : 3;
+  ctx.beginPath();
+  ctx.moveTo(0, 12);
+  ctx.lineTo(0, -15);
+  ctx.stroke();
+  ctx.fillStyle = enemy.type === "saboteur" ? "#d09a32" : "#aeb5aa";
+  ctx.beginPath();
+  ctx.moveTo(-8, -18);
+  ctx.lineTo(9, -18);
+  ctx.lineTo(6, -10);
+  ctx.lineTo(-6, -10);
+  ctx.closePath();
+  ctx.fill();
+  ctx.stroke();
+  ctx.restore();
+}
+
+function drawEnemy(enemy) {
+  const depth = roadDepthScale(enemy.y);
+  const bob = Math.abs(Math.sin(enemy.phase)) * -1.5 * depth;
+  const s = enemy.scale * depth;
+  const palette = enemyPalette(enemy);
+
+  ctx.save();
+  ctx.translate(enemy.x, enemy.y + 2);
+  ctx.scale(s, s);
+  ctx.fillStyle = "rgba(10,18,13,0.22)";
+  ctx.beginPath();
+  ctx.ellipse(3, 1, enemy.type === "boss" ? 30 : enemy.type === "tank" ? 24 : 18, 6, -0.06, 0, Math.PI * 2);
+  ctx.fill();
+  ctx.fillStyle = "rgba(10,18,13,0.38)";
+  ctx.beginPath();
+  ctx.ellipse(0, 0, enemy.type === "boss" ? 18 : 11, 3, 0, 0, Math.PI * 2);
+  ctx.fill();
+  ctx.restore();
+
+  ctx.save();
+  ctx.translate(enemy.x, enemy.y + bob);
+  ctx.scale(s, s);
+  ctx.translate(0, -21);
+  drawEnemyLegs(enemy.type, palette, enemy.phase);
+  if (enemy.type === "runner") drawRunnerEnemy(palette, enemy.phase);
+  else if (enemy.type === "tank") drawTankEnemy(palette);
+  else if (enemy.type === "saboteur") drawSaboteurEnemy(palette);
+  else if (enemy.type === "boss") drawBossEnemy(palette, enemy.shield > 0);
+  else drawGruntEnemy(palette);
+  drawEnemyWeapon(enemy);
+
+  if (enemy.slow > 0) {
+    ctx.strokeStyle = "rgba(102,217,255,0.9)";
+    ctx.lineWidth = 2;
+    ctx.setLineDash([4, 3]);
+    ctx.beginPath();
+    ctx.ellipse(0, -7, enemy.type === "boss" ? 36 : 23, enemy.type === "boss" ? 42 : 29, 0, 0, Math.PI * 2);
+    ctx.stroke();
+    ctx.setLineDash([]);
+  }
+  if (enemy.burn > 0) {
+    ctx.fillStyle = "#ff7048";
+    for (const x of [-8, 4]) {
+      ctx.beginPath();
+      ctx.moveTo(x, -31);
+      ctx.quadraticCurveTo(x + 7, -25, x + 1, -18);
+      ctx.quadraticCurveTo(x - 5, -24, x, -31);
+      ctx.fill();
+    }
+  }
+  ctx.restore();
+
+  if (enemy.attackFlash > 0) {
+    ctx.save();
+    ctx.globalAlpha = clamp(enemy.attackFlash / 0.24, 0, 1);
+    ctx.strokeStyle = "#ffd34e";
+    ctx.lineWidth = 3;
+    ctx.beginPath();
+    ctx.moveTo(enemy.x - 14, enemy.y + 8);
+    ctx.lineTo(enemy.x + 8, enemy.y + 25);
+    ctx.moveTo(enemy.x - 5, enemy.y + 4);
+    ctx.lineTo(enemy.x + 15, enemy.y + 19);
+    ctx.stroke();
+    ctx.restore();
+  }
+
+  const barW = Math.max(24, (enemy.type === "boss" ? 48 : 36) * s);
+  const barY = enemy.y - (enemy.type === "boss" ? 61 : 50) * s;
+  const hpRatio = clamp(enemy.hp / enemy.maxHp, 0, 1);
+  fillRound(enemy.x - barW / 2 - 1, barY - 1, barW + 2, 6, 3, "rgba(12,20,15,0.88)");
+  fillRound(enemy.x - barW / 2, barY, barW * hpRatio, 4, 2,
+    hpRatio < 0.3 ? "#ee5a48" : "#73d68d");
+  if (enemy.maxShield > 0 && enemy.shield > 0) {
+    const shieldRatio = enemy.shield / enemy.maxShield;
+    fillRound(enemy.x - barW / 2 - 1, barY - 7, barW + 2, 5, 2.5, "#173241");
+    fillRound(enemy.x - barW / 2, barY - 6, barW * shieldRatio, 3, 1.5, "#66d9ff");
+  }
+}
+
+function drawGunnerMagazine(index) {
+  const loadedTypes = gunnerAmmoTypes(index);
+  const capacity = state.gunnerMagCapacity;
+  const gap = capacity <= 5 ? 7 : 5;
+  const width = capacity <= 5 ? 5 : 4;
+  const startX = -((capacity - 1) * gap + width) / 2;
+  for (let slot = 0; slot < capacity; slot++) {
+    fillRound(startX + slot * gap, 19, width, 5, 1.5,
+      loadedTypes[slot] ? ammoMeta[loadedTypes[slot]].color : "rgba(23,35,28,0.55)");
+    strokeRound(startX + slot * gap, 19, width, 5, 1.5, "#17231c", 0.8);
+  }
+}
+
+function drawDefenseDurability(position, health, yOffset) {
+  const barWidth = 38;
+  fillRound(position.x - barWidth / 2, position.y + yOffset, barWidth, 4, 2, "rgba(23,35,28,0.74)");
+  fillRound(
+    position.x - barWidth / 2,
+    position.y + yOffset,
+    barWidth * clamp(health / DEFENSE_MAX_HP, 0, 1),
+    4,
+    2,
+    health <= 1 ? "#ee5a48" : "#65d18a"
+  );
+}
+
+function drawFocusedDefense() {
+  const target = state.focusDefenseTarget;
+  if (!target || state.wallHealth > 0 || defenseHealth(target) <= 0) return;
+  const targetKey = defenseTargetKey(target);
+  const activelyTargeted = state.enemies.some(enemy =>
+    (enemy.movement === "approachingDefense" || enemy.movement === "attackingDefense") &&
+    enemy.attackTarget &&
+    defenseTargetKey(enemy.attackTarget) === targetKey
+  );
+  if (!activelyTargeted) return;
+  const position = defensePosition(target);
+  const pulse = 0.5 + Math.sin(state.time * 8) * 0.15;
+  ctx.save();
+  ctx.strokeStyle = `rgba(255,196,61,${pulse})`;
+  ctx.lineWidth = 3;
+  ctx.setLineDash([5, 4]);
+  ctx.beginPath();
+  ctx.ellipse(
+    position.x,
+    position.y + 4,
+    target.kind === "cannon" ? 38 : 33,
+    target.kind === "cannon" ? 31 : 27,
+    0,
+    0,
+    Math.PI * 2
+  );
+  ctx.stroke();
+  ctx.setLineDash([]);
+  fillRound(position.x - 28, position.y - 62, 56, 17, 5, "rgba(91,45,42,0.92)");
+  text("正在拆除", position.x, position.y - 53.5, 8, "#fff4c5");
+  ctx.restore();
+}
+
+function drawBrokenDefense(position, label, yOffset) {
+  ctx.save();
+  ctx.translate(position.x, position.y);
+  ctx.fillStyle = "rgba(23,35,28,0.36)";
+  ctx.beginPath();
+  ctx.ellipse(0, 18, 29, 8, 0, 0, Math.PI * 2);
+  ctx.fill();
+  ctx.strokeStyle = "#282e2a";
+  ctx.lineWidth = 6;
+  ctx.beginPath();
+  ctx.moveTo(-13, 10);
+  ctx.lineTo(12, -11);
+  ctx.moveTo(-11, -9);
+  ctx.lineTo(14, 9);
+  ctx.stroke();
+  ctx.fillStyle = "rgba(40,46,42,0.7)";
+  ctx.beginPath();
+  ctx.arc(-9, -12, 5, 0, Math.PI * 2);
+  ctx.arc(8, -16, 4, 0, Math.PI * 2);
+  ctx.fill();
+  fillRound(-24, 24, 48, 13, 6, "rgba(91,45,42,0.9)");
+  text(`${label} · 待维修`, 0, 30.5, 7, "#ffb09d");
+  ctx.restore();
+  drawDefenseDurability(position, 0, yOffset);
+}
+
+function gunnerWeaponTimer(index, type) {
+  if (type === "machine") return state.weaponTimers.machine;
+  if (type === "sniper") return state.weaponTimers.sniper;
+  return state.gunTimers[index];
+}
+
+function gunnerWeaponCooldown(type) {
+  if (type === "machine") return Math.max(0.09, 0.17 - (state.gunnerLevel - 1) * 0.012);
+  if (type === "sniper") return Math.max(0.9, 1.75 - (state.gunnerLevel - 1) * 0.1);
+  return gunCooldown();
+}
+
+function gunnerWeaponAimAngle(index, type) {
+  if (type === "machine") return state.weaponAimAngles.machine || 0;
+  if (type === "sniper") return state.weaponAimAngles.sniper || 0;
+  return state.gunnerAimAngles[index] || 0;
+}
+
+function drawGunnerWeapon(position, index, type = "rifle") {
+  const health = state.gunnerHealth[index] || 0;
+  if (health <= 0) {
+    drawBrokenDefense(position, `枪${index + 1}`, 41);
+    return;
+  }
+  const timer = gunnerWeaponTimer(index, type);
+  const cooldown = gunnerWeaponCooldown(type);
+  const recoilWindow = type === "machine" ? 0.035 : type === "sniper" ? 0.1 : 0.055;
+  const recoil = timer > cooldown - recoilWindow ? (type === "sniper" ? 4 : 3) : 0;
+  const uniform = type === "sniper" ? "#35546a" : type === "machine" ? "#4b604a" : "#40583f";
+  const accent = type === "sniper" ? "#66d9ff" : type === "machine" ? "#ffc43d" : "#9fc078";
+
+  ctx.save();
+  ctx.translate(position.x, position.y);
+  ctx.fillStyle = "rgba(10,18,13,0.34)";
+  ctx.beginPath();
+  ctx.ellipse(2, 20, 30, 8, 0, 0, Math.PI * 2);
+  ctx.fill();
+
+  ctx.fillStyle = "#675d43";
+  ctx.strokeStyle = "#17231c";
+  ctx.lineWidth = 2.5;
+  for (const x of [-15, 0, 15]) {
+    ctx.beginPath();
+    ctx.ellipse(x, 13 + Math.abs(x) * 0.08, 12, 7, 0, 0, Math.PI * 2);
+    ctx.fill();
+    ctx.stroke();
+  }
+
+  ctx.strokeStyle = "#17231c";
+  ctx.lineWidth = 4;
+  ctx.beginPath();
+  ctx.moveTo(-8, 4);
+  ctx.lineTo(-10, 16);
+  ctx.moveTo(8, 4);
+  ctx.lineTo(10, 16);
+  ctx.stroke();
+
+  fillRound(-12, -6, 24, 22, 6, uniform);
+  strokeRound(-12, -6, 24, 22, 6, "#17231c", 2.5);
+  ctx.fillStyle = accent;
+  ctx.fillRect(-8, -2, 4, 12);
+  fillRound(-5, 5, 10, 7, 2, "rgba(18,29,23,0.64)");
+
+  ctx.fillStyle = "#ffd09b";
+  ctx.beginPath();
+  ctx.arc(-2, -13, 8.5, 0, Math.PI * 2);
+  ctx.fill();
+  ctx.stroke();
+  ctx.fillStyle = type === "sniper" ? "#334c57" : "#4c633d";
+  ctx.beginPath();
+  ctx.arc(-2, -17, 10, Math.PI, Math.PI * 2);
+  ctx.lineTo(9, -14);
+  ctx.lineTo(-13, -14);
+  ctx.closePath();
+  ctx.fill();
+  ctx.stroke();
+  ctx.fillStyle = accent;
+  ctx.fillRect(-7, -21, 10, 3);
+
+  ctx.save();
+  ctx.rotate(gunnerWeaponAimAngle(index, type));
+  ctx.translate(2, recoil - 4);
+  if (type === "machine") {
+    ctx.strokeStyle = "#17231c";
+    ctx.lineWidth = 3;
+    ctx.beginPath();
+    ctx.moveTo(0, 4);
+    ctx.lineTo(-10, 17);
+    ctx.moveTo(0, 4);
+    ctx.lineTo(11, 17);
+    ctx.stroke();
+    fillRound(-7, -17, 14, 20, 4, "#4f5d52");
+    strokeRound(-7, -17, 14, 20, 4, "#17231c", 2.5);
+    ctx.strokeStyle = "#17231c";
+    ctx.lineWidth = 6;
+    ctx.beginPath();
+    ctx.moveTo(-3, -14);
+    ctx.lineTo(-1, -37);
+    ctx.moveTo(4, -14);
+    ctx.lineTo(6, -37);
+    ctx.stroke();
+    ctx.strokeStyle = "#89988a";
+    ctx.lineWidth = 2;
+    ctx.beginPath();
+    ctx.moveTo(-3, -15);
+    ctx.lineTo(-1, -37);
+    ctx.moveTo(4, -15);
+    ctx.lineTo(6, -37);
+    ctx.stroke();
+    fillRound(8, -10, 10, 12, 2, "#9c6a2d");
+    strokeRound(8, -10, 10, 12, 2, "#17231c", 2);
+  } else if (type === "sniper") {
+    ctx.strokeStyle = "#17231c";
+    ctx.lineWidth = 5;
+    ctx.beginPath();
+    ctx.moveTo(0, 2);
+    ctx.lineTo(5, -39);
+    ctx.stroke();
+    ctx.strokeStyle = "#7593a2";
+    ctx.lineWidth = 2;
+    ctx.beginPath();
+    ctx.moveTo(0, 1);
+    ctx.lineTo(5, -39);
+    ctx.stroke();
+    ctx.fillStyle = "#263c48";
+    ctx.fillRect(-4, -20, 13, 5);
+    ctx.strokeRect(-4, -20, 13, 5);
+    ctx.fillStyle = "#66d9ff";
+    ctx.beginPath();
+    ctx.arc(7, -18, 2.5, 0, Math.PI * 2);
+    ctx.fill();
+    ctx.fillStyle = "#17231c";
+    ctx.fillRect(1, -43, 9, 5);
+  } else {
+    ctx.strokeStyle = "#17231c";
+    ctx.lineWidth = 6;
+    ctx.beginPath();
+    ctx.moveTo(0, 1);
+    ctx.lineTo(5, -32);
+    ctx.stroke();
+    ctx.strokeStyle = "#7f9082";
+    ctx.lineWidth = 2;
+    ctx.beginPath();
+    ctx.moveTo(0, 0);
+    ctx.lineTo(5, -32);
+    ctx.stroke();
+    ctx.fillStyle = "#17231c";
+    ctx.fillRect(0, -35, 10, 5);
+  }
+  ctx.restore();
+
+  drawGunnerMagazine(index);
+  fillRound(-20, 24, 40, 13, 6, "rgba(23,35,28,0.82)");
+  const typeMark = type === "machine" ? "机" : type === "sniper" ? "狙" : String(index + 1);
+  text(`${typeMark} · 强${state.gunnerLevel}`, 0, 30.5, 7, "#fff4c5");
+  ctx.restore();
+  drawDefenseDurability(position, health, 41);
+}
+
+function drawGun(position, index) {
+  drawGunnerWeapon(position, index, "rifle");
+}
+
+function drawCannon(position, index, type = "cannon") {
+  const health = state.cannonHealth[index] || 0;
+  if (health <= 0) {
+    drawBrokenDefense(position, `炮${index + 1}`, 47);
+    return;
+  }
+  const timer = type === "mortar" ? state.weaponTimers.mortar : state.cannonTimers[index];
+  const cooldown = type === "mortar" ? mortarCooldown() : cannonCooldown();
+  const recoil = timer > cooldown - 0.12 ? 5 : 0;
+  ctx.save();
+  ctx.translate(position.x, position.y);
+  ctx.fillStyle = "rgba(10,18,13,0.36)";
+  ctx.beginPath();
+  ctx.ellipse(2, 23, 38, 10, 0, 0, Math.PI * 2);
+  ctx.fill();
+
+  ctx.strokeStyle = "#17231c";
+  ctx.lineWidth = 3;
+  fillRound(-27, 7, 54, 18, 7, "#303b39");
+  strokeRound(-27, 7, 54, 18, 7, "#17231c", 3);
+  ctx.fillStyle = "#68736d";
+  for (const x of [-19, -6, 7, 20]) {
+    ctx.beginPath();
+    ctx.arc(x, 16, 5, 0, Math.PI * 2);
+    ctx.fill();
+    ctx.stroke();
+  }
+  ctx.fillStyle = "#28322f";
+  ctx.fillRect(-24, 11, 48, 3);
+
+  ctx.fillStyle = type === "mortar" ? "#66547f" : "#406d78";
+  ctx.beginPath();
+  ctx.arc(0, 6, 22, 0, Math.PI * 2);
+  ctx.fill();
+  ctx.stroke();
+  ctx.fillStyle = type === "mortar" ? "#8a71ad" : "#5b93a2";
+  ctx.beginPath();
+  ctx.arc(0, 4, 14, 0, Math.PI * 2);
+  ctx.fill();
+  ctx.stroke();
+  ctx.fillStyle = "#d09a32";
+  for (const x of [-11, 11]) {
+    ctx.beginPath();
+    ctx.arc(x, 5, 2, 0, Math.PI * 2);
+    ctx.fill();
+  }
+
+  ctx.save();
+  const aimAngle = type === "mortar"
+    ? state.weaponAimAngles.mortar || 0
+    : state.cannonAimAngles[index] || 0;
+  ctx.rotate(aimAngle);
+  ctx.translate(0, recoil);
+  if (type === "mortar") {
+    fillRound(-10, -34, 20, 38, 6, "#77608e");
+    strokeRound(-10, -34, 20, 38, 6, "#17231c", 3);
+    ctx.fillStyle = "#282033";
+    ctx.beginPath();
+    ctx.ellipse(0, -33, 10, 4, 0, 0, Math.PI * 2);
+    ctx.fill();
+    ctx.stroke();
+    ctx.fillStyle = "#9f83bd";
+    ctx.beginPath();
+    ctx.ellipse(0, -32, 6, 2, 0, 0, Math.PI * 2);
+    ctx.fill();
+  } else {
+    fillRound(-7, -39, 14, 42, 4, "#557f89");
+    strokeRound(-7, -39, 14, 42, 4, "#17231c", 3);
+    ctx.fillStyle = "#8eb1b6";
+    ctx.fillRect(-3, -35, 3, 31);
+    fillRound(-11, -44, 22, 8, 2, "#293735");
+    strokeRound(-11, -44, 22, 8, 2, "#17231c", 2.5);
+    ctx.fillStyle = "#d09a32";
+    ctx.fillRect(-7, -42, 14, 2);
+  }
+  ctx.restore();
+  text(type === "mortar" ? "M" : String(index + 1), 0, 5, 10, "#fff4c5");
+  const loadedTypes = cannonAmmoTypes(index);
+  const capacity = state.cannonMagCapacity;
+  const gap = capacity <= 2 ? 13 : 10;
+  const width = capacity <= 2 ? 9 : 7;
+  const startX = -((capacity - 1) * gap + width) / 2;
+  for (let slot = 0; slot < capacity; slot++) {
+    fillRound(startX + slot * gap, 21, width, 6, 2,
+      loadedTypes[slot] ? ammoMeta[loadedTypes[slot]].color : "rgba(23,35,28,0.55)");
+    strokeRound(startX + slot * gap, 21, width, 6, 2, "#17231c", 1);
+  }
+  fillRound(-22, 30, 44, 13, 6, "rgba(23,35,28,0.82)");
+  text(`${index + 1} · 强${state.cannonLevel}`, 0, 36.5, 7, "#fff4c5");
+  ctx.restore();
+  drawDefenseDurability(position, health, 47);
+}
+
+function drawExtraWeapons() {
+  const machineIndex = state.specialSlots.machine;
+  if (state.unlocks.machine && Number.isInteger(machineIndex)) {
+    const position = GUN_SLOTS[machineIndex];
+    drawGunnerWeapon(position, machineIndex, "machine");
+  }
+
+  const sniperIndex = state.specialSlots.sniper;
+  if (state.unlocks.sniper && Number.isInteger(sniperIndex)) {
+    const position = GUN_SLOTS[sniperIndex];
+    drawGunnerWeapon(position, sniperIndex, "sniper");
+  }
+}
+
+function drawProjectile(projectile) {
+  const color = ammoMeta[projectile.ammoType]?.color || "#ffc43d";
+  const depth = roadDepthScale(projectile.y);
+  const renderY = projectile.y - projectile.height;
+  const direction = (projectile.renderAngle ?? Math.atan2(projectile.vy, projectile.vx) + Math.PI / 2) - Math.PI / 2;
+
+  ctx.save();
+  ctx.translate(projectile.x, projectile.y + 1);
+  const shadowAlpha = projectile.kind === "shell"
+    ? lerp(0.3, 0.08, clamp(projectile.height / 120, 0, 1))
+    : 0.17;
+  ctx.fillStyle = `rgba(13,22,17,${shadowAlpha})`;
+  ctx.beginPath();
+  ctx.ellipse(0, 0, (projectile.kind === "shell" ? 8 : 5) * depth, 2.2 * depth, direction, 0, Math.PI * 2);
+  ctx.fill();
+  ctx.restore();
+
+  ctx.save();
+  ctx.translate(projectile.x, renderY);
+  ctx.rotate(direction + Math.PI / 2);
+  if (projectile.kind === "shell") {
+    ctx.scale(depth, depth);
+    ctx.strokeStyle = "rgba(214,218,202,0.34)";
+    ctx.lineWidth = 4;
+    ctx.beginPath();
+    ctx.moveTo(0, 9);
+    ctx.lineTo(0, 23);
+    ctx.stroke();
+    ctx.strokeStyle = "rgba(68,78,69,0.46)";
+    ctx.lineWidth = 2;
+    ctx.beginPath();
+    ctx.moveTo(0, 7);
+    ctx.lineTo(0, 19);
+    ctx.stroke();
+    ctx.shadowColor = color;
+    ctx.shadowBlur = 7;
+    const shellGradient = ctx.createLinearGradient(-6, 0, 6, 0);
+    shellGradient.addColorStop(0, "#2e2434");
+    shellGradient.addColorStop(0.35, color);
+    shellGradient.addColorStop(0.72, color);
+    shellGradient.addColorStop(1, "#241c29");
+    ctx.fillStyle = shellGradient;
+    ctx.strokeStyle = "#382345";
+    ctx.lineWidth = 2;
+    ctx.beginPath();
+    ctx.moveTo(0, -9);
+    ctx.lineTo(6, -2);
+    ctx.lineTo(5, 8);
+    ctx.lineTo(-5, 8);
+    ctx.lineTo(-6, -2);
+    ctx.closePath();
+    ctx.fill();
+    ctx.stroke();
+    ctx.fillStyle = "#d5a13b";
+    ctx.fillRect(-5, 2, 10, 3);
+    ctx.fillStyle = "rgba(255,255,255,0.62)";
+    ctx.fillRect(-2.5, -4, 1.5, 8);
+  } else {
+    const streak = projectile.weapon === "sniper" ? 22 : 13;
+    ctx.strokeStyle = "rgba(255,244,197,0.2)";
+    ctx.lineWidth = projectile.weapon === "sniper" ? 7 : 5;
+    ctx.beginPath();
+    ctx.moveTo(0, streak + 5);
+    ctx.lineTo(0, -2);
+    ctx.stroke();
+    ctx.shadowColor = color;
+    ctx.shadowBlur = projectile.weapon === "sniper" ? 10 : 6;
+    ctx.strokeStyle = color;
+    ctx.lineWidth = projectile.weapon === "sniper" ? 3 : 2;
+    ctx.beginPath();
+    ctx.moveTo(0, streak);
+    ctx.lineTo(0, -3);
+    ctx.stroke();
+    ctx.strokeStyle = "#fff4c5";
+    ctx.lineWidth = 1;
+    ctx.beginPath();
+    ctx.moveTo(0, 4);
+    ctx.lineTo(0, -4);
+    ctx.stroke();
+  }
+  ctx.restore();
+}
+
+function drawParticles() {
+  for (const p of state.particles) {
+    const alpha = clamp(p.life / p.maxLife, 0, 1);
+    const velocity = Math.hypot(p.vx, p.vy);
+    ctx.save();
+    ctx.globalAlpha = alpha;
+    ctx.strokeStyle = p.color;
+    ctx.fillStyle = p.color;
+    if (velocity > 75) {
+      const length = Math.min(10, p.size + velocity * 0.025);
+      const nx = p.vx / velocity;
+      const ny = p.vy / velocity;
+      ctx.lineWidth = Math.max(1, p.size * 0.48);
+      ctx.beginPath();
+      ctx.moveTo(p.x, p.y);
+      ctx.lineTo(p.x - nx * length, p.y - ny * length);
+      ctx.stroke();
+    } else {
+      ctx.beginPath();
+      ctx.arc(p.x, p.y, p.size * 0.5, 0, Math.PI * 2);
+      ctx.fill();
+    }
+    if (p.size > 3.8) {
+      ctx.globalAlpha = alpha * 0.22;
+      ctx.beginPath();
+      ctx.arc(p.x, p.y, p.size * 1.6, 0, Math.PI * 2);
+      ctx.fill();
+    }
+    ctx.restore();
+  }
+  ctx.globalAlpha = 1;
+
+  for (const f of state.floaters) {
+    ctx.globalAlpha = clamp(f.life / 0.35, 0, 1);
+    text(f.value, f.x, f.y, 13, f.color);
+  }
+  ctx.globalAlpha = 1;
+}
+
+function drawWaveLabel() {
+  if (!state.waveActive && state.wave < waveBook.length && state.waveTimer > 0) {
+    fillRound(232, 122, 128, 28, 14, "rgba(23,35,28,0.78)");
+    text(currentStageWave() === 1 ? "关卡准备" : "下一波", 267, 136, 11, "#9ac4a2");
+    text(Math.max(1, Math.ceil(state.waveTimer)), 334, 136, 15, "#fff4c5");
+  }
+  const currentWave = waveBook[state.wave];
+  if (currentWave?.type === "boss" && state.waveActive) {
+    fillRound(232, 122, 128, 28, 14, "rgba(130,39,49,0.9)");
+    text(currentWave.bossName, 296, 136, 12, "#fff4c5");
+  }
+}
+
+function drawShopIcon(key, x, y, color) {
+  ctx.save();
+  ctx.translate(x, y);
+  ctx.strokeStyle = "#17231c";
+  ctx.fillStyle = color;
+  ctx.lineWidth = 3;
+
+  if (key === "production") {
+    for (let i = -1; i <= 1; i++) {
+      fillRound(i * 7 - 3, -14, 6, 25, 2, "#ffc43d");
+      strokeRound(i * 7 - 3, -14, 6, 25, 2, "#8d531a", 1.8);
+    }
+  } else if (key === "gunner") {
+    ctx.fillStyle = "#ffd09b";
+    ctx.beginPath();
+    ctx.arc(0, -8, 7, 0, Math.PI * 2);
+    ctx.fill();
+    ctx.stroke();
+    ctx.fillStyle = "#4c633d";
+    ctx.beginPath();
+    ctx.arc(0, -11, 8, Math.PI, Math.PI * 2);
+    ctx.lineTo(8, -9);
+    ctx.lineTo(-8, -9);
+    ctx.closePath();
+    ctx.fill();
+    ctx.stroke();
+    ctx.strokeStyle = "#17231c";
+    ctx.lineWidth = 4;
+    ctx.beginPath();
+    ctx.moveTo(2, -1);
+    ctx.lineTo(5, -19);
+    ctx.stroke();
+  } else if (key === "cannon") {
+    fillRound(-7, -16, 14, 25, 4, color);
+    strokeRound(-7, -16, 14, 25, 4, "#17231c", 3);
+    ctx.beginPath();
+    ctx.arc(0, 9, 13, Math.PI, Math.PI * 2);
+    ctx.fill();
+    ctx.stroke();
+  } else {
+    ctx.fillStyle = "#ffd09b";
+    ctx.beginPath();
+    ctx.arc(0, -8, 7, 0, Math.PI * 2);
+    ctx.fill();
+    ctx.stroke();
+    ctx.fillStyle = color;
+    roundedRect(-9, -1, 18, 18, 5);
+    ctx.fill();
+    ctx.stroke();
+    ctx.beginPath();
+    ctx.moveTo(-7, 15);
+    ctx.lineTo(-10, 22);
+    ctx.moveTo(7, 15);
+    ctx.lineTo(10, 22);
+    ctx.stroke();
+  }
+  ctx.restore();
+}
+
+function drawShop() {
+  ctx.fillStyle = "#17231c";
+  ctx.fillRect(0, SHOP_TOP, W, H - SHOP_TOP);
+  ctx.fillStyle = "#2b3c31";
+  ctx.fillRect(0, SHOP_TOP, W, 6);
+
+  shop.forEach((item, index) => {
+    const columnWidth = W / shop.length;
+    const x = 5 + index * columnWidth;
+    const w = columnWidth - 10;
+    const cost = item.cost();
+    const maxed = item.maxed?.() || false;
+    const affordable = !maxed && state.coins >= cost;
+    const label = typeof item.label === "function" ? item.label() : item.label;
+    const status = item.status ? item.status() : `LV.${item.level()}`;
+    const buttonLabel = maxed ? "已满" : item.buttonLabel ? item.buttonLabel() : "升级";
+
+    fillRound(x, SHOP_TOP + 13, w, 128, 7, affordable ? "#fff4c5" : "#b7b49e");
+    strokeRound(x, SHOP_TOP + 13, w, 128, 7, "#0d1711", 3);
+    ctx.fillStyle = item.color;
+    ctx.fillRect(x + 3, SHOP_TOP + 16, w - 6, 44);
+    drawShopIcon(item.key, x + 22, SHOP_TOP + 38, item.color);
+    text(label, x + 62, SHOP_TOP + 34, 11, "#17231c");
+    text(status, x + 62, SHOP_TOP + 51, 8, "#315340", "center", 800);
+    if (!maxed) drawCoin(x + 20, SHOP_TOP + 100, 8);
+    text(maxed ? "MAX" : String(cost), x + 60, SHOP_TOP + 100, 14,
+      affordable ? "#17231c" : "#6f7067");
+    fillRound(x + 10, SHOP_TOP + 116, w - 20, 16, 8, affordable ? "#ffc43d" : "#7c7e74");
+    text(buttonLabel, x + w / 2, SHOP_TOP + 124, 9, affordable ? "#17231c" : "#d5d2bd");
+  });
+}
+
+function draw() {
+  ctx.save();
+  drawBackground();
+  drawBelt();
+  drawRoad();
+  const ammoByDepth = [...state.ammoDrops].sort((a, b) => a.y - b.y);
+  for (const ammo of ammoByDepth) drawAmmo(ammo);
+  const enemiesByDepth = [...state.enemies].sort((a, b) => a.y - b.y);
+  for (const enemy of enemiesByDepth) drawEnemy(enemy);
+  for (const projectile of state.projectiles) drawProjectile(projectile);
+  drawDepot();
+  for (const worker of state.workers) drawWorker(worker);
+  for (let i = 0; i < state.gunnerCount; i++) {
+    if (!gunnerSpecialAt(i)) drawGun(GUN_SLOTS[i], i);
+  }
+  drawExtraWeapons();
+  for (let i = 0; i < state.cannonCount; i++) {
+    const type = cannonSpecialAt(i) || "cannon";
+    drawCannon(CANNON_SLOTS[i], i, type);
+  }
+  drawFocusedDefense();
+  drawRepairProgress();
+  drawBeltStatus();
+  drawDefenseRows();
+  drawWaveLabel();
+  drawParticles();
+  drawHeader();
+  drawShop();
+
+  if (state.flash > 0) {
+    ctx.fillStyle = `rgba(238,90,72,${state.flash * 0.28})`;
+    ctx.fillRect(0, 0, W, H);
+  }
+  ctx.restore();
+}

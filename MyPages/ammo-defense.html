@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover, user-scalable=no">
+  <meta name="theme-color" content="#17231c">
+  <title>弹药防线</title>
+  <link rel="stylesheet" href="./ammo-defense/styles.css">
+</head>
+<body>
+  <main class="app-shell" aria-label="弹药防线 H5 游戏">
+    <section class="game-frame">
+      <canvas id="game" width="860" height="1640" aria-label="游戏画面"></canvas>
+
+      <div class="utility">
+        <button id="helpButton" class="icon-button" type="button" title="操作说明" aria-label="打开操作说明">?</button>
+        <button id="soundButton" class="icon-button" type="button" title="声音" aria-label="切换声音">♪</button>
+        <button id="pauseButton" class="icon-button" type="button" title="暂停" aria-label="暂停游戏" hidden="">Ⅱ</button>
+      </div>
+
+      <div id="startOverlay" class="overlay">
+        <div class="panel">
+          <p class="eyebrow">矿区 · 17 号补给线</p>
+          <h1>弹药<br>防线</h1>
+          <p class="tagline">生产子弹与炮弹，调度搬运工<br>为枪械和炮台持续装填</p>
+          <button id="startButton" class="primary-button" type="button">开始游戏</button>
+          <button id="continueGameButton" class="secondary-button" type="button" hidden="">继续第 1 关</button>
+          <button id="startHelpButton" class="secondary-button" type="button">操作说明</button>
+        </div>
+      </div>
+
+      <div id="pauseOverlay" class="overlay" hidden="">
+        <div class="panel">
+          <p class="eyebrow">矿区暂时静止</p>
+          <h1 style="font-size:42px">暂停</h1>
+          <button id="resumeButton" class="primary-button" type="button" style="margin-top:22px">继续</button>
+          <button id="restartButtonPause" class="secondary-button" type="button">重新开始</button>
+        </div>
+      </div>
+
+      <div id="resultOverlay" class="overlay" hidden="">
+        <div class="panel">
+          <p id="resultEyebrow" class="eyebrow">撤离完成</p>
+          <h1 id="resultTitle" style="font-size:42px">守住了</h1>
+          <div class="result-stat">
+            <span>金币 <strong id="resultCoins">0</strong></span>
+            <span>击退 <strong id="resultKills">0</strong></span>
+            <span>评级 <strong id="resultRank">A</strong></span>
+          </div>
+          <button id="continueStageButton" class="primary-button" type="button" hidden="">继续本关</button>
+          <button id="restartButton" class="primary-button" type="button">再来一局</button>
+        </div>
+      </div>
+
+      <div id="stageOverlay" class="overlay" hidden="">
+        <div class="panel">
+          <p id="stageEyebrow" class="eyebrow">第 1 关完成</p>
+          <h1 style="font-size:38px">阵地转移</h1>
+          <p id="stageSummary" class="tagline">下一关敌人将更强<br>阵地与资源已全部重置</p>
+          <button id="nextStageButton" class="primary-button" type="button">进入下一关</button>
+        </div>
+      </div>
+
+      <div id="choiceOverlay" class="overlay choice-overlay" hidden="">
+        <div class="panel choice-panel">
+          <p class="eyebrow">波次强化 · 三选一</p>
+          <h1 style="font-size:34px">补给改造</h1>
+          <div id="choiceList" class="choice-list"></div>
+          <button id="refreshChoicesButton" class="secondary-button refresh-button" type="button">刷新补给</button>
+        </div>
+      </div>
+
+      <div id="helpOverlay" class="overlay choice-overlay" hidden="">
+        <div class="panel help-panel">
+          <p class="eyebrow">操作说明</p>
+          <h1 style="font-size:34px">补给手册</h1>
+          <div class="help-list">
+            <div><strong>产线</strong><span>点击"均衡"切换子弹或炮弹优先；故障后搬运工会优先前往维修。</span></div>
+            <div><strong>工人</strong><span>每名枪手最多五发、每座炮台最多两发；满弹后会自动改送其他单位。</span></div>
+            <div><strong>防守</strong><span>怪物先拆城墙，再走到目标身边逐个拆除枪手和炮台，全部失守后才攻击基地。</span></div>
+            <div><strong>维修</strong><span>产线基础维修 3 秒，可通过"维修专精"缩短；城墙与阵地维修仍需 5 秒。</span></div>
+            <div><strong>基地</strong><span>基地每 5 秒自动产出金币；"基地经济"补给可以提高单次收益。</span></div>
+            <div><strong>升级</strong><span>枪手和炮台先添加到三个，满员后购买才会强化全体；特殊改造按 1→2→3 顺序应用。</span></div>
+            <div><strong>关卡</strong><span>共 10 关，每关 10 波；已到达的最高关卡会保存在本机，下次可从该关继续。</span></div>
+          </div>
+          <button id="closeHelpButton" class="primary-button" type="button">返回游戏</button>
+        </div>
+      </div>
+
+      <p class="sr-only" aria-live="polite" id="announcer"></p>
+    </section>
+  </main>
+
+  <script src="./ammo-defense/core.js"></script>
+  <script src="./ammo-defense/systems.js"></script>
+  <script src="./ammo-defense/background.js"></script>
+  <script src="./ammo-defense/render.js"></script>
+  <script src="./ammo-defense/game.js"></script>
+</body>
+</html>
