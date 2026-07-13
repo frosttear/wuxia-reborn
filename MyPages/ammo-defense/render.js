@@ -7,8 +7,15 @@ function drawBackground() {
 function drawHeader() {
   ctx.fillStyle = "#fff4c5";
   text("弹药防线", 18, 24, 18, "#fff4c5", "left");
-  text(`第 ${currentStageNumber()} 关 · ${currentStageWave()}/${WAVES_PER_STAGE} 波`,
-    18, 52, 12, "#9ac4a2", "left", 800);
+  if (state.endless) {
+    const ew = state.endlessWave % WAVES_PER_STAGE + 1;
+    const es = Math.floor(state.endlessWave / WAVES_PER_STAGE) + 1;
+    text(`无尽 · 阶段${es} · ${ew}/${WAVES_PER_STAGE} 波`,
+      18, 52, 12, "#ff9d43", "left", 800);
+  } else {
+    text(`第 ${currentStageNumber()} 关 · ${currentStageWave()}/${WAVES_PER_STAGE} 波`,
+      18, 52, 12, "#9ac4a2", "left", 800);
+  }
 
   drawCoin(168, 38, 12);
   fillRound(181, 20, 78, 36, 18, "#fff4c5");
@@ -18,8 +25,24 @@ function drawHeader() {
   text(`城墙 ${state.wallHealth}/${WALL_MAX_HP}`, 275, 61, 8,
     state.wallHealth > 0 ? "#9ac4a2" : "#ff8874");
   text("基地", 315, 61, 8, "#9ac4a2");
-  for (let i = 0; i < HOME_MAX_HP; i++) {
+  for (let i = 0; i < state.gateMax; i++) {
     drawHeart(340 + i * 11, 61, 4.4, i < state.lives ? "#ee5a48" : "#4d5b52");
+  }
+  if (state.activeSynergies.length > 0) {
+    const synergyColors = { fire: "#ff7048", armor: "#66d9ff", speed: "#ffe36a", economy: "#ffc43d" };
+    let sx = 400;
+    for (const tag of Object.keys(state.synergyCounts)) {
+      if (state.synergyCounts[tag] > 0) {
+        ctx.fillStyle = synergyColors[tag] || "#9ac4a2";
+        ctx.globalAlpha = 0.8;
+        ctx.beginPath();
+        ctx.arc(sx, 26, 4, 0, Math.PI * 2);
+        ctx.fill();
+        ctx.globalAlpha = 1;
+        text(String(state.synergyCounts[tag]), sx, 26, 6, "#17231c");
+        sx += 12;
+      }
+    }
   }
 }
 
@@ -405,7 +428,8 @@ function enemyPalette(enemy) {
     runner: { body: "#2b8c82", light: "#5dd2c3", dark: "#174f4b", accent: "#f0b83f" },
     tank: { body: "#596558", light: "#87917b", dark: "#303a33", accent: "#ba7543" },
     saboteur: { body: "#a76c3f", light: "#d49a58", dark: "#563923", accent: "#ffd34e" },
-    boss: { body: "#914653", light: "#c36a72", dark: "#40202a", accent: "#ffbd48" }
+    boss: { body: "#914653", light: "#c36a72", dark: "#40202a", accent: "#ffbd48" },
+    healer: { body: "#3a7a5c", light: "#6fc4a0", dark: "#1e4035", accent: "#7ee0b3" }
   };
   const palette = palettes[enemy.type] || palettes.grunt;
   return hit ? { ...palette, body: "#fff1bf", light: "#fff9dc" } : palette;
@@ -545,6 +569,39 @@ function drawSaboteurEnemy(palette) {
   ctx.fill();
 }
 
+function drawHealerEnemy(palette) {
+  ctx.fillStyle = palette.dark;
+  ctx.strokeStyle = "#17231c";
+  ctx.lineWidth = 2.5;
+  fillRound(-11, -12, 22, 26, 5, palette.main);
+  strokeRound(-11, -12, 22, 26, 5, "#17231c", 2.5);
+  ctx.fillStyle = "#7ee0b3";
+  ctx.fillRect(-2, -6, 4, 14);
+  ctx.fillRect(-6, 0, 12, 4);
+  ctx.fillStyle = palette.accent;
+  ctx.beginPath();
+  ctx.arc(0, -18, 7, 0, Math.PI * 2);
+  ctx.fill();
+  ctx.stroke();
+  ctx.fillStyle = "#7ee0b3";
+  ctx.beginPath();
+  ctx.arc(0, -22, 8, Math.PI, Math.PI * 2);
+  ctx.lineTo(9, -18);
+  ctx.lineTo(-9, -18);
+  ctx.closePath();
+  ctx.fill();
+  ctx.stroke();
+  const healPulse = 0.4 + Math.sin(state.time * 5) * 0.3;
+  ctx.save();
+  ctx.globalAlpha = healPulse;
+  ctx.strokeStyle = "#7ee0b3";
+  ctx.lineWidth = 1.5;
+  ctx.beginPath();
+  ctx.arc(0, -2, 18, 0, Math.PI * 2);
+  ctx.stroke();
+  ctx.restore();
+}
+
 function drawBossEnemy(palette, shielded) {
   ctx.fillStyle = palette.dark;
   ctx.strokeStyle = "#17231c";
@@ -636,7 +693,7 @@ function drawEnemy(enemy) {
   ctx.scale(s, s);
   ctx.fillStyle = "rgba(10,18,13,0.22)";
   ctx.beginPath();
-  ctx.ellipse(3, 1, enemy.type === "boss" ? 30 : enemy.type === "tank" ? 24 : 18, 6, -0.06, 0, Math.PI * 2);
+  ctx.ellipse(3, 1, enemy.type === "boss" ? 30 : enemy.type === "tank" ? 24 : enemy.type === "healer" ? 16 : 18, 6, -0.06, 0, Math.PI * 2);
   ctx.fill();
   ctx.fillStyle = "rgba(10,18,13,0.38)";
   ctx.beginPath();
@@ -652,7 +709,25 @@ function drawEnemy(enemy) {
   if (enemy.type === "runner") drawRunnerEnemy(palette, enemy.phase);
   else if (enemy.type === "tank") drawTankEnemy(palette);
   else if (enemy.type === "saboteur") drawSaboteurEnemy(palette);
-  else if (enemy.type === "boss") drawBossEnemy(palette, enemy.shield > 0);
+  else if (enemy.type === "healer") drawHealerEnemy(palette);
+  else if (enemy.type === "boss") {
+    drawBossEnemy(palette, enemy.shield > 0);
+    if (isBossEnraged(enemy)) {
+      const enragePulse = 0.3 + Math.sin(state.time * 10) * 0.2;
+      ctx.save();
+      ctx.strokeStyle = `rgba(255,64,64,${enragePulse})`;
+      ctx.lineWidth = 3;
+      ctx.beginPath();
+      ctx.ellipse(0, -7, 40, 46, 0, 0, Math.PI * 2);
+      ctx.stroke();
+      ctx.strokeStyle = `rgba(255,160,40,${enragePulse * 0.6})`;
+      ctx.lineWidth = 2;
+      ctx.beginPath();
+      ctx.ellipse(0, -7, 44, 50, 0, 0, Math.PI * 2);
+      ctx.stroke();
+      ctx.restore();
+    }
+  }
   else drawGruntEnemy(palette);
   drawEnemyWeapon(enemy);
 
@@ -701,6 +776,30 @@ function drawEnemy(enemy) {
     const shieldRatio = enemy.shield / enemy.maxShield;
     fillRound(enemy.x - barW / 2 - 1, barY - 7, barW + 2, 5, 2.5, "#173241");
     fillRound(enemy.x - barW / 2, barY - 6, barW * shieldRatio, 3, 1.5, "#66d9ff");
+  }
+  if (state.focusTarget === enemy) {
+    const pulse = 0.6 + Math.sin(state.time * 6) * 0.25;
+    const cr = (enemy.type === "boss" ? 38 : 26) * s;
+    ctx.save();
+    ctx.strokeStyle = `rgba(255,100,80,${pulse})`;
+    ctx.lineWidth = 2.5;
+    ctx.setLineDash([6, 4]);
+    ctx.beginPath();
+    ctx.arc(enemy.x, enemy.y - 8 * s, cr, 0, Math.PI * 2);
+    ctx.stroke();
+    ctx.setLineDash([]);
+    const len = 6 * s;
+    ctx.strokeStyle = `rgba(255,100,80,${pulse + 0.15})`;
+    ctx.lineWidth = 2;
+    ctx.beginPath();
+    ctx.moveTo(enemy.x - len, enemy.y - 8 * s);
+    ctx.lineTo(enemy.x + len, enemy.y - 8 * s);
+    ctx.moveTo(enemy.x, enemy.y - 8 * s - len);
+    ctx.lineTo(enemy.x, enemy.y - 8 * s + len);
+    ctx.stroke();
+    fillRound(enemy.x - 16, barY - 14, 32, 10, 5, "rgba(130,35,35,0.88)");
+    text("集火", enemy.x, barY - 9, 6, "#fff4c5");
+    ctx.restore();
   }
 }
 
@@ -941,6 +1040,14 @@ function drawGunnerWeapon(position, index, type = "rifle") {
   ctx.restore();
 
   drawGunnerMagazine(index);
+  if (gunnerAmmoCount(index) === 0 && state.waveActive) {
+    const starvePulse = 0.5 + Math.sin(state.time * 8) * 0.5;
+    ctx.save();
+    ctx.globalAlpha = starvePulse;
+    fillRound(-10, -42, 20, 16, 8, "rgba(238,90,72,0.92)");
+    text("!", 0, -34, 11, "#fff4c5");
+    ctx.restore();
+  }
   fillRound(-20, 24, 40, 13, 6, "rgba(23,35,28,0.82)");
   const typeMark = type === "machine" ? "机" : type === "sniper" ? "狙" : String(index + 1);
   text(`${typeMark} · 强${state.gunnerLevel}`, 0, 30.5, 7, "#fff4c5");
@@ -1038,6 +1145,14 @@ function drawCannon(position, index, type = "cannon") {
     fillRound(startX + slot * gap, 21, width, 6, 2,
       loadedTypes[slot] ? ammoMeta[loadedTypes[slot]].color : "rgba(23,35,28,0.55)");
     strokeRound(startX + slot * gap, 21, width, 6, 2, "#17231c", 1);
+  }
+  if (cannonAmmoCount(index) === 0 && state.waveActive) {
+    const starvePulse = 0.5 + Math.sin(state.time * 8) * 0.5;
+    ctx.save();
+    ctx.globalAlpha = starvePulse;
+    fillRound(-10, -50, 20, 16, 8, "rgba(238,90,72,0.92)");
+    text("!", 0, -42, 11, "#fff4c5");
+    ctx.restore();
   }
   fillRound(-22, 30, 44, 13, 6, "rgba(23,35,28,0.82)");
   text(`${index + 1} · 强${state.cannonLevel}`, 0, 36.5, 7, "#fff4c5");
@@ -1182,12 +1297,14 @@ function drawParticles() {
 }
 
 function drawWaveLabel() {
-  if (!state.waveActive && state.wave < waveBook.length && state.waveTimer > 0) {
+  const canSpawn = state.endless || state.wave < waveBook.length;
+  if (!state.waveActive && canSpawn && state.waveTimer > 0) {
     fillRound(232, 122, 128, 28, 14, "rgba(23,35,28,0.78)");
-    text(currentStageWave() === 1 ? "关卡准备" : "下一波", 267, 136, 11, "#9ac4a2");
+    const label = state.endless ? "下一波" : currentStageWave() === 1 ? "关卡准备" : "下一波";
+    text(label, 267, 136, 11, state.endless ? "#ff9d43" : "#9ac4a2");
     text(Math.max(1, Math.ceil(state.waveTimer)), 334, 136, 15, "#fff4c5");
   }
-  const currentWave = waveBook[state.wave];
+  const currentWave = getWave(state.wave);
   if (currentWave?.type === "boss" && state.waveActive) {
     fillRound(232, 122, 128, 28, 14, "rgba(130,39,49,0.9)");
     text(currentWave.bossName, 296, 136, 12, "#fff4c5");

@@ -44,6 +44,29 @@ canvas.addEventListener("pointerdown", (event) => {
     if (index >= 0 && index < shop.length) tryUpgrade(index);
     return;
   }
+  if (point.y >= PLAY_TOP && point.y < SHOP_TOP && point.x >= ROAD.x) {
+    let closest = null;
+    let closestDist = 40;
+    for (const enemy of state.enemies) {
+      const dist = Math.hypot(enemy.x - point.x, enemy.y - point.y);
+      if (dist < closestDist) {
+        closestDist = dist;
+        closest = enemy;
+      }
+    }
+    if (closest && closest === state.focusTarget) {
+      state.focusTarget = null;
+      addFloater("取消集火", closest.x, closest.y - 50, "#9ac4a2");
+    } else if (closest) {
+      state.focusTarget = closest;
+      addFloater("集火目标", closest.x, closest.y - 50, "#ff8874");
+      beep(440, 0.04, "triangle", 0.03);
+    } else {
+      if (state.focusTarget) addFloater("取消集火", point.x, point.y - 20, "#9ac4a2");
+      state.focusTarget = null;
+    }
+    return;
+  }
 });
 
 window.addEventListener("keydown", (event) => {

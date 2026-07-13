@@ -128,6 +128,7 @@ const state = {
   defenseHitCooldown: 0,
   defenseTransitionTimer: 0,
   focusDefenseTarget: null,
+  focusTarget: null,
   homeHitCooldown: 0,
   eventTimer: 14,
   beltEvent: null,
@@ -148,7 +149,11 @@ const state = {
   stageStartEarned: 0,
   stageStartKills: 0,
   savedStage: readSavedStage(),
-  bestWave: Number(localStorage.getItem("mining-defense-best") || 0)
+  bestWave: Number(localStorage.getItem("mining-defense-best") || 0),
+  endless: false,
+  endlessWave: 0,
+  synergyCounts: { fire: 0, armor: 0, speed: 0, economy: 0 },
+  activeSynergies: []
 };
 
 const bossNames = [
@@ -197,6 +202,43 @@ function createWave(index) {
 }
 
 const waveBook = Array.from({ length: TOTAL_WAVES }, (_, index) => createWave(index));
+
+function createEndlessWave(endlessIndex) {
+  const stageWave = endlessIndex % WAVES_PER_STAGE + 1;
+  const virtualStage = TOTAL_STAGES + Math.floor(endlessIndex / WAVES_PER_STAGE);
+  const scaleFactor = 1 + endlessIndex * 0.06;
+  if (stageWave === WAVES_PER_STAGE) {
+    return {
+      count: 1,
+      interval: 0,
+      hp: Math.round(5100 * Math.pow(1.38, virtualStage - 1) * scaleFactor),
+      speed: Math.min(52, 15 + (virtualStage - 1) * 1.65),
+      reward: Math.round(420 + (virtualStage - 1) * 240),
+      shield: Math.round(650 * Math.pow(1.35, virtualStage - 1) * scaleFactor),
+      type: "boss",
+      bossName: `无尽Boss·${Math.floor(endlessIndex / WAVES_PER_STAGE) + 1}`,
+      batchSize: 1,
+      stage: virtualStage,
+      stageWave
+    };
+  }
+  return {
+    count: Math.min(120, 28 + (stageWave - 1) * 6 + (virtualStage - 1) * 5),
+    interval: Math.max(0.22, 1.0 - stageWave * 0.06 - (virtualStage - 1) * 0.02),
+    hp: Math.round(52 * Math.pow(1.16, stageWave - 1) * Math.pow(1.24, virtualStage - 1) * scaleFactor),
+    speed: Math.min(60, 22.75 + (stageWave - 1) * 1.15 + (virtualStage - 1) * 1.8),
+    reward: Math.round(18 + stageWave * 5 + (virtualStage - 1) * 12),
+    type: "mixed",
+    batchSize: Math.min(8, 2 + Math.floor((stageWave - 1) / 2) + Math.floor((virtualStage - 1) / 2)),
+    stage: virtualStage,
+    stageWave
+  };
+}
+
+function getWave(index) {
+  if (index < waveBook.length) return waveBook[index];
+  return createEndlessWave(index - TOTAL_WAVES);
+}
 
 function currentStageNumber() {
   return Math.min(TOTAL_STAGES, Math.floor(state.wave / WAVES_PER_STAGE) + 1);
@@ -749,6 +791,41 @@ function choicePool() {
   ];
 }
 
+const choiceTags = {
+  ap: "armor", ice: "armor", fire: "fire", he: "fire",
+  machine: "fire", sniper: "armor", mortar: "fire",
+  porterRole: "speed", loaderRole: "speed", dispatcherRole: "speed", mechanicRole: "speed",
+  gunnerCapacity: "armor", cannonCapacity: "fire",
+  critical: "fire", beltSpeed: "speed", blastRadius: "fire",
+  ammoEfficiency: "economy", bounty: "economy", baseIncome: "economy",
+  waveRepair: "armor", productionTune: "speed", arsenalTraining: "fire",
+  damage: "fire", coinCache: "economy", ammoCrate: "speed", emergencyRepair: "armor"
+};
+
+const synergyDefs = [
+  { tag: "fire", threshold: 3, name: "烈焰共鸣", desc: "所有伤害额外+8%", effect: () => { state.damageBonus += 0.08; } },
+  { tag: "fire", threshold: 6, name: "焚天", desc: "燃烧弹持续时间+50%", effect: () => {} },
+  { tag: "armor", threshold: 3, name: "钢铁壁垒", desc: "城墙+1上限", effect: () => { state.gateMax++; state.lives = Math.min(state.gateMax, state.lives + 1); } },
+  { tag: "armor", threshold: 6, name: "铜墙铁壁", desc: "火力点耐久维修速度提高", effect: () => {} },
+  { tag: "speed", threshold: 3, name: "极速供应", desc: "传送带速度+10%", effect: () => { state.beltSpeedBonus += 0.10; } },
+  { tag: "speed", threshold: 6, name: "闪电物流", desc: "搬运工移动速度+15%", effect: () => { state.roleLevels.porter++; } },
+  { tag: "economy", threshold: 3, name: "财源广进", desc: "基地收入+2", effect: () => { state.baseIncomeLevel++; } },
+  { tag: "economy", threshold: 6, name: "黄金时代", desc: "击杀奖励+10%", effect: () => { state.killCoinBonus += 0.10; } }
+];
+
+function checkSynergies() {
+  for (const def of synergyDefs) {
+    if (state.synergyCounts[def.tag] >= def.threshold &&
+        !state.activeSynergies.includes(def.name)) {
+      state.activeSynergies.push(def.name);
+      def.effect();
+      addFloater(`共鸣·${def.name}`, ROAD.x + ROAD.w / 2, 170, "#ffe36a");
+      beep(740, 0.15, "triangle", 0.05);
+      setTimeout(() => beep(880, 0.12, "triangle", 0.05), 100);
+    }
+  }
+}
+
 function choiceRefreshCost() {
   return 60 + state.choiceRefreshes * 40;
 }
@@ -782,15 +859,25 @@ function renderChoiceOptions(preferNew = false) {
     const button = document.createElement("button");
     button.type = "button";
     button.className = "choice-button";
+    const tag = choiceTags[choice.id];
+    const tagLabels = { fire: "🔥火", armor: "🛡防", speed: "⚡速", economy: "💰财" };
+    const tagLabel = tag ? tagLabels[tag] || "" : "";
+    const tagCount = tag ? (state.synergyCounts[tag] || 0) : 0;
+    const tagHtml = tag ? `<span class="choice-tag">${tagLabel} ${tagCount}/3</span>` : "";
     button.innerHTML = `
       <span class="choice-mark">${choice.mark}</span>
       <span class="choice-copy">
-        <strong>${choice.title}</strong>
+        <strong>${choice.title}</strong>${tagHtml}
         <span>${choice.desc}</span>
       </span>
     `;
     button.addEventListener("click", () => {
       choice.apply();
+      const tag = choiceTags[choice.id];
+      if (tag && state.synergyCounts[tag] !== undefined) {
+        state.synergyCounts[tag]++;
+        checkSynergies();
+      }
       choiceOverlay.hidden = true;
       state.mode = "playing";
       state.waveTimer = 2.2;
@@ -890,6 +977,7 @@ function resetStageState(mode = "playing") {
     defenseHitCooldown: 0,
     defenseTransitionTimer: 0,
     focusDefenseTarget: null,
+    focusTarget: null,
     homeHitCooldown: 0,
     eventTimer: 14,
     beltEvent: null,
@@ -905,9 +993,17 @@ function resetStageState(mode = "playing") {
     projectiles: [],
     floaters: [],
     pendingChoices: [],
-    choiceRefreshes: 0
+    choiceRefreshes: 0,
+    synergyCounts: { fire: 0, armor: 0, speed: 0, economy: 0 },
+    activeSynergies: []
   });
   addWorker();
+}
+
+function resetGame() {
+  state.endless = false;
+  state.endlessWave = 0;
+  startGameAtStage(1);
 }
 
 function startGameAtStage(stage) {
@@ -930,10 +1026,6 @@ function startGameAtStage(stage) {
   announce(`第 ${normalizedStage} 关 · 第 1 波准备`);
   beep(320, 0.08, "square", 0.05);
   requestAnimationFrame(loop);
-}
-
-function resetGame() {
-  startGameAtStage(1);
 }
 
 function continueSavedGame() {
@@ -1003,27 +1095,60 @@ function resumeGame() {
   requestAnimationFrame(loop);
 }
 
+function startEndlessMode() {
+  state.endless = true;
+  state.endlessWave = 0;
+  state.wave = TOTAL_WAVES;
+  state.waveActive = false;
+  state.waveTimer = 2.5;
+  state.mode = "playing";
+  state.last = performance.now();
+  resultOverlay.hidden = true;
+  pauseButton.hidden = false;
+  announce("无尽模式开启");
+  beep(440, 0.1, "triangle", 0.05);
+  setTimeout(() => beep(660, 0.12, "triangle", 0.05), 120);
+  requestAnimationFrame(loop);
+}
+
 function endGame(won) {
   saveStageProgress(won ? TOTAL_STAGES : currentStageNumber());
   state.mode = won ? "won" : "lost";
   pauseButton.hidden = true;
   resultOverlay.hidden = false;
+  const isEndless = state.endless;
+  const endlessStage = isEndless ? Math.floor(state.endlessWave / WAVES_PER_STAGE) + 1 : 0;
   document.getElementById("resultEyebrow").textContent =
-    won ? "撤离完成" : `第 ${currentStageNumber()} 关失守`;
-  document.getElementById("resultTitle").textContent = won ? "守住了" : "阵地失守";
+    isEndless ? `无尽模式 · 第 ${endlessStage} 阶段失守`
+    : won ? "撤离完成" : `第 ${currentStageNumber()} 关失守`;
+  document.getElementById("resultTitle").textContent =
+    isEndless ? `坚守了 ${state.endlessWave} 波` : won ? "守住了" : "阵地失守";
   document.getElementById("resultCoins").textContent = state.earned;
   document.getElementById("resultKills").textContent = state.kills;
   const restartButton = document.getElementById("restartButton");
-  continueStageButton.hidden = won;
-  restartButton.textContent = won ? "再来一局" : "重新开始";
-  restartButton.className = won ? "primary-button" : "secondary-button";
-  const rank = won
-    ? state.lives >= 5 ? "S" : state.lives >= 3 ? "A" : "B"
-    : state.wave >= 4 ? "C" : "D";
+  continueStageButton.hidden = won || isEndless;
+  restartButton.textContent = isEndless ? "再来一局" : won ? "再来一局" : "重新开始";
+  restartButton.className = won || isEndless ? "primary-button" : "secondary-button";
+  let endlessButton = document.getElementById("endlessButton");
+  if (!endlessButton && won && !isEndless) {
+    endlessButton = document.createElement("button");
+    endlessButton.id = "endlessButton";
+    endlessButton.className = "secondary-button";
+    endlessButton.type = "button";
+    endlessButton.textContent = "无尽模式";
+    endlessButton.addEventListener("click", startEndlessMode);
+    restartButton.parentNode.insertBefore(endlessButton, restartButton.nextSibling);
+  }
+  if (endlessButton) endlessButton.hidden = !(won && !isEndless);
+  const rank = isEndless
+    ? state.endlessWave >= 40 ? "SS" : state.endlessWave >= 20 ? "S" : state.endlessWave >= 10 ? "A" : "B"
+    : won
+      ? state.lives >= 5 ? "S" : state.lives >= 3 ? "A" : "B"
+      : state.wave >= 4 ? "C" : "D";
   document.getElementById("resultRank").textContent = rank;
   state.bestWave = Math.max(state.bestWave, state.wave + (won ? 1 : 0));
   localStorage.setItem("mining-defense-best", String(state.bestWave));
-  if (won) {
+  if (won || isEndless) {
     beep(523, 0.1, "triangle", 0.05);
     setTimeout(() => beep(659, 0.12, "triangle", 0.05), 100);
     setTimeout(() => beep(784, 0.2, "triangle", 0.05), 220);

@@ -73,7 +73,7 @@ function spawnAmmo() {
 }
 
 function spawnEnemy(forcedType = null, countSpawn = true) {
-  const wave = waveBook[state.wave];
+  const wave = getWave(state.wave);
   let type = forcedType || wave.type;
   if (type === "mixed") {
     const difficulty = state.wave / Math.max(1, waveBook.length - 1);
@@ -81,15 +81,17 @@ function spawnEnemy(forcedType = null, countSpawn = true) {
     const tankChance = 0.12 + difficulty * 0.18;
     const saboteurChance = 0.12 + difficulty * 0.08;
     const runnerChance = 0.18 + difficulty * 0.08;
+    const healerChance = wave.stage >= 3 ? 0.08 + difficulty * 0.04 : 0;
     type = roll < tankChance ? "tank"
       : roll < tankChance + saboteurChance ? "saboteur"
       : roll < tankChance + saboteurChance + runnerChance ? "runner"
+      : roll < tankChance + saboteurChance + runnerChance + healerChance ? "healer"
       : "grunt";
   }
 
-  const scale = type === "boss" ? 1.55 : type === "tank" ? 1.18 : type === "runner" ? 0.82 : type === "saboteur" ? 0.92 : 1;
-  const hpMultiplier = type === "tank" ? 1.75 : type === "runner" ? 0.72 : type === "saboteur" ? 0.9 : 1;
-  const speedMultiplier = type === "tank" ? 0.68 : type === "runner" ? 1.48 : type === "saboteur" ? 1.16 : 1;
+  const scale = type === "boss" ? 1.55 : type === "tank" ? 1.18 : type === "runner" ? 0.82 : type === "saboteur" ? 0.92 : type === "healer" ? 0.88 : 1;
+  const hpMultiplier = type === "tank" ? 1.75 : type === "runner" ? 0.72 : type === "saboteur" ? 0.9 : type === "healer" ? 0.6 : 1;
+  const speedMultiplier = type === "tank" ? 0.68 : type === "runner" ? 1.48 : type === "saboteur" ? 1.16 : type === "healer" ? 0.85 : 1;
   const baseHp = forcedType ? 82 + state.wave * 18 : wave.hp;
   const hp = baseHp * hpMultiplier;
   const lane = type === "boss" ? 0.55 : rand(0.08, 0.92);
@@ -122,7 +124,9 @@ function spawnEnemy(forcedType = null, countSpawn = true) {
     defenseBias: Math.random() < 0.5 ? "gunner" : "cannon",
     homeOffset: rand(-34, 34),
     defenseSide: Math.random() < 0.5 ? -1 : 1,
-    defenseSpacing: rand(24, 34)
+    defenseSpacing: rand(24, 34),
+    healTimer: type === "healer" ? 2.5 : 0,
+    enrageNotified: false
   });
   if (countSpawn) state.spawned++;
 }
@@ -794,8 +798,12 @@ function damageDefense(target, enemy) {
   }
 }
 
+function isBossEnraged(enemy) {
+  return enemy.type === "boss" && enemy.shield <= 0 && enemy.hp < enemy.maxHp * 0.3;
+}
+
 function enemyAttackInterval(enemy) {
-  if (enemy.type === "boss") return 0.68;
+  if (enemy.type === "boss") return isBossEnraged(enemy) ? 0.42 : 0.68;
   if (enemy.type === "runner") return 0.86;
   if (enemy.type === "tank") return 1.28;
   if (enemy.type === "saboteur") return 1;
@@ -891,7 +899,8 @@ function startBeltEvent(type, duration = 7) {
 }
 
 function enemyBeltJamLimit() {
-  return waveBook[state.wave]?.stageWave === WAVES_PER_STAGE ? 2 : 1;
+  const wave = getWave(state.wave);
+  return wave?.stageWave === WAVES_PER_STAGE ? 2 : 1;
 }
 
 function tryStartEnemyBeltJam(duration, label, y) {
@@ -939,10 +948,15 @@ function mortarCooldown() {
 
 function priorityTarget(mode = "front") {
   if (state.enemies.length === 0) return null;
+  if (state.focusTarget && !state.enemies.includes(state.focusTarget)) {
+    state.focusTarget = null;
+  }
+  if (state.focusTarget && mode !== "heavy") return state.focusTarget;
   if (mode === "heavy") {
-    return state.enemies.reduce((best, enemy) =>
+    const heavy = state.enemies.reduce((best, enemy) =>
       (enemy.armor ? enemy.hp * 1.5 : enemy.hp) > (best.armor ? best.hp * 1.5 : best.hp) ? enemy : best
     );
+    return state.focusTarget && state.focusTarget.armor ? state.focusTarget : heavy;
   }
   return state.enemies.reduce((closest, enemy) => enemy.y > closest.y ? enemy : closest);
 }
@@ -1228,7 +1242,8 @@ function update(dt) {
 
   if (!state.waveActive) {
     state.waveTimer -= dt;
-    if (state.waveTimer <= 0 && state.wave < waveBook.length) {
+    const canSpawn = state.endless || state.wave < waveBook.length;
+    if (state.waveTimer <= 0 && canSpawn) {
       state.waveActive = true;
       state.waveClearTimer = null;
       state.focusDefenseTarget = null;
@@ -1237,11 +1252,17 @@ function update(dt) {
       state.enemyBeltJamsThisWave = 0;
       state.spawned = 0;
       state.spawnTimer = 0;
-      announce(`第 ${currentStageNumber()} 关 · 第 ${currentStageWave()} 波`);
+      if (state.endless) {
+        const ew = state.endlessWave % WAVES_PER_STAGE + 1;
+        const es = Math.floor(state.endlessWave / WAVES_PER_STAGE) + 1;
+        announce(`无尽 · 阶段${es} · 第 ${ew} 波`);
+      } else {
+        announce(`第 ${currentStageNumber()} 关 · 第 ${currentStageWave()} 波`);
+      }
       beep(260, 0.08, "square", 0.04);
     }
   } else {
-    const wave = waveBook[state.wave];
+    const wave = getWave(state.wave);
     state.spawnTimer -= dt;
     if (state.spawned < wave.count && state.spawnTimer <= 0) {
       const batchSize = Math.min(wave.batchSize || 1, wave.count - state.spawned);
@@ -1263,11 +1284,12 @@ function update(dt) {
       state.focusDefenseTarget = null;
       const clearedWave = wave;
       state.wave++;
-      if (state.wave >= waveBook.length) {
+      if (state.endless) state.endlessWave++;
+      if (!state.endless && state.wave >= waveBook.length) {
         endGame(true);
         return;
       }
-      if (clearedWave.stageWave === WAVES_PER_STAGE) {
+      if (!state.endless && clearedWave.stageWave === WAVES_PER_STAGE) {
         showStageClear(clearedWave.stage);
         return;
       }
@@ -1396,18 +1418,49 @@ function update(dt) {
       tryStartEnemyBeltJam(8, "产线被破坏", 210);
     }
 
+    if (enemy.type === "healer") {
+      enemy.healTimer -= dt;
+      if (enemy.healTimer <= 0) {
+        enemy.healTimer = 3;
+        const healRange = 80;
+        const healAmount = enemy.maxHp * 0.6;
+        let healed = false;
+        for (const ally of state.enemies) {
+          if (ally === enemy || ally.type === "boss") continue;
+          if (Math.hypot(ally.x - enemy.x, ally.y - enemy.y) < healRange && ally.hp < ally.maxHp) {
+            ally.hp = Math.min(ally.maxHp, ally.hp + healAmount);
+            burst(ally.x, ally.y, "#7ee0b3", 6, 60);
+            healed = true;
+          }
+        }
+        if (healed) {
+          addFloater("治疗", enemy.x, enemy.y - 42, "#7ee0b3");
+          burst(enemy.x, enemy.y, "#7ee0b3", 10, 80);
+          beep(680, 0.06, "triangle", 0.02);
+        }
+      }
+    }
+
     if (enemy.type === "boss") {
-      enemy.bossTimer -= dt;
+      const enraged = isBossEnraged(enemy);
+      if (enraged && !enemy.enrageNotified) {
+        enemy.enrageNotified = true;
+        addFloater("狂暴化！", enemy.x, enemy.y - 60, "#ff4040");
+        burst(enemy.x, enemy.y, "#ff4040", 28, 180);
+        beep(85, 0.4, "sawtooth", 0.07);
+      }
+      enemy.bossTimer -= dt * (enraged ? 1.6 : 1);
       if (enemy.bossTimer <= 0) {
         enemy.bossPhase++;
         if (enemy.bossPhase % 2 === 1) {
           spawnEnemy("runner", false);
           spawnEnemy("saboteur", false);
-          addFloater("召集援军", enemy.x, enemy.y - 52, "#ff8874");
+          if (enraged) spawnEnemy("tank", false);
+          addFloater(enraged ? "疯狂增援" : "召集援军", enemy.x, enemy.y - 52, "#ff8874");
         } else {
-          tryStartEnemyBeltJam(9, "冲击产线", 185);
+          tryStartEnemyBeltJam(enraged ? 11 : 9, enraged ? "疯狂冲击" : "冲击产线", 185);
         }
-        enemy.bossTimer = enemy.shield > 0 ? 5.2 : 3.9;
+        enemy.bossTimer = enemy.shield > 0 ? 5.2 : enraged ? 2.8 : 3.9;
       }
     }
   }
