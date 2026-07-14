@@ -557,7 +557,7 @@ function choicePool() {
       id: "ap",
       mark: "AP",
       title: "穿甲弹",
-      desc: "产线可能掉落穿甲弹，对装甲目标伤害大幅提高",
+      desc: "解锁穿甲弹(AP)，对装甲×2.15伤害；普通子弹仅×0.48",
       eligible: () => !state.unlocks.ap,
       apply: () => { state.unlocks.ap = true; }
     },
@@ -565,7 +565,7 @@ function choicePool() {
       id: "ice",
       mark: "ICE",
       title: "冰冻弹",
-      desc: "命中后降低敌人速度，适合拦截快速怪",
+      desc: "解锁冰冻弹，命中后减速3.8秒，克制跑者",
       eligible: () => !state.unlocks.ice,
       apply: () => { state.unlocks.ice = true; }
     },
@@ -573,7 +573,7 @@ function choicePool() {
       id: "fire",
       mark: "F",
       title: "燃烧炮弹",
-      desc: "爆炸后造成持续范围伤害",
+      desc: "解锁燃烧炮弹，命中后持续烧伤5秒，每0.5秒造成额外伤害",
       eligible: () => !state.unlocks.fire,
       apply: () => { state.unlocks.fire = true; }
     },
@@ -581,7 +581,7 @@ function choicePool() {
       id: "he",
       mark: "HE",
       title: "高爆炮弹",
-      desc: "爆炸范围更大，并将敌人向后击退",
+      desc: "解锁高爆炮弹，爆炸范围+58%并击退敌人",
       eligible: () => !state.unlocks.he,
       apply: () => { state.unlocks.he = true; }
     },
@@ -589,7 +589,7 @@ function choicePool() {
       id: "machine",
       mark: "MG",
       title: "机枪阵地",
-      desc: "按 1→2→3 顺序改装下一名枪手，持续压制小怪",
+      desc: "改装一名枪手为机枪，射速极快(0.09s)但单发较低",
       eligible: () => !state.unlocks.machine && nextGunnerSpecialSlot() !== null,
       apply: () => {
         state.specialSlots.machine = nextGunnerSpecialSlot();
@@ -600,7 +600,7 @@ function choicePool() {
       id: "sniper",
       mark: "SR",
       title: "狙击阵地",
-      desc: "按 1→2→3 顺序改装下一名枪手，优先攻击重甲目标",
+      desc: "改装一名枪手为狙击，单发高伤(×3.7)且优先打重甲",
       eligible: () => !state.unlocks.sniper && nextGunnerSpecialSlot() !== null,
       apply: () => {
         state.specialSlots.sniper = nextGunnerSpecialSlot();
@@ -611,7 +611,7 @@ function choicePool() {
       id: "mortar",
       mark: "M",
       title: "迫击炮阵地",
-      desc: "按 1→2→3 顺序改装下一座炮台，自动进行范围炮击",
+      desc: "改装一座炮台为迫击炮，60px范围自动轰炸，冷却3秒",
       eligible: () => !state.unlocks.mortar && nextCannonSpecialSlot() !== null,
       apply: () => {
         state.specialSlots.mortar = nextCannonSpecialSlot();
@@ -622,7 +622,7 @@ function choicePool() {
       id: "porterRole",
       mark: "速",
       title: "搬运专精",
-      desc: "所有搬运工移动速度提高",
+      desc: "搬运工移速+14%（当前LV." + state.roleLevels.porter + "/5）",
       eligible: () => state.roleLevels.porter < 5,
       apply: () => { state.roleLevels.porter++; }
     },
@@ -630,7 +630,7 @@ function choicePool() {
       id: "loaderRole",
       mark: "装",
       title: "装填专精",
-      desc: "提高单次子弹搬运量，装填工高等级获得额外容量",
+      desc: "单次装填量+1，装填工额外+1（当前LV." + state.roleLevels.loader + "/5）",
       eligible: () => state.roleLevels.loader < 5,
       apply: () => { state.roleLevels.loader++; }
     },
@@ -638,7 +638,7 @@ function choicePool() {
       id: "dispatcherRole",
       mark: "调",
       title: "调度专精",
-      desc: "工人更准确地优先补充紧缺武器",
+      desc: "调度偏差+12%，更准确补充紧缺弹种（当前LV." + state.roleLevels.dispatcher + "/5）",
       eligible: () => state.roleLevels.dispatcher < 5,
       apply: () => { state.roleLevels.dispatcher++; }
     },
@@ -646,7 +646,7 @@ function choicePool() {
       id: "mechanicRole",
       mark: "修",
       title: "维修专精",
-      desc: "产线维修时间减少 0.4 秒，最低缩短至 1.4 秒",
+      desc: "产线维修-0.4s（当前" + (Math.max(1.4, 3 - (state.roleLevels.mechanic - 1) * 0.4)).toFixed(1) + "s→" + (Math.max(1.4, 3 - state.roleLevels.mechanic * 0.4)).toFixed(1) + "s，LV." + state.roleLevels.mechanic + "/5）",
       eligible: () => state.roleLevels.mechanic < 5,
       apply: () => { state.roleLevels.mechanic++; }
     },
@@ -654,7 +654,7 @@ function choicePool() {
       id: "gunnerCapacity",
       mark: "匣",
       title: "弹匣扩容",
-      desc: "每名枪手的装弹上限增加 1",
+      desc: "枪手弹匣+1（当前" + state.gunnerMagCapacity + "→" + (state.gunnerMagCapacity + 1) + "发，上限8）",
       eligible: () => state.gunnerMagCapacity < 8,
       apply: () => { state.gunnerMagCapacity++; }
     },
@@ -662,7 +662,7 @@ function choicePool() {
       id: "cannonCapacity",
       mark: "仓",
       title: "炮舱扩容",
-      desc: "每座炮台的装弹上限增加 1",
+      desc: "炮台弹仓+1（当前" + state.cannonMagCapacity + "→" + (state.cannonMagCapacity + 1) + "发，上限4）",
       eligible: () => state.cannonMagCapacity < 4,
       apply: () => { state.cannonMagCapacity++; }
     },
@@ -670,7 +670,7 @@ function choicePool() {
       id: "critical",
       mark: "准",
       title: "暴击训练",
-      desc: "所有武器增加 8% 暴击率，暴击造成 175% 伤害",
+      desc: "暴击率+8%（当前" + Math.round(state.critChance * 100) + "%→" + Math.round((state.critChance + 0.08) * 100) + "%，暴击×1.75伤害）",
       eligible: () => state.critChance < 0.32,
       apply: () => { state.critChance += 0.08; }
     },
@@ -678,7 +678,7 @@ function choicePool() {
       id: "beltSpeed",
       mark: "带",
       title: "高速履带",
-      desc: "传送带运输速度提高 15%",
+      desc: "传送带速度+15%（当前+" + Math.round(state.beltSpeedBonus * 100) + "%→+" + Math.round((state.beltSpeedBonus + 0.15) * 100) + "%）",
       eligible: () => state.beltSpeedBonus < 0.6,
       apply: () => { state.beltSpeedBonus += 0.15; }
     },
@@ -686,7 +686,7 @@ function choicePool() {
       id: "blastRadius",
       mark: "爆",
       title: "广域引信",
-      desc: "炮弹爆炸范围提高 15%",
+      desc: "炮弹AOE范围+15%（当前+" + Math.round(state.blastRadiusBonus * 100) + "%→+" + Math.round((state.blastRadiusBonus + 0.15) * 100) + "%）",
       eligible: () => state.blastRadiusBonus < 0.6,
       apply: () => { state.blastRadiusBonus += 0.15; }
     },
@@ -694,7 +694,7 @@ function choicePool() {
       id: "ammoEfficiency",
       mark: "省",
       title: "节约供弹",
-      desc: "开火时有 8% 概率不消耗弹药",
+      desc: "免耗弹率+8%（当前" + Math.round(state.ammoEfficiency * 100) + "%→" + Math.round((state.ammoEfficiency + 0.08) * 100) + "%）",
       eligible: () => state.ammoEfficiency < 0.32,
       apply: () => { state.ammoEfficiency += 0.08; }
     },
@@ -702,7 +702,7 @@ function choicePool() {
       id: "bounty",
       mark: "赏",
       title: "战地赏金",
-      desc: "击杀敌人获得的金币提高 15%",
+      desc: "击杀奖励+15%（当前+" + Math.round(state.killCoinBonus * 100) + "%→+" + Math.round((state.killCoinBonus + 0.15) * 100) + "%）",
       eligible: () => state.killCoinBonus < 0.6,
       apply: () => { state.killCoinBonus += 0.15; }
     },
@@ -710,7 +710,7 @@ function choicePool() {
       id: "baseIncome",
       mark: "基",
       title: "基地经济",
-      desc: "基地每 5 秒产出的金币增加 3",
+      desc: "基地收入+3/5s（当前" + (10 + (state.baseIncomeLevel - 1) * 3) + "→" + (10 + state.baseIncomeLevel * 3) + "金/5s）",
       eligible: () => state.baseIncomeLevel < MAX_BASE_INCOME_LEVEL,
       apply: () => { state.baseIncomeLevel++; }
     },
@@ -718,7 +718,7 @@ function choicePool() {
       id: "waveRepair",
       mark: "补",
       title: "维修补给",
-      desc: "火力点维修完成时额外补充 1 发对应弹药",
+      desc: "维修补充弹药+1（当前维修时补充" + state.waveRepair + "→" + (state.waveRepair + 1) + "发）",
       eligible: () => state.waveRepair < 3,
       apply: () => { state.waveRepair++; }
     },
@@ -726,7 +726,7 @@ function choicePool() {
       id: "productionTune",
       mark: "产",
       title: "产线调校",
-      desc: "产线等级提高 1，增加弹药产出效率",
+      desc: "产线LV." + state.productionLevel + "→" + Math.min(MAX_PRODUCTION_LEVEL, state.productionLevel + 1) + "：产弹间隔" + Math.max(0.28, 0.78 - state.productionLevel * 0.055).toFixed(2) + "s→" + Math.max(0.28, 0.78 - (state.productionLevel + 1) * 0.055).toFixed(2) + "s，枪手伤害+2",
       eligible: () => state.productionLevel < MAX_PRODUCTION_LEVEL,
       apply: () => {
         state.productionLevel = Math.min(MAX_PRODUCTION_LEVEL, state.productionLevel + 1);
@@ -736,7 +736,7 @@ function choicePool() {
       id: "arsenalTraining",
       mark: "训",
       title: "全员训练",
-      desc: "枪手和炮台强化等级同时提高 1",
+      desc: "枪手LV." + state.gunnerLevel + "→" + Math.min(MAX_GUNNER_LEVEL, state.gunnerLevel + 1) + " 炮台LV." + state.cannonLevel + "→" + Math.min(MAX_CANNON_LEVEL, state.cannonLevel + 1) + "（提高伤害和射速）",
       eligible: () => state.gunnerLevel < MAX_GUNNER_LEVEL || state.cannonLevel < MAX_CANNON_LEVEL,
       apply: () => {
         state.gunnerLevel = Math.min(MAX_GUNNER_LEVEL, state.gunnerLevel + 1);
@@ -747,7 +747,7 @@ function choicePool() {
       id: "damage",
       mark: "+",
       title: "火力校准",
-      desc: "所有武器伤害提高 12%",
+      desc: "全局伤害+12%（当前+" + Math.round(state.damageBonus * 100) + "%→+" + Math.round(Math.min(MAX_DAMAGE_BONUS, state.damageBonus + 0.12) * 100) + "%，上限+120%）",
       eligible: () => state.damageBonus < MAX_DAMAGE_BONUS - 0.001,
       apply: () => {
         state.damageBonus = Math.min(MAX_DAMAGE_BONUS, state.damageBonus + 0.12);
@@ -757,7 +757,7 @@ function choicePool() {
       id: "coinCache",
       mark: "金",
       title: "战地金库",
-      desc: "立即获得一批随关卡提高的金币",
+      desc: "立即获得 " + (120 + currentStageNumber() * 35) + " 金币",
       eligible: () => true,
       apply: () => {
         const amount = 120 + currentStageNumber() * 35;
@@ -769,7 +769,7 @@ function choicePool() {
       id: "ammoCrate",
       mark: "弹",
       title: "整箱弹药",
-      desc: "立即补充子弹与炮弹库存",
+      desc: "立即获得 " + (12 + currentStageNumber() * 2) + " 子弹 + " + (4 + Math.ceil(currentStageNumber() / 2)) + " 炮弹",
       eligible: () => true,
       apply: () => {
         state.ammoStock.bullet += 12 + currentStageNumber() * 2;
@@ -780,7 +780,7 @@ function choicePool() {
       id: "emergencyRepair",
       mark: "援",
       title: "紧急支援",
-      desc: "基地恢复 2 点生命；满生命时改为获得 100 金币",
+      desc: state.lives < state.gateMax ? "基地恢复2点生命（" + state.lives + "/" + state.gateMax + "→" + Math.min(state.gateMax, state.lives + 2) + "/" + state.gateMax + "）" : "生命已满，改为获得100金币",
       eligible: () => true,
       apply: () => {
         if (state.lives < state.gateMax) {
