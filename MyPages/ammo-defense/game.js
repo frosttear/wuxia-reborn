@@ -171,6 +171,33 @@ closeTechButton.addEventListener("click", () => {
   techOverlay.hidden = true;
 });
 
+const resetProgressButton = document.getElementById("resetProgressButton");
+let resetConfirmTimer = null;
+
+resetProgressButton.addEventListener("click", () => {
+  if (resetProgressButton.dataset.confirm === "1") {
+    localStorage.removeItem(STAGE_PROGRESS_KEY);
+    localStorage.removeItem(PRESTIGE_KEY);
+    localStorage.removeItem(TECH_KEY);
+    localStorage.removeItem("mining-defense-best");
+    state.prestige = 0;
+    state.tech = {};
+    state.bestWave = 0;
+    resetProgressButton.textContent = "重置存档";
+    resetProgressButton.dataset.confirm = "0";
+    clearTimeout(resetConfirmTimer);
+    updateContinueGameButton();
+    beep(220, 0.15, "square", 0.05);
+  } else {
+    resetProgressButton.dataset.confirm = "1";
+    resetProgressButton.textContent = "确认重置？不可恢复！";
+    resetConfirmTimer = setTimeout(() => {
+      resetProgressButton.textContent = "重置存档";
+      resetProgressButton.dataset.confirm = "0";
+    }, 3000);
+  }
+});
+
 updateContinueGameButton();
 
 document.addEventListener("visibilitychange", () => {

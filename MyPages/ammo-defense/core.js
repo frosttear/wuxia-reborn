@@ -348,8 +348,11 @@ function readSavedStage() {
 function updateContinueGameButton() {
   const savedStage = readSavedStage();
   state.savedStage = savedStage;
-  continueGameButton.hidden = savedStage <= 1;
+  const hasSave = savedStage > 1;
+  continueGameButton.hidden = !hasSave;
   continueGameButton.textContent = `继续第 ${savedStage} 关`;
+  document.getElementById("startButton").hidden = hasSave;
+  document.getElementById("resetProgressButton").hidden = !hasSave;
 }
 
 function saveStageProgress(stage) {
