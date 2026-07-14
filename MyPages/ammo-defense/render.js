@@ -438,7 +438,9 @@ function enemyPalette(enemy) {
     tank: { body: "#596558", light: "#87917b", dark: "#303a33", accent: "#ba7543" },
     saboteur: { body: "#a76c3f", light: "#d49a58", dark: "#563923", accent: "#ffd34e" },
     boss: { body: "#914653", light: "#c36a72", dark: "#40202a", accent: "#ffbd48" },
-    healer: { body: "#3a7a5c", light: "#6fc4a0", dark: "#1e4035", accent: "#7ee0b3" }
+    healer: { body: "#3a7a5c", light: "#6fc4a0", dark: "#1e4035", accent: "#7ee0b3" },
+    shielded: { body: "#4a6a8a", light: "#6a9ac4", dark: "#2a3a4f", accent: "#81e6ff" },
+    berserker: { body: "#8a3a3a", light: "#c45a5a", dark: "#4a1a1a", accent: "#ff4040" }
   };
   const palette = palettes[enemy.type] || palettes.grunt;
   return hit ? { ...palette, body: "#fff1bf", light: "#fff9dc" } : palette;
@@ -666,6 +668,55 @@ function drawBossEnemy(palette, shielded) {
   }
 }
 
+function drawShieldedEnemy(palette, hasShield) {
+  fillRound(-13, -10, 26, 23, 7, palette.body);
+  strokeRound(-13, -10, 26, 23, 7, "#17231c", 2.5);
+  fillRound(-10, 0, 20, 8, 2, palette.dark);
+  ctx.fillStyle = palette.light;
+  ctx.beginPath();
+  ctx.arc(0, -17, 9, 0, Math.PI * 2);
+  ctx.fill();
+  ctx.stroke();
+  ctx.fillStyle = palette.accent;
+  ctx.beginPath();
+  ctx.arc(0, -22, 10, Math.PI, Math.PI * 2);
+  ctx.lineTo(10, -20);
+  ctx.lineTo(-10, -20);
+  ctx.closePath();
+  ctx.fill();
+  ctx.stroke();
+  if (hasShield) {
+    ctx.strokeStyle = "rgba(102,217,255,0.75)";
+    ctx.lineWidth = 2;
+    ctx.beginPath();
+    ctx.ellipse(0, -7, 22, 28, 0, 0, Math.PI * 2);
+    ctx.stroke();
+  }
+}
+
+function drawBerserkerEnemy(palette, rage) {
+  fillRound(-13, -10, 26, 23, 7, palette.body);
+  strokeRound(-13, -10, 26, 23, 7, "#17231c", 2.5);
+  fillRound(-10, 0, 20, 8, 2, palette.dark);
+  ctx.fillStyle = palette.light;
+  ctx.beginPath();
+  ctx.arc(0, -17, 9, 0, Math.PI * 2);
+  ctx.fill();
+  ctx.stroke();
+  ctx.fillStyle = palette.accent;
+  ctx.fillRect(-4, -26, 8, 4);
+  ctx.fillRect(-8, -24, 16, 2);
+  if (rage > 0.3) {
+    ctx.save();
+    ctx.strokeStyle = `rgba(255,64,64,${0.3 + rage * 0.5})`;
+    ctx.lineWidth = 2;
+    ctx.beginPath();
+    ctx.ellipse(0, -7, 20, 26, 0, 0, Math.PI * 2);
+    ctx.stroke();
+    ctx.restore();
+  }
+}
+
 function drawEnemyWeapon(enemy) {
   if (enemy.movement !== "attacking" &&
       enemy.movement !== "attackingDefense" &&
@@ -719,6 +770,8 @@ function drawEnemy(enemy) {
   else if (enemy.type === "tank") drawTankEnemy(palette);
   else if (enemy.type === "saboteur") drawSaboteurEnemy(palette);
   else if (enemy.type === "healer") drawHealerEnemy(palette);
+  else if (enemy.type === "shielded") drawShieldedEnemy(palette, enemy.shield > 0);
+  else if (enemy.type === "berserker") drawBerserkerEnemy(palette, 1 - enemy.hp / enemy.maxHp);
   else if (enemy.type === "boss") {
     drawBossEnemy(palette, enemy.shield > 0);
     if (isBossEnraged(enemy)) {

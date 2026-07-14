@@ -77,12 +77,12 @@ function saveTech(t) {
 }
 
 const techDefs = [
-  { id: "startCoins",   label: "战备物资",   desc: "初始金币+60",         max: 3, cost: [2, 3, 5], effect: lv => ({ coins: lv * 60 }) },
-  { id: "startWorkers", label: "老兵征召",   desc: "初始搬运工+1",       max: 2, cost: [3, 5],    effect: lv => ({ workers: lv }) },
-  { id: "startProd",    label: "工业底蕴",   desc: "初始产线等级+1",     max: 3, cost: [2, 4, 6], effect: lv => ({ productionLevel: lv }) },
-  { id: "permCrit",     label: "射击训练",   desc: "全局暴击率+2%",      max: 3, cost: [2, 3, 5], effect: lv => ({ critChance: lv * 0.02 }) },
-  { id: "permDamage",   label: "火力研发",   desc: "全局伤害+5%",        max: 3, cost: [3, 4, 6], effect: lv => ({ damageBonus: lv * 0.05 }) },
-  { id: "permLives",    label: "加固工事",   desc: "基地生命上限+1",     max: 2, cost: [4, 6],    effect: lv => ({ lives: lv }) }
+  { id: "startCoins",   label: "战备物资",   desc: "初始金币+100",        max: 3, cost: [1, 2, 4], effect: lv => ({ coins: lv * 100 }) },
+  { id: "startWorkers", label: "老兵征召",   desc: "初始搬运工+1",       max: 2, cost: [2, 4],    effect: lv => ({ workers: lv }) },
+  { id: "startProd",    label: "工业底蕴",   desc: "初始产线等级+1",     max: 3, cost: [1, 3, 5], effect: lv => ({ productionLevel: lv }) },
+  { id: "permCrit",     label: "射击训练",   desc: "全局暴击率+3%",      max: 3, cost: [2, 3, 5], effect: lv => ({ critChance: lv * 0.03 }) },
+  { id: "permDamage",   label: "火力研发",   desc: "全局伤害+8%",        max: 3, cost: [2, 4, 6], effect: lv => ({ damageBonus: lv * 0.08 }) },
+  { id: "permLives",    label: "加固工事",   desc: "基地生命上限+1",     max: 2, cost: [3, 5],    effect: lv => ({ lives: lv }) }
 ];
 
 const legacyDefs = [
@@ -238,7 +238,7 @@ const state = {
   endlessWave: 0,
   synergyCounts: { fire: 0, armor: 0, speed: 0, economy: 0 },
   activeSynergies: [],
-  tipShown: { armor: false, shield: false },
+  tipShown: { armor: false, shield: false, berserker: false },
   burnDurationBonus: 0,
   defenseRepairBonus: 0,
   prestige: loadPrestige(),
@@ -268,10 +268,10 @@ function createWave(index) {
     return {
       count: 1,
       interval: 0,
-      hp: Math.round(5100 * Math.pow(1.38, stageTier)),
-      speed: Math.min(32, 15 + stageTier * 1.65),
+      hp: Math.round(5100 * Math.pow(1.22, stageTier)),
+      speed: Math.min(28, 15 + stageTier * 0.8),
       reward: Math.round(420 + stageTier * 240),
-      shield: Math.round(650 * Math.pow(1.35, stageTier)),
+      shield: Math.round(650 * Math.pow(1.18, stageTier)),
       type: "boss",
       bossName: bossNames[stageTier],
       batchSize: 1,
@@ -282,8 +282,8 @@ function createWave(index) {
   return {
     count: Math.min(80, 24 + (stageWave - 1) * 5 + stageTier * 4),
     interval: Math.max(0.3, 1.17 - stageWave * 0.065 - stageTier * 0.025),
-    hp: Math.round(52 * Math.pow(1.16, stageWave - 1) * Math.pow(1.24, stageTier)),
-    speed: Math.min(50, 22.75 + (stageWave - 1) * 1.15 + stageTier * 1.8),
+    hp: Math.round(52 * Math.pow(1.16, stageWave - 1) * Math.pow(1.10, stageTier)),
+    speed: Math.min(50, 22.75 + (stageWave - 1) * 1.15 + stageTier * 0.8),
     reward: Math.round(18 + stageWave * 4 + stageTier * 9),
     type: stage === 1 && stageWave <= 2 ? "grunt" : "mixed",
     batchSize: Math.min(6, 2 + Math.floor((stageWave - 1) / 2) + Math.floor(stageTier / 3)),
@@ -1097,13 +1097,26 @@ function resetStageState(mode = "playing") {
     choiceRefreshes: 0,
     synergyCounts: { fire: 0, armor: 0, speed: 0, economy: 0 },
     activeSynergies: [],
-    tipShown: { armor: false, shield: false },
+    tipShown: { armor: false, shield: false, berserker: false },
     burnDurationBonus: 0,
     defenseRepairBonus: 0
   });
   addWorker();
+  applyStageBonus();
   applyTechBonuses();
   applyLegacy();
+}
+
+function applyStageBonus() {
+  const stage = currentStageNumber();
+  if (stage <= 1) return;
+  const tier = stage - 1;
+  state.coins += tier * 30;
+  state.gunnerMagazines[0].bullet += tier;
+  state.cannonMagazines[0].shell += Math.min(tier, 5);
+  state.productionLevel = Math.min(MAX_PRODUCTION_LEVEL, state.productionLevel + Math.floor(tier / 2));
+  state.gunnerLevel = Math.min(MAX_GUNNER_LEVEL, state.gunnerLevel + Math.floor(tier / 3));
+  state.cannonLevel = Math.min(MAX_CANNON_LEVEL, state.cannonLevel + Math.floor(tier / 3));
 }
 
 function applyTechBonuses() {

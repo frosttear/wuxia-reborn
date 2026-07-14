@@ -72,49 +72,74 @@ function spawnAmmo() {
   });
 }
 
+const stageEnemyWeights = [
+  { grunt: 60, runner: 25, tank: 10, saboteur: 5 },
+  { grunt: 45, runner: 25, tank: 18, saboteur: 12 },
+  { grunt: 35, runner: 20, tank: 20, saboteur: 12, healer: 13 },
+  { grunt: 30, runner: 18, tank: 18, saboteur: 14, healer: 20 },
+  { grunt: 22, runner: 16, tank: 16, saboteur: 12, healer: 16, shielded: 18 },
+  { grunt: 18, runner: 15, tank: 15, saboteur: 12, healer: 15, shielded: 25 },
+  { grunt: 14, runner: 14, tank: 14, saboteur: 12, healer: 12, shielded: 18, berserker: 16 },
+  { grunt: 10, runner: 14, tank: 14, saboteur: 13, healer: 12, shielded: 17, berserker: 20 },
+  { grunt: 8,  runner: 13, tank: 13, saboteur: 14, healer: 12, shielded: 18, berserker: 22 },
+  { grunt: 6,  runner: 12, tank: 12, saboteur: 15, healer: 12, shielded: 18, berserker: 25 }
+];
+
+function pickEnemyType(stage) {
+  const weights = stageEnemyWeights[Math.min(stage - 1, stageEnemyWeights.length - 1)];
+  let total = 0;
+  for (const w of Object.values(weights)) total += w;
+  let roll = Math.random() * total;
+  for (const [t, w] of Object.entries(weights)) {
+    roll -= w;
+    if (roll <= 0) return t;
+  }
+  return "grunt";
+}
+
 function spawnEnemy(forcedType = null, countSpawn = true) {
   const wave = getWave(state.wave);
   let type = forcedType || wave.type;
   if (type === "mixed") {
-    const difficulty = state.wave / Math.max(1, waveBook.length - 1);
-    const roll = Math.random();
-    const tankChance = 0.12 + difficulty * 0.18;
-    const saboteurChance = 0.12 + difficulty * 0.08;
-    const runnerChance = 0.18 + difficulty * 0.08;
-    const healerChance = wave.stage >= 3 ? 0.08 + difficulty * 0.04 : 0;
-    type = roll < tankChance ? "tank"
-      : roll < tankChance + saboteurChance ? "saboteur"
-      : roll < tankChance + saboteurChance + runnerChance ? "runner"
-      : roll < tankChance + saboteurChance + runnerChance + healerChance ? "healer"
-      : "grunt";
+    type = pickEnemyType(wave.stage);
   }
 
-  const scale = type === "boss" ? 1.55 : type === "tank" ? 1.18 : type === "runner" ? 0.82 : type === "saboteur" ? 0.92 : type === "healer" ? 0.88 : 1;
-  const hpMultiplier = type === "tank" ? 1.75 : type === "runner" ? 0.72 : type === "saboteur" ? 0.9 : type === "healer" ? 0.6 : 1;
-  const speedMultiplier = type === "tank" ? 0.68 : type === "runner" ? 1.48 : type === "saboteur" ? 1.16 : type === "healer" ? 0.85 : 1;
+  const typeStats = {
+    grunt:     { scale: 1,    hp: 1,    speed: 1,    armor: false },
+    runner:    { scale: 0.82, hp: 0.72, speed: 1.48, armor: false },
+    tank:      { scale: 1.18, hp: 1.75, speed: 0.68, armor: true },
+    saboteur:  { scale: 0.92, hp: 0.9,  speed: 1.16, armor: false },
+    healer:    { scale: 0.88, hp: 0.6,  speed: 0.85, armor: false },
+    shielded:  { scale: 1.05, hp: 1.1,  speed: 0.9,  armor: false },
+    berserker: { scale: 1.0,  hp: 1.3,  speed: 1.0,  armor: false },
+    boss:      { scale: 1.55, hp: 1,    speed: 1,    armor: true }
+  };
+  const ts = typeStats[type] || typeStats.grunt;
   const baseHp = forcedType ? 82 + state.wave * 18 : wave.hp;
-  const hp = baseHp * hpMultiplier;
+  const hp = baseHp * ts.hp;
   const lane = type === "boss" ? 0.55 : rand(0.08, 0.92);
+  const shieldAmount = type === "boss" ? (wave.shield || 360)
+    : type === "shielded" ? Math.round(baseHp * 0.6) : 0;
 
   state.enemies.push({
     x: roadPointForLane(ENEMY_SPAWN_Y, lane),
     y: ENEMY_SPAWN_Y,
     lane,
     type,
-    scale,
+    scale: ts.scale,
     hp,
     maxHp: hp,
-    speed: wave.speed * speedMultiplier,
-    reward: Math.round((forcedType ? 22 : wave.reward) * hpMultiplier),
+    speed: wave.speed * ts.speed,
+    reward: Math.round((forcedType ? 22 : wave.reward) * ts.hp),
     phase: rand(0, Math.PI * 2),
     hit: 0,
-    armor: type === "tank" || type === "boss",
+    armor: ts.armor,
     slow: 0,
     burn: 0,
     burnTimer: 0,
     sabotageDone: false,
-    shield: type === "boss" ? (wave.shield || 360) : 0,
-    maxShield: type === "boss" ? (wave.shield || 360) : 0,
+    shield: shieldAmount,
+    maxShield: shieldAmount,
     bossTimer: type === "boss" ? 4.5 : 0,
     bossPhase: 0,
     movement: "advancing",
@@ -134,10 +159,16 @@ function spawnEnemy(forcedType = null, countSpawn = true) {
     addFloater("装甲! 用炮弹或穿甲弹", ROAD.x + ROAD.w / 2, 200, "#ffcc44");
     announce("装甲敌人出现，普通子弹伤害减半，使用炮弹或穿甲弹更有效");
   }
-  if (!state.tipShown.shield && type === "boss") {
+  if (!state.tipShown.shield && (type === "boss" || type === "shielded")) {
     state.tipShown.shield = true;
+    const msg = type === "boss" ? "Boss 自带护盾，必须依靠炮弹破盾" : "护盾兵出现，需要炮弹击破护盾";
     addFloater("护盾! 需要炮弹击破", ROAD.x + ROAD.w / 2, 200, "#81e6ff");
-    announce("Boss 自带护盾，普通子弹几乎无法破盾，必须依靠炮弹");
+    announce(msg);
+  }
+  if (!state.tipShown.berserker && type === "berserker") {
+    state.tipShown.berserker = true;
+    addFloater("狂战士! 血少越快", ROAD.x + ROAD.w / 2, 200, "#ff6b6b");
+    announce("狂战士出现，血量越低速度越快，优先集火消灭");
   }
 }
 
@@ -1449,6 +1480,12 @@ function update(dt) {
           beep(680, 0.06, "triangle", 0.02);
         }
       }
+    }
+
+    if (enemy.type === "berserker") {
+      const hpRatio = enemy.hp / enemy.maxHp;
+      const rage = 1 + (1 - hpRatio) * 1.2;
+      enemy.speed = (getWave(state.wave).speed * 1.0) * rage;
     }
 
     if (enemy.type === "boss") {
