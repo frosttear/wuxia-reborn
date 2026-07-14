@@ -90,6 +90,10 @@ window.addEventListener("keydown", (event) => {
 document.getElementById("startButton").addEventListener("click", resetGame);
 continueGameButton.addEventListener("click", continueSavedGame);
 document.getElementById("restartButton").addEventListener("click", resetGame);
+document.getElementById("retryStageButtonPause").addEventListener("click", () => {
+  pauseOverlay.hidden = true;
+  retryCurrentStage();
+});
 document.getElementById("restartButtonPause").addEventListener("click", resetGame);
 document.getElementById("resumeButton").addEventListener("click", resumeGame);
 nextStageButton.addEventListener("click", startNextStage);
