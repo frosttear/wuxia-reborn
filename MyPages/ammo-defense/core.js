@@ -99,9 +99,9 @@ const legacyDefs = [
     id: "coinReserve",
     icon: "💰",
     title: "物资储备",
-    desc: () => "继承本关收入的30%作为初始金币（+" + Math.round(state.earned * 0.3) + "金）",
-    eligible: () => state.earned > 100,
-    snapshot: () => ({ coins: Math.round(state.earned * 0.3) }),
+    desc: () => "继承当前金币的50%（+" + Math.round(state.coins * 0.5) + "金）",
+    eligible: () => state.coins >= 100,
+    snapshot: () => ({ coins: Math.round(state.coins * 0.5) }),
     apply: s => { state.coins += s.coins; }
   },
   {
@@ -963,7 +963,8 @@ function renderChoiceOptions(preferNew = false) {
     const tagLabels = { fire: "🔥火", armor: "🛡防", speed: "⚡速", economy: "💰财" };
     const tagLabel = tag ? tagLabels[tag] || "" : "";
     const tagCount = tag ? (state.synergyCounts[tag] || 0) : 0;
-    const tagHtml = tag ? `<span class="choice-tag">${tagLabel} ${tagCount}/3</span>` : "";
+    const tagThreshold = tagCount >= 3 ? 6 : 3;
+    const tagHtml = tag ? `<span class="choice-tag">${tagLabel} ${tagCount}/${tagThreshold}</span>` : "";
     button.innerHTML = `
       <span class="choice-mark">${choice.mark}</span>
       <span class="choice-copy">
@@ -1243,6 +1244,7 @@ function showStageClear(completedStage) {
   const pts = awardPrestige(completedStage);
   state.stageStartEarned = state.earned;
   state.stageStartKills = state.kills;
+  state.mode = "legacyChoice";
   pauseButton.hidden = true;
   choiceOverlay.hidden = true;
   announce(`第 ${completedStage} 关完成 · 获得 ${pts} 声望点`);
@@ -1252,12 +1254,13 @@ function showStageClear(completedStage) {
 }
 
 function showStageClearOverlay(completedStage) {
+  const legacyId = state.pendingLegacy;
+  const legacyName = legacyId ? legacyDefs.find(d => d.id === legacyId)?.title : null;
   resetStageState("stageClear");
   document.getElementById("stageEyebrow").textContent = `第 ${completedStage} 关完成 · +${completedStage} 声望`;
-  const legacyName = state.pendingLegacy ? legacyDefs.find(d => d.id === state.pendingLegacy)?.title : null;
   document.getElementById("stageSummary").innerHTML =
     `第 ${completedStage + 1} 关敌人生命、速度与数量提升` +
-    (legacyName ? `<br>遗产「${legacyName}」已就绪` : `<br>阵地与资源已重置`);
+    (legacyName ? `<br>遗产「${legacyName}」已生效` : `<br>阵地与资源已重置`);
   nextStageButton.textContent = `进入第 ${completedStage + 1} 关`;
   stageOverlay.hidden = false;
 }
