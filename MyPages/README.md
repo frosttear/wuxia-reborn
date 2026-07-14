@@ -1,3 +1,5 @@
+English | **[中文](./README_ZH_CN.md)**
+
 # MyPages
 
 A collection of static HTML pages hosted on GitHub Pages.

@@ -1,3 +1,5 @@
+**[English](./README_EN.md)** | 中文
+
 # 轮回江湖（开发中）v0.27.35
 
 > 武侠风世界线回溯类文字冒险游戏 · 纯 HTML/CSS/JS · GitHub Pages 可直接部署
