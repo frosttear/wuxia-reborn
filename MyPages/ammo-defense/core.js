@@ -820,7 +820,9 @@ function checkSynergies() {
         !state.activeSynergies.includes(def.name)) {
       state.activeSynergies.push(def.name);
       def.effect();
-      addFloater(`共鸣·${def.name}`, ROAD.x + ROAD.w / 2, 170, "#ffe36a");
+      state.floaters.push({ value: `共鸣·${def.name}`, x: ROAD.x + ROAD.w / 2, y: 180, life: 2.2, color: "#ffe36a" });
+      state.floaters.push({ value: def.desc, x: ROAD.x + ROAD.w / 2, y: 206, life: 2.2, color: "#fff4c5" });
+      announce(`共鸣触发: ${def.name} — ${def.desc}`);
       beep(740, 0.15, "triangle", 0.05);
       setTimeout(() => beep(880, 0.12, "triangle", 0.05), 100);
     }
