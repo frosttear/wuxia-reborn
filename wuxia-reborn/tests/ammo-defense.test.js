@@ -415,8 +415,8 @@ describe('ammo-defense render.js - endless mode header', () => {
         expect(renderJs).toMatch(/无尽/);
     });
 
-    test('shows synergy dots in header', () => {
-        expect(renderJs).toMatch(/activeSynergies/);
+    test('shows synergy indicators in header', () => {
+        expect(renderJs).toMatch(/synergyCounts/);
     });
 });
 

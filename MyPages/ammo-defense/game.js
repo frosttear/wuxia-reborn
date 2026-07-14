@@ -125,6 +125,52 @@ closeHelpButton.addEventListener("click", () => {
 });
 
 refreshChoicesButton.addEventListener("click", refreshChoices);
+
+const techButton = document.getElementById("techButton");
+const techOverlay = document.getElementById("techOverlay");
+const closeTechButton = document.getElementById("closeTechButton");
+
+function renderTechTree() {
+  document.getElementById("techPrestige").textContent = "声望点：" + state.prestige;
+  const list = document.getElementById("techList");
+  list.innerHTML = "";
+  for (const def of techDefs) {
+    const lv = getTechLevel(def.id);
+    const maxed = lv >= def.max;
+    const cost = maxed ? 0 : def.cost[lv];
+    const affordable = !maxed && state.prestige >= cost;
+    const div = document.createElement("div");
+    div.style.cursor = affordable ? "pointer" : "default";
+    div.style.opacity = maxed ? "0.55" : "1";
+    if (affordable) div.style.background = "rgba(255, 196, 61, 0.18)";
+    div.innerHTML =
+      `<strong>${def.label}` +
+      ` <span style="color:#d06b2f;font-size:11px">LV.${lv}/${def.max}</span>` +
+      `</strong>` +
+      `<span>${def.desc}` +
+      (maxed ? " ✓ 已满" : `　需要 ${cost} 声望`) +
+      `</span>`;
+    if (affordable) {
+      div.addEventListener("click", () => {
+        if (upgradeTech(def.id)) {
+          beep(660, 0.08, "triangle", 0.04);
+          renderTechTree();
+        }
+      });
+    }
+    list.appendChild(div);
+  }
+}
+
+techButton.addEventListener("click", () => {
+  renderTechTree();
+  techOverlay.hidden = false;
+});
+
+closeTechButton.addEventListener("click", () => {
+  techOverlay.hidden = true;
+});
+
 updateContinueGameButton();
 
 document.addEventListener("visibilitychange", () => {

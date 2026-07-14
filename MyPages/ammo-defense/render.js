@@ -28,20 +28,28 @@ function drawHeader() {
   for (let i = 0; i < state.gateMax; i++) {
     drawHeart(340 + i * 11, 61, 4.4, i < state.lives ? "#ee5a48" : "#4d5b52");
   }
-  if (state.activeSynergies.length > 0) {
-    const synergyColors = { fire: "#ff7048", armor: "#66d9ff", speed: "#ffe36a", economy: "#ffc43d" };
-    let sx = 400;
+  const synergyColors = { fire: "#ff7048", armor: "#66d9ff", speed: "#ffe36a", economy: "#ffc43d" };
+  const synergyLabels = { fire: "火", armor: "防", speed: "速", economy: "财" };
+  const hasSynergy = Object.values(state.synergyCounts).some(v => v > 0);
+  if (hasSynergy) {
+    let sx = 275;
     for (const tag of Object.keys(state.synergyCounts)) {
-      if (state.synergyCounts[tag] > 0) {
-        ctx.fillStyle = synergyColors[tag] || "#9ac4a2";
-        ctx.globalAlpha = 0.8;
-        ctx.beginPath();
-        ctx.arc(sx, 26, 4, 0, Math.PI * 2);
-        ctx.fill();
-        ctx.globalAlpha = 1;
-        text(String(state.synergyCounts[tag]), sx, 26, 6, "#17231c");
-        sx += 12;
+      const count = state.synergyCounts[tag];
+      if (count <= 0) continue;
+      const color = synergyColors[tag];
+      const active3 = count >= 3;
+      const active6 = count >= 6;
+      ctx.globalAlpha = 0.85;
+      fillRound(sx, 10, 38, 16, 4, active3 ? color : "#2b3c31");
+      ctx.globalAlpha = 1;
+      text(synergyLabels[tag] + count, sx + 19, 18, 9,
+        active3 ? "#17231c" : color, "center", active3 ? 900 : 700);
+      if (active3) {
+        ctx.strokeStyle = active6 ? "#ffe36a" : color;
+        ctx.lineWidth = 1.5;
+        ctx.strokeRect(sx + 0.5, 10.5, 37, 15);
       }
+      sx += 42;
     }
   }
 }

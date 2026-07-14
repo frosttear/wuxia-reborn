@@ -60,6 +60,90 @@ const TOTAL_STAGES = 10;
 const WAVES_PER_STAGE = 10;
 const TOTAL_WAVES = TOTAL_STAGES * WAVES_PER_STAGE;
 const STAGE_PROGRESS_KEY = "ammo-defense-stage-progress";
+const PRESTIGE_KEY = "ammo-defense-prestige";
+const TECH_KEY = "ammo-defense-tech";
+
+function loadPrestige() {
+  return Number(localStorage.getItem(PRESTIGE_KEY) || 0);
+}
+function savePrestige(p) {
+  localStorage.setItem(PRESTIGE_KEY, String(p));
+}
+function loadTech() {
+  try { return JSON.parse(localStorage.getItem(TECH_KEY)) || {}; } catch { return {}; }
+}
+function saveTech(t) {
+  localStorage.setItem(TECH_KEY, JSON.stringify(t));
+}
+
+const techDefs = [
+  { id: "startCoins",   label: "战备物资",   desc: "初始金币+60",         max: 3, cost: [2, 3, 5], effect: lv => ({ coins: lv * 60 }) },
+  { id: "startWorkers", label: "老兵征召",   desc: "初始搬运工+1",       max: 2, cost: [3, 5],    effect: lv => ({ workers: lv }) },
+  { id: "startProd",    label: "工业底蕴",   desc: "初始产线等级+1",     max: 3, cost: [2, 4, 6], effect: lv => ({ productionLevel: lv }) },
+  { id: "permCrit",     label: "射击训练",   desc: "全局暴击率+2%",      max: 3, cost: [2, 3, 5], effect: lv => ({ critChance: lv * 0.02 }) },
+  { id: "permDamage",   label: "火力研发",   desc: "全局伤害+5%",        max: 3, cost: [3, 4, 6], effect: lv => ({ damageBonus: lv * 0.05 }) },
+  { id: "permLives",    label: "加固工事",   desc: "基地生命上限+1",     max: 2, cost: [4, 6],    effect: lv => ({ lives: lv }) }
+];
+
+const legacyDefs = [
+  {
+    id: "weaponLevels",
+    icon: "🔥",
+    title: "火力传承",
+    desc: () => "保留武器等级的一半（枪手LV." + Math.floor(state.gunnerLevel / 2) + " 炮台LV." + Math.floor(state.cannonLevel / 2) + "）",
+    eligible: () => state.gunnerLevel > 1 || state.cannonLevel > 1,
+    snapshot: () => ({ gunnerLevel: Math.floor(state.gunnerLevel / 2), cannonLevel: Math.floor(state.cannonLevel / 2) }),
+    apply: s => { state.gunnerLevel = Math.max(state.gunnerLevel, s.gunnerLevel); state.cannonLevel = Math.max(state.cannonLevel, s.cannonLevel); }
+  },
+  {
+    id: "coinReserve",
+    icon: "💰",
+    title: "物资储备",
+    desc: () => "继承本关收入的30%作为初始金币（+" + Math.round(state.earned * 0.3) + "金）",
+    eligible: () => state.earned > 100,
+    snapshot: () => ({ coins: Math.round(state.earned * 0.3) }),
+    apply: s => { state.coins += s.coins; }
+  },
+  {
+    id: "veteranCrew",
+    icon: "👷",
+    title: "老兵部队",
+    desc: () => "保留搬运工（最多3人，当前" + state.workers.length + "人）",
+    eligible: () => state.workers.length > 1,
+    snapshot: () => ({ workerCount: Math.min(3, state.workers.length) }),
+    apply: s => { while (state.workers.length < s.workerCount) addWorker(); }
+  },
+  {
+    id: "tacticMemory",
+    icon: "🎯",
+    title: "战术经验",
+    desc: () => {
+      const owned = ["ap", "ice", "fire", "he"].filter(k => state.unlocks[k]);
+      return owned.length ? "保留一种特殊弹药（" + owned.join("/") + "）" : "无可保留弹药";
+    },
+    eligible: () => ["ap", "ice", "fire", "he"].some(k => state.unlocks[k]),
+    snapshot: () => {
+      const owned = ["ap", "ice", "fire", "he"].filter(k => state.unlocks[k]);
+      return { ammo: owned[Math.floor(Math.random() * owned.length)] };
+    },
+    apply: s => { if (s.ammo) state.unlocks[s.ammo] = true; }
+  },
+  {
+    id: "synergyEcho",
+    icon: "⚡",
+    title: "共鸣余韵",
+    desc: () => {
+      const best = Object.entries(state.synergyCounts).sort((a, b) => b[1] - a[1])[0];
+      return best && best[1] > 0 ? "保留最高共鸣标签2层（" + best[0] + " " + best[1] + "→2）" : "无共鸣可保留";
+    },
+    eligible: () => Object.values(state.synergyCounts).some(v => v >= 2),
+    snapshot: () => {
+      const best = Object.entries(state.synergyCounts).sort((a, b) => b[1] - a[1])[0];
+      return { tag: best[0], count: Math.min(2, best[1]) };
+    },
+    apply: s => { if (s.tag) { state.synergyCounts[s.tag] += s.count; checkSynergies(); } }
+  }
+];
 
 ctx.scale(SCALE, SCALE);
 ctx.lineJoin = "round";
@@ -156,7 +240,11 @@ const state = {
   activeSynergies: [],
   tipShown: { armor: false, shield: false },
   burnDurationBonus: 0,
-  defenseRepairBonus: 0
+  defenseRepairBonus: 0,
+  prestige: loadPrestige(),
+  tech: loadTech(),
+  pendingLegacy: null,
+  legacySnapshot: null
 };
 
 const bossNames = [
@@ -1010,11 +1098,112 @@ function resetStageState(mode = "playing") {
     defenseRepairBonus: 0
   });
   addWorker();
+  applyTechBonuses();
+  applyLegacy();
+}
+
+function applyTechBonuses() {
+  const tech = state.tech;
+  for (const def of techDefs) {
+    const lv = tech[def.id] || 0;
+    if (lv <= 0) continue;
+    const fx = def.effect(lv);
+    if (fx.coins) state.coins += fx.coins;
+    if (fx.workers) { for (let i = 0; i < fx.workers; i++) addWorker(); }
+    if (fx.productionLevel) state.productionLevel += fx.productionLevel;
+    if (fx.critChance) state.critChance += fx.critChance;
+    if (fx.damageBonus) state.damageBonus += fx.damageBonus;
+    if (fx.lives) { state.gateMax += fx.lives; state.lives = state.gateMax; }
+  }
+}
+
+function applyLegacy() {
+  const legacy = state.pendingLegacy;
+  const snapshot = state.legacySnapshot;
+  if (!legacy || !snapshot) return;
+  const def = legacyDefs.find(d => d.id === legacy);
+  if (def) {
+    def.apply(snapshot);
+    addFloater("遗产·" + def.title, ROAD.x + ROAD.w / 2, 200, "#ffe36a");
+    announce("遗产生效: " + def.title);
+  }
+  state.pendingLegacy = null;
+  state.legacySnapshot = null;
+}
+
+function getTechLevel(id) {
+  return state.tech[id] || 0;
+}
+
+function upgradeTech(id) {
+  const def = techDefs.find(d => d.id === id);
+  if (!def) return false;
+  const lv = getTechLevel(id);
+  if (lv >= def.max) return false;
+  const cost = def.cost[lv];
+  if (state.prestige < cost) return false;
+  state.prestige -= cost;
+  state.tech[id] = lv + 1;
+  savePrestige(state.prestige);
+  saveTech(state.tech);
+  return true;
+}
+
+function awardPrestige(stage) {
+  const points = stage;
+  state.prestige += points;
+  savePrestige(state.prestige);
+  return points;
+}
+
+function showLegacyChoice(completedStage) {
+  const available = legacyDefs.filter(d => d.eligible());
+  if (available.length === 0) {
+    showStageClearOverlay(completedStage);
+    return;
+  }
+  const shuffled = available.sort(() => Math.random() - 0.5).slice(0, 3);
+  const legacyOverlay = document.getElementById("legacyOverlay");
+  const legacyList = document.getElementById("legacyList");
+  legacyList.innerHTML = "";
+  const snapshots = {};
+  for (const def of shuffled) {
+    snapshots[def.id] = def.snapshot();
+    const btn = document.createElement("button");
+    btn.className = "choice-button";
+    btn.type = "button";
+    btn.innerHTML =
+      `<span class="choice-mark">${def.icon}</span>` +
+      `<div class="choice-copy"><strong>${def.title}</strong><span>${def.desc()}</span></div>`;
+    btn.addEventListener("click", () => {
+      state.pendingLegacy = def.id;
+      state.legacySnapshot = snapshots[def.id];
+      legacyOverlay.hidden = true;
+      showStageClearOverlay(completedStage);
+      beep(520, 0.08, "triangle", 0.04);
+    });
+    legacyList.appendChild(btn);
+  }
+  const skipBtn = document.createElement("button");
+  skipBtn.className = "secondary-button";
+  skipBtn.type = "button";
+  skipBtn.style.marginTop = "12px";
+  skipBtn.textContent = "不带遗产";
+  skipBtn.addEventListener("click", () => {
+    state.pendingLegacy = null;
+    state.legacySnapshot = null;
+    legacyOverlay.hidden = true;
+    showStageClearOverlay(completedStage);
+  });
+  legacyList.appendChild(skipBtn);
+  legacyOverlay.hidden = false;
 }
 
 function resetGame() {
   state.endless = false;
   state.endlessWave = 0;
+  state.pendingLegacy = null;
+  state.legacySnapshot = null;
   startGameAtStage(1);
 }
 
@@ -1033,6 +1222,8 @@ function startGameAtStage(stage) {
   resultOverlay.hidden = true;
   stageOverlay.hidden = true;
   choiceOverlay.hidden = true;
+  document.getElementById("legacyOverlay").hidden = true;
+  document.getElementById("techOverlay").hidden = true;
   pauseButton.hidden = false;
   saveStageProgress(normalizedStage);
   announce(`第 ${normalizedStage} 关 · 第 1 波准备`);
@@ -1046,19 +1237,26 @@ function continueSavedGame() {
 
 function showStageClear(completedStage) {
   saveStageProgress(completedStage + 1);
+  const pts = awardPrestige(completedStage);
   state.stageStartEarned = state.earned;
   state.stageStartKills = state.kills;
-  resetStageState("stageClear");
   pauseButton.hidden = true;
   choiceOverlay.hidden = true;
-  document.getElementById("stageEyebrow").textContent = `第 ${completedStage} 关完成`;
-  document.getElementById("stageSummary").innerHTML =
-    `第 ${completedStage + 1} 关敌人生命、速度与数量提升<br>阵地、金币、弹药和强化已全部重置`;
-  nextStageButton.textContent = `进入第 ${completedStage + 1} 关`;
-  stageOverlay.hidden = false;
-  announce(`第 ${completedStage} 关完成`);
+  announce(`第 ${completedStage} 关完成 · 获得 ${pts} 声望点`);
   beep(523, 0.1, "triangle", 0.05);
   setTimeout(() => beep(659, 0.14, "triangle", 0.05), 110);
+  showLegacyChoice(completedStage);
+}
+
+function showStageClearOverlay(completedStage) {
+  resetStageState("stageClear");
+  document.getElementById("stageEyebrow").textContent = `第 ${completedStage} 关完成 · +${completedStage} 声望`;
+  const legacyName = state.pendingLegacy ? legacyDefs.find(d => d.id === state.pendingLegacy)?.title : null;
+  document.getElementById("stageSummary").innerHTML =
+    `第 ${completedStage + 1} 关敌人生命、速度与数量提升` +
+    (legacyName ? `<br>遗产「${legacyName}」已就绪` : `<br>阵地与资源已重置`);
+  nextStageButton.textContent = `进入第 ${completedStage + 1} 关`;
+  stageOverlay.hidden = false;
 }
 
 function startNextStage() {
@@ -1125,6 +1323,7 @@ function startEndlessMode() {
 
 function endGame(won) {
   saveStageProgress(won ? TOTAL_STAGES : currentStageNumber());
+  if (won && !state.endless) awardPrestige(TOTAL_STAGES);
   state.mode = won ? "won" : "lost";
   pauseButton.hidden = true;
   resultOverlay.hidden = false;

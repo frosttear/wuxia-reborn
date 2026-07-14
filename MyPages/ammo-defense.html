@@ -25,6 +25,7 @@
           <p class="tagline">生产子弹与炮弹，调度搬运工<br>为枪械和炮台持续装填</p>
           <button id="startButton" class="primary-button" type="button">开始游戏</button>
           <button id="continueGameButton" class="secondary-button" type="button" hidden="">继续第 1 关</button>
+          <button id="techButton" class="secondary-button" type="button">科技树</button>
           <button id="startHelpButton" class="secondary-button" type="button">操作说明</button>
         </div>
       </div>
@@ -58,6 +59,24 @@
           <h1 style="font-size:38px">阵地转移</h1>
           <p id="stageSummary" class="tagline">下一关敌人将更强<br>阵地与资源已全部重置</p>
           <button id="nextStageButton" class="primary-button" type="button">进入下一关</button>
+        </div>
+      </div>
+
+      <div id="legacyOverlay" class="overlay choice-overlay" hidden="">
+        <div class="panel choice-panel">
+          <p class="eyebrow">通关遗产 · 选择一项带入下关</p>
+          <h1 style="font-size:34px">战场遗产</h1>
+          <div id="legacyList" class="choice-list"></div>
+        </div>
+      </div>
+
+      <div id="techOverlay" class="overlay choice-overlay" hidden="">
+        <div class="panel help-panel">
+          <p class="eyebrow">永久科技 · 声望解锁</p>
+          <h1 style="font-size:34px">科技树</h1>
+          <p id="techPrestige" class="tagline" style="margin:8px 0 4px">声望点：0</p>
+          <div id="techList" class="help-list"></div>
+          <button id="closeTechButton" class="primary-button" type="button">返回</button>
         </div>
       </div>
 
