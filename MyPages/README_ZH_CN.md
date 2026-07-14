@@ -10,12 +10,16 @@
 
 | 页面 | 说明 |
 |------|------|
+| **[弹药防线](ammo-defense.html)** | 末日要塞风格塔防游戏，含弹药物流、武器升级和共鸣系统（[详情](ammo-defense/README.md)） |
 | **[游泳年卡打卡台账](swim-pass-checkin.html)** | 本地优先的游泳年卡打卡记录器，支持人员管理和月度统计 |
-| **[Async/Await 线程切换陷阱](Async%3AAwait%20Thread%20Switching%20Pitfall.html)** | 关于常见 async/await 陷阱的交互式演示 |
+| **[Music Generator](music-generator.html)** | 交互式音乐生成工具 |
+| **[Scratch Blocks Compiler](scratch-blocks-compiler.html)** | 深入解析 Scratch 积木如何编译为 JavaScript |
+| **[TurboWarp Packager Internals](turbowarp-packager-internals.html)** | TurboWarp 打包器如何将 Scratch 项目转换为 HTML |
+| **[Async/Await 线程切换陷阱](async-await-thread-pitfall.html)** | 关于常见 async/await 陷阱的交互式演示 |
 | **[棒球](Baseball.html)** | 使用 Scratch & TurboWarp 制作的棒球游戏 |
 | **[飞翔的小鸟](FlyingBird_mobile.html)** | 适配移动端的 Flappy Bird 风格游戏 |
-| **[狐妖大作战](%E7%8B%90%E5%A6%96%E5%A4%A7%E4%BD%9C%E6%88%98%20-%20Preview.html)** | 植物大战僵尸风格的塔防游戏 |
-| **[三年级英语打字练习](%E4%B8%89%E5%B9%B4%E7%BA%A7%E8%8B%B1%E8%AF%AD%E6%89%93%E5%AD%97%E7%BB%83%E4%B9%A0.html)** | 面向小学三年级学生的英语词汇打字练习 |
+| **[狐妖大作战](fox-demon-battle-preview.html)** | 植物大战僵尸风格的塔防游戏 |
+| **[三年级英语打字练习](grade3-typing-practice.html)** | 面向小学三年级学生的英语词汇打字练习 |
 
 ## 特性
 
