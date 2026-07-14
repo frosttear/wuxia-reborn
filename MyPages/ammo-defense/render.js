@@ -410,8 +410,9 @@ function drawRepairProgress() {
     }
     if (worker.state !== "repairing" || !worker.targetDefense) continue;
     const position = defensePosition(worker.targetDefense);
-    const remaining = clamp(worker.wait, 0, DEFENSE_REPAIR_DURATION);
-    const progress = 1 - remaining / DEFENSE_REPAIR_DURATION;
+    const adjustedDuration = DEFENSE_REPAIR_DURATION * (1 - state.defenseRepairBonus);
+    const remaining = clamp(worker.wait, 0, adjustedDuration);
+    const progress = 1 - remaining / adjustedDuration;
     const y = position.y - 62;
     fillRound(position.x - 28, y, 56, 17, 5, "rgba(23,35,28,0.9)");
     text(`${worker.targetDefense.kind === "wall" ? "修墙" : "维修"} ${remaining.toFixed(1)}s`,

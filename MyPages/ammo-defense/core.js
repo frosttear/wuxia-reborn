@@ -154,7 +154,9 @@ const state = {
   endlessWave: 0,
   synergyCounts: { fire: 0, armor: 0, speed: 0, economy: 0 },
   activeSynergies: [],
-  tipShown: { armor: false, shield: false }
+  tipShown: { armor: false, shield: false },
+  burnDurationBonus: 0,
+  defenseRepairBonus: 0
 };
 
 const bossNames = [
@@ -805,9 +807,9 @@ const choiceTags = {
 
 const synergyDefs = [
   { tag: "fire", threshold: 3, name: "烈焰共鸣", desc: "所有伤害额外+8%", effect: () => { state.damageBonus += 0.08; } },
-  { tag: "fire", threshold: 6, name: "焚天", desc: "燃烧弹持续时间+50%", effect: () => {} },
+  { tag: "fire", threshold: 6, name: "焚天", desc: "燃烧弹持续时间+50%", effect: () => { state.burnDurationBonus += 0.5; } },
   { tag: "armor", threshold: 3, name: "钢铁壁垒", desc: "城墙+1上限", effect: () => { state.gateMax++; state.lives = Math.min(state.gateMax, state.lives + 1); } },
-  { tag: "armor", threshold: 6, name: "铜墙铁壁", desc: "火力点耐久维修速度提高", effect: () => {} },
+  { tag: "armor", threshold: 6, name: "铜墙铁壁", desc: "阵地维修时间缩短30%", effect: () => { state.defenseRepairBonus += 0.3; } },
   { tag: "speed", threshold: 3, name: "极速供应", desc: "传送带速度+10%", effect: () => { state.beltSpeedBonus += 0.10; } },
   { tag: "speed", threshold: 6, name: "闪电物流", desc: "搬运工移动速度+15%", effect: () => { state.roleLevels.porter++; } },
   { tag: "economy", threshold: 3, name: "财源广进", desc: "基地收入+2", effect: () => { state.baseIncomeLevel++; } },
@@ -999,7 +1001,9 @@ function resetStageState(mode = "playing") {
     choiceRefreshes: 0,
     synergyCounts: { fire: 0, armor: 0, speed: 0, economy: 0 },
     activeSynergies: [],
-    tipShown: { armor: false, shield: false }
+    tipShown: { armor: false, shield: false },
+    burnDurationBonus: 0,
+    defenseRepairBonus: 0
   });
   addWorker();
 }

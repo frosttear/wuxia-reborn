@@ -626,7 +626,7 @@ function updateWorkers(dt) {
       worker.y += (targetY - worker.y) * Math.min(1, dt * 7);
       if (Math.abs(dx) < 3) {
         worker.state = "repairing";
-        worker.wait = DEFENSE_REPAIR_DURATION;
+        worker.wait = DEFENSE_REPAIR_DURATION * (1 - state.defenseRepairBonus);
       }
     } else if (worker.state === "repairing") {
       const target = worker.targetDefense;
@@ -727,7 +727,7 @@ function damageEnemy(enemy, amount, projectile = null) {
 
   if (ammoType === "ice") enemy.slow = Math.max(enemy.slow, 3.8);
   if (ammoType === "fire") {
-    enemy.burn = Math.max(enemy.burn, 5);
+    enemy.burn = Math.max(enemy.burn, 5 * (1 + state.burnDurationBonus));
     enemy.burnTimer = 0;
   }
   if (ammoType === "he") {
