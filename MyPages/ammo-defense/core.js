@@ -316,6 +316,7 @@ const shop = [
     cost: () => 100 + state.productionLevel * 90,
     level: () => state.productionLevel,
     maxed: () => state.productionLevel >= MAX_PRODUCTION_LEVEL,
+    desc: () => "产弹" + Math.max(0.28, 0.78 - state.productionLevel * 0.055).toFixed(2) + "s→" + Math.max(0.28, 0.78 - (state.productionLevel + 1) * 0.055).toFixed(2) + "s 枪伤+2",
     action: () => {
       state.productionLevel = Math.min(MAX_PRODUCTION_LEVEL, state.productionLevel + 1);
     }
@@ -334,6 +335,7 @@ const shop = [
       ? "添加"
       : state.gunnerLevel >= MAX_GUNNER_LEVEL ? "已满" : "强化",
     maxed: () => state.gunnerCount >= 3 && state.gunnerLevel >= MAX_GUNNER_LEVEL,
+    desc: () => state.gunnerCount < 3 ? "增加一名枪手" : "伤害+3 射速" + Math.max(0.48, 0.9 - (state.gunnerLevel - 1) * 0.025 - (state.productionLevel - 1) * 0.008).toFixed(2) + "s→" + Math.max(0.48, 0.9 - state.gunnerLevel * 0.025 - (state.productionLevel - 1) * 0.008).toFixed(2) + "s",
     action: () => {
       if (state.gunnerCount < 3) addGunner();
       else state.gunnerLevel = Math.min(MAX_GUNNER_LEVEL, state.gunnerLevel + 1);
@@ -353,6 +355,7 @@ const shop = [
         ? "添加"
         : state.cannonLevel >= MAX_CANNON_LEVEL ? "已满" : "强化",
       maxed: () => state.cannonCount >= 3 && state.cannonLevel >= MAX_CANNON_LEVEL,
+      desc: () => state.cannonCount < 3 ? "增加一座炮台" : "伤害+20 射速" + Math.max(1.2, 2.5 - (state.cannonLevel - 1) * 0.07).toFixed(2) + "s→" + Math.max(1.2, 2.5 - state.cannonLevel * 0.07).toFixed(2) + "s 爆炸+3",
       action: () => {
         if (state.cannonCount < 3) addCannon();
         else state.cannonLevel = Math.min(MAX_CANNON_LEVEL, state.cannonLevel + 1);
@@ -365,6 +368,7 @@ const shop = [
     cost: () => 90 + state.porterLevel * 110,
     level: () => state.porterLevel,
     maxed: () => state.porterLevel >= 6,
+    desc: () => "当前" + state.workers.length + "人 添加一名搬运工",
     action: () => addWorker()
   }
 ];

@@ -1393,8 +1393,9 @@ function drawShop() {
     ctx.fillStyle = item.color;
     ctx.fillRect(x + 3, SHOP_TOP + 16, w - 6, 44);
     drawShopIcon(item.key, x + 22, SHOP_TOP + 38, item.color);
-    text(label, x + 62, SHOP_TOP + 34, 11, "#17231c");
-    text(status, x + 62, SHOP_TOP + 51, 8, "#315340", "center", 800);
+    text(label, x + 62, SHOP_TOP + 31, 11, "#17231c");
+    text(status, x + 62, SHOP_TOP + 46, 8, "#315340", "center", 800);
+    if (item.desc && !maxed) text(item.desc(), x + w / 2, SHOP_TOP + 57, 6, "#4d5b52");
     if (!maxed) drawCoin(x + 20, SHOP_TOP + 100, 8);
     text(maxed ? "MAX" : String(cost), x + 60, SHOP_TOP + 100, 14,
       affordable ? "#17231c" : "#6f7067");
