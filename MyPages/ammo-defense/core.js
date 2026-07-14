@@ -153,7 +153,8 @@ const state = {
   endless: false,
   endlessWave: 0,
   synergyCounts: { fire: 0, armor: 0, speed: 0, economy: 0 },
-  activeSynergies: []
+  activeSynergies: [],
+  tipShown: { armor: false, shield: false }
 };
 
 const bossNames = [
@@ -995,7 +996,8 @@ function resetStageState(mode = "playing") {
     pendingChoices: [],
     choiceRefreshes: 0,
     synergyCounts: { fire: 0, armor: 0, speed: 0, economy: 0 },
-    activeSynergies: []
+    activeSynergies: [],
+    tipShown: { armor: false, shield: false }
   });
   addWorker();
 }

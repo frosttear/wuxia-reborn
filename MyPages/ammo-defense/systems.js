@@ -129,6 +129,16 @@ function spawnEnemy(forcedType = null, countSpawn = true) {
     enrageNotified: false
   });
   if (countSpawn) state.spawned++;
+  if (!state.tipShown.armor && type === "tank") {
+    state.tipShown.armor = true;
+    addFloater("装甲! 用炮弹或穿甲弹", ROAD.x + ROAD.w / 2, 200, "#ffcc44");
+    announce("装甲敌人出现，普通子弹伤害减半，使用炮弹或穿甲弹更有效");
+  }
+  if (!state.tipShown.shield && type === "boss") {
+    state.tipShown.shield = true;
+    addFloater("护盾! 需要炮弹击破", ROAD.x + ROAD.w / 2, 200, "#81e6ff");
+    announce("Boss 自带护盾，普通子弹几乎无法破盾，必须依靠炮弹");
+  }
 }
 
 function spawnProjectile(ammoType, target, weapon = "gun") {
