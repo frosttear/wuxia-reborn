@@ -268,10 +268,10 @@ function createWave(index) {
     return {
       count: 1,
       interval: 0,
-      hp: Math.round(5100 * Math.pow(1.22, stageTier)),
-      speed: Math.min(28, 15 + stageTier * 0.8),
+      hp: Math.round(5100 * Math.pow(1.26, stageTier)),
+      speed: Math.min(30, 15 + stageTier * 1.0),
       reward: Math.round(420 + stageTier * 240),
-      shield: Math.round(650 * Math.pow(1.18, stageTier)),
+      shield: Math.round(650 * Math.pow(1.22, stageTier)),
       type: "boss",
       bossName: bossNames[stageTier],
       batchSize: 1,
@@ -282,8 +282,8 @@ function createWave(index) {
   return {
     count: Math.min(80, 24 + (stageWave - 1) * 5 + stageTier * 4),
     interval: Math.max(0.3, 1.17 - stageWave * 0.065 - stageTier * 0.025),
-    hp: Math.round(52 * Math.pow(1.16, stageWave - 1) * Math.pow(1.10, stageTier)),
-    speed: Math.min(50, 22.75 + (stageWave - 1) * 1.15 + stageTier * 0.8),
+    hp: Math.round(52 * Math.pow(1.16, stageWave - 1) * Math.pow(1.14, stageTier)),
+    speed: Math.min(50, 22.75 + (stageWave - 1) * 1.15 + stageTier * 1.0),
     reward: Math.round(18 + stageWave * 4 + stageTier * 9),
     type: stage === 1 && stageWave <= 2 ? "grunt" : "mixed",
     batchSize: Math.min(6, 2 + Math.floor((stageWave - 1) / 2) + Math.floor(stageTier / 3)),
@@ -365,7 +365,8 @@ function saveStageProgress(stage) {
 }
 
 function baseCoinAmount() {
-  return 5 + (state.baseIncomeLevel - 1) * 3;
+  const stageBonus = (currentStageNumber() - 1) * 4;
+  return 5 + (state.baseIncomeLevel - 1) * 3 + stageBonus;
 }
 
 function nextGunnerSpecialSlot() {
@@ -805,7 +806,7 @@ function choicePool() {
       id: "baseIncome",
       mark: "基",
       title: "基地经济",
-      desc: "基地收入+3/5s（当前" + (10 + (state.baseIncomeLevel - 1) * 3) + "→" + (10 + state.baseIncomeLevel * 3) + "金/5s）",
+      desc: "基地收入+3/5s（当前" + baseCoinAmount() + "→" + (baseCoinAmount() + 3) + "金/5s）",
       eligible: () => state.baseIncomeLevel < MAX_BASE_INCOME_LEVEL,
       apply: () => { state.baseIncomeLevel++; }
     },

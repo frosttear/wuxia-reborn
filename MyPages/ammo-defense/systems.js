@@ -1496,18 +1496,48 @@ function update(dt) {
         burst(enemy.x, enemy.y, "#ff4040", 28, 180);
         beep(85, 0.4, "sawtooth", 0.07);
       }
-      enemy.bossTimer -= dt * (enraged ? 1.6 : 1);
+      if (enemy.bossPhase === 0) {
+        enemy.bossPhase = 1;
+        const stage = currentStageNumber();
+        spawnEnemy("tank", false);
+        spawnEnemy("runner", false);
+        if (stage >= 3) spawnEnemy("healer", false);
+        if (stage >= 5) spawnEnemy("shielded", false);
+        if (stage >= 7) spawnEnemy("berserker", false);
+        addFloater("护卫出击", enemy.x, enemy.y - 52, "#ff8874");
+        beep(120, 0.2, "sawtooth", 0.05);
+      }
+      enemy.bossTimer -= dt * (enraged ? 1.8 : 1);
       if (enemy.bossTimer <= 0) {
         enemy.bossPhase++;
-        if (enemy.bossPhase % 2 === 1) {
+        const skill = enemy.bossPhase % 3;
+        if (skill === 0) {
           spawnEnemy("runner", false);
-          spawnEnemy("saboteur", false);
-          if (enraged) spawnEnemy("tank", false);
+          spawnEnemy(enraged ? "tank" : "saboteur", false);
+          if (enraged) spawnEnemy("berserker", false);
           addFloater(enraged ? "疯狂增援" : "召集援军", enemy.x, enemy.y - 52, "#ff8874");
+        } else if (skill === 1) {
+          const shieldAmt = Math.round(enemy.maxHp * 0.12);
+          let shielded = 0;
+          for (const ally of state.enemies) {
+            if (ally === enemy || ally.shield > 0) continue;
+            if (Math.hypot(ally.x - enemy.x, ally.y - enemy.y) < 120) {
+              ally.shield = shieldAmt;
+              ally.maxShield = shieldAmt;
+              burst(ally.x, ally.y, "#81e6ff", 8, 60);
+              shielded++;
+            }
+          }
+          if (shielded > 0) {
+            addFloater("护盾光环", enemy.x, enemy.y - 52, "#81e6ff");
+            beep(550, 0.12, "triangle", 0.04);
+          } else {
+            tryStartEnemyBeltJam(enraged ? 11 : 9, enraged ? "疯狂冲击" : "冲击产线", 185);
+          }
         } else {
           tryStartEnemyBeltJam(enraged ? 11 : 9, enraged ? "疯狂冲击" : "冲击产线", 185);
         }
-        enemy.bossTimer = enemy.shield > 0 ? 5.2 : enraged ? 2.8 : 3.9;
+        enemy.bossTimer = enemy.shield > 0 ? 4.5 : enraged ? 2.2 : 3.2;
       }
     }
   }
