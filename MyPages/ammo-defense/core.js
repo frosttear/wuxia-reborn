@@ -59,21 +59,92 @@ const MAX_DAMAGE_BONUS = 1.2;
 const TOTAL_STAGES = 10;
 const WAVES_PER_STAGE = 10;
 const TOTAL_WAVES = TOTAL_STAGES * WAVES_PER_STAGE;
-const STAGE_PROGRESS_KEY = "ammo-defense-stage-progress";
-const PRESTIGE_KEY = "ammo-defense-prestige";
-const TECH_KEY = "ammo-defense-tech";
+const ENDLESS_UNLOCK_KEY = "ammo-defense-endless-unlocked";
+let currentSlot = 1;
+
+function slotKey(base) { return `ammo-defense-slot-${currentSlot}-${base}`; }
+function STAGE_PROGRESS_KEY() { return slotKey("stage"); }
+function PRESTIGE_KEY() { return slotKey("prestige"); }
+function TECH_KEY() { return slotKey("tech"); }
+function BEST_WAVE_KEY() { return slotKey("best"); }
+
+(function migrateLegacySave() {
+  const old = localStorage.getItem("ammo-defense-stage-progress");
+  if (old && !localStorage.getItem("ammo-defense-slot-1-stage")) {
+    localStorage.setItem("ammo-defense-slot-1-stage", old);
+    const p = localStorage.getItem("ammo-defense-prestige");
+    if (p) localStorage.setItem("ammo-defense-slot-1-prestige", p);
+    const t = localStorage.getItem("ammo-defense-tech");
+    if (t) localStorage.setItem("ammo-defense-slot-1-tech", t);
+    const b = localStorage.getItem("mining-defense-best");
+    if (b) localStorage.setItem("ammo-defense-slot-1-best", b);
+    if (Number(old) >= TOTAL_STAGES) localStorage.setItem(ENDLESS_UNLOCK_KEY, "1");
+    localStorage.removeItem("ammo-defense-stage-progress");
+    localStorage.removeItem("ammo-defense-prestige");
+    localStorage.removeItem("ammo-defense-tech");
+  }
+})();
 
 function loadPrestige() {
-  return Number(localStorage.getItem(PRESTIGE_KEY) || 0);
+  return Number(localStorage.getItem(PRESTIGE_KEY()) || 0);
 }
 function savePrestige(p) {
-  localStorage.setItem(PRESTIGE_KEY, String(p));
+  localStorage.setItem(PRESTIGE_KEY(), String(p));
 }
 function loadTech() {
-  try { return JSON.parse(localStorage.getItem(TECH_KEY)) || {}; } catch { return {}; }
+  try { return JSON.parse(localStorage.getItem(TECH_KEY())) || {}; } catch { return {}; }
 }
 function saveTech(t) {
-  localStorage.setItem(TECH_KEY, JSON.stringify(t));
+  localStorage.setItem(TECH_KEY(), JSON.stringify(t));
+}
+function isEndlessUnlocked() {
+  return localStorage.getItem(ENDLESS_UNLOCK_KEY) === "1";
+}
+function unlockEndless() {
+  localStorage.setItem(ENDLESS_UNLOCK_KEY, "1");
+}
+function getSlotSummary(slot) {
+  const stage = Number(localStorage.getItem(`ammo-defense-slot-${slot}-stage`) || 0);
+  const prestige = Number(localStorage.getItem(`ammo-defense-slot-${slot}-prestige`) || 0);
+  return { stage, prestige, empty: stage <= 0 };
+}
+function switchSlot(slot) {
+  currentSlot = slot;
+  state.prestige = loadPrestige();
+  state.tech = loadTech();
+  state.savedStage = readSavedStage();
+  state.bestWave = Number(localStorage.getItem(BEST_WAVE_KEY()) || 0);
+}
+function exportSaveData() {
+  const data = {};
+  for (let s = 1; s <= 3; s++) {
+    data[`slot${s}`] = {
+      stage: localStorage.getItem(`ammo-defense-slot-${s}-stage`),
+      prestige: localStorage.getItem(`ammo-defense-slot-${s}-prestige`),
+      tech: localStorage.getItem(`ammo-defense-slot-${s}-tech`),
+      best: localStorage.getItem(`ammo-defense-slot-${s}-best`)
+    };
+  }
+  data.endlessUnlocked = localStorage.getItem(ENDLESS_UNLOCK_KEY);
+  return JSON.stringify(data);
+}
+function importSaveData(json) {
+  try {
+    const data = JSON.parse(json);
+    for (let s = 1; s <= 3; s++) {
+      const slot = data[`slot${s}`];
+      if (!slot) continue;
+      for (const [k, v] of Object.entries(slot)) {
+        const key = `ammo-defense-slot-${s}-${k}`;
+        if (v != null) localStorage.setItem(key, v);
+        else localStorage.removeItem(key);
+      }
+    }
+    if (data.endlessUnlocked) localStorage.setItem(ENDLESS_UNLOCK_KEY, data.endlessUnlocked);
+    switchSlot(currentSlot);
+    updateContinueGameButton();
+    return true;
+  } catch { return false; }
 }
 
 const techDefs = [
@@ -233,7 +304,7 @@ const state = {
   stageStartEarned: 0,
   stageStartKills: 0,
   savedStage: readSavedStage(),
-  bestWave: Number(localStorage.getItem("mining-defense-best") || 0),
+  bestWave: Number(localStorage.getItem(BEST_WAVE_KEY()) || 0),
   endless: false,
   endlessWave: 0,
   synergyCounts: { fire: 0, armor: 0, speed: 0, economy: 0 },
@@ -340,7 +411,7 @@ function currentStageWave() {
 }
 
 function readSavedStage() {
-  const saved = Number(localStorage.getItem(STAGE_PROGRESS_KEY));
+  const saved = Number(localStorage.getItem(STAGE_PROGRESS_KEY()));
   if (!Number.isFinite(saved)) return 1;
   return Math.min(TOTAL_STAGES, Math.max(1, Math.floor(saved)));
 }
@@ -350,16 +421,32 @@ function updateContinueGameButton() {
   state.savedStage = savedStage;
   const hasSave = savedStage > 1;
   continueGameButton.hidden = !hasSave;
-  continueGameButton.textContent = `继续第 ${savedStage} 关`;
+  continueGameButton.textContent = `继续第 ${savedStage} 关 (槽${currentSlot})`;
   document.getElementById("startButton").hidden = hasSave;
   document.getElementById("resetProgressButton").hidden = !hasSave;
+  const endlessTitleBtn = document.getElementById("endlessTitleButton");
+  if (endlessTitleBtn) endlessTitleBtn.hidden = !isEndlessUnlocked();
+  renderSlotSelector();
+}
+
+function renderSlotSelector() {
+  for (let s = 1; s <= 3; s++) {
+    const btn = document.getElementById(`slot${s}Button`);
+    if (!btn) continue;
+    const info = getSlotSummary(s);
+    btn.className = s === currentSlot ? "slot-button active" : "slot-button";
+    btn.innerHTML = info.empty
+      ? `槽${s}<span class="slot-info">空</span>`
+      : `槽${s}<span class="slot-info">第${info.stage}关 ★${info.prestige}</span>`;
+  }
 }
 
 function saveStageProgress(stage) {
   const normalized = Math.min(TOTAL_STAGES, Math.max(1, Math.floor(stage)));
   const savedStage = Math.max(readSavedStage(), normalized);
-  localStorage.setItem(STAGE_PROGRESS_KEY, String(savedStage));
+  localStorage.setItem(STAGE_PROGRESS_KEY(), String(savedStage));
   state.savedStage = savedStage;
+  if (savedStage >= TOTAL_STAGES) unlockEndless();
   updateContinueGameButton();
   return savedStage;
 }
@@ -1325,6 +1412,20 @@ function resumeGame() {
   requestAnimationFrame(loop);
 }
 
+function backToTitle() {
+  state.mode = "start";
+  pauseOverlay.hidden = true;
+  resultOverlay.hidden = true;
+  stageOverlay.hidden = true;
+  choiceOverlay.hidden = true;
+  document.getElementById("legacyOverlay").hidden = true;
+  document.getElementById("techOverlay").hidden = true;
+  pauseButton.hidden = true;
+  startOverlay.hidden = false;
+  updateContinueGameButton();
+  draw();
+}
+
 function startEndlessMode() {
   state.endless = true;
   state.endlessWave = 0;
@@ -1378,7 +1479,7 @@ function endGame(won) {
       : state.wave >= 4 ? "C" : "D";
   document.getElementById("resultRank").textContent = rank;
   state.bestWave = Math.max(state.bestWave, state.wave + (won ? 1 : 0));
-  localStorage.setItem("mining-defense-best", String(state.bestWave));
+  localStorage.setItem(BEST_WAVE_KEY(), String(state.bestWave));
   if (won || isEndless) {
     beep(523, 0.1, "triangle", 0.05);
     setTimeout(() => beep(659, 0.12, "triangle", 0.05), 100);

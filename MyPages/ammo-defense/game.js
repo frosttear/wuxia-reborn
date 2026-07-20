@@ -95,6 +95,7 @@ document.getElementById("retryStageButtonPause").addEventListener("click", () =>
   retryCurrentStage();
 });
 document.getElementById("restartButtonPause").addEventListener("click", resetGame);
+document.getElementById("backToTitleButton").addEventListener("click", backToTitle);
 document.getElementById("resumeButton").addEventListener("click", resumeGame);
 nextStageButton.addEventListener("click", startNextStage);
 pauseButton.addEventListener("click", pauseGame);
@@ -180,10 +181,10 @@ let resetConfirmTimer = null;
 
 resetProgressButton.addEventListener("click", () => {
   if (resetProgressButton.dataset.confirm === "1") {
-    localStorage.removeItem(STAGE_PROGRESS_KEY);
-    localStorage.removeItem(PRESTIGE_KEY);
-    localStorage.removeItem(TECH_KEY);
-    localStorage.removeItem("mining-defense-best");
+    localStorage.removeItem(STAGE_PROGRESS_KEY());
+    localStorage.removeItem(PRESTIGE_KEY());
+    localStorage.removeItem(TECH_KEY());
+    localStorage.removeItem(BEST_WAVE_KEY());
     state.prestige = 0;
     state.tech = {};
     state.bestWave = 0;
@@ -201,6 +202,50 @@ resetProgressButton.addEventListener("click", () => {
     }, 3000);
   }
 });
+
+document.getElementById("endlessTitleButton").addEventListener("click", () => {
+  state.endless = false;
+  state.endlessWave = 0;
+  state.pendingLegacy = null;
+  state.legacySnapshot = null;
+  startGameAtStage(TOTAL_STAGES);
+  state.endless = true;
+  state.endlessWave = 0;
+  state.wave = TOTAL_WAVES;
+  state.waveTimer = 2.5;
+  announce("无尽模式开始");
+});
+
+document.getElementById("exportSaveButton").addEventListener("click", () => {
+  const json = exportSaveData();
+  navigator.clipboard.writeText(json).then(() => {
+    const btn = document.getElementById("exportSaveButton");
+    btn.textContent = "已复制!";
+    setTimeout(() => { btn.textContent = "导出存档"; }, 1500);
+  }).catch(() => {
+    prompt("复制以下内容保存：", json);
+  });
+});
+
+document.getElementById("importSaveButton").addEventListener("click", () => {
+  const json = prompt("粘贴存档数据：");
+  if (json && importSaveData(json)) {
+    beep(660, 0.08, "triangle", 0.04);
+    const btn = document.getElementById("importSaveButton");
+    btn.textContent = "导入成功!";
+    setTimeout(() => { btn.textContent = "导入存档"; }, 1500);
+  } else if (json) {
+    alert("存档数据无效");
+  }
+});
+
+for (let s = 1; s <= 3; s++) {
+  document.getElementById(`slot${s}Button`).addEventListener("click", () => {
+    switchSlot(s);
+    updateContinueGameButton();
+    beep(440, 0.04, "triangle", 0.03);
+  });
+}
 
 updateContinueGameButton();
 

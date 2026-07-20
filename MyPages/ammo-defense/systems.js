@@ -106,12 +106,12 @@ function spawnEnemy(forcedType = null, countSpawn = true) {
 
   const typeStats = {
     grunt:     { scale: 1,    hp: 1,    speed: 1,    armor: false },
-    runner:    { scale: 0.82, hp: 0.72, speed: 1.48, armor: false },
+    runner:    { scale: 0.82, hp: 0.72, speed: 1.55, armor: false },
     tank:      { scale: 1.18, hp: 1.75, speed: 0.68, armor: true },
-    saboteur:  { scale: 0.92, hp: 0.9,  speed: 1.16, armor: false },
+    saboteur:  { scale: 0.92, hp: 0.9,  speed: 1.22, armor: false },
     healer:    { scale: 0.88, hp: 0.6,  speed: 0.85, armor: false },
     shielded:  { scale: 1.05, hp: 1.1,  speed: 0.9,  armor: false },
-    berserker: { scale: 1.0,  hp: 1.3,  speed: 1.0,  armor: false },
+    berserker: { scale: 1.0,  hp: 1.3,  speed: 1.05, armor: false },
     boss:      { scale: 1.55, hp: 1,    speed: 1,    armor: true }
   };
   const ts = typeStats[type] || typeStats.grunt;
@@ -120,6 +120,7 @@ function spawnEnemy(forcedType = null, countSpawn = true) {
   const lane = type === "boss" ? 0.55 : rand(0.08, 0.92);
   const shieldAmount = type === "boss" ? (wave.shield || 360)
     : type === "shielded" ? Math.round(baseHp * 0.6) : 0;
+  const speedJitter = type === "boss" ? 1 : rand(0.85, 1.15);
 
   state.enemies.push({
     x: roadPointForLane(ENEMY_SPAWN_Y, lane),
@@ -129,7 +130,7 @@ function spawnEnemy(forcedType = null, countSpawn = true) {
     scale: ts.scale,
     hp,
     maxHp: hp,
-    speed: wave.speed * ts.speed,
+    speed: wave.speed * ts.speed * speedJitter,
     reward: Math.round((forcedType ? 22 : wave.reward) * ts.hp),
     phase: rand(0, Math.PI * 2),
     hit: 0,

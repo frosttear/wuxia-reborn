@@ -23,10 +23,20 @@
           <p class="eyebrow">末日要塞 · 最后补给线</p>
           <h1>弹药<br>防线</h1>
           <p class="tagline">生产子弹与炮弹，调度搬运工<br>为枪械和炮台持续装填</p>
+          <div id="slotSelector" class="slot-bar">
+            <button id="slot1Button" class="slot-button active" type="button">槽1</button>
+            <button id="slot2Button" class="slot-button" type="button">槽2</button>
+            <button id="slot3Button" class="slot-button" type="button">槽3</button>
+          </div>
           <button id="continueGameButton" class="primary-button" type="button" hidden="">继续第 1 关</button>
           <button id="startButton" class="primary-button" type="button">开始游戏</button>
+          <button id="endlessTitleButton" class="secondary-button" type="button" hidden="">无尽模式</button>
           <button id="techButton" class="secondary-button" type="button">科技树</button>
           <button id="startHelpButton" class="secondary-button" type="button">操作说明</button>
+          <div class="save-actions">
+            <button id="exportSaveButton" class="mini-button" type="button">导出存档</button>
+            <button id="importSaveButton" class="mini-button" type="button">导入存档</button>
+          </div>
           <button id="resetProgressButton" class="danger-button" type="button" hidden="">重置存档</button>
         </div>
       </div>
@@ -38,6 +48,7 @@
           <button id="resumeButton" class="primary-button" type="button" style="margin-top:22px">继续</button>
           <button id="retryStageButtonPause" class="secondary-button" type="button">重试本关</button>
           <button id="restartButtonPause" class="danger-button" type="button">从第一关开始</button>
+          <button id="backToTitleButton" class="secondary-button" type="button" style="margin-top:8px;opacity:0.75">回到标题</button>
         </div>
       </div>
 
