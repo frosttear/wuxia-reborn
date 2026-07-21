@@ -1444,38 +1444,68 @@ function backToTitle() {
 
 function activateGunnerSkill(index) {
   if (state.gunnerSkillCharge[index] < 100 || state.gunnerSkillActive[index] > 0) return false;
-  if (!gunnerOperational(index) || gunnerSpecialAt(index)) return false;
+  if (!gunnerOperational(index)) return false;
+  const pos = GUN_SLOTS[index];
+  const special = gunnerSpecialAt(index);
   state.gunnerSkillCharge[index] = 0;
-  state.gunnerSkillActive[index] = 3.0;
-  addFloater("弹幕!", GUN_SLOTS[index].x, GUN_SLOTS[index].y - 50, "#ff7048");
-  beep(880, 0.06, "triangle", 0.04);
+  if (special === "machine") {
+    state.gunnerSkillActive[index] = 4.0;
+    addFloater("弹雨!", pos.x, pos.y - 50, "#69b9ff");
+    beep(660, 0.08, "triangle", 0.04);
+    setTimeout(() => beep(880, 0.06, "triangle", 0.03), 60);
+  } else if (special === "sniper") {
+    state.gunnerSkillActive[index] = 15.0;
+    addFloater("穿甲弹!", pos.x, pos.y - 50, "#c97dff");
+    beep(440, 0.12, "square", 0.04);
+  } else {
+    state.gunnerSkillActive[index] = 3.0;
+    addFloater("弹幕!", pos.x, pos.y - 50, "#ff7048");
+    beep(880, 0.06, "triangle", 0.04);
+  }
   return true;
 }
 
 function activateCannonSkill(index) {
   if (state.cannonSkillCharge[index] < 100 || state.cannonSkillActive[index] > 0) return false;
-  if (!cannonOperational(index) || cannonSpecialAt(index)) return false;
+  if (!cannonOperational(index)) return false;
+  const pos = CANNON_SLOTS[index];
+  const special = cannonSpecialAt(index);
   const target = priorityTarget();
   if (!target) {
-    addFloater("无目标", CANNON_SLOTS[index].x, CANNON_SLOTS[index].y - 55, "#9ac4a2");
+    addFloater("无目标", pos.x, pos.y - 55, "#9ac4a2");
     return false;
   }
   state.cannonSkillCharge[index] = 0;
   state.cannonSkillActive[index] = 0.1;
-  const dmgPerTick = (54 + state.cannonLevel * 20) * 0.4 * (1 + state.damageBonus);
-  const radius = (48 + state.cannonLevel * 3) * 1.5 * (1 + state.blastRadiusBonus);
-  state.fireZones.push({
-    x: target.x, y: target.y,
-    radius,
-    dmg: dmgPerTick,
-    duration: 5.0,
-    timer: 5.0,
-    tickInterval: 0.5,
-    tickTimer: 0
-  });
-  burst(target.x, target.y, "#ff7048", 30, 160);
-  addFloater("火海!", CANNON_SLOTS[index].x, CANNON_SLOTS[index].y - 55, "#ff7048");
-  beep(150, 0.2, "sawtooth", 0.06);
+  const baseDmgPerTick = (54 + state.cannonLevel * 20) * 0.4 * (1 + state.damageBonus);
+  const baseRadius = (48 + state.cannonLevel * 3) * 1.5 * (1 + state.blastRadiusBonus);
+  if (special === "mortar") {
+    const offsets = [{x: 0, y: 0}, {x: -55, y: 30}, {x: 55, y: -30}];
+    for (const off of offsets) {
+      state.fireZones.push({
+        x: target.x + off.x, y: target.y + off.y,
+        radius: baseRadius * 0.85,
+        dmg: baseDmgPerTick * 1.2,
+        duration: 6.0, timer: 6.0,
+        tickInterval: 0.5, tickTimer: 0
+      });
+      burst(target.x + off.x, target.y + off.y, "#ff7048", 24, 140);
+    }
+    addFloater("地毯轰炸!", pos.x, pos.y - 55, "#ff5733");
+    beep(100, 0.3, "sawtooth", 0.07);
+    setTimeout(() => beep(80, 0.25, "sawtooth", 0.06), 150);
+  } else {
+    state.fireZones.push({
+      x: target.x, y: target.y,
+      radius: baseRadius,
+      dmg: baseDmgPerTick,
+      duration: 5.0, timer: 5.0,
+      tickInterval: 0.5, tickTimer: 0
+    });
+    burst(target.x, target.y, "#ff7048", 30, 160);
+    addFloater("火海!", pos.x, pos.y - 55, "#ff7048");
+    beep(150, 0.2, "sawtooth", 0.06);
+  }
   return true;
 }
 

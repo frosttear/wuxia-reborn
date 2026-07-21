@@ -198,8 +198,11 @@ function spawnProjectile(ammoType, target, weapon = "gun") {
     : family === "shell" ? 54 + state.cannonLevel * 20
     : 13 + state.productionLevel * 2 + state.gunnerLevel * 3;
   const gunnerSkillMult = (gunIndex >= 0 && state.gunnerSkillActive[gunIndex] > 0) ? 1.5 : 1;
-  const critical = Math.random() < state.critChance;
-  const damage = baseDamage * gunnerSkillMult * (critical ? 1.75 : 1);
+  const machineSkillMult = (weapon === "machine" && Number.isInteger(machineIndex) && state.gunnerSkillActive[machineIndex] > 0) ? 2.0 : 1;
+  const sniperSkillOn = weapon === "sniper" && Number.isInteger(sniperIndex) && state.gunnerSkillActive[sniperIndex] > 0;
+  const sniperSkillMult = sniperSkillOn ? 5.0 : 1;
+  const critical = sniperSkillOn ? true : Math.random() < state.critChance;
+  const damage = baseDamage * gunnerSkillMult * machineSkillMult * sniperSkillMult * (critical ? 1.75 : 1);
   const muzzleHeight = family === "shell" ? 34 : 28;
   const aimRotation = aimAngleForTarget(origin, target);
   const barrelLength = weapon === "machine" ? 41
@@ -243,7 +246,8 @@ function spawnProjectile(ammoType, target, weapon = "gun") {
     progress: 0,
     muzzleHeight,
     arcHeight: family === "shell" ? (isMortar ? 104 : 72) : 0,
-    height: family === "shell" ? 34 : 28
+    height: family === "shell" ? 34 : 28,
+    pierceShield: sniperSkillOn
   });
   burst(startX, muzzleScreenY, ammoMeta[ammoType].color, family === "shell" ? 9 : 3, 70);
   beep(family === "shell" ? 118 : weapon === "sniper" ? 210 : 310, family === "shell" ? 0.1 : 0.025, "square", family === "shell" ? 0.055 : 0.018);
@@ -732,10 +736,10 @@ function defeatEnemy(enemy) {
   state.kills++;
   const killCharge = enemy.type === "boss" ? 25 : 5;
   for (let i = 0; i < state.gunnerCount; i++) {
-    if (!gunnerSpecialAt(i)) state.gunnerSkillCharge[i] = Math.min(100, (state.gunnerSkillCharge[i] || 0) + killCharge);
+    state.gunnerSkillCharge[i] = Math.min(100, (state.gunnerSkillCharge[i] || 0) + killCharge);
   }
   for (let i = 0; i < state.cannonCount; i++) {
-    if (!cannonSpecialAt(i)) state.cannonSkillCharge[i] = Math.min(100, (state.cannonSkillCharge[i] || 0) + killCharge);
+    state.cannonSkillCharge[i] = Math.min(100, (state.cannonSkillCharge[i] || 0) + killCharge);
   }
   burst(enemy.x, enemy.y, enemy.type === "boss" ? "#ff7867" : "#7ee0b3", enemy.type === "boss" ? 36 : 14, 140);
   addFloater(`+${reward}`, enemy.x, enemy.y - 18, "#ffc43d");
@@ -758,7 +762,7 @@ function damageEnemy(enemy, amount, projectile = null) {
     else adjusted *= 1.18;
   }
 
-  if (enemy.shield > 0) {
+  if (enemy.shield > 0 && !projectile?.pierceShield) {
     const shieldDamage = family === "shell" ? adjusted : adjusted * 0.16;
     enemy.shield = Math.max(0, enemy.shield - shieldDamage);
     enemy.hit = 1;
@@ -1102,13 +1106,13 @@ function updateWeapons(dt) {
   }
 
   for (let i = 0; i < state.gunnerCount; i++) {
-    if (gunnerOperational(i) && !gunnerSpecialAt(i)) {
+    if (gunnerOperational(i)) {
       state.gunnerSkillCharge[i] = Math.min(100, (state.gunnerSkillCharge[i] || 0) + dt * 0.5);
     }
     if (state.gunnerSkillActive[i] > 0) state.gunnerSkillActive[i] = Math.max(0, state.gunnerSkillActive[i] - dt);
   }
   for (let i = 0; i < state.cannonCount; i++) {
-    if (cannonOperational(i) && !cannonSpecialAt(i)) {
+    if (cannonOperational(i)) {
       state.cannonSkillCharge[i] = Math.min(100, (state.cannonSkillCharge[i] || 0) + dt * 0.5);
     }
     if (state.cannonSkillActive[i] > 0) state.cannonSkillActive[i] = Math.max(0, state.cannonSkillActive[i] - dt);
@@ -1140,10 +1144,12 @@ function updateWeapons(dt) {
   if (front && Number.isInteger(machineIndex) && gunnerOperational(machineIndex) &&
       state.unlocks.machine && state.weaponTimers.machine <= 0 &&
       aimIsReady(state.weaponAimAngles.machine, machineDesiredAngle)) {
-    const ammo = takeAmmo("bullet", machineIndex);
+    const mSkillOn = state.gunnerSkillActive[machineIndex] > 0;
+    const ammo = mSkillOn ? "bullet" : takeAmmo("bullet", machineIndex);
     if (ammo) {
       spawnProjectile(ammo, front, "machine");
-      state.weaponTimers.machine = Math.max(0.09, 0.17 - (state.gunnerLevel - 1) * 0.012);
+      const baseCd = Math.max(0.09, 0.17 - (state.gunnerLevel - 1) * 0.012);
+      state.weaponTimers.machine = mSkillOn ? baseCd * 0.5 : baseCd;
     }
   }
 
@@ -1151,10 +1157,13 @@ function updateWeapons(dt) {
       state.unlocks.sniper && state.weaponTimers.sniper <= 0 &&
       sniperDesiredAngle !== null &&
       aimIsReady(state.weaponAimAngles.sniper, sniperDesiredAngle)) {
-    const ammo = heavy ? takeAmmo("bullet", sniperIndex) : null;
+    const sSkillOn = state.gunnerSkillActive[sniperIndex] > 0;
+    const sniperTarget = heavy || (sSkillOn ? front : null);
+    const ammo = sniperTarget ? (sSkillOn ? "bullet" : takeAmmo("bullet", sniperIndex)) : null;
     if (ammo) {
-      spawnProjectile(ammo, heavy, "sniper");
+      spawnProjectile(ammo, sniperTarget, "sniper");
       state.weaponTimers.sniper = Math.max(0.9, 1.75 - (state.gunnerLevel - 1) * 0.1);
+      if (sSkillOn) state.gunnerSkillActive[sniperIndex] = 0;
     }
   }
 

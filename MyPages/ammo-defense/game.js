@@ -46,7 +46,6 @@ canvas.addEventListener("pointerdown", (event) => {
   }
   if (point.y >= PLAY_TOP && point.y < SHOP_TOP) {
     for (let i = 0; i < state.gunnerCount; i++) {
-      if (gunnerSpecialAt(i)) continue;
       const slot = GUN_SLOTS[i];
       if (Math.hypot(point.x - slot.x, point.y - slot.y) < 35 &&
           state.gunnerSkillCharge[i] >= 100) {
@@ -55,7 +54,6 @@ canvas.addEventListener("pointerdown", (event) => {
       }
     }
     for (let i = 0; i < state.cannonCount; i++) {
-      if (cannonSpecialAt(i)) continue;
       const slot = CANNON_SLOTS[i];
       if (Math.hypot(point.x - slot.x, point.y - slot.y) < 38 &&
           state.cannonSkillCharge[i] >= 100) {

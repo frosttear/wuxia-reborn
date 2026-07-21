@@ -1115,19 +1115,22 @@ function drawGunnerWeapon(position, index, type = "rifle") {
   text(`${typeMark} · 强${state.gunnerLevel}`, 0, 30.5, 7, "#fff4c5");
   ctx.restore();
   drawDefenseDurability(position, health, 41);
-  if (type === "rifle") {
+  {
+    const skillCfg = type === "machine" ? { color: "#69b9ff", label: "弹雨", dur: 4.0 }
+      : type === "sniper" ? { color: "#c97dff", label: "穿甲弹", dur: 15.0 }
+      : { color: "#ff7048", label: "弹幕", dur: 3.0 };
     const skillActive = state.gunnerSkillActive[index] || 0;
     if (skillActive > 0) {
       const barW = 38;
       const barY = position.y + 48;
       fillRound(position.x - barW / 2, barY, barW, 5, 2, "rgba(23,35,28,0.74)");
-      fillRound(position.x - barW / 2, barY, barW * clamp(skillActive / 3.0, 0, 1), 5, 2, "#ff7048");
+      fillRound(position.x - barW / 2, barY, barW * clamp(skillActive / skillCfg.dur, 0, 1), 5, 2, skillCfg.color);
       const pulse = 0.6 + Math.sin(state.time * 12) * 0.4;
       ctx.save();
       ctx.globalAlpha = pulse;
-      strokeRound(position.x - 22, position.y - 22, 44, 68, 8, "#ff7048", 2.5);
+      strokeRound(position.x - 22, position.y - 22, 44, 68, 8, skillCfg.color, 2.5);
       ctx.restore();
-      text("弹幕", position.x, position.y - 28, 9, "#ff7048", "center", 900);
+      text(skillCfg.label, position.x, position.y - 28, 9, skillCfg.color, "center", 900);
     } else {
       const charge = state.gunnerSkillCharge[index] || 0;
       if (charge > 0) {
@@ -1135,7 +1138,7 @@ function drawGunnerWeapon(position, index, type = "rifle") {
         const barY = position.y + 48;
         fillRound(position.x - barW / 2, barY, barW, 5, 2, "rgba(23,35,28,0.74)");
         const chargeFill = barW * clamp(charge / 100, 0, 1);
-        fillRound(position.x - barW / 2, barY, chargeFill, 5, 2, charge >= 100 ? "#ffc43d" : "#ff7048");
+        fillRound(position.x - barW / 2, barY, chargeFill, 5, 2, charge >= 100 ? "#ffc43d" : skillCfg.color);
         if (charge >= 100) {
           const pulse = 0.5 + Math.sin(state.time * 6) * 0.3;
           ctx.save();
@@ -1252,14 +1255,15 @@ function drawCannon(position, index, type = "cannon") {
   text(`${index + 1} · 强${state.cannonLevel}`, 0, 36.5, 7, "#fff4c5");
   ctx.restore();
   drawDefenseDurability(position, health, 47);
-  if (type === "cannon") {
+  {
+    const cSkillColor = type === "mortar" ? "#ff5733" : "#ff9d43";
     const charge = state.cannonSkillCharge[index] || 0;
     if (charge > 0) {
       const barW = 42;
       const barY = position.y + 54;
       fillRound(position.x - barW / 2, barY, barW, 5, 2, "rgba(23,35,28,0.74)");
       const chargeFill = barW * clamp(charge / 100, 0, 1);
-      fillRound(position.x - barW / 2, barY, chargeFill, 5, 2, charge >= 100 ? "#ffc43d" : "#ff9d43");
+      fillRound(position.x - barW / 2, barY, chargeFill, 5, 2, charge >= 100 ? "#ffc43d" : cSkillColor);
       if (charge >= 100) {
         const pulse = 0.5 + Math.sin(state.time * 6) * 0.3;
         ctx.save();
