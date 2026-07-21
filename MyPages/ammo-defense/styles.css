@@ -342,44 +342,46 @@ h1 {
 
 .slot-button {
   padding: 5px 16px;
-  border: 2px solid rgba(255, 244, 197, 0.25);
+  border: 2px solid rgba(255, 244, 197, 0.35);
   border-radius: 8px;
   background: rgba(23, 35, 28, 0.6);
-  color: #9ac4a2;
-  font: 700 12px/1.4 "Microsoft YaHei", sans-serif;
+  color: #d0e4d4;
+  font: 700 13px/1.4 "Microsoft YaHei", sans-serif;
   cursor: pointer;
   transition: all 0.15s;
 }
 
 .slot-button.active {
   border-color: var(--gold);
-  background: rgba(255, 196, 61, 0.18);
+  background: rgba(255, 196, 61, 0.3);
   color: var(--cream);
+  box-shadow: 0 0 8px rgba(255, 196, 61, 0.4);
 }
 
 .slot-button .slot-info {
   display: block;
   font-size: 10px;
   font-weight: 400;
-  opacity: 0.7;
+  opacity: 0.85;
   margin-top: 2px;
 }
 
-.save-actions {
-  display: flex;
-  gap: 8px;
-  justify-content: center;
-  margin: 6px 0 2px;
+.slot-divider {
+  width: 1px;
+  align-self: stretch;
+  margin: 2px 2px;
+  background: rgba(255, 244, 197, 0.2);
 }
 
-.mini-button {
-  padding: 4px 12px;
-  border: 1px solid rgba(154, 196, 162, 0.3);
-  border-radius: 6px;
-  background: rgba(23, 35, 28, 0.5);
-  color: #9ac4a2;
-  font: 700 11px/1.4 "Microsoft YaHei", sans-serif;
+.slot-action {
+  padding: 5px 14px;
+  border: 2px solid rgba(255, 244, 197, 0.3);
+  border-radius: 8px;
+  background: rgba(58, 85, 68, 0.6);
+  color: #d0e4d4;
+  font: 700 12px/1.4 "Microsoft YaHei", sans-serif;
   cursor: pointer;
+  transition: all 0.15s;
 }
 
 .sr-only {

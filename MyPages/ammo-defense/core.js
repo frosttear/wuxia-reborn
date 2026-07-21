@@ -52,9 +52,12 @@ const BELT_REPAIR_POINT = { x: PICKUP_X - 18, y: 570 };
 const ENEMY_BELT_JAM_COOLDOWN = 22;
 const BASE_COIN_INTERVAL = 5;
 const MAX_BASE_INCOME_LEVEL = 5;
-const MAX_PRODUCTION_LEVEL = 20;
-const MAX_GUNNER_LEVEL = 20;
-const MAX_CANNON_LEVEL = 20;
+const BASE_MAX_PROD = 20;
+const BASE_MAX_GUN = 20;
+const BASE_MAX_CAN = 20;
+function maxProductionLevel() { return state.endless ? BASE_MAX_PROD + Math.floor(state.endlessWave / WAVES_PER_STAGE) * 5 : BASE_MAX_PROD; }
+function maxGunnerLevel() { return state.endless ? BASE_MAX_GUN + Math.floor(state.endlessWave / WAVES_PER_STAGE) * 5 : BASE_MAX_GUN; }
+function maxCannonLevel() { return state.endless ? BASE_MAX_CAN + Math.floor(state.endlessWave / WAVES_PER_STAGE) * 5 : BASE_MAX_CAN; }
 const MAX_DAMAGE_BONUS = 1.2;
 const TOTAL_STAGES = 10;
 const WAVES_PER_STAGE = 10;
@@ -98,10 +101,9 @@ function saveTech(t) {
   localStorage.setItem(TECH_KEY(), JSON.stringify(t));
 }
 function isEndlessUnlocked() {
-  return localStorage.getItem(ENDLESS_UNLOCK_KEY) === "1";
+  return readSavedStage() >= TOTAL_STAGES;
 }
 function unlockEndless() {
-  localStorage.setItem(ENDLESS_UNLOCK_KEY, "1");
 }
 function getSlotSummary(slot) {
   const stage = Number(localStorage.getItem(`ammo-defense-slot-${slot}-stage`) || 0);
@@ -148,12 +150,14 @@ function importSaveData(json) {
 }
 
 const techDefs = [
-  { id: "startCoins",   label: "战备物资",   desc: "初始金币+100",        max: 3, cost: [1, 2, 4], effect: lv => ({ coins: lv * 100 }) },
-  { id: "startWorkers", label: "老兵征召",   desc: "初始搬运工+1",       max: 2, cost: [2, 4],    effect: lv => ({ workers: lv }) },
-  { id: "startProd",    label: "工业底蕴",   desc: "初始产线等级+1",     max: 3, cost: [1, 3, 5], effect: lv => ({ productionLevel: lv }) },
-  { id: "permCrit",     label: "射击训练",   desc: "全局暴击率+3%",      max: 3, cost: [2, 3, 5], effect: lv => ({ critChance: lv * 0.03 }) },
-  { id: "permDamage",   label: "火力研发",   desc: "全局伤害+8%",        max: 3, cost: [2, 4, 6], effect: lv => ({ damageBonus: lv * 0.08 }) },
-  { id: "permLives",    label: "加固工事",   desc: "基地生命上限+1",     max: 2, cost: [3, 5],    effect: lv => ({ lives: lv }) }
+  { id: "startCoins",   label: "战备物资",   desc: "初始金币+200",        max: 3, cost: [1, 2, 3], effect: lv => ({ coins: lv * 200 }) },
+  { id: "startWorkers", label: "老兵征召",   desc: "初始搬运工+1",       max: 3, cost: [1, 3, 5], effect: lv => ({ workers: lv }) },
+  { id: "startProd",    label: "工业底蕴",   desc: "初始产线等级+2",     max: 3, cost: [1, 3, 5], effect: lv => ({ productionLevel: lv * 2 }) },
+  { id: "permCrit",     label: "射击训练",   desc: "全局暴击率+5%",      max: 3, cost: [2, 3, 5], effect: lv => ({ critChance: lv * 0.05 }) },
+  { id: "permDamage",   label: "火力研发",   desc: "全局伤害+12%",       max: 3, cost: [2, 4, 6], effect: lv => ({ damageBonus: lv * 0.12 }) },
+  { id: "permLives",    label: "加固工事",   desc: "基地生命上限+1",     max: 3, cost: [2, 4, 6], effect: lv => ({ lives: lv }) },
+  { id: "baseIncome",   label: "经济基建",   desc: "基地收入+6/5s",      max: 3, cost: [1, 2, 4], effect: lv => ({ baseIncome: lv }) },
+  { id: "blastRadius",  label: "爆破专家",   desc: "炮弹爆炸范围+10%",   max: 3, cost: [2, 4, 6], effect: lv => ({ blastRadius: lv * 0.10 }) }
 ];
 
 const legacyDefs = [
@@ -269,6 +273,10 @@ const state = {
     mortar: false
   },
   specialSlots: { machine: null, sniper: null, mortar: null },
+  gunnerSkillCharge: [0],
+  cannonSkillCharge: [0],
+  gunnerSkillActive: [0],
+  cannonSkillActive: [0],
   roleLevels: { porter: 1, loader: 1, dispatcher: 1, mechanic: 1 },
   damageBonus: 0,
   gunnerMagCapacity: GUNNER_MAG_CAPACITY,
@@ -494,10 +502,10 @@ const shop = [
     color: "#69b9ff",
     cost: () => 100 + state.productionLevel * 90,
     level: () => state.productionLevel,
-    maxed: () => state.productionLevel >= MAX_PRODUCTION_LEVEL,
+    maxed: () => state.productionLevel >= maxProductionLevel(),
     desc: () => "产弹" + Math.max(0.28, 0.78 - state.productionLevel * 0.055).toFixed(2) + "s→" + Math.max(0.28, 0.78 - (state.productionLevel + 1) * 0.055).toFixed(2) + "s 枪伤+2",
     action: () => {
-      state.productionLevel = Math.min(MAX_PRODUCTION_LEVEL, state.productionLevel + 1);
+      state.productionLevel = Math.min(maxProductionLevel(), state.productionLevel + 1);
     }
   },
   {
@@ -509,15 +517,15 @@ const shop = [
       : 220 + state.gunnerLevel * 140,
     status: () => state.gunnerCount < 3
       ? `数量 ${state.gunnerCount}/3`
-      : state.gunnerLevel >= MAX_GUNNER_LEVEL ? "强化 MAX" : `强化 LV.${state.gunnerLevel}`,
+      : state.gunnerLevel >= maxGunnerLevel() ? "强化 MAX" : `强化 LV.${state.gunnerLevel}`,
     buttonLabel: () => state.gunnerCount < 3
       ? "添加"
-      : state.gunnerLevel >= MAX_GUNNER_LEVEL ? "已满" : "强化",
-    maxed: () => state.gunnerCount >= 3 && state.gunnerLevel >= MAX_GUNNER_LEVEL,
+      : state.gunnerLevel >= maxGunnerLevel() ? "已满" : "强化",
+    maxed: () => state.gunnerCount >= 3 && state.gunnerLevel >= maxGunnerLevel(),
     desc: () => state.gunnerCount < 3 ? "增加一名枪手" : "伤害+3 射速" + Math.max(0.48, 0.9 - (state.gunnerLevel - 1) * 0.025 - (state.productionLevel - 1) * 0.008).toFixed(2) + "s→" + Math.max(0.48, 0.9 - state.gunnerLevel * 0.025 - (state.productionLevel - 1) * 0.008).toFixed(2) + "s",
     action: () => {
       if (state.gunnerCount < 3) addGunner();
-      else state.gunnerLevel = Math.min(MAX_GUNNER_LEVEL, state.gunnerLevel + 1);
+      else state.gunnerLevel = Math.min(maxGunnerLevel(), state.gunnerLevel + 1);
     }
   },
   {
@@ -529,15 +537,15 @@ const shop = [
         : 320 + state.cannonLevel * 180,
       status: () => state.cannonCount < 3
         ? `数量 ${state.cannonCount}/3`
-        : state.cannonLevel >= MAX_CANNON_LEVEL ? "强化 MAX" : `强化 LV.${state.cannonLevel}`,
+        : state.cannonLevel >= maxCannonLevel() ? "强化 MAX" : `强化 LV.${state.cannonLevel}`,
       buttonLabel: () => state.cannonCount < 3
         ? "添加"
-        : state.cannonLevel >= MAX_CANNON_LEVEL ? "已满" : "强化",
-      maxed: () => state.cannonCount >= 3 && state.cannonLevel >= MAX_CANNON_LEVEL,
+        : state.cannonLevel >= maxCannonLevel() ? "已满" : "强化",
+      maxed: () => state.cannonCount >= 3 && state.cannonLevel >= maxCannonLevel(),
       desc: () => state.cannonCount < 3 ? "增加一座炮台" : "伤害+20 射速" + Math.max(1.2, 2.5 - (state.cannonLevel - 1) * 0.07).toFixed(2) + "s→" + Math.max(1.2, 2.5 - state.cannonLevel * 0.07).toFixed(2) + "s 爆炸+3",
       action: () => {
         if (state.cannonCount < 3) addCannon();
-        else state.cannonLevel = Math.min(MAX_CANNON_LEVEL, state.cannonLevel + 1);
+        else state.cannonLevel = Math.min(maxCannonLevel(), state.cannonLevel + 1);
       }
   },
   {
@@ -909,21 +917,21 @@ function choicePool() {
       id: "productionTune",
       mark: "产",
       title: "产线调校",
-      desc: "产线LV." + state.productionLevel + "→" + Math.min(MAX_PRODUCTION_LEVEL, state.productionLevel + 1) + "：产弹间隔" + Math.max(0.28, 0.78 - state.productionLevel * 0.055).toFixed(2) + "s→" + Math.max(0.28, 0.78 - (state.productionLevel + 1) * 0.055).toFixed(2) + "s，枪手伤害+2",
-      eligible: () => state.productionLevel < MAX_PRODUCTION_LEVEL,
+      desc: "产线LV." + state.productionLevel + "→" + Math.min(maxProductionLevel(), state.productionLevel + 1) + "：产弹间隔" + Math.max(0.28, 0.78 - state.productionLevel * 0.055).toFixed(2) + "s→" + Math.max(0.28, 0.78 - (state.productionLevel + 1) * 0.055).toFixed(2) + "s，枪手伤害+2",
+      eligible: () => state.productionLevel < maxProductionLevel(),
       apply: () => {
-        state.productionLevel = Math.min(MAX_PRODUCTION_LEVEL, state.productionLevel + 1);
+        state.productionLevel = Math.min(maxProductionLevel(), state.productionLevel + 1);
       }
     },
     {
       id: "arsenalTraining",
       mark: "训",
       title: "全员训练",
-      desc: "枪手LV." + state.gunnerLevel + "→" + Math.min(MAX_GUNNER_LEVEL, state.gunnerLevel + 1) + " 炮台LV." + state.cannonLevel + "→" + Math.min(MAX_CANNON_LEVEL, state.cannonLevel + 1) + "（提高伤害和射速）",
-      eligible: () => state.gunnerLevel < MAX_GUNNER_LEVEL || state.cannonLevel < MAX_CANNON_LEVEL,
+      desc: "枪手LV." + state.gunnerLevel + "→" + Math.min(maxGunnerLevel(), state.gunnerLevel + 1) + " 炮台LV." + state.cannonLevel + "→" + Math.min(maxCannonLevel(), state.cannonLevel + 1) + "（提高伤害和射速）",
+      eligible: () => state.gunnerLevel < maxGunnerLevel() || state.cannonLevel < maxCannonLevel(),
       apply: () => {
-        state.gunnerLevel = Math.min(MAX_GUNNER_LEVEL, state.gunnerLevel + 1);
-        state.cannonLevel = Math.min(MAX_CANNON_LEVEL, state.cannonLevel + 1);
+        state.gunnerLevel = Math.min(maxGunnerLevel(), state.gunnerLevel + 1);
+        state.cannonLevel = Math.min(maxCannonLevel(), state.cannonLevel + 1);
       }
     },
     {
@@ -1152,6 +1160,10 @@ function resetStageState(mode = "playing") {
       mortar: false
     },
     specialSlots: { machine: null, sniper: null, mortar: null },
+    gunnerSkillCharge: [0],
+    cannonSkillCharge: [0],
+    gunnerSkillActive: [0],
+    cannonSkillActive: [0],
     roleLevels: { porter: 1, loader: 1, dispatcher: 1, mechanic: 1 },
     damageBonus: 0,
     gunnerMagCapacity: GUNNER_MAG_CAPACITY,
@@ -1202,9 +1214,9 @@ function applyStageBonus() {
   state.coins += tier * 30;
   state.gunnerMagazines[0].bullet += tier;
   state.cannonMagazines[0].shell += Math.min(tier, 5);
-  state.productionLevel = Math.min(MAX_PRODUCTION_LEVEL, state.productionLevel + Math.floor(tier / 2));
-  state.gunnerLevel = Math.min(MAX_GUNNER_LEVEL, state.gunnerLevel + Math.floor(tier / 3));
-  state.cannonLevel = Math.min(MAX_CANNON_LEVEL, state.cannonLevel + Math.floor(tier / 3));
+  state.productionLevel = Math.min(maxProductionLevel(), state.productionLevel + Math.floor(tier / 2));
+  state.gunnerLevel = Math.min(maxGunnerLevel(), state.gunnerLevel + Math.floor(tier / 3));
+  state.cannonLevel = Math.min(maxCannonLevel(), state.cannonLevel + Math.floor(tier / 3));
 }
 
 function applyTechBonuses() {
@@ -1215,10 +1227,12 @@ function applyTechBonuses() {
     const fx = def.effect(lv);
     if (fx.coins) state.coins += fx.coins;
     if (fx.workers) { for (let i = 0; i < fx.workers; i++) addWorker(); }
-    if (fx.productionLevel) state.productionLevel += fx.productionLevel;
+    if (fx.productionLevel) state.productionLevel = Math.min(maxProductionLevel(), state.productionLevel + fx.productionLevel);
     if (fx.critChance) state.critChance += fx.critChance;
     if (fx.damageBonus) state.damageBonus += fx.damageBonus;
     if (fx.lives) { state.gateMax += fx.lives; state.lives = state.gateMax; }
+    if (fx.baseIncome) state.baseIncomeLevel += fx.baseIncome;
+    if (fx.blastRadius) state.blastRadiusBonus += fx.blastRadius;
   }
 }
 
@@ -1424,6 +1438,40 @@ function backToTitle() {
   startOverlay.hidden = false;
   updateContinueGameButton();
   draw();
+}
+
+function activateGunnerSkill(index) {
+  if (state.gunnerSkillCharge[index] < 100 || state.gunnerSkillActive[index] > 0) return false;
+  if (!gunnerOperational(index) || gunnerSpecialAt(index)) return false;
+  state.gunnerSkillCharge[index] = 0;
+  state.gunnerSkillActive[index] = 3.0;
+  addFloater("弹幕!", GUN_SLOTS[index].x, GUN_SLOTS[index].y - 50, "#ff7048");
+  beep(880, 0.06, "triangle", 0.04);
+  return true;
+}
+
+function activateCannonSkill(index) {
+  if (state.cannonSkillCharge[index] < 100 || state.cannonSkillActive[index] > 0) return false;
+  if (!cannonOperational(index) || cannonSpecialAt(index)) return false;
+  state.cannonSkillCharge[index] = 0;
+  state.cannonSkillActive[index] = 0.1;
+  const pos = CANNON_SLOTS[index];
+  const target = priorityTarget();
+  if (target) {
+    const megaDamage = (cannonDamage() * 2.5) * (1 + state.damageBonus);
+    const megaRadius = (48 + state.cannonLevel * 3) * 2.0 * (1 + state.blastRadiusBonus);
+    const victims = state.enemies.filter(e =>
+      Math.hypot(e.x - target.x, e.y - target.y) <= megaRadius
+    );
+    for (const e of victims) damageEnemy(e, megaDamage);
+    burst(target.x, target.y, "#ff9d43", 40, 200);
+    addFloater("轰炸!", pos.x, pos.y - 55, "#ff9d43");
+    beep(110, 0.25, "sawtooth", 0.06);
+  } else {
+    addFloater("无目标", pos.x, pos.y - 55, "#9ac4a2");
+    state.cannonSkillCharge[index] = 100;
+  }
+  return true;
 }
 
 function startEndlessMode() {

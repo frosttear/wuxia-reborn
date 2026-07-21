@@ -34,20 +34,20 @@ function drawHeader() {
   if (hasSynergy) {
     const activeTags = Object.keys(state.synergyCounts).filter(t => state.synergyCounts[t] > 0);
     const totalW = activeTags.length * 42 - 4;
-    let sx = 275;
-    fillRound(sx - 4, 36, totalW + 8, 22, 5, "rgba(23,35,28,0.88)");
+    let sx = 18;
+    fillRound(sx - 4, 60, totalW + 8, 22, 5, "rgba(23,35,28,0.88)");
     for (const tag of activeTags) {
       const count = state.synergyCounts[tag];
       const color = synergyColors[tag];
       const active3 = count >= 3;
       const active6 = count >= 6;
-      fillRound(sx, 38, 38, 18, 4, active3 ? color : "#2b3c31");
-      text(synergyLabels[tag] + count, sx + 19, 47, 10,
+      fillRound(sx, 62, 38, 18, 4, active3 ? color : "#2b3c31");
+      text(synergyLabels[tag] + count, sx + 19, 71, 10,
         active3 ? "#17231c" : color, "center", active3 ? 900 : 700);
       if (active3) {
         ctx.strokeStyle = active6 ? "#ffe36a" : color;
         ctx.lineWidth = 1.5;
-        ctx.strokeRect(sx + 0.5, 38.5, 37, 17);
+        ctx.strokeRect(sx + 0.5, 62.5, 37, 17);
       }
       sx += 42;
     }
@@ -1115,6 +1115,24 @@ function drawGunnerWeapon(position, index, type = "rifle") {
   text(`${typeMark} · 强${state.gunnerLevel}`, 0, 30.5, 7, "#fff4c5");
   ctx.restore();
   drawDefenseDurability(position, health, 41);
+  if (type === "rifle") {
+    const charge = state.gunnerSkillCharge[index] || 0;
+    if (charge > 0) {
+      const barW = 38;
+      const barY = position.y + 48;
+      fillRound(position.x - barW / 2, barY, barW, 5, 2, "rgba(23,35,28,0.74)");
+      const chargeFill = barW * clamp(charge / 100, 0, 1);
+      fillRound(position.x - barW / 2, barY, chargeFill, 5, 2, charge >= 100 ? "#ffc43d" : "#ff7048");
+      if (charge >= 100) {
+        const pulse = 0.5 + Math.sin(state.time * 6) * 0.3;
+        ctx.save();
+        ctx.globalAlpha = pulse;
+        strokeRound(position.x - 22, position.y - 22, 44, 68, 8, "#ffc43d", 2);
+        ctx.restore();
+        text("⚡", position.x, position.y - 28, 10, "#ffc43d");
+      }
+    }
+  }
 }
 
 function drawGun(position, index) {
@@ -1220,6 +1238,24 @@ function drawCannon(position, index, type = "cannon") {
   text(`${index + 1} · 强${state.cannonLevel}`, 0, 36.5, 7, "#fff4c5");
   ctx.restore();
   drawDefenseDurability(position, health, 47);
+  if (type === "cannon") {
+    const charge = state.cannonSkillCharge[index] || 0;
+    if (charge > 0) {
+      const barW = 42;
+      const barY = position.y + 54;
+      fillRound(position.x - barW / 2, barY, barW, 5, 2, "rgba(23,35,28,0.74)");
+      const chargeFill = barW * clamp(charge / 100, 0, 1);
+      fillRound(position.x - barW / 2, barY, chargeFill, 5, 2, charge >= 100 ? "#ffc43d" : "#ff9d43");
+      if (charge >= 100) {
+        const pulse = 0.5 + Math.sin(state.time * 6) * 0.3;
+        ctx.save();
+        ctx.globalAlpha = pulse;
+        strokeRound(position.x - 26, position.y - 28, 52, 80, 8, "#ffc43d", 2);
+        ctx.restore();
+        text("⚡", position.x, position.y - 34, 10, "#ffc43d");
+      }
+    }
+  }
 }
 
 function drawExtraWeapons() {

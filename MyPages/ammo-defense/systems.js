@@ -32,6 +32,8 @@ function addGunner() {
   state.gunnerMagazines.push({ bullet: 0, ap: 0, ice: 0 });
   state.gunnerHealth.push(DEFENSE_MAX_HP);
   state.gunnerRepairWave.push(Infinity);
+  state.gunnerSkillCharge.push(0);
+  state.gunnerSkillActive.push(0);
   const slot = GUN_SLOTS[state.gunnerCount - 1];
   addFloater(`枪手 ${state.gunnerCount}/3`, slot.x, slot.y - 48, "#ee6d55");
 }
@@ -44,6 +46,8 @@ function addCannon() {
   state.cannonMagazines.push({ shell: 0, fire: 0, he: 0 });
   state.cannonHealth.push(DEFENSE_MAX_HP);
   state.cannonRepairWave.push(Infinity);
+  state.cannonSkillCharge.push(0);
+  state.cannonSkillActive.push(0);
   const slot = CANNON_SLOTS[state.cannonCount - 1];
   addFloater(`炮台 ${state.cannonCount}/3`, slot.x, slot.y - 48, "#ff9d43");
 }
@@ -725,6 +729,13 @@ function defeatEnemy(enemy) {
   state.coins += reward;
   state.earned += reward;
   state.kills++;
+  const killCharge = enemy.type === "boss" ? 25 : 5;
+  for (let i = 0; i < state.gunnerCount; i++) {
+    if (!gunnerSpecialAt(i)) state.gunnerSkillCharge[i] = Math.min(100, (state.gunnerSkillCharge[i] || 0) + killCharge);
+  }
+  for (let i = 0; i < state.cannonCount; i++) {
+    if (!cannonSpecialAt(i)) state.cannonSkillCharge[i] = Math.min(100, (state.cannonSkillCharge[i] || 0) + killCharge);
+  }
   burst(enemy.x, enemy.y, enemy.type === "boss" ? "#ff7867" : "#7ee0b3", enemy.type === "boss" ? 36 : 14, 140);
   addFloater(`+${reward}`, enemy.x, enemy.y - 18, "#ffc43d");
   beep(enemy.type === "boss" ? 95 : 240, enemy.type === "boss" ? 0.3 : 0.08, "sawtooth", 0.035);
@@ -1090,13 +1101,27 @@ function updateWeapons(dt) {
   }
 
   for (let i = 0; i < state.gunnerCount; i++) {
+    if (gunnerOperational(i) && !gunnerSpecialAt(i)) {
+      state.gunnerSkillCharge[i] = Math.min(100, (state.gunnerSkillCharge[i] || 0) + dt * 0.5);
+    }
+    if (state.gunnerSkillActive[i] > 0) state.gunnerSkillActive[i] = Math.max(0, state.gunnerSkillActive[i] - dt);
+  }
+  for (let i = 0; i < state.cannonCount; i++) {
+    if (cannonOperational(i) && !cannonSpecialAt(i)) {
+      state.cannonSkillCharge[i] = Math.min(100, (state.cannonSkillCharge[i] || 0) + dt * 0.5);
+    }
+    if (state.cannonSkillActive[i] > 0) state.cannonSkillActive[i] = Math.max(0, state.cannonSkillActive[i] - dt);
+  }
+
+  for (let i = 0; i < state.gunnerCount; i++) {
     if (!gunnerOperational(i)) continue;
     if (gunnerSpecialAt(i) || !front || state.gunTimers[i] > 0 ||
         !aimIsReady(state.gunnerAimAngles[i], gunnerDesiredAngles[i])) continue;
     const ammo = takeAmmo("bullet", i);
     if (ammo) {
       spawnProjectile(ammo, front, `gun-${i}`);
-      state.gunTimers[i] = gunCooldown();
+      const skillCd = state.gunnerSkillActive[i] > 0 ? gunCooldown() * 0.3 : gunCooldown();
+      state.gunTimers[i] = skillCd;
     }
   }
 
