@@ -197,8 +197,9 @@ function spawnProjectile(ammoType, target, weapon = "gun") {
     : mortarIndex >= 0 ? 44 + state.cannonLevel * 12
     : family === "shell" ? 54 + state.cannonLevel * 20
     : 13 + state.productionLevel * 2 + state.gunnerLevel * 3;
+  const gunnerSkillMult = (gunIndex >= 0 && state.gunnerSkillActive[gunIndex] > 0) ? 1.5 : 1;
   const critical = Math.random() < state.critChance;
-  const damage = baseDamage * (critical ? 1.75 : 1);
+  const damage = baseDamage * gunnerSkillMult * (critical ? 1.75 : 1);
   const muzzleHeight = family === "shell" ? 34 : 28;
   const aimRotation = aimAngleForTarget(origin, target);
   const barrelLength = weapon === "machine" ? 41
@@ -1117,11 +1118,11 @@ function updateWeapons(dt) {
     if (!gunnerOperational(i)) continue;
     if (gunnerSpecialAt(i) || !front || state.gunTimers[i] > 0 ||
         !aimIsReady(state.gunnerAimAngles[i], gunnerDesiredAngles[i])) continue;
-    const ammo = takeAmmo("bullet", i);
+    const skillOn = state.gunnerSkillActive[i] > 0;
+    const ammo = skillOn ? "bullet" : takeAmmo("bullet", i);
     if (ammo) {
       spawnProjectile(ammo, front, `gun-${i}`);
-      const skillCd = state.gunnerSkillActive[i] > 0 ? gunCooldown() * 0.3 : gunCooldown();
-      state.gunTimers[i] = skillCd;
+      state.gunTimers[i] = skillOn ? gunCooldown() * 0.3 : gunCooldown();
     }
   }
 
@@ -1570,6 +1571,35 @@ function update(dt) {
 
   updateWeapons(dt);
   updateProjectiles(dt);
+
+  for (let zi = state.fireZones.length - 1; zi >= 0; zi--) {
+    const zone = state.fireZones[zi];
+    zone.timer -= dt;
+    zone.tickTimer -= dt;
+    if (zone.tickTimer <= 0) {
+      zone.tickTimer += zone.tickInterval;
+      for (const enemy of state.enemies) {
+        if (Math.hypot(enemy.x - zone.x, enemy.y - zone.y) <= zone.radius) {
+          damageEnemy(enemy, zone.dmg);
+        }
+      }
+      const count = 3 + Math.floor(zone.radius / 20);
+      for (let p = 0; p < count; p++) {
+        const angle = Math.random() * Math.PI * 2;
+        const dist = Math.random() * zone.radius * 0.8;
+        state.particles.push({
+          x: zone.x + Math.cos(angle) * dist,
+          y: zone.y + Math.sin(angle) * dist,
+          vx: (Math.random() - 0.5) * 20,
+          vy: -Math.random() * 40 - 10,
+          life: 0.4 + Math.random() * 0.3,
+          color: Math.random() < 0.5 ? "#ff7048" : "#ffc43d",
+          r: 2 + Math.random() * 3
+        });
+      }
+    }
+    if (zone.timer <= 0) state.fireZones.splice(zi, 1);
+  }
 
   for (let i = state.particles.length - 1; i >= 0; i--) {
     const p = state.particles[i];

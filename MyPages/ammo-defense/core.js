@@ -55,9 +55,9 @@ const MAX_BASE_INCOME_LEVEL = 5;
 const BASE_MAX_PROD = 20;
 const BASE_MAX_GUN = 20;
 const BASE_MAX_CAN = 20;
-function maxProductionLevel() { return state.endless ? BASE_MAX_PROD + Math.floor(state.endlessWave / WAVES_PER_STAGE) * 5 : BASE_MAX_PROD; }
-function maxGunnerLevel() { return state.endless ? BASE_MAX_GUN + Math.floor(state.endlessWave / WAVES_PER_STAGE) * 5 : BASE_MAX_GUN; }
-function maxCannonLevel() { return state.endless ? BASE_MAX_CAN + Math.floor(state.endlessWave / WAVES_PER_STAGE) * 5 : BASE_MAX_CAN; }
+function maxProductionLevel() { return state.endless ? Infinity : BASE_MAX_PROD; }
+function maxGunnerLevel() { return state.endless ? Infinity : BASE_MAX_GUN; }
+function maxCannonLevel() { return state.endless ? Infinity : BASE_MAX_CAN; }
 const MAX_DAMAGE_BONUS = 1.2;
 const TOTAL_STAGES = 10;
 const WAVES_PER_STAGE = 10;
@@ -307,6 +307,7 @@ const state = {
   enemies: [],
   projectiles: [],
   floaters: [],
+  fireZones: [],
   pendingChoices: [],
   choiceRefreshes: 0,
   stageStartEarned: 0,
@@ -1193,6 +1194,7 @@ function resetStageState(mode = "playing") {
     enemies: [],
     projectiles: [],
     floaters: [],
+    fireZones: [],
     pendingChoices: [],
     choiceRefreshes: 0,
     synergyCounts: { fire: 0, armor: 0, speed: 0, economy: 0 },
@@ -1453,24 +1455,27 @@ function activateGunnerSkill(index) {
 function activateCannonSkill(index) {
   if (state.cannonSkillCharge[index] < 100 || state.cannonSkillActive[index] > 0) return false;
   if (!cannonOperational(index) || cannonSpecialAt(index)) return false;
+  const target = priorityTarget();
+  if (!target) {
+    addFloater("无目标", CANNON_SLOTS[index].x, CANNON_SLOTS[index].y - 55, "#9ac4a2");
+    return false;
+  }
   state.cannonSkillCharge[index] = 0;
   state.cannonSkillActive[index] = 0.1;
-  const pos = CANNON_SLOTS[index];
-  const target = priorityTarget();
-  if (target) {
-    const megaDamage = (cannonDamage() * 2.5) * (1 + state.damageBonus);
-    const megaRadius = (48 + state.cannonLevel * 3) * 2.0 * (1 + state.blastRadiusBonus);
-    const victims = state.enemies.filter(e =>
-      Math.hypot(e.x - target.x, e.y - target.y) <= megaRadius
-    );
-    for (const e of victims) damageEnemy(e, megaDamage);
-    burst(target.x, target.y, "#ff9d43", 40, 200);
-    addFloater("轰炸!", pos.x, pos.y - 55, "#ff9d43");
-    beep(110, 0.25, "sawtooth", 0.06);
-  } else {
-    addFloater("无目标", pos.x, pos.y - 55, "#9ac4a2");
-    state.cannonSkillCharge[index] = 100;
-  }
+  const dmgPerTick = (54 + state.cannonLevel * 20) * 0.4 * (1 + state.damageBonus);
+  const radius = (48 + state.cannonLevel * 3) * 1.5 * (1 + state.blastRadiusBonus);
+  state.fireZones.push({
+    x: target.x, y: target.y,
+    radius,
+    dmg: dmgPerTick,
+    duration: 5.0,
+    timer: 5.0,
+    tickInterval: 0.5,
+    tickTimer: 0
+  });
+  burst(target.x, target.y, "#ff7048", 30, 160);
+  addFloater("火海!", CANNON_SLOTS[index].x, CANNON_SLOTS[index].y - 55, "#ff7048");
+  beep(150, 0.2, "sawtooth", 0.06);
   return true;
 }
 

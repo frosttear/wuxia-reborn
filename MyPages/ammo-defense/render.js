@@ -1116,20 +1116,34 @@ function drawGunnerWeapon(position, index, type = "rifle") {
   ctx.restore();
   drawDefenseDurability(position, health, 41);
   if (type === "rifle") {
-    const charge = state.gunnerSkillCharge[index] || 0;
-    if (charge > 0) {
+    const skillActive = state.gunnerSkillActive[index] || 0;
+    if (skillActive > 0) {
       const barW = 38;
       const barY = position.y + 48;
       fillRound(position.x - barW / 2, barY, barW, 5, 2, "rgba(23,35,28,0.74)");
-      const chargeFill = barW * clamp(charge / 100, 0, 1);
-      fillRound(position.x - barW / 2, barY, chargeFill, 5, 2, charge >= 100 ? "#ffc43d" : "#ff7048");
-      if (charge >= 100) {
-        const pulse = 0.5 + Math.sin(state.time * 6) * 0.3;
-        ctx.save();
-        ctx.globalAlpha = pulse;
-        strokeRound(position.x - 22, position.y - 22, 44, 68, 8, "#ffc43d", 2);
-        ctx.restore();
-        text("⚡", position.x, position.y - 28, 10, "#ffc43d");
+      fillRound(position.x - barW / 2, barY, barW * clamp(skillActive / 3.0, 0, 1), 5, 2, "#ff7048");
+      const pulse = 0.6 + Math.sin(state.time * 12) * 0.4;
+      ctx.save();
+      ctx.globalAlpha = pulse;
+      strokeRound(position.x - 22, position.y - 22, 44, 68, 8, "#ff7048", 2.5);
+      ctx.restore();
+      text("弹幕", position.x, position.y - 28, 9, "#ff7048", "center", 900);
+    } else {
+      const charge = state.gunnerSkillCharge[index] || 0;
+      if (charge > 0) {
+        const barW = 38;
+        const barY = position.y + 48;
+        fillRound(position.x - barW / 2, barY, barW, 5, 2, "rgba(23,35,28,0.74)");
+        const chargeFill = barW * clamp(charge / 100, 0, 1);
+        fillRound(position.x - barW / 2, barY, chargeFill, 5, 2, charge >= 100 ? "#ffc43d" : "#ff7048");
+        if (charge >= 100) {
+          const pulse = 0.5 + Math.sin(state.time * 6) * 0.3;
+          ctx.save();
+          ctx.globalAlpha = pulse;
+          strokeRound(position.x - 22, position.y - 22, 44, 68, 8, "#ffc43d", 2);
+          ctx.restore();
+          text("⚡", position.x, position.y - 28, 10, "#ffc43d");
+        }
       }
     }
   }
@@ -1537,6 +1551,21 @@ function draw() {
   drawBeltStatus();
   drawDefenseRows();
   drawWaveLabel();
+  for (const zone of state.fireZones) {
+    const alpha = clamp(zone.timer / zone.duration, 0, 1) * 0.35;
+    const pulse = 1 + Math.sin(state.time * 8) * 0.1;
+    ctx.save();
+    ctx.globalAlpha = alpha;
+    ctx.beginPath();
+    ctx.arc(zone.x, zone.y, zone.radius * pulse, 0, Math.PI * 2);
+    const grad = ctx.createRadialGradient(zone.x, zone.y, 0, zone.x, zone.y, zone.radius * pulse);
+    grad.addColorStop(0, "#ff7048");
+    grad.addColorStop(0.6, "rgba(255,112,72,0.5)");
+    grad.addColorStop(1, "rgba(255,196,61,0)");
+    ctx.fillStyle = grad;
+    ctx.fill();
+    ctx.restore();
+  }
   drawParticles();
   drawHeader();
   drawShop();
