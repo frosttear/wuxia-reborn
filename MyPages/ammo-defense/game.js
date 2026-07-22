@@ -225,11 +225,8 @@ document.getElementById("endlessTitleButton").addEventListener("click", () => {
   state.pendingLegacy = null;
   state.legacySnapshot = null;
   startGameAtStage(TOTAL_STAGES);
-  state.endless = true;
-  state.endlessWave = 0;
-  state.wave = TOTAL_WAVES;
-  state.waveTimer = 2.5;
-  announce("无尽模式开始");
+  const savedWave = readEndlessWave();
+  startEndlessMode(savedWave);
 });
 
 document.getElementById("exportSaveButton").addEventListener("click", () => {

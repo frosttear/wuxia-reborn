@@ -70,6 +70,7 @@ function STAGE_PROGRESS_KEY() { return slotKey("stage"); }
 function PRESTIGE_KEY() { return slotKey("prestige"); }
 function TECH_KEY() { return slotKey("tech"); }
 function BEST_WAVE_KEY() { return slotKey("best"); }
+function ENDLESS_WAVE_KEY() { return slotKey("endless-wave"); }
 
 (function migrateLegacySave() {
   const old = localStorage.getItem("ammo-defense-stage-progress");
@@ -103,6 +104,15 @@ function saveTech(t) {
 function isEndlessUnlocked() {
   return readSavedStage() >= TOTAL_STAGES;
 }
+function saveEndlessWave(w) {
+  localStorage.setItem(ENDLESS_WAVE_KEY(), String(w));
+}
+function readEndlessWave() {
+  return Number(localStorage.getItem(ENDLESS_WAVE_KEY()) || 0);
+}
+function clearEndlessWave() {
+  localStorage.removeItem(ENDLESS_WAVE_KEY());
+}
 function unlockEndless() {
 }
 function getSlotSummary(slot) {
@@ -124,7 +134,8 @@ function exportSaveData() {
       stage: localStorage.getItem(`ammo-defense-slot-${s}-stage`),
       prestige: localStorage.getItem(`ammo-defense-slot-${s}-prestige`),
       tech: localStorage.getItem(`ammo-defense-slot-${s}-tech`),
-      best: localStorage.getItem(`ammo-defense-slot-${s}-best`)
+      best: localStorage.getItem(`ammo-defense-slot-${s}-best`),
+      "endless-wave": localStorage.getItem(`ammo-defense-slot-${s}-endless-wave`)
     };
   }
   data.endlessUnlocked = localStorage.getItem(ENDLESS_UNLOCK_KEY);
@@ -430,7 +441,14 @@ function updateContinueGameButton() {
   state.savedStage = savedStage;
   const hasSave = savedStage > 1;
   continueGameButton.hidden = !hasSave;
-  continueGameButton.textContent = `继续第 ${savedStage} 关 (槽${currentSlot})`;
+  const endlessWave = readEndlessWave();
+  if (endlessWave > 0 && savedStage >= TOTAL_STAGES) {
+    const ew = endlessWave % WAVES_PER_STAGE + 1;
+    const es = Math.floor(endlessWave / WAVES_PER_STAGE) + 1;
+    continueGameButton.textContent = `继续无尽 阶段${es}·${ew}波 (槽${currentSlot})`;
+  } else {
+    continueGameButton.textContent = `继续第 ${savedStage} 关 (槽${currentSlot})`;
+  }
   document.getElementById("startButton").hidden = hasSave;
   document.getElementById("resetProgressButton").hidden = !hasSave;
   const endlessTitleBtn = document.getElementById("endlessTitleButton");
@@ -1331,6 +1349,7 @@ function showLegacyChoice(completedStage) {
 function resetGame() {
   state.endless = false;
   state.endlessWave = 0;
+  clearEndlessWave();
   state.pendingLegacy = null;
   state.legacySnapshot = null;
   startGameAtStage(1);
@@ -1361,6 +1380,12 @@ function startGameAtStage(stage) {
 }
 
 function continueSavedGame() {
+  const endlessWave = readEndlessWave();
+  if (endlessWave > 0 && readSavedStage() >= TOTAL_STAGES) {
+    startGameAtStage(TOTAL_STAGES);
+    startEndlessMode(endlessWave);
+    return;
+  }
   startGameAtStage(readSavedStage());
 }
 
@@ -1437,6 +1462,9 @@ function resumeGame() {
 }
 
 function backToTitle() {
+  if (state.endless && state.endlessWave > 0) {
+    saveEndlessWave(state.endlessWave);
+  }
   state.mode = "start";
   pauseOverlay.hidden = true;
   resultOverlay.hidden = true;
@@ -1517,10 +1545,10 @@ function activateCannonSkill(index) {
   return true;
 }
 
-function startEndlessMode() {
+function startEndlessMode(resumeWave) {
   state.endless = true;
-  state.endlessWave = 0;
-  state.wave = TOTAL_WAVES;
+  state.endlessWave = resumeWave || 0;
+  state.wave = TOTAL_WAVES + (resumeWave || 0);
   state.waveActive = false;
   state.waveTimer = 2.5;
   state.mode = "playing";
