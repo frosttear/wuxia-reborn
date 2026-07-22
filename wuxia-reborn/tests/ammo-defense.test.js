@@ -663,8 +663,8 @@ describe('ammo-defense - pure logic (sandboxed)', () => {
         expect(tags).toContain('economy');
     });
 
-    test('synergyDefs has 8 entries (4 tags × 2 thresholds)', () => {
-        expect(G.synergyDefs.length).toBe(8);
+    test('synergyDefs has 16 entries (4 tags × 4 thresholds)', () => {
+        expect(G.synergyDefs.length).toBe(16);
     });
 
     test('TOTAL_STAGES and WAVES_PER_STAGE constants', () => {

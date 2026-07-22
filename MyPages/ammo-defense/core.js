@@ -1000,12 +1000,20 @@ const choiceTags = {
 const synergyDefs = [
   { tag: "fire", threshold: 3, name: "烈焰共鸣", desc: "所有伤害额外+8%", effect: () => { state.damageBonus += 0.08; } },
   { tag: "fire", threshold: 6, name: "焚天", desc: "燃烧弹持续时间+50%", effect: () => { state.burnDurationBonus += 0.5; } },
+  { tag: "fire", threshold: 9, name: "业火燎原", desc: "所有伤害额外+15%", effect: () => { state.damageBonus += 0.15; } },
+  { tag: "fire", threshold: 12, name: "灭世之炎", desc: "暴击率+12%，暴击伤害额外生效", effect: () => { state.critChance += 0.12; } },
   { tag: "armor", threshold: 3, name: "钢铁壁垒", desc: "城墙+1上限", effect: () => { state.gateMax++; state.lives = Math.min(state.gateMax, state.lives + 1); } },
   { tag: "armor", threshold: 6, name: "铜墙铁壁", desc: "阵地维修时间缩短30%", effect: () => { state.defenseRepairBonus += 0.3; } },
+  { tag: "armor", threshold: 9, name: "金刚不坏", desc: "城墙+2上限", effect: () => { state.gateMax += 2; state.lives = Math.min(state.gateMax, state.lives + 2); } },
+  { tag: "armor", threshold: 12, name: "永恒之盾", desc: "阵地维修时间再缩短30%", effect: () => { state.defenseRepairBonus += 0.3; } },
   { tag: "speed", threshold: 3, name: "极速供应", desc: "传送带速度+10%", effect: () => { state.beltSpeedBonus += 0.10; } },
   { tag: "speed", threshold: 6, name: "闪电物流", desc: "搬运工移动速度+15%", effect: () => { state.roleLevels.porter++; } },
+  { tag: "speed", threshold: 9, name: "超频链路", desc: "传送带速度再+15%", effect: () => { state.beltSpeedBonus += 0.15; } },
+  { tag: "speed", threshold: 12, name: "光速补给", desc: "搬运工移动速度再+20%", effect: () => { state.roleLevels.porter++; } },
   { tag: "economy", threshold: 3, name: "财源广进", desc: "基地收入+2", effect: () => { state.baseIncomeLevel++; } },
-  { tag: "economy", threshold: 6, name: "黄金时代", desc: "击杀奖励+10%", effect: () => { state.killCoinBonus += 0.10; } }
+  { tag: "economy", threshold: 6, name: "黄金时代", desc: "击杀奖励+10%", effect: () => { state.killCoinBonus += 0.10; } },
+  { tag: "economy", threshold: 9, name: "富可敌国", desc: "基地收入+3，击杀奖励+10%", effect: () => { state.baseIncomeLevel++; state.killCoinBonus += 0.10; } },
+  { tag: "economy", threshold: 12, name: "点石成金", desc: "击杀奖励+20%", effect: () => { state.killCoinBonus += 0.20; } }
 ];
 
 function checkSynergies() {
@@ -1060,8 +1068,8 @@ function renderChoiceOptions(preferNew = false) {
     const tagLabels = { fire: "🔥火", armor: "🛡防", speed: "⚡速", economy: "💰财" };
     const tagLabel = tag ? tagLabels[tag] || "" : "";
     const tagCount = tag ? (state.synergyCounts[tag] || 0) : 0;
-    const tagThreshold = tagCount >= 3 ? 6 : 3;
-    const tagHtml = tag ? `<span class="choice-tag">${tagLabel} ${tagCount}/${tagThreshold}</span>` : "";
+    const nextThreshold = tag ? synergyDefs.filter(d => d.tag === tag && d.threshold > tagCount).map(d => d.threshold).sort((a, b) => a - b)[0] : null;
+    const tagHtml = tag ? `<span class="choice-tag">${tagLabel} ${tagCount}${nextThreshold ? '/' + nextThreshold : ' MAX'}</span>` : "";
     button.innerHTML = `
       <span class="choice-mark">${choice.mark}</span>
       <span class="choice-copy">

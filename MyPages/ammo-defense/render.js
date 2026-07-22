@@ -22,12 +22,6 @@ function drawHeader() {
   strokeRound(181, 20, 78, 36, 18, "#17231c", 2);
   text(String(state.coins), 220, 38, 17, "#17231c");
 
-  text(`城墙 ${state.wallHealth}/${WALL_MAX_HP}`, 275, 24, 8,
-    state.wallHealth > 0 ? "#9ac4a2" : "#ff8874");
-  text("基地", 315, 24, 8, "#9ac4a2");
-  for (let i = 0; i < state.gateMax; i++) {
-    drawHeart(340 + i * 11, 24, 4.4, i < state.lives ? "#ee5a48" : "#4d5b52");
-  }
   const synergyColors = { fire: "#ff7048", armor: "#66d9ff", speed: "#ffe36a", economy: "#ffc43d" };
   const synergyLabels = { fire: "火", armor: "防", speed: "速", economy: "财" };
   const hasSynergy = Object.values(state.synergyCounts).some(v => v > 0);
@@ -39,14 +33,13 @@ function drawHeader() {
     for (const tag of activeTags) {
       const count = state.synergyCounts[tag];
       const color = synergyColors[tag];
-      const active3 = count >= 3;
-      const active6 = count >= 6;
-      fillRound(sx, 62, 38, 18, 4, active3 ? color : "#2b3c31");
+      const tier = count >= 12 ? 4 : count >= 9 ? 3 : count >= 6 ? 2 : count >= 3 ? 1 : 0;
+      fillRound(sx, 62, 38, 18, 4, tier >= 1 ? color : "#2b3c31");
       text(synergyLabels[tag] + count, sx + 19, 71, 10,
-        active3 ? "#17231c" : color, "center", active3 ? 900 : 700);
-      if (active3) {
-        ctx.strokeStyle = active6 ? "#ffe36a" : color;
-        ctx.lineWidth = 1.5;
+        tier >= 1 ? "#17231c" : color, "center", tier >= 1 ? 900 : 700);
+      if (tier >= 1) {
+        ctx.strokeStyle = tier >= 4 ? "#ff7048" : tier >= 3 ? "#c97dff" : tier >= 2 ? "#ffe36a" : color;
+        ctx.lineWidth = tier >= 3 ? 2.5 : 1.5;
         ctx.strokeRect(sx + 0.5, 62.5, 37, 17);
       }
       sx += 42;
@@ -1527,6 +1520,15 @@ function drawShop() {
       affordable ? "#17231c" : "#6f7067");
     fillRound(x + 10, SHOP_TOP + 108, w - 20, 16, 8, affordable ? "#ffc43d" : "#7c7e74");
     text(buttonLabel, x + w / 2, SHOP_TOP + 116, 9, affordable ? "#17231c" : "#d5d2bd");
+
+    const flash = state.shopFlash?.[index] || 0;
+    if (flash > 0) {
+      ctx.save();
+      ctx.globalAlpha = flash * 2;
+      fillRound(x, SHOP_TOP + 13, w, 120, 7, "#ffffff");
+      ctx.restore();
+      state.shopFlash[index] = Math.max(0, flash - 0.016);
+    }
   });
 }
 

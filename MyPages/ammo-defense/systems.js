@@ -1282,9 +1282,13 @@ function tryUpgrade(index) {
   if (state.coins >= cost) {
     state.coins -= cost;
     item.action();
-    burst(shopX, 722, item.color, 14, 120);
-    addFloater(actionLabel, shopX, 690, "#fff4c5");
+    burst(shopX, 722, item.color, 22, 160);
+    burst(shopX, 710, "#fff4c5", 8, 80);
+    addFloater(actionLabel, shopX, 685, item.color);
+    if (!state.shopFlash) state.shopFlash = [];
+    state.shopFlash[index] = 0.35;
     beep(620 + index * 90, 0.1, "square", 0.045);
+    setTimeout(() => beep(820 + index * 90, 0.08, "triangle", 0.03), 70);
   } else {
     addFloater("金币不足", shopX, 690, "#ff8874");
     beep(115, 0.11, "sawtooth", 0.025);
