@@ -224,9 +224,10 @@ document.getElementById("endlessTitleButton").addEventListener("click", () => {
   state.endlessWave = 0;
   state.pendingLegacy = null;
   state.legacySnapshot = null;
+  const snap = loadEndlessState();
   startGameAtStage(TOTAL_STAGES);
-  const savedWave = readEndlessWave();
-  startEndlessMode(savedWave);
+  if (snap) restoreEndlessSnap(snap);
+  startEndlessMode(snap ? snap.endlessWave : 0);
 });
 
 document.getElementById("exportSaveButton").addEventListener("click", () => {

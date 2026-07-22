@@ -112,6 +112,44 @@ function readEndlessWave() {
 }
 function clearEndlessWave() {
   localStorage.removeItem(ENDLESS_WAVE_KEY());
+  localStorage.removeItem(slotKey("endless-state"));
+}
+function saveEndlessState() {
+  const snap = {
+    endlessWave: state.endlessWave,
+    coins: state.coins, lives: state.lives, gateMax: state.gateMax,
+    productionLevel: state.productionLevel,
+    gunnerCount: state.gunnerCount, gunnerLevel: state.gunnerLevel,
+    cannonCount: state.cannonCount, cannonLevel: state.cannonLevel,
+    porterLevel: state.porterLevel,
+    baseIncomeLevel: state.baseIncomeLevel,
+    unlocks: { ...state.unlocks },
+    specialSlots: { ...state.specialSlots },
+    roleLevels: { ...state.roleLevels },
+    damageBonus: state.damageBonus,
+    gunnerMagCapacity: state.gunnerMagCapacity,
+    cannonMagCapacity: state.cannonMagCapacity,
+    critChance: state.critChance,
+    beltSpeedBonus: state.beltSpeedBonus,
+    blastRadiusBonus: state.blastRadiusBonus,
+    ammoEfficiency: state.ammoEfficiency,
+    killCoinBonus: state.killCoinBonus,
+    waveRepair: state.waveRepair,
+    burnDurationBonus: state.burnDurationBonus,
+    defenseRepairBonus: state.defenseRepairBonus,
+    synergyCounts: { ...state.synergyCounts },
+    activeSynergies: [...state.activeSynergies],
+    workers: state.workers.length,
+    earned: state.earned, kills: state.kills
+  };
+  localStorage.setItem(slotKey("endless-state"), JSON.stringify(snap));
+  saveEndlessWave(state.endlessWave);
+}
+function loadEndlessState() {
+  try {
+    const raw = localStorage.getItem(slotKey("endless-state"));
+    return raw ? JSON.parse(raw) : null;
+  } catch { return null; }
 }
 function unlockEndless() {
 }
@@ -135,7 +173,8 @@ function exportSaveData() {
       prestige: localStorage.getItem(`ammo-defense-slot-${s}-prestige`),
       tech: localStorage.getItem(`ammo-defense-slot-${s}-tech`),
       best: localStorage.getItem(`ammo-defense-slot-${s}-best`),
-      "endless-wave": localStorage.getItem(`ammo-defense-slot-${s}-endless-wave`)
+      "endless-wave": localStorage.getItem(`ammo-defense-slot-${s}-endless-wave`),
+      "endless-state": localStorage.getItem(`ammo-defense-slot-${s}-endless-state`)
     };
   }
   data.endlessUnlocked = localStorage.getItem(ENDLESS_UNLOCK_KEY);
@@ -1382,11 +1421,63 @@ function startGameAtStage(stage) {
 function continueSavedGame() {
   const endlessWave = readEndlessWave();
   if (endlessWave > 0 && readSavedStage() >= TOTAL_STAGES) {
+    const snap = loadEndlessState();
     startGameAtStage(TOTAL_STAGES);
-    startEndlessMode(endlessWave);
+    if (snap) restoreEndlessSnap(snap);
+    startEndlessMode(snap ? snap.endlessWave : endlessWave);
     return;
   }
   startGameAtStage(readSavedStage());
+}
+
+function restoreEndlessSnap(snap) {
+  state.coins = snap.coins;
+  state.lives = snap.lives;
+  state.gateMax = snap.gateMax;
+  state.productionLevel = snap.productionLevel;
+  state.gunnerLevel = snap.gunnerLevel;
+  state.cannonLevel = snap.cannonLevel;
+  state.porterLevel = snap.porterLevel;
+  state.baseIncomeLevel = snap.baseIncomeLevel;
+  state.damageBonus = snap.damageBonus;
+  state.gunnerMagCapacity = snap.gunnerMagCapacity;
+  state.cannonMagCapacity = snap.cannonMagCapacity;
+  state.critChance = snap.critChance;
+  state.beltSpeedBonus = snap.beltSpeedBonus;
+  state.blastRadiusBonus = snap.blastRadiusBonus;
+  state.ammoEfficiency = snap.ammoEfficiency;
+  state.killCoinBonus = snap.killCoinBonus;
+  state.waveRepair = snap.waveRepair;
+  state.burnDurationBonus = snap.burnDurationBonus;
+  state.defenseRepairBonus = snap.defenseRepairBonus;
+  state.synergyCounts = { ...snap.synergyCounts };
+  state.activeSynergies = [...(snap.activeSynergies || [])];
+  state.earned = snap.earned || 0;
+  state.kills = snap.kills || 0;
+  Object.assign(state.unlocks, snap.unlocks);
+  Object.assign(state.specialSlots, snap.specialSlots);
+  Object.assign(state.roleLevels, snap.roleLevels);
+  while (state.gunnerCount < snap.gunnerCount) {
+    state.gunnerCount++;
+    state.gunTimers.push(0);
+    state.gunnerAimAngles.push(0);
+    state.gunnerHealth.push(DEFENSE_MAX_HP);
+    state.gunnerRepairWave.push(Infinity);
+    state.gunnerMagazines.push({ bullet: 5, ap: 0, ice: 0 });
+    state.gunnerSkillCharge.push(0);
+    state.gunnerSkillActive.push(0);
+  }
+  while (state.cannonCount < snap.cannonCount) {
+    state.cannonCount++;
+    state.cannonTimers.push(0);
+    state.cannonAimAngles.push(0);
+    state.cannonHealth.push(DEFENSE_MAX_HP);
+    state.cannonRepairWave.push(Infinity);
+    state.cannonMagazines.push({ shell: 1, fire: 0, he: 0 });
+    state.cannonSkillCharge.push(0);
+    state.cannonSkillActive.push(0);
+  }
+  while (state.workers.length < (snap.workers || 1)) addWorker();
 }
 
 function showStageClear(completedStage) {
@@ -1463,7 +1554,7 @@ function resumeGame() {
 
 function backToTitle() {
   if (state.endless && state.endlessWave > 0) {
-    saveEndlessWave(state.endlessWave);
+    saveEndlessState();
   }
   state.mode = "start";
   pauseOverlay.hidden = true;

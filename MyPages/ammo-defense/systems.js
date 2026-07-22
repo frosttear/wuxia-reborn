@@ -1365,7 +1365,7 @@ function update(dt) {
       state.focusDefenseTarget = null;
       const clearedWave = wave;
       state.wave++;
-      if (state.endless) { state.endlessWave++; saveEndlessWave(state.endlessWave); }
+      if (state.endless) { state.endlessWave++; saveEndlessState(); }
       if (!state.endless && state.wave >= waveBook.length) {
         endGame(true);
         return;
