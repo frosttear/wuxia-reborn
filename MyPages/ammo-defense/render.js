@@ -1388,7 +1388,16 @@ function drawParticles() {
       ctx.arc(p.x, p.y, p.size * 0.5, 0, Math.PI * 2);
       ctx.fill();
     }
-    if (p.size > 3.8) {
+    if (p.ring) {
+      const progress = 1 - p.life / p.maxLife;
+      const radius = p.ringMax * progress;
+      ctx.globalAlpha = alpha * 0.7;
+      ctx.strokeStyle = p.color;
+      ctx.lineWidth = Math.max(1, 4 * (1 - progress));
+      ctx.beginPath();
+      ctx.arc(p.x, p.y, radius, 0, Math.PI * 2);
+      ctx.stroke();
+    } else if (p.size > 3.8) {
       ctx.globalAlpha = alpha * 0.22;
       ctx.beginPath();
       ctx.arc(p.x, p.y, p.size * 1.6, 0, Math.PI * 2);
@@ -1579,6 +1588,14 @@ function draw() {
   if (state.flash > 0) {
     ctx.fillStyle = `rgba(238,90,72,${state.flash * 0.28})`;
     ctx.fillRect(0, 0, W, H);
+  }
+  if (state.skillFlash) {
+    const sf = state.skillFlash;
+    const a = clamp(sf.timer * 4, 0, 1) * 0.18;
+    ctx.fillStyle = sf.color;
+    ctx.globalAlpha = a;
+    ctx.fillRect(0, 0, W, H);
+    ctx.globalAlpha = 1;
   }
   ctx.restore();
 }

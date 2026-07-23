@@ -1578,16 +1578,15 @@ function activateGunnerSkill(index) {
   if (special === "machine") {
     state.gunnerSkillActive[index] = 4.0;
     addFloater("弹雨!", pos.x, pos.y - 50, "#69b9ff");
-    beep(660, 0.08, "triangle", 0.04);
-    setTimeout(() => beep(880, 0.06, "triangle", 0.03), 60);
+    skillActivateFX(pos.x, pos.y, "#69b9ff");
   } else if (special === "sniper") {
     state.gunnerSkillActive[index] = 15.0;
     addFloater("穿甲弹!", pos.x, pos.y - 50, "#c97dff");
-    beep(440, 0.12, "square", 0.04);
+    skillActivateFX(pos.x, pos.y, "#c97dff");
   } else {
     state.gunnerSkillActive[index] = 3.0;
     addFloater("弹幕!", pos.x, pos.y - 50, "#ff7048");
-    beep(880, 0.06, "triangle", 0.04);
+    skillActivateFX(pos.x, pos.y, "#ff7048");
   }
   return true;
 }
@@ -1619,6 +1618,7 @@ function activateCannonSkill(index) {
       burst(target.x + off.x, target.y + off.y, "#ff7048", 24, 140);
     }
     addFloater("地毯轰炸!", pos.x, pos.y - 55, "#ff5733");
+    skillActivateFX(pos.x, pos.y, "#ff5733");
     beep(100, 0.3, "sawtooth", 0.07);
     setTimeout(() => beep(80, 0.25, "sawtooth", 0.06), 150);
   } else {
@@ -1631,6 +1631,7 @@ function activateCannonSkill(index) {
     });
     burst(target.x, target.y, "#ff7048", 30, 160);
     addFloater("火海!", pos.x, pos.y - 55, "#ff7048");
+    skillActivateFX(pos.x, pos.y, "#ff9d43");
     beep(150, 0.2, "sawtooth", 0.06);
   }
   return true;

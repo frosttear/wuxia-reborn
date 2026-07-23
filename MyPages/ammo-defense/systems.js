@@ -273,6 +273,19 @@ function addFloater(value, x, y, color = "#fff4c5") {
   state.floaters.push({ value, x, y, life: 0.8, color });
 }
 
+function skillActivateFX(x, y, color) {
+  burst(x, y, color, 28, 180);
+  burst(x, y, "#fff4c5", 10, 100);
+  state.particles.push(
+    { x, y, vx: 0, vy: 0, life: 0.45, maxLife: 0.45, size: 0, color, ring: true, ringMax: 80 },
+    { x, y, vx: 0, vy: 0, life: 0.55, maxLife: 0.55, size: 0, color: "#fff4c5", ring: true, ringMax: 50 }
+  );
+  state.skillFlash = { color, timer: 0.25 };
+  beep(520, 0.07, "triangle", 0.045);
+  setTimeout(() => beep(780, 0.06, "triangle", 0.035), 50);
+  setTimeout(() => beep(1040, 0.05, "triangle", 0.025), 100);
+}
+
 function storeAmmo(ammo) {
   state.ammoStock[ammo.kind]++;
   const meta = ammoMeta[ammo.kind];
@@ -1314,6 +1327,10 @@ function update(dt) {
   const beltSpeed = baseBeltSpeed * (1 + state.beltSpeedBonus);
   state.beltOffset = (state.beltOffset + dt * beltSpeed) % 264;
   state.flash = Math.max(0, state.flash - dt * 3);
+  if (state.skillFlash) {
+    state.skillFlash.timer -= dt * 4;
+    if (state.skillFlash.timer <= 0) state.skillFlash = null;
+  }
 
   if (state.beltEvent !== "jam") state.ammoTimer -= dt * (state.beltEvent === "overload" ? 1.65 : 1);
   if (state.ammoTimer <= 0 && state.beltEvent !== "jam") {
