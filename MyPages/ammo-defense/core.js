@@ -398,10 +398,10 @@ function createWave(index) {
     return {
       count: 1,
       interval: 0,
-      hp: Math.round(5100 * Math.pow(1.26, stageTier)),
+      hp: Math.round(2400 * Math.pow(1.22, stageTier)),
       speed: Math.min(30, 15 + stageTier * 1.0),
       reward: Math.round(420 + stageTier * 240),
-      shield: Math.round(650 * Math.pow(1.22, stageTier)),
+      shield: Math.round(400 * Math.pow(1.18, stageTier)),
       type: "boss",
       bossName: bossNames[stageTier],
       batchSize: 1,
@@ -412,7 +412,7 @@ function createWave(index) {
   return {
     count: Math.min(80, 24 + (stageWave - 1) * 5 + stageTier * 4),
     interval: Math.max(0.3, 1.17 - stageWave * 0.065 - stageTier * 0.025),
-    hp: Math.round(52 * Math.pow(1.16, stageWave - 1) * Math.pow(1.14, stageTier)),
+    hp: Math.round(72 * Math.pow(1.18, stageWave - 1) * Math.pow(1.18, stageTier)),
     speed: Math.min(50, 22.75 + (stageWave - 1) * 1.15 + stageTier * 1.0),
     reward: Math.round(18 + stageWave * 4 + stageTier * 9),
     type: stage === 1 && stageWave <= 2 ? "grunt" : "mixed",
@@ -432,10 +432,10 @@ function createEndlessWave(endlessIndex) {
     return {
       count: 1,
       interval: 0,
-      hp: Math.round(5100 * Math.pow(1.38, virtualStage - 1) * scaleFactor),
+      hp: Math.round(2400 * Math.pow(1.24, virtualStage - 1) * scaleFactor),
       speed: Math.min(52, 15 + (virtualStage - 1) * 1.65),
       reward: Math.round(420 + (virtualStage - 1) * 240),
-      shield: Math.round(650 * Math.pow(1.35, virtualStage - 1) * scaleFactor),
+      shield: Math.round(400 * Math.pow(1.20, virtualStage - 1) * scaleFactor),
       type: "boss",
       bossName: `无尽Boss·${Math.floor(endlessIndex / WAVES_PER_STAGE) + 1}`,
       batchSize: 1,
@@ -446,7 +446,7 @@ function createEndlessWave(endlessIndex) {
   return {
     count: Math.min(120, 28 + (stageWave - 1) * 6 + (virtualStage - 1) * 5),
     interval: Math.max(0.22, 1.0 - stageWave * 0.06 - (virtualStage - 1) * 0.02),
-    hp: Math.round(52 * Math.pow(1.16, stageWave - 1) * Math.pow(1.24, virtualStage - 1) * scaleFactor),
+    hp: Math.round(72 * Math.pow(1.18, stageWave - 1) * Math.pow(1.22, virtualStage - 1) * scaleFactor),
     speed: Math.min(60, 22.75 + (stageWave - 1) * 1.15 + (virtualStage - 1) * 1.8),
     reward: Math.round(18 + stageWave * 5 + (virtualStage - 1) * 12),
     type: "mixed",
