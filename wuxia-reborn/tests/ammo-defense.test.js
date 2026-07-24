@@ -33,7 +33,7 @@ describe('ammo-defense.html - basic structure', () => {
     });
 
     test('loads stylesheet', () => {
-        expect(html).toMatch(/<link\s+rel="stylesheet"\s+href="\.\/ammo-defense\/styles\.css">/);
+        expect(html).toMatch(/<link\s+rel="stylesheet"\s+href="\.\/ammo-defense\/styles\.css(\?v=\d+)?">/);
     });
 });
 
