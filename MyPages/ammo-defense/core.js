@@ -379,8 +379,23 @@ const state = {
   legacySnapshot: null,
   upgradeBranch: null,
   wavePreview: null,
-  showStatusPanel: false
+  showStatusPanel: false,
+  fogPenalty: 0,
+  nextMutator: null
 };
+
+const stageLore = [
+  { title: "前哨站", desc: "废土边缘的补给站传来求救信号，零星的变异体开始出没。" },
+  { title: "必经之路", desc: "敌人学会了冲锋，通往要塞的公路上出现了更凶猛的变异体。" },
+  { title: "分裂危机", desc: "情报显示新型变异体能在死亡后分裂——必须准备更多弹药。" },
+  { title: "爆破突袭", desc: "自爆型变异体接近城墙时会引爆自身，城防压力骤增。" },
+  { title: "要塞攻防", desc: "治疗者和盾兵开始协同进攻，这是一场有组织的攻势。" },
+  { title: "死灵之影", desc: "黑暗法师出现了，它能让倒下的敌人重新站起来。" },
+  { title: "地下威胁", desc: "雷达探测到地下移动信号——有东西在我们脚下掘进。" },
+  { title: "钢铁洪流", desc: "狂战士和潜地兵的数量激增，防线即将迎来最严峻的考验。" },
+  { title: "泰坦降临", desc: "巨型变异体出现在地平线上，城墙在它面前如同纸板。" },
+  { title: "终焉之战", desc: "这是最后的防线。所有已知变异体倾巢而出，要塞存亡在此一举。" }
+];
 
 const bossNames = [
   "废土监工",
@@ -429,6 +444,23 @@ function createWave(index) {
 
 const waveBook = Array.from({ length: TOTAL_WAVES }, (_, index) => createWave(index));
 
+const endlessMutators = [
+  { key: "swarm",   label: "虫潮",   desc: "数量×1.5 HP×0.6",  minStage: 0 },
+  { key: "armored", label: "重甲",   desc: "全员护甲 HP+30%",  minStage: 1 },
+  { key: "sprint",  label: "疾行",   desc: "速度+40%",          minStage: 0 },
+  { key: "regen",   label: "再生",   desc: "敌人缓慢回血",      minStage: 2 },
+  { key: "shield",  label: "护盾潮", desc: "全员自带护盾",      minStage: 2 },
+  { key: "elite",   label: "精锐",   desc: "HP×2 奖励×1.5",    minStage: 3 },
+  { key: "fog",     label: "迷雾",   desc: "射程-20%",          minStage: 1 },
+  { key: "none",    label: null,      desc: null,                minStage: 0 }
+];
+
+function pickMutator(endlessIndex) {
+  const stagesPast = Math.floor(endlessIndex / WAVES_PER_STAGE);
+  const pool = endlessMutators.filter(m => stagesPast >= m.minStage);
+  return pool[Math.floor(Math.random() * pool.length)];
+}
+
 function createEndlessWave(endlessIndex) {
   const stageWave = endlessIndex % WAVES_PER_STAGE + 1;
   const virtualStage = TOTAL_STAGES + Math.floor(endlessIndex / WAVES_PER_STAGE);
@@ -445,19 +477,38 @@ function createEndlessWave(endlessIndex) {
       bossName: `无尽Boss·${Math.floor(endlessIndex / WAVES_PER_STAGE) + 1}`,
       batchSize: 1,
       stage: virtualStage,
-      stageWave
+      stageWave,
+      mutator: null
     };
   }
+  const mut = pickMutator(endlessIndex);
+  let count = Math.min(120, 28 + (stageWave - 1) * 6 + (virtualStage - 1) * 5);
+  let hp = Math.round(72 * Math.pow(1.18, stageWave - 1) * Math.pow(1.22, virtualStage - 1) * scaleFactor);
+  let speed = Math.min(60, 22.75 + (stageWave - 1) * 1.15 + (virtualStage - 1) * 1.8);
+  let reward = Math.round(18 + stageWave * 5 + (virtualStage - 1) * 12);
+  let waveArmor = false;
+  let waveShield = 0;
+  let waveRegen = 0;
+  let fogPenalty = 0;
+
+  if (mut.key === "swarm")   { count = Math.round(count * 1.5); hp = Math.round(hp * 0.6); }
+  if (mut.key === "armored") { waveArmor = true; hp = Math.round(hp * 1.3); }
+  if (mut.key === "sprint")  { speed = Math.min(75, speed * 1.4); }
+  if (mut.key === "regen")   { waveRegen = Math.round(hp * 0.02); }
+  if (mut.key === "shield")  { waveShield = Math.round(hp * 0.3); }
+  if (mut.key === "elite")   { hp = Math.round(hp * 2); reward = Math.round(reward * 1.5); }
+  if (mut.key === "fog")     { fogPenalty = 0.2; }
+
   return {
-    count: Math.min(120, 28 + (stageWave - 1) * 6 + (virtualStage - 1) * 5),
+    count,
     interval: Math.max(0.22, 1.0 - stageWave * 0.06 - (virtualStage - 1) * 0.02),
-    hp: Math.round(72 * Math.pow(1.18, stageWave - 1) * Math.pow(1.22, virtualStage - 1) * scaleFactor),
-    speed: Math.min(60, 22.75 + (stageWave - 1) * 1.15 + (virtualStage - 1) * 1.8),
-    reward: Math.round(18 + stageWave * 5 + (virtualStage - 1) * 12),
+    hp, speed, reward,
     type: "mixed",
     batchSize: Math.min(8, 2 + Math.floor((stageWave - 1) / 2) + Math.floor((virtualStage - 1) / 2)),
     stage: virtualStage,
-    stageWave
+    stageWave,
+    mutator: mut.key !== "none" ? mut : null,
+    waveArmor, waveShield, waveRegen, fogPenalty
   };
 }
 
@@ -1464,7 +1515,8 @@ function startGameAtStage(stage) {
   document.getElementById("techOverlay").hidden = true;
   pauseButton.hidden = false;
   saveStageProgress(normalizedStage);
-  announce(`第 ${normalizedStage} 关 · 第 1 波准备`);
+  const lore = stageLore[normalizedStage - 1];
+  announce(lore ? `第 ${normalizedStage} 关 · ${lore.title}` : `第 ${normalizedStage} 关 · 第 1 波准备`);
   beep(320, 0.08, "square", 0.05);
   requestAnimationFrame(loop);
 }

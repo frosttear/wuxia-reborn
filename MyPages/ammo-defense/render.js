@@ -1643,6 +1643,15 @@ function drawWaveLabel() {
     const label = state.endless ? "下一波" : currentStageWave() === 1 ? "关卡准备" : "下一波";
     text(label, 267, 136, 11, state.endless ? "#ff9d43" : "#9ac4a2");
     text(Math.max(1, Math.ceil(state.waveTimer)), 334, 136, 15, "#fff4c5");
+    if (!state.endless && currentStageWave() === 1) {
+      const lore = stageLore[currentStageNumber() - 1];
+      if (lore) {
+        fillRound(30, 192, W - 60, 52, 10, "rgba(23,35,28,0.88)");
+        strokeRound(30, 192, W - 60, 52, 10, "#3b5042", 1.5);
+        text(`第${currentStageNumber()}关 · ${lore.title}`, W / 2, 210, 12, "#fff4c5", "center", 800);
+        text(lore.desc, W / 2, 230, 8, "#9ac4a2");
+      }
+    }
     if (state.wavePreview) {
       const entries = Object.entries(state.wavePreview).filter(([, c]) => c > 0);
       if (entries.length > 0) {
@@ -1659,11 +1668,36 @@ function drawWaveLabel() {
         }
       }
     }
+    if (state.nextMutator) {
+      const m = state.nextMutator;
+      const mutColors = { swarm: "#ff9d43", armored: "#8899aa", sprint: "#5dd2c3", regen: "#7ee0b3", shield: "#6a9ac4", elite: "#c97dff", fog: "#a0a0a0" };
+      const mc = mutColors[m.key] || "#fff4c5";
+      fillRound(125, 178, 150, 18, 9, "rgba(23,35,28,0.88)");
+      strokeRound(125, 178, 150, 18, 9, mc, 1.5);
+      text(`词条: ${m.label} — ${m.desc}`, 200, 187, 7, mc);
+    }
   }
   const currentWave = getWave(state.wave);
   if (currentWave?.type === "boss" && state.waveActive) {
     fillRound(232, 122, 128, 28, 14, "rgba(130,39,49,0.9)");
     text(currentWave.bossName, 296, 136, 12, "#fff4c5");
+  }
+  if (state.waveActive && currentWave?.mutator) {
+    const m = currentWave.mutator;
+    const mutColors = { swarm: "#ff9d43", armored: "#8899aa", sprint: "#5dd2c3", regen: "#7ee0b3", shield: "#6a9ac4", elite: "#c97dff", fog: "#a0a0a0" };
+    const mc = mutColors[m.key] || "#fff4c5";
+    fillRound(12, 104, 88, 18, 9, "rgba(23,35,28,0.85)");
+    strokeRound(12, 104, 88, 18, 9, mc, 1.5);
+    text(`${m.label}: ${m.desc}`, 56, 113, 7, mc);
+  }
+  if (state.fogPenalty > 0 && state.waveActive) {
+    const fogY = PLAY_TOP + (GATE_Y - PLAY_TOP) * state.fogPenalty;
+    const grad = ctx.createLinearGradient(0, PLAY_TOP, 0, fogY + 40);
+    grad.addColorStop(0, "rgba(80,90,80,0.35)");
+    grad.addColorStop(0.7, "rgba(80,90,80,0.12)");
+    grad.addColorStop(1, "rgba(80,90,80,0)");
+    ctx.fillStyle = grad;
+    ctx.fillRect(ROAD.x, PLAY_TOP, ROAD.w, fogY - PLAY_TOP + 40);
   }
 }
 

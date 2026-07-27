@@ -89,8 +89,22 @@ const stageEnemyWeights = [
   { grunt: 3, runner: 6, tank: 7, saboteur: 7, charger: 7, splitter: 7, bomber: 6, healer: 5, shielded: 7, necro: 8, berserker: 12, tunneler: 12, titan: 13 }
 ];
 
+const endlessHardTypes = ["titan", "necro", "tunneler", "berserker", "bomber"];
+
 function pickEnemyType(stage) {
-  const weights = stageEnemyWeights[Math.min(stage - 1, stageEnemyWeights.length - 1)];
+  const base = stageEnemyWeights[Math.min(stage - 1, stageEnemyWeights.length - 1)];
+  let weights;
+  if (stage > TOTAL_STAGES) {
+    const extra = stage - TOTAL_STAGES;
+    weights = { ...base };
+    for (const t of endlessHardTypes) {
+      if (weights[t]) weights[t] += extra * 2;
+    }
+    weights.grunt = Math.max(1, (weights.grunt || 3) - extra);
+    weights.runner = Math.max(1, (weights.runner || 6) - Math.floor(extra / 2));
+  } else {
+    weights = base;
+  }
   let total = 0;
   for (const w of Object.values(weights)) total += w;
   let roll = Math.random() * total;
@@ -128,9 +142,14 @@ function spawnEnemy(forcedType = null, countSpawn = true) {
   const baseHp = forcedType ? 82 + state.wave * 18 : wave.hp;
   const hp = baseHp * ts.hp;
   const lane = type === "boss" ? 0.55 : rand(0.08, 0.92);
-  const shieldAmount = type === "boss" ? (wave.shield || 360)
+  let shieldAmount = type === "boss" ? (wave.shield || 360)
     : type === "shielded" ? Math.round(baseHp * 0.6) : 0;
   const speedJitter = type === "boss" ? 1 : rand(0.85, 1.15);
+  let armor = ts.armor;
+  if (wave.waveArmor && type !== "boss") armor = true;
+  if (wave.waveShield && shieldAmount === 0 && type !== "boss") {
+    shieldAmount = wave.waveShield;
+  }
 
   state.enemies.push({
     x: roadPointForLane(ENEMY_SPAWN_Y, lane),
@@ -144,13 +163,14 @@ function spawnEnemy(forcedType = null, countSpawn = true) {
     reward: Math.round((forcedType ? 22 : wave.reward) * ts.hp),
     phase: rand(0, Math.PI * 2),
     hit: 0,
-    armor: ts.armor,
+    armor,
     slow: 0,
     burn: 0,
     burnTimer: 0,
     sabotageDone: false,
     shield: shieldAmount,
     maxShield: shieldAmount,
+    regen: wave.waveRegen || 0,
     bossTimer: type === "boss" ? 4.5 : 0,
     bossPhase: 0,
     movement: "advancing",
@@ -1134,7 +1154,8 @@ function mortarCooldown() {
 }
 
 function priorityTarget(mode = "front") {
-  const visible = state.enemies.filter(e => !e.burrowed);
+  const fogMinY = state.fogPenalty > 0 ? PLAY_TOP + (GATE_Y - PLAY_TOP) * state.fogPenalty : PLAY_TOP;
+  const visible = state.enemies.filter(e => !e.burrowed && e.y >= fogMinY);
   if (visible.length === 0) return null;
   if (state.focusTarget && !visible.includes(state.focusTarget)) {
     state.focusTarget = null;
@@ -1491,6 +1512,7 @@ function update(dt) {
       state.waveActive = true;
       state.waveClearTimer = null;
       state.wavePreview = null;
+      state.fogPenalty = getWave(state.wave).fogPenalty || 0;
       state.focusDefenseTarget = null;
       state.defenseTransitionTimer = 0;
       state.enemyBeltJamCooldown = 0;
@@ -1500,7 +1522,9 @@ function update(dt) {
       if (state.endless) {
         const ew = state.endlessWave % WAVES_PER_STAGE + 1;
         const es = Math.floor(state.endlessWave / WAVES_PER_STAGE) + 1;
-        announce(`无尽 · 阶段${es} · 第 ${ew} 波`);
+        const cw = getWave(state.wave);
+        const mutLabel = cw.mutator ? ` 【${cw.mutator.label}】` : "";
+        announce(`无尽 · 阶段${es} · 第 ${ew} 波${mutLabel}`);
       } else {
         announce(`第 ${currentStageNumber()} 关 · 第 ${currentStageWave()} 波`);
       }
@@ -1526,12 +1550,23 @@ function update(dt) {
     if (waveCleared && state.waveClearTimer <= 0) {
       state.waveActive = false;
       state.waveClearTimer = null;
+      state.fogPenalty = 0;
       state.focusDefenseTarget = null;
       state.upgradeBranch = null;
       const nextWave = getWave(state.wave + 1);
       if (nextWave) {
         const stage = nextWave.stage || currentStageNumber();
-        const weights = stageEnemyWeights[Math.min(stage - 1, stageEnemyWeights.length - 1)];
+        const base = stageEnemyWeights[Math.min(stage - 1, stageEnemyWeights.length - 1)];
+        let weights;
+        if (stage > TOTAL_STAGES) {
+          const extra = stage - TOTAL_STAGES;
+          weights = { ...base };
+          for (const t of endlessHardTypes) { if (weights[t]) weights[t] += extra * 2; }
+          weights.grunt = Math.max(1, (weights.grunt || 3) - extra);
+          weights.runner = Math.max(1, (weights.runner || 6) - Math.floor(extra / 2));
+        } else {
+          weights = base;
+        }
         let total = 0;
         for (const w of Object.values(weights)) total += w;
         const preview = {};
@@ -1540,8 +1575,10 @@ function update(dt) {
           if (est > 0) preview[t] = est;
         }
         state.wavePreview = preview;
+        state.nextMutator = nextWave.mutator || null;
       } else {
         state.wavePreview = null;
+        state.nextMutator = null;
       }
       const clearedWave = wave;
       state.wave++;
@@ -1581,6 +1618,9 @@ function update(dt) {
     enemy.phase += dt * 5;
     enemy.hit = Math.max(0, enemy.hit - dt * 5);
     enemy.attackFlash = Math.max(0, enemy.attackFlash - dt);
+    if (enemy.regen > 0 && enemy.hp < enemy.maxHp) {
+      enemy.hp = Math.min(enemy.maxHp, enemy.hp + enemy.regen * dt);
+    }
 
     if (enemy.movement === "advancing") {
       const slowFactor = enemy.slow > 0 ? 0.52 : 1;
