@@ -17,17 +17,13 @@ function drawHeader() {
       18, 52, 12, "#9ac4a2", "left", 800);
   }
 
-  drawCoin(168, 38, 12);
-  fillRound(181, 20, 78, 36, 18, "#fff4c5");
-  strokeRound(181, 20, 78, 36, 18, "#17231c", 2);
-  text(String(state.coins), 220, 38, 17, "#17231c");
+  drawHeart(148, 38, 7, "#ee5a48");
+  text(`${state.lives}/${state.gateMax}`, 170, 38, 11, "#ff8874", "center", 800);
 
-  drawHeart(275, 38, 8, "#ee5a48");
-  text(`${state.lives}/${state.gateMax}`, 302, 38, 13, "#ff8874", "center", 800);
-
-  fillRound(340, 22, 50, 32, 8, "rgba(255,244,197,0.85)");
-  strokeRound(340, 22, 50, 32, 8, "#17231c", 2);
-  text("详情", 365, 38, 11, "#17231c");
+  drawCoin(208, 38, 12);
+  fillRound(221, 22, 70, 32, 16, "#fff4c5");
+  strokeRound(221, 22, 70, 32, 16, "#17231c", 2);
+  text(String(state.coins), 256, 38, 15, "#17231c");
 
   const synergyColors = { fire: "#ff7048", armor: "#66d9ff", speed: "#ffe36a", economy: "#ffc43d" };
   const synergyLabels = { fire: "火", armor: "防", speed: "速", economy: "财" };
@@ -1975,6 +1971,7 @@ function draw() {
   }
 
   if (state.showStatusPanel) drawStatusPanel();
+  statusButton.hidden = state.mode !== "playing";
 
   if (state.flash > 0) {
     ctx.fillStyle = `rgba(238,90,72,${state.flash * 0.28})`;

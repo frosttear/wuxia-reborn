@@ -673,7 +673,7 @@ describe('ammo-defense - pure logic (sandboxed)', () => {
         expect(G.TOTAL_WAVES).toBe(100);
     });
 
-    test('shop has 5 upgrade slots', () => {
-        expect(G.shop.length).toBe(5);
+    test('shop has 4 upgrade slots', () => {
+        expect(G.shop.length).toBe(4);
     });
 });

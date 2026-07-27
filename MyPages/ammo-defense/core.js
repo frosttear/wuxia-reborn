@@ -702,21 +702,6 @@ const shop = [
     desc: () => "当前" + state.workers.length + "人 添加一名搬运工",
     action: () => addWorker()
   },
-  {
-    key: "wall",
-    label: "城防强化",
-    color: "#8899aa",
-    cost: () => 200 + state.wallLevel * 180,
-    level: () => state.wallLevel,
-    maxed: () => state.wallLevel >= 5,
-    desc: () => "城墙+2 漏怪容错+1 (" + state.wallHealth + "/" + (WALL_MAX_HP + state.wallLevel * 2) + "→/" + (WALL_MAX_HP + (state.wallLevel + 1) * 2) + ")",
-    action: () => {
-      state.wallLevel++;
-      state.wallHealth = Math.min(state.wallHealth + 2, WALL_MAX_HP + state.wallLevel * 2);
-      state.gateMax++;
-      state.lives = Math.min(state.lives + 1, state.gateMax);
-    }
-  }
 ];
 
 let audioCtx = null;

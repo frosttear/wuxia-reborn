@@ -4,7 +4,13 @@ const helpButton = document.getElementById("helpButton");
 const startHelpButton = document.getElementById("startHelpButton");
 const helpOverlay = document.getElementById("helpOverlay");
 const closeHelpButton = document.getElementById("closeHelpButton");
+const statusButton = document.getElementById("statusButton");
 let modeBeforeHelp = "start";
+
+statusButton.addEventListener("click", () => {
+  if (state.mode !== "playing") return;
+  state.showStatusPanel = !state.showStatusPanel;
+});
 
 function loop(now) {
   if (state.mode !== "playing") {
@@ -31,10 +37,6 @@ canvas.addEventListener("pointerdown", (event) => {
   const point = canvasPoint(event);
   if (state.showStatusPanel) {
     state.showStatusPanel = false;
-    return;
-  }
-  if (point.x >= 340 && point.x <= 390 && point.y >= 22 && point.y <= 54) {
-    state.showStatusPanel = true;
     return;
   }
   if (point.x >= BELT.x && point.x <= BELT.x + BELT.w &&
