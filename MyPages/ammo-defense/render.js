@@ -17,13 +17,12 @@ function drawHeader() {
       18, 52, 12, "#9ac4a2", "left", 800);
   }
 
-  drawHeart(148, 38, 7, "#ee5a48");
-  text(`${state.lives}/${state.gateMax}`, 170, 38, 11, "#ff8874", "center", 800);
-
-  drawCoin(208, 38, 12);
-  fillRound(221, 22, 70, 32, 16, "#fff4c5");
-  strokeRound(221, 22, 70, 32, 16, "#17231c", 2);
-  text(String(state.coins), 256, 38, 15, "#17231c");
+  drawHeart(200, 52, 6, "#ee5a48");
+  text(`${state.lives}/${state.gateMax}`, 220, 52, 10, "#ff8874", "left", 800);
+  drawCoin(268, 52, 9);
+  fillRound(278, 41, 58, 22, 11, "#fff4c5");
+  strokeRound(278, 41, 58, 22, 11, "#17231c", 2);
+  text(String(state.coins), 307, 52, 12, "#17231c");
 
   const synergyColors = { fire: "#ff7048", armor: "#66d9ff", speed: "#ffe36a", economy: "#ffc43d" };
   const synergyLabels = { fire: "火", armor: "防", speed: "速", economy: "财" };
@@ -32,18 +31,18 @@ function drawHeader() {
     const activeTags = Object.keys(state.synergyCounts).filter(t => state.synergyCounts[t] > 0);
     const totalW = activeTags.length * 42 - 4;
     let sx = 18;
-    fillRound(sx - 4, 60, totalW + 8, 22, 5, "rgba(23,35,28,0.88)");
+    fillRound(sx - 4, 76, totalW + 8, 22, 5, "rgba(23,35,28,0.88)");
     for (const tag of activeTags) {
       const count = state.synergyCounts[tag];
       const color = synergyColors[tag];
       const tier = count >= 12 ? 4 : count >= 9 ? 3 : count >= 6 ? 2 : count >= 3 ? 1 : 0;
-      fillRound(sx, 62, 38, 18, 4, tier >= 1 ? color : "#2b3c31");
-      text(synergyLabels[tag] + count, sx + 19, 71, 10,
+      fillRound(sx, 78, 38, 18, 4, tier >= 1 ? color : "#2b3c31");
+      text(synergyLabels[tag] + count, sx + 19, 87, 10,
         tier >= 1 ? "#17231c" : color, "center", tier >= 1 ? 900 : 700);
       if (tier >= 1) {
         ctx.strokeStyle = tier >= 4 ? "#ff7048" : tier >= 3 ? "#c97dff" : tier >= 2 ? "#ffe36a" : color;
         ctx.lineWidth = tier >= 3 ? 2.5 : 1.5;
-        ctx.strokeRect(sx + 0.5, 62.5, 37, 17);
+        ctx.strokeRect(sx + 0.5, 78.5, 37, 17);
       }
       sx += 42;
     }

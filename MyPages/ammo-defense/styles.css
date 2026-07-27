@@ -88,21 +88,21 @@ canvas:active {
   top: 12px;
   right: 12px;
   display: flex;
-  gap: 7px;
+  gap: 4px;
 }
 
 .icon-button {
   display: grid;
   place-items: center;
-  width: 36px;
-  height: 36px;
+  width: 28px;
+  height: 28px;
   padding: 0;
   border: 2px solid rgba(23, 35, 28, 0.86);
-  border-radius: 7px;
+  border-radius: 6px;
   color: #17231c;
   background: rgba(255, 244, 197, 0.92);
-  box-shadow: 0 3px 0 rgba(23, 35, 28, 0.76);
-  font: 900 18px/1 Arial, sans-serif;
+  box-shadow: 0 2px 0 rgba(23, 35, 28, 0.76);
+  font: 900 14px/1 Arial, sans-serif;
   cursor: pointer;
 }
 
