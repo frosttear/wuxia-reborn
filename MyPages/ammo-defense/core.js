@@ -1638,9 +1638,10 @@ function activateCannonSkill(index) {
 }
 
 function startEndlessMode(resumeWave) {
+  const wave = typeof resumeWave === "number" ? resumeWave : 0;
   state.endless = true;
-  state.endlessWave = resumeWave || 0;
-  state.wave = TOTAL_WAVES + (resumeWave || 0);
+  state.endlessWave = wave;
+  state.wave = TOTAL_WAVES + wave;
   state.waveActive = false;
   state.waveTimer = 2.5;
   state.mode = "playing";
@@ -1679,7 +1680,7 @@ function endGame(won) {
     endlessButton.className = "secondary-button";
     endlessButton.type = "button";
     endlessButton.textContent = "无尽模式";
-    endlessButton.addEventListener("click", startEndlessMode);
+    endlessButton.addEventListener("click", () => startEndlessMode(0));
     restartButton.parentNode.insertBefore(endlessButton, restartButton.nextSibling);
   }
   if (endlessButton) endlessButton.hidden = !(won && !isEndless);
