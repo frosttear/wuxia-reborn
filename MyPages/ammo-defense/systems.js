@@ -147,18 +147,18 @@ function spawnEnemy(forcedType = null, countSpawn = true) {
 
   const typeStats = {
     grunt:     { scale: 1,    hp: 1,    speed: 1,    armor: false },
-    runner:    { scale: 0.82, hp: 0.72, speed: 1.55, armor: false },
-    tank:      { scale: 1.18, hp: 1.75, speed: 0.68, armor: true },
-    saboteur:  { scale: 0.92, hp: 0.9,  speed: 1.22, armor: false },
-    healer:    { scale: 0.88, hp: 0.6,  speed: 0.85, armor: false },
-    shielded:  { scale: 1.05, hp: 1.1,  speed: 0.9,  armor: false },
-    berserker: { scale: 1.0,  hp: 1.3,  speed: 1.05, armor: false },
-    charger:   { scale: 0.95, hp: 0.95, speed: 1.1,  armor: false },
-    splitter:  { scale: 1.05, hp: 1.2,  speed: 0.9,  armor: false },
-    bomber:    { scale: 0.88, hp: 0.7,  speed: 1.35, armor: false },
-    necro:     { scale: 0.92, hp: 0.55, speed: 0.75, armor: false },
-    tunneler:  { scale: 0.9,  hp: 0.85, speed: 1.15, armor: false },
-    titan:     { scale: 1.35, hp: 3.0,  speed: 0.5,  armor: true },
+    runner:    { scale: 0.82, hp: 0.72, speed: 1.85, armor: false },
+    tank:      { scale: 1.18, hp: 1.75, speed: 0.58, armor: true },
+    saboteur:  { scale: 0.92, hp: 0.9,  speed: 1.35, armor: false },
+    healer:    { scale: 0.88, hp: 0.6,  speed: 0.72, armor: false },
+    shielded:  { scale: 1.05, hp: 1.1,  speed: 0.8,  armor: false },
+    berserker: { scale: 1.0,  hp: 1.3,  speed: 1.15, armor: false },
+    charger:   { scale: 0.95, hp: 0.95, speed: 1.45, armor: false },
+    splitter:  { scale: 1.05, hp: 1.2,  speed: 0.82, armor: false },
+    bomber:    { scale: 0.88, hp: 0.7,  speed: 1.65, armor: false },
+    necro:     { scale: 0.92, hp: 0.55, speed: 0.6,  armor: false },
+    tunneler:  { scale: 0.9,  hp: 0.85, speed: 1.25, armor: false },
+    titan:     { scale: 1.35, hp: 3.0,  speed: 0.38, armor: true },
     boss:      { scale: 1.55, hp: 1,    speed: 1,    armor: true }
   };
   const ts = typeStats[type] || typeStats.grunt;

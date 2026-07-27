@@ -419,7 +419,7 @@ function createWave(index) {
       count: 1,
       interval: 0,
       hp: Math.round(2400 * Math.pow(1.22, stageTier)),
-      speed: Math.min(30, 15 + stageTier * 1.0),
+      speed: Math.min(34, 17 + stageTier * 1.2),
       reward: Math.round(420 + stageTier * 240),
       shield: Math.round(400 * Math.pow(1.18, stageTier)),
       type: "boss",
@@ -430,13 +430,13 @@ function createWave(index) {
     };
   }
   return {
-    count: Math.min(80, 24 + (stageWave - 1) * 5 + stageTier * 4),
-    interval: Math.max(0.3, 1.17 - stageWave * 0.065 - stageTier * 0.025),
+    count: Math.min(60, 18 + (stageWave - 1) * 4 + stageTier * 3),
+    interval: Math.max(0.42, 1.25 - stageWave * 0.06 - stageTier * 0.02),
     hp: Math.round(72 * Math.pow(1.18, stageWave - 1) * Math.pow(1.18, stageTier)),
-    speed: Math.min(50, 22.75 + (stageWave - 1) * 1.15 + stageTier * 1.0),
+    speed: Math.min(58, 28 + (stageWave - 1) * 1.3 + stageTier * 1.2),
     reward: Math.round(18 + stageWave * 4 + stageTier * 9),
     type: stage === 1 && stageWave <= 2 ? "grunt" : "mixed",
-    batchSize: Math.min(6, 2 + Math.floor((stageWave - 1) / 2) + Math.floor(stageTier / 3)),
+    batchSize: Math.min(4, 1 + Math.floor((stageWave - 1) / 2.5) + Math.floor(stageTier / 4)),
     stage,
     stageWave
   };
@@ -482,9 +482,9 @@ function createEndlessWave(endlessIndex) {
     };
   }
   const mut = pickMutator(endlessIndex);
-  let count = Math.min(120, 28 + (stageWave - 1) * 6 + (virtualStage - 1) * 5);
+  let count = Math.min(90, 22 + (stageWave - 1) * 4 + (virtualStage - 1) * 4);
   let hp = Math.round(72 * Math.pow(1.18, stageWave - 1) * Math.pow(1.22, virtualStage - 1) * scaleFactor);
-  let speed = Math.min(60, 22.75 + (stageWave - 1) * 1.15 + (virtualStage - 1) * 1.8);
+  let speed = Math.min(70, 30 + (stageWave - 1) * 1.35 + (virtualStage - 1) * 2.0);
   let reward = Math.round(18 + stageWave * 5 + (virtualStage - 1) * 12);
   let waveArmor = false;
   let waveShield = 0;
@@ -501,10 +501,10 @@ function createEndlessWave(endlessIndex) {
 
   return {
     count,
-    interval: Math.max(0.22, 1.0 - stageWave * 0.06 - (virtualStage - 1) * 0.02),
+    interval: Math.max(0.34, 1.1 - stageWave * 0.05 - (virtualStage - 1) * 0.015),
     hp, speed, reward,
     type: "mixed",
-    batchSize: Math.min(8, 2 + Math.floor((stageWave - 1) / 2) + Math.floor((virtualStage - 1) / 2)),
+    batchSize: Math.min(5, 1 + Math.floor((stageWave - 1) / 2.5) + Math.floor((virtualStage - 1) / 3)),
     stage: virtualStage,
     stageWave,
     mutator: mut.key !== "none" ? mut : null,
