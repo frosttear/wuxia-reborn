@@ -1870,6 +1870,31 @@ function drawStatusPanel() {
   text(`弹匣容量: ${state.gunnerMagCapacity}`, lx, y, 9, "#d5d2bd", "left");
   y += 20;
 
+  const hasSpecial = state.unlocks.machine || state.unlocks.sniper || state.unlocks.mortar;
+  if (hasSpecial) {
+    text("【特殊武器】", lx, y, 11, "#c97dff", "left", 800);
+    y += 18;
+    if (state.unlocks.machine) {
+      const mIndex = state.specialSlots.machine;
+      const mCd = Math.max(0.09, 0.17 - (state.gunnerLevel - 1) * 0.012);
+      text(`机枪 #${mIndex + 1}: 0.09s级射速`, lx, y, 9, "#ee6d55", "left");
+      y += 14;
+    }
+    if (state.unlocks.sniper) {
+      const sIndex = state.specialSlots.sniper;
+      const sCd = Math.max(0.9, 1.75 - (state.gunnerLevel - 1) * 0.1);
+      text(`狙击 #${sIndex + 1}: ×3.7重甲/首领特攻`, lx, y, 9, "#6a9ac4", "left");
+      y += 14;
+    }
+    if (state.unlocks.mortar) {
+      const mrtIndex = state.specialSlots.mortar;
+      const mrtDmg = 44 + state.cannonLevel * 12;
+      text(`迫击炮 #${mrtIndex + 1}: 60px轰炸/${mrtDmg}伤害/3s`, lx, y, 9, "#ff9d43", "left");
+      y += 14;
+    }
+    y += 6;
+  }
+
   text("【炮台】", lx, y, 11, "#ff9d43", "left", 800);
   y += 18;
   const cDmg = 54 + state.cannonLevel * 20;
