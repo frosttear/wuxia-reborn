@@ -78,15 +78,15 @@ function spawnAmmo() {
 
 const stageEnemyWeights = [
   { grunt: 60, runner: 25, tank: 10, saboteur: 5 },
-  { grunt: 45, runner: 25, tank: 18, saboteur: 12 },
-  { grunt: 35, runner: 20, tank: 20, saboteur: 12, healer: 13 },
-  { grunt: 30, runner: 18, tank: 18, saboteur: 14, healer: 20 },
-  { grunt: 22, runner: 16, tank: 16, saboteur: 12, healer: 16, shielded: 18 },
-  { grunt: 18, runner: 15, tank: 15, saboteur: 12, healer: 15, shielded: 25 },
-  { grunt: 14, runner: 14, tank: 14, saboteur: 12, healer: 12, shielded: 18, berserker: 16 },
-  { grunt: 10, runner: 14, tank: 14, saboteur: 13, healer: 12, shielded: 17, berserker: 20 },
-  { grunt: 8,  runner: 13, tank: 13, saboteur: 14, healer: 12, shielded: 18, berserker: 22 },
-  { grunt: 6,  runner: 12, tank: 12, saboteur: 15, healer: 12, shielded: 18, berserker: 25 }
+  { grunt: 35, runner: 20, tank: 15, saboteur: 10, charger: 20 },
+  { grunt: 25, runner: 15, tank: 14, saboteur: 10, charger: 16, splitter: 20 },
+  { grunt: 20, runner: 12, tank: 12, saboteur: 10, charger: 12, splitter: 14, bomber: 20 },
+  { grunt: 14, runner: 10, tank: 10, saboteur: 8, charger: 10, splitter: 12, bomber: 14, healer: 10, shielded: 12 },
+  { grunt: 10, runner: 8, tank: 8, saboteur: 8, charger: 8, splitter: 10, bomber: 10, healer: 8, shielded: 10, necro: 20 },
+  { grunt: 6, runner: 8, tank: 8, saboteur: 8, charger: 8, splitter: 8, bomber: 8, healer: 6, shielded: 8, necro: 12, berserker: 10, tunneler: 10 },
+  { grunt: 5, runner: 7, tank: 8, saboteur: 8, charger: 8, splitter: 8, bomber: 7, healer: 6, shielded: 8, necro: 10, berserker: 10, tunneler: 15 },
+  { grunt: 4, runner: 6, tank: 7, saboteur: 7, charger: 7, splitter: 7, bomber: 6, healer: 5, shielded: 7, necro: 8, berserker: 10, tunneler: 12, titan: 14 },
+  { grunt: 3, runner: 6, tank: 7, saboteur: 7, charger: 7, splitter: 7, bomber: 6, healer: 5, shielded: 7, necro: 8, berserker: 12, tunneler: 12, titan: 13 }
 ];
 
 function pickEnemyType(stage) {
@@ -116,6 +116,12 @@ function spawnEnemy(forcedType = null, countSpawn = true) {
     healer:    { scale: 0.88, hp: 0.6,  speed: 0.85, armor: false },
     shielded:  { scale: 1.05, hp: 1.1,  speed: 0.9,  armor: false },
     berserker: { scale: 1.0,  hp: 1.3,  speed: 1.05, armor: false },
+    charger:   { scale: 0.95, hp: 0.95, speed: 1.1,  armor: false },
+    splitter:  { scale: 1.05, hp: 1.2,  speed: 0.9,  armor: false },
+    bomber:    { scale: 0.88, hp: 0.7,  speed: 1.35, armor: false },
+    necro:     { scale: 0.92, hp: 0.55, speed: 0.75, armor: false },
+    tunneler:  { scale: 0.9,  hp: 0.85, speed: 1.15, armor: false },
+    titan:     { scale: 1.35, hp: 3.0,  speed: 0.5,  armor: true },
     boss:      { scale: 1.55, hp: 1,    speed: 1,    armor: true }
   };
   const ts = typeStats[type] || typeStats.grunt;
@@ -156,7 +162,16 @@ function spawnEnemy(forcedType = null, countSpawn = true) {
     defenseSide: Math.random() < 0.5 ? -1 : 1,
     defenseSpacing: rand(24, 34),
     healTimer: type === "healer" ? 2.5 : 0,
-    enrageNotified: false
+    enrageNotified: false,
+    chargeTriggered: false,
+    chargeTimer: 0,
+    splitDone: type !== "splitter",
+    bomberExploded: false,
+    necroTimer: type === "necro" ? 8 : 0,
+    necroCount: 0,
+    burrowed: false,
+    burrowTimer: 0,
+    titanWallDmg: type === "titan" ? 2 : 1
   });
   if (countSpawn) state.spawned++;
   if (!state.tipShown.armor && type === "tank") {
@@ -174,6 +189,41 @@ function spawnEnemy(forcedType = null, countSpawn = true) {
     state.tipShown.berserker = true;
     addFloater("狂战士! 血少越快", ROAD.x + ROAD.w / 2, 200, "#ff6b6b");
     announce("狂战士出现，血量越低速度越快，优先集火消灭");
+  }
+  if (!state.tipShown.saboteur && type === "saboteur") {
+    state.tipShown.saboteur = true;
+    addFloater("破坏者! 会瘫痪产线", ROAD.x + ROAD.w / 2, 200, "#c97dff");
+    announce("破坏者出现，走到中段会破坏产线，优先击杀");
+  }
+  if (!state.tipShown.charger && type === "charger") {
+    state.tipShown.charger = true;
+    addFloater("冲锋兵! 半血后冲刺", ROAD.x + ROAD.w / 2, 200, "#ff9d43");
+    announce("冲锋兵出现，血量低于50%时会高速冲刺，用冰冻弹或快速击杀");
+  }
+  if (!state.tipShown.splitter && type === "splitter") {
+    state.tipShown.splitter = true;
+    addFloater("分裂体! 死后分裂", ROAD.x + ROAD.w / 2, 200, "#7ee0b3");
+    announce("分裂体出现，击杀后分裂为两个小体，用范围伤害清理");
+  }
+  if (!state.tipShown.bomber && type === "bomber") {
+    state.tipShown.bomber = true;
+    addFloater("爆破兵! 到墙自爆", ROAD.x + ROAD.w / 2, 200, "#ff5733");
+    announce("爆破兵出现，到达城墙时自爆造成双倍伤害，务必提前击杀");
+  }
+  if (!state.tipShown.necro && type === "necro") {
+    state.tipShown.necro = true;
+    addFloater("亡灵法师! 复活死者", ROAD.x + ROAD.w / 2, 200, "#b06ddb");
+    announce("亡灵法师出现，会周期性复活已击杀敌人，优先消灭");
+  }
+  if (!state.tipShown.tunneler && type === "tunneler") {
+    state.tipShown.tunneler = true;
+    addFloater("潜地兵! 钻地绕后", ROAD.x + ROAD.w / 2, 200, "#a08060");
+    announce("潜地兵出现，会钻入地下绕过火力区，需要后排火力应对");
+  }
+  if (!state.tipShown.titan && type === "titan") {
+    state.tipShown.titan = true;
+    addFloater("泰坦! 高血护甲", ROAD.x + ROAD.w / 2, 200, "#8899aa");
+    announce("泰坦出现，极高血量且有护甲，攻城伤害翻倍，集中穿甲火力");
   }
 }
 
@@ -419,7 +469,7 @@ function defenseHealth(target) {
 }
 
 function defenseMaxHealth(target) {
-  return target.kind === "wall" ? WALL_MAX_HP : DEFENSE_MAX_HP;
+  return target.kind === "wall" ? WALL_MAX_HP + (state.wallLevel || 0) * 2 : DEFENSE_MAX_HP;
 }
 
 function defenseRepairWave(target) {
@@ -754,6 +804,56 @@ function defeatEnemy(enemy) {
   for (let i = 0; i < state.cannonCount; i++) {
     state.cannonSkillCharge[i] = Math.min(100, (state.cannonSkillCharge[i] || 0) + killCharge);
   }
+  if (enemy.type === "splitter" && !enemy.splitDone) {
+    for (let s = 0; s < 2; s++) {
+      const splitHp = Math.round(enemy.maxHp * 0.35);
+      const splitLane = clamp(enemy.lane + (s === 0 ? -0.08 : 0.08), 0.05, 0.95);
+      state.enemies.push({
+        x: enemy.x + (s === 0 ? -12 : 12),
+        y: enemy.y,
+        lane: splitLane,
+        type: "splitter",
+        scale: enemy.scale * 0.7,
+        hp: splitHp,
+        maxHp: splitHp,
+        speed: enemy.speed * 1.3,
+        reward: Math.round(enemy.reward * 0.3),
+        phase: rand(0, Math.PI * 2),
+        hit: 0,
+        armor: false,
+        slow: 0,
+        burn: 0,
+        burnTimer: 0,
+        sabotageDone: false,
+        shield: 0,
+        maxShield: 0,
+        bossTimer: 0,
+        bossPhase: 0,
+        movement: enemy.movement === "advancing" ? "advancing" : enemy.movement,
+        attackTimer: rand(0.35, 0.65),
+        attackFlash: 0,
+        attackTarget: null,
+        defenseBias: enemy.defenseBias,
+        homeOffset: rand(-34, 34),
+        defenseSide: Math.random() < 0.5 ? -1 : 1,
+        defenseSpacing: rand(24, 34),
+        healTimer: 0,
+        enrageNotified: false,
+        chargeTriggered: false,
+        chargeTimer: 0,
+        splitDone: true,
+        bomberExploded: false,
+        necroTimer: 0,
+        necroCount: 0,
+        burrowed: false,
+        burrowTimer: 0,
+        titanWallDmg: 1
+      });
+    }
+    burst(enemy.x, enemy.y, "#7ee0b3", 16, 120);
+    addFloater("分裂!", enemy.x, enemy.y - 30, "#7ee0b3");
+    beep(450, 0.06, "triangle", 0.03);
+  }
   burst(enemy.x, enemy.y, enemy.type === "boss" ? "#ff7867" : "#7ee0b3", enemy.type === "boss" ? 36 : 14, 140);
   addFloater(`+${reward}`, enemy.x, enemy.y - 18, "#ffc43d");
   beep(enemy.type === "boss" ? 95 : 240, enemy.type === "boss" ? 0.3 : 0.08, "sawtooth", 0.035);
@@ -878,6 +978,8 @@ function enemyAttackInterval(enemy) {
   if (enemy.type === "runner") return 0.86;
   if (enemy.type === "tank") return 1.28;
   if (enemy.type === "saboteur") return 1;
+  if (enemy.type === "charger") return 0.75;
+  if (enemy.type === "titan") return 1.5;
   return 1.12;
 }
 
@@ -906,6 +1008,18 @@ function performEnemyAttack(enemy) {
     beginDefenseApproach(enemy);
     return;
   }
+  if (enemy.type === "bomber" && !enemy.bomberExploded) {
+    enemy.bomberExploded = true;
+    const target = { kind: "wall", index: 0 };
+    damageDefense(target, enemy);
+    if (state.wallHealth > 0) damageDefense(target, enemy);
+    burst(enemy.x, enemy.y, "#ff5733", 30, 180);
+    addFloater("自爆!", enemy.x, enemy.y - 42, "#ff5733");
+    beep(90, 0.3, "sawtooth", 0.07);
+    const idx = state.enemies.indexOf(enemy);
+    if (idx >= 0) state.enemies.splice(idx, 1);
+    return;
+  }
   const target = { kind: "wall", index: 0 };
   enemy.attackTarget = target;
   if (state.defenseHitCooldown > 0) return;
@@ -928,23 +1042,25 @@ function performDefenseAttack(enemy) {
   beep(105, 0.13, "sawtooth", 0.045);
 }
 
+const leakCost = {
+  grunt: 1, runner: 1, tank: 1, saboteur: 1, healer: 1, shielded: 1,
+  charger: 1, splitter: 1, bomber: 1, berserker: 2, tunneler: 1,
+  necro: 2, titan: 3, boss: 5
+};
+
 function performHomeAttack(enemy) {
   if (state.wallHealth > 0 || activeDefenseTargets().length > 0) {
     enemy.movement = "attacking";
     enemy.attackTimer = 0.2;
     return;
   }
-  if (state.homeHitCooldown > 0) {
-    enemy.attackTimer = 0.14;
-    return;
-  }
-  enemy.attackFlash = 0.24;
-  state.homeHitCooldown = 0.85;
-  state.lives = Math.max(0, state.lives - 1);
+  const dmg = leakCost[enemy.type] || 1;
+  state.lives = Math.max(0, state.lives - dmg);
   state.flash = 0.65;
-  burst(ROAD.x + ROAD.w / 2, 642, "#ee5a48", 24, 150);
-  addFloater("基地 -1", ROAD.x + ROAD.w / 2, 610, "#ff8874");
+  burst(enemy.x, enemy.y, "#ee5a48", 20, 140);
+  addFloater(`漏怪 -${dmg}`, enemy.x, enemy.y - 30, "#ff8874");
   beep(78, 0.24, "sawtooth", 0.065);
+  enemy.leaked = true;
   if (state.lives <= 0) endGame(false);
 }
 
@@ -1018,18 +1134,19 @@ function mortarCooldown() {
 }
 
 function priorityTarget(mode = "front") {
-  if (state.enemies.length === 0) return null;
-  if (state.focusTarget && !state.enemies.includes(state.focusTarget)) {
+  const visible = state.enemies.filter(e => !e.burrowed);
+  if (visible.length === 0) return null;
+  if (state.focusTarget && !visible.includes(state.focusTarget)) {
     state.focusTarget = null;
   }
   if (state.focusTarget && mode !== "heavy") return state.focusTarget;
   if (mode === "heavy") {
-    const heavy = state.enemies.reduce((best, enemy) =>
+    const heavy = visible.reduce((best, enemy) =>
       (enemy.armor ? enemy.hp * 1.5 : enemy.hp) > (best.armor ? best.hp * 1.5 : best.hp) ? enemy : best
     );
     return state.focusTarget && state.focusTarget.armor ? state.focusTarget : heavy;
   }
-  return state.enemies.reduce((closest, enemy) => enemy.y > closest.y ? enemy : closest);
+  return visible.reduce((closest, enemy) => enemy.y > closest.y ? enemy : closest);
 }
 
 function aimAngleForTarget(origin, target) {
@@ -1200,6 +1317,7 @@ function segmentEnemyHit(projectile, fromX, fromY, toX, toY) {
   let closestProgress = Infinity;
 
   for (const enemy of state.enemies) {
+    if (enemy.burrowed) continue;
     const progress = clamp(
       ((enemy.x - fromX) * segmentX + (enemy.y - fromY) * segmentY) / segmentLengthSquared,
       0,
@@ -1224,9 +1342,13 @@ function detonateShell(projectile) {
     : 48 + state.cannonLevel * 3;
   const blastRadius = baseBlastRadius * (1 + state.blastRadiusBonus);
   const victims = state.enemies.filter(enemy =>
-    Math.hypot(enemy.x - projectile.x, enemy.y - projectile.y) <= blastRadius
+    !enemy.burrowed && Math.hypot(enemy.x - projectile.x, enemy.y - projectile.y) <= blastRadius
   );
-  for (const enemy of victims) damageEnemy(enemy, projectile.damage, projectile);
+  for (const enemy of victims) {
+    const dist = Math.hypot(enemy.x - projectile.x, enemy.y - projectile.y);
+    const falloff = 1 - (dist / blastRadius) * 0.65;
+    damageEnemy(enemy, projectile.damage * falloff, projectile);
+  }
   burst(projectile.x, projectile.y, ammoMeta[projectile.ammoType].color, 22, 155);
 }
 
@@ -1285,6 +1407,7 @@ function updateProjectiles(dt) {
 function tryUpgrade(index) {
   const item = shop[index];
   if (!item) return;
+  if (state.upgradeBranch) return;
   const cost = item.cost();
   const actionLabel = item.buttonLabel ? item.buttonLabel() : "升级";
   const shopX = (index + 0.5) * (W / shop.length);
@@ -1292,20 +1415,43 @@ function tryUpgrade(index) {
     addFloater("已满级", shopX, 690, "#fff4c5");
     return;
   }
-  if (state.coins >= cost) {
-    state.coins -= cost;
-    item.action();
-    burst(shopX, 722, item.color, 22, 160);
-    burst(shopX, 710, "#fff4c5", 8, 80);
-    addFloater(actionLabel, shopX, 685, item.color);
-    if (!state.shopFlash) state.shopFlash = [];
-    state.shopFlash[index] = 0.35;
-    beep(620 + index * 90, 0.1, "square", 0.045);
-    setTimeout(() => beep(820 + index * 90, 0.08, "triangle", 0.03), 70);
-  } else {
+  if (state.coins < cost) {
     addFloater("金币不足", shopX, 690, "#ff8874");
     beep(115, 0.11, "sawtooth", 0.025);
+    return;
   }
+  if (item.branching?.()) {
+    state.upgradeBranch = { index, cost, branches: item.branches(), color: item.color };
+    beep(440, 0.08, "triangle", 0.03);
+    return;
+  }
+  state.coins -= cost;
+  item.action();
+  burst(shopX, 722, item.color, 22, 160);
+  burst(shopX, 710, "#fff4c5", 8, 80);
+  addFloater(actionLabel, shopX, 685, item.color);
+  if (!state.shopFlash) state.shopFlash = [];
+  state.shopFlash[index] = 0.35;
+  beep(620 + index * 90, 0.1, "square", 0.045);
+  setTimeout(() => beep(820 + index * 90, 0.08, "triangle", 0.03), 70);
+}
+
+function applyBranch(branchIndex) {
+  const ub = state.upgradeBranch;
+  if (!ub) return;
+  const branch = ub.branches[branchIndex];
+  if (!branch) return;
+  state.coins -= ub.cost;
+  branch.apply();
+  const shopX = (ub.index + 0.5) * (W / shop.length);
+  burst(shopX, 722, branch.color, 22, 160);
+  burst(shopX, 710, "#fff4c5", 8, 80);
+  addFloater(branch.title, shopX, 685, branch.color);
+  if (!state.shopFlash) state.shopFlash = [];
+  state.shopFlash[ub.index] = 0.35;
+  beep(620, 0.1, "square", 0.045);
+  setTimeout(() => beep(820, 0.08, "triangle", 0.03), 70);
+  state.upgradeBranch = null;
 }
 
 function update(dt) {
@@ -1344,6 +1490,7 @@ function update(dt) {
     if (state.waveTimer <= 0 && canSpawn) {
       state.waveActive = true;
       state.waveClearTimer = null;
+      state.wavePreview = null;
       state.focusDefenseTarget = null;
       state.defenseTransitionTimer = 0;
       state.enemyBeltJamCooldown = 0;
@@ -1380,6 +1527,22 @@ function update(dt) {
       state.waveActive = false;
       state.waveClearTimer = null;
       state.focusDefenseTarget = null;
+      state.upgradeBranch = null;
+      const nextWave = getWave(state.wave + 1);
+      if (nextWave) {
+        const stage = nextWave.stage || currentStageNumber();
+        const weights = stageEnemyWeights[Math.min(stage - 1, stageEnemyWeights.length - 1)];
+        let total = 0;
+        for (const w of Object.values(weights)) total += w;
+        const preview = {};
+        for (const [t, w] of Object.entries(weights)) {
+          const est = Math.round(nextWave.count * w / total);
+          if (est > 0) preview[t] = est;
+        }
+        state.wavePreview = preview;
+      } else {
+        state.wavePreview = null;
+      }
       const clearedWave = wave;
       state.wave++;
       if (state.endless) { state.endlessWave++; saveEndlessState(); }
@@ -1494,6 +1657,7 @@ function update(dt) {
       if (enemy.attackTimer <= 0) {
         performHomeAttack(enemy);
         if (state.mode !== "playing") return;
+        if (enemy.leaked) continue;
         if (enemy.movement === "attackingHome") {
           enemy.attackTimer = enemyAttackInterval(enemy);
         }
@@ -1543,6 +1707,59 @@ function update(dt) {
       const hpRatio = enemy.hp / enemy.maxHp;
       const rage = 1 + (1 - hpRatio) * 1.2;
       enemy.speed = (getWave(state.wave).speed * 1.0) * rage;
+    }
+
+    if (enemy.type === "charger") {
+      if (!enemy.chargeTriggered && enemy.hp / enemy.maxHp < 0.5) {
+        enemy.chargeTriggered = true;
+        enemy.chargeTimer = 3;
+        addFloater("冲刺!", enemy.x, enemy.y - 42, "#ff9d43");
+        burst(enemy.x, enemy.y, "#ff9d43", 12, 100);
+        beep(600, 0.08, "square", 0.04);
+      }
+      if (enemy.chargeTimer > 0) {
+        enemy.chargeTimer -= dt;
+        enemy.speed = getWave(state.wave).speed * 1.1 * 2.5;
+        enemy.slow = 0;
+      } else if (enemy.chargeTriggered) {
+        enemy.speed = getWave(state.wave).speed * 1.1;
+      }
+    }
+
+    if (enemy.type === "necro") {
+      enemy.necroTimer -= dt;
+      if (enemy.necroTimer <= 0 && enemy.necroCount < 3) {
+        enemy.necroTimer = 8;
+        enemy.necroCount++;
+        const resType = pickEnemyType(currentStageNumber());
+        const finalType = (resType === "necro" || resType === "boss" || resType === "titan") ? "grunt" : resType;
+        spawnEnemy(finalType, false);
+        addFloater("亡灵复活", enemy.x, enemy.y - 42, "#b06ddb");
+        burst(enemy.x, enemy.y, "#b06ddb", 14, 100);
+        beep(200, 0.15, "sawtooth", 0.04);
+      }
+    }
+
+    if (enemy.type === "tunneler") {
+      if (!enemy.burrowed && enemy.y >= 280 && enemy.y < 390) {
+        enemy.burrowed = true;
+        enemy.burrowTimer = 2;
+        addFloater("钻地!", enemy.x, enemy.y - 42, "#a08060");
+        burst(enemy.x, enemy.y, "#a08060", 10, 80);
+        beep(130, 0.15, "square", 0.03);
+      }
+      if (enemy.burrowed) {
+        enemy.burrowTimer -= dt;
+        enemy.y += 55 * dt;
+        if (enemy.burrowTimer <= 0) {
+          enemy.burrowed = false;
+          enemy.y = 400;
+          enemy.x = roadPointForLane(400, enemy.lane);
+          burst(enemy.x, enemy.y, "#a08060", 14, 100);
+          addFloater("现身!", enemy.x, enemy.y - 42, "#a08060");
+          beep(280, 0.1, "triangle", 0.04);
+        }
+      }
     }
 
     if (enemy.type === "boss") {
@@ -1597,6 +1814,10 @@ function update(dt) {
         enemy.bossTimer = enemy.shield > 0 ? 4.5 : enraged ? 2.2 : 3.2;
       }
     }
+  }
+
+  for (let i = state.enemies.length - 1; i >= 0; i--) {
+    if (state.enemies[i].leaked) state.enemies.splice(i, 1);
   }
 
   updateWeapons(dt);

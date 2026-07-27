@@ -22,6 +22,13 @@ function drawHeader() {
   strokeRound(181, 20, 78, 36, 18, "#17231c", 2);
   text(String(state.coins), 220, 38, 17, "#17231c");
 
+  drawHeart(275, 38, 8, "#ee5a48");
+  text(`${state.lives}/${state.gateMax}`, 302, 38, 13, "#ff8874", "center", 800);
+
+  fillRound(340, 22, 50, 32, 8, "rgba(255,244,197,0.85)");
+  strokeRound(340, 22, 50, 32, 8, "#17231c", 2);
+  text("详情", 365, 38, 11, "#17231c");
+
   const synergyColors = { fire: "#ff7048", armor: "#66d9ff", speed: "#ffe36a", economy: "#ffc43d" };
   const synergyLabels = { fire: "火", armor: "防", speed: "速", economy: "财" };
   const hasSynergy = Object.values(state.synergyCounts).some(v => v > 0);
@@ -433,7 +440,13 @@ function enemyPalette(enemy) {
     boss: { body: "#914653", light: "#c36a72", dark: "#40202a", accent: "#ffbd48" },
     healer: { body: "#3a7a5c", light: "#6fc4a0", dark: "#1e4035", accent: "#7ee0b3" },
     shielded: { body: "#4a6a8a", light: "#6a9ac4", dark: "#2a3a4f", accent: "#81e6ff" },
-    berserker: { body: "#8a3a3a", light: "#c45a5a", dark: "#4a1a1a", accent: "#ff4040" }
+    berserker: { body: "#8a3a3a", light: "#c45a5a", dark: "#4a1a1a", accent: "#ff4040" },
+    charger: { body: "#b87030", light: "#e09848", dark: "#6a3e18", accent: "#ff9d43" },
+    splitter: { body: "#3a8a5a", light: "#5cc48a", dark: "#1e4a30", accent: "#7ee0b3" },
+    bomber: { body: "#993322", light: "#cc5544", dark: "#551818", accent: "#ff5733" },
+    necro: { body: "#6a3a8a", light: "#9a5ab8", dark: "#3a1a5a", accent: "#b06ddb" },
+    tunneler: { body: "#7a6a4a", light: "#a89060", dark: "#4a3a28", accent: "#a08060" },
+    titan: { body: "#5a6a7a", light: "#8099aa", dark: "#2a3a4a", accent: "#8899aa" }
   };
   const palette = palettes[enemy.type] || palettes.grunt;
   return hit ? { ...palette, body: "#fff1bf", light: "#fff9dc" } : palette;
@@ -442,7 +455,7 @@ function enemyPalette(enemy) {
 function drawEnemyLegs(type, palette, phase) {
   const stride = Math.sin(phase) * (type === "runner" ? 5 : 2.5);
   ctx.strokeStyle = "#15211b";
-  ctx.lineWidth = type === "tank" || type === "boss" ? 6 : 4;
+  ctx.lineWidth = type === "tank" || type === "boss" || type === "titan" ? 6 : 4;
   ctx.beginPath();
   ctx.moveTo(-7, 7);
   ctx.lineTo(-9 - stride, 20);
@@ -452,7 +465,7 @@ function drawEnemyLegs(type, palette, phase) {
   ctx.lineTo(14 + stride, 22);
   ctx.stroke();
   ctx.strokeStyle = palette.dark;
-  ctx.lineWidth = type === "tank" || type === "boss" ? 3 : 2;
+  ctx.lineWidth = type === "tank" || type === "boss" || type === "titan" ? 3 : 2;
   ctx.beginPath();
   ctx.moveTo(-8, 8);
   ctx.lineTo(-10 - stride, 18);
@@ -710,6 +723,184 @@ function drawBerserkerEnemy(palette, rage) {
   }
 }
 
+function drawChargerEnemy(palette, charging) {
+  fillRound(-12, -10, 24, 23, 6, palette.body);
+  strokeRound(-12, -10, 24, 23, 6, "#17231c", 2.5);
+  ctx.fillStyle = palette.light;
+  ctx.beginPath();
+  ctx.arc(0, -17, 8, 0, Math.PI * 2);
+  ctx.fill();
+  ctx.stroke();
+  ctx.fillStyle = palette.accent;
+  ctx.beginPath();
+  ctx.moveTo(-8, -20);
+  ctx.lineTo(0, -28);
+  ctx.lineTo(8, -20);
+  ctx.closePath();
+  ctx.fill();
+  ctx.stroke();
+  ctx.fillStyle = "#17231c";
+  ctx.fillRect(-4, -18, 3, 2);
+  ctx.fillRect(2, -18, 3, 2);
+  if (charging) {
+    ctx.save();
+    ctx.strokeStyle = "rgba(255,157,67,0.7)";
+    ctx.lineWidth = 2;
+    ctx.beginPath();
+    ctx.moveTo(-16, 0);
+    ctx.lineTo(-24, 5);
+    ctx.moveTo(-16, -8);
+    ctx.lineTo(-24, -5);
+    ctx.stroke();
+    ctx.restore();
+  }
+}
+
+function drawSplitterEnemy(palette) {
+  fillRound(-12, -9, 24, 22, 8, palette.body);
+  strokeRound(-12, -9, 24, 22, 8, "#17231c", 2.5);
+  ctx.fillStyle = palette.accent;
+  ctx.beginPath();
+  ctx.moveTo(0, -5);
+  ctx.lineTo(-8, 5);
+  ctx.lineTo(8, 5);
+  ctx.closePath();
+  ctx.fill();
+  ctx.fillStyle = palette.light;
+  ctx.beginPath();
+  ctx.arc(-5, -16, 6, 0, Math.PI * 2);
+  ctx.arc(5, -16, 6, 0, Math.PI * 2);
+  ctx.fill();
+  ctx.stroke();
+  ctx.fillStyle = "#17231c";
+  ctx.fillRect(-6, -17, 2, 2);
+  ctx.fillRect(4, -17, 2, 2);
+}
+
+function drawBomberEnemy(palette) {
+  fillRound(-11, -10, 22, 22, 6, palette.body);
+  strokeRound(-11, -10, 22, 22, 6, "#17231c", 2.5);
+  ctx.fillStyle = palette.light;
+  ctx.beginPath();
+  ctx.arc(0, -17, 8, 0, Math.PI * 2);
+  ctx.fill();
+  ctx.stroke();
+  ctx.fillStyle = palette.accent;
+  ctx.beginPath();
+  ctx.arc(0, 0, 8, 0, Math.PI * 2);
+  ctx.fill();
+  ctx.strokeStyle = "#17231c";
+  ctx.lineWidth = 2;
+  ctx.stroke();
+  ctx.fillStyle = "#ffd34e";
+  ctx.fillRect(-1.5, -9, 3, 6);
+  const fuse = Math.sin(state.time * 12) * 0.4 + 0.6;
+  ctx.fillStyle = `rgba(255,87,51,${fuse})`;
+  ctx.beginPath();
+  ctx.arc(0, -11, 3, 0, Math.PI * 2);
+  ctx.fill();
+}
+
+function drawNecroEnemy(palette) {
+  ctx.fillStyle = palette.dark;
+  ctx.beginPath();
+  ctx.moveTo(-14, 8);
+  ctx.lineTo(-18, -5);
+  ctx.lineTo(-8, -3);
+  ctx.lineTo(8, -3);
+  ctx.lineTo(18, -5);
+  ctx.lineTo(14, 8);
+  ctx.closePath();
+  ctx.fill();
+  ctx.stroke();
+  fillRound(-11, -12, 22, 24, 5, palette.body);
+  strokeRound(-11, -12, 22, 24, 5, "#17231c", 2.5);
+  ctx.fillStyle = palette.light;
+  ctx.beginPath();
+  ctx.arc(0, -18, 8, 0, Math.PI * 2);
+  ctx.fill();
+  ctx.stroke();
+  ctx.fillStyle = palette.accent;
+  ctx.beginPath();
+  ctx.arc(0, -24, 10, Math.PI, Math.PI * 2);
+  ctx.lineTo(10, -22);
+  ctx.lineTo(-10, -22);
+  ctx.closePath();
+  ctx.fill();
+  ctx.stroke();
+  ctx.fillStyle = "#e0b0ff";
+  ctx.fillRect(-2, -19, 4, 2);
+  const pulse = 0.3 + Math.sin(state.time * 4) * 0.3;
+  ctx.save();
+  ctx.globalAlpha = pulse;
+  ctx.strokeStyle = "#b06ddb";
+  ctx.lineWidth = 1.5;
+  ctx.beginPath();
+  ctx.arc(0, -2, 20, 0, Math.PI * 2);
+  ctx.stroke();
+  ctx.restore();
+}
+
+function drawTunnelerEnemy(palette) {
+  fillRound(-11, -10, 22, 22, 6, palette.body);
+  strokeRound(-11, -10, 22, 22, 6, "#17231c", 2.5);
+  ctx.fillStyle = palette.dark;
+  ctx.fillRect(-9, -2, 18, 8);
+  ctx.fillStyle = palette.light;
+  ctx.beginPath();
+  ctx.arc(0, -17, 8, 0, Math.PI * 2);
+  ctx.fill();
+  ctx.stroke();
+  ctx.fillStyle = palette.accent;
+  ctx.fillRect(-8, -22, 16, 5);
+  ctx.fillStyle = "#17231c";
+  ctx.fillRect(-5, -18, 3, 2);
+  ctx.fillRect(3, -18, 3, 2);
+  ctx.fillStyle = palette.accent;
+  ctx.beginPath();
+  ctx.moveTo(-10, 6);
+  ctx.lineTo(-6, 12);
+  ctx.lineTo(6, 12);
+  ctx.lineTo(10, 6);
+  ctx.closePath();
+  ctx.fill();
+}
+
+function drawTitanEnemy(palette) {
+  ctx.fillStyle = palette.dark;
+  ctx.strokeStyle = "#17231c";
+  ctx.lineWidth = 3;
+  ctx.beginPath();
+  ctx.arc(-20, -4, 10, 0, Math.PI * 2);
+  ctx.arc(20, -4, 10, 0, Math.PI * 2);
+  ctx.fill();
+  ctx.stroke();
+  fillRound(-22, -16, 44, 34, 8, palette.body);
+  strokeRound(-22, -16, 44, 34, 8, "#17231c", 3);
+  fillRound(-18, -8, 36, 14, 3, palette.light);
+  ctx.fillStyle = "#3b453d";
+  ctx.fillRect(-14, -5, 28, 6);
+  ctx.fillStyle = palette.light;
+  ctx.beginPath();
+  ctx.arc(0, -24, 11, 0, Math.PI * 2);
+  ctx.fill();
+  ctx.stroke();
+  ctx.fillStyle = palette.accent;
+  ctx.beginPath();
+  ctx.moveTo(-14, -26);
+  ctx.lineTo(-8, -36);
+  ctx.lineTo(0, -30);
+  ctx.lineTo(8, -36);
+  ctx.lineTo(14, -26);
+  ctx.closePath();
+  ctx.fill();
+  ctx.stroke();
+  ctx.fillStyle = "#ffb54d";
+  ctx.fillRect(-6, -25, 12, 3);
+  ctx.fillStyle = palette.accent;
+  ctx.fillRect(-5, 8, 10, 8);
+}
+
 function drawEnemyWeapon(enemy) {
   if (enemy.movement !== "attacking" &&
       enemy.movement !== "attackingDefense" &&
@@ -746,13 +937,25 @@ function drawEnemy(enemy) {
   ctx.scale(s, s);
   ctx.fillStyle = "rgba(10,18,13,0.22)";
   ctx.beginPath();
-  ctx.ellipse(3, 1, enemy.type === "boss" ? 30 : enemy.type === "tank" ? 24 : enemy.type === "healer" ? 16 : 18, 6, -0.06, 0, Math.PI * 2);
+  const shadowW = enemy.type === "boss" ? 30 : enemy.type === "titan" ? 28 : enemy.type === "tank" ? 24 : enemy.type === "healer" ? 16 : 18;
+  ctx.ellipse(3, 1, shadowW, 6, -0.06, 0, Math.PI * 2);
   ctx.fill();
   ctx.fillStyle = "rgba(10,18,13,0.38)";
   ctx.beginPath();
-  ctx.ellipse(0, 0, enemy.type === "boss" ? 18 : 11, 3, 0, 0, Math.PI * 2);
+  ctx.ellipse(0, 0, enemy.type === "boss" ? 18 : enemy.type === "titan" ? 16 : 11, 3, 0, 0, Math.PI * 2);
   ctx.fill();
   ctx.restore();
+
+  if (enemy.burrowed) {
+    ctx.save();
+    ctx.globalAlpha = 0.25;
+    ctx.translate(enemy.x, enemy.y + bob);
+    ctx.scale(s, s);
+    ctx.translate(0, -21);
+    drawTunnelerEnemy(palette);
+    ctx.restore();
+    return;
+  }
 
   ctx.save();
   ctx.translate(enemy.x, enemy.y + bob);
@@ -765,6 +968,12 @@ function drawEnemy(enemy) {
   else if (enemy.type === "healer") drawHealerEnemy(palette);
   else if (enemy.type === "shielded") drawShieldedEnemy(palette, enemy.shield > 0);
   else if (enemy.type === "berserker") drawBerserkerEnemy(palette, 1 - enemy.hp / enemy.maxHp);
+  else if (enemy.type === "charger") drawChargerEnemy(palette, enemy.chargeTimer > 0);
+  else if (enemy.type === "splitter") drawSplitterEnemy(palette);
+  else if (enemy.type === "bomber") drawBomberEnemy(palette);
+  else if (enemy.type === "necro") drawNecroEnemy(palette);
+  else if (enemy.type === "tunneler") drawTunnelerEnemy(palette);
+  else if (enemy.type === "titan") drawTitanEnemy(palette);
   else if (enemy.type === "boss") {
     drawBossEnemy(palette, enemy.shield > 0);
     if (isBossEnraged(enemy)) {
@@ -1414,6 +1623,19 @@ function drawParticles() {
   ctx.globalAlpha = 1;
 }
 
+const enemyTypeNames = {
+  grunt: "步兵", runner: "跑者", tank: "坦克", saboteur: "破坏者",
+  healer: "治疗", shielded: "盾兵", berserker: "狂战",
+  charger: "冲锋", splitter: "分裂", bomber: "爆破",
+  necro: "法师", tunneler: "潜地", titan: "泰坦"
+};
+const enemyTypeColors = {
+  grunt: "#6fc4b5", runner: "#5dd2c3", tank: "#87917b", saboteur: "#d49a58",
+  healer: "#7ee0b3", shielded: "#6a9ac4", berserker: "#c45a5a",
+  charger: "#e09848", splitter: "#5cc48a", bomber: "#cc5544",
+  necro: "#9a5ab8", tunneler: "#a89060", titan: "#8099aa"
+};
+
 function drawWaveLabel() {
   const canSpawn = state.endless || state.wave < waveBook.length;
   if (!state.waveActive && canSpawn && state.waveTimer > 0) {
@@ -1421,6 +1643,22 @@ function drawWaveLabel() {
     const label = state.endless ? "下一波" : currentStageWave() === 1 ? "关卡准备" : "下一波";
     text(label, 267, 136, 11, state.endless ? "#ff9d43" : "#9ac4a2");
     text(Math.max(1, Math.ceil(state.waveTimer)), 334, 136, 15, "#fff4c5");
+    if (state.wavePreview) {
+      const entries = Object.entries(state.wavePreview).filter(([, c]) => c > 0);
+      if (entries.length > 0) {
+        const pw = Math.min(entries.length * 52 + 80, W - 20);
+        const px = (W - pw) / 2;
+        fillRound(px, 154, pw, 22, 8, "rgba(23,35,28,0.78)");
+        text("侦察:", px + 30, 165, 8, "#9ac4a2");
+        let cx = px + 56;
+        for (const [t, c] of entries) {
+          const name = enemyTypeNames[t] || t;
+          const col = enemyTypeColors[t] || "#fff4c5";
+          text(`${name}×${c}`, cx, 165, 7, col);
+          cx += 44;
+        }
+      }
+    }
   }
   const currentWave = getWave(state.wave);
   if (currentWave?.type === "boss" && state.waveActive) {
@@ -1468,6 +1706,17 @@ function drawShopIcon(key, x, y, color) {
     ctx.arc(0, 9, 13, Math.PI, Math.PI * 2);
     ctx.fill();
     ctx.stroke();
+  } else if (key === "wall") {
+    ctx.fillStyle = "#6a7a8a";
+    fillRound(-14, -6, 28, 20, 3, "#6a7a8a");
+    strokeRound(-14, -6, 28, 20, 3, "#17231c", 2.5);
+    fillRound(-12, -14, 8, 10, 2, "#8899aa");
+    fillRound(-2, -14, 8, 10, 2, "#8899aa");
+    fillRound(4, -14, 8, 10, 2, "#8899aa");
+    ctx.fillStyle = "#aabbcc";
+    ctx.fillRect(-10, 0, 4, 6);
+    ctx.fillRect(-2, 0, 4, 6);
+    ctx.fillRect(6, 0, 4, 6);
   } else {
     ctx.fillStyle = "#ffd09b";
     ctx.beginPath();
@@ -1541,6 +1790,92 @@ function drawShop() {
   });
 }
 
+function drawStatusPanel() {
+  ctx.fillStyle = "rgba(13,23,17,0.88)";
+  ctx.fillRect(0, 0, W, H);
+  fillRound(15, 30, W - 30, H - 60, 12, "#1a2b22");
+  strokeRound(15, 30, W - 30, H - 60, 12, "#3b5042", 2);
+  text("—— 详细状态 ——", W / 2, 52, 14, "#fff4c5", "center", 800);
+  fillRound(W - 60, 36, 36, 20, 6, "#ff8874");
+  text("关闭", W - 42, 46, 9, "#17231c");
+
+  let y = 76;
+  const lx = 30, rx = W / 2 + 10;
+
+  text("【枪手】", lx, y, 11, "#ee6d55", "left", 800);
+  y += 18;
+  const gMult = 1 + (state.gunnerLevel - 1) * 0.1;
+  const gDmg = Math.round((13 + state.productionLevel * 2 + state.gunnerLevel * 3) * 100) / 100;
+  const gRate = gunCooldown();
+  text(`数量: ${state.gunnerCount}/3`, lx, y, 9, "#d5d2bd", "left");
+  text(`强化: LV.${state.gunnerLevel}`, rx, y, 9, "#d5d2bd", "left");
+  y += 14;
+  text(`基础伤害: ${gDmg}`, lx, y, 9, "#fff4c5", "left");
+  text(`射速: ${gRate.toFixed(2)}s`, rx, y, 9, "#fff4c5", "left");
+  y += 14;
+  text(`暴击率: ${(state.critChance * 100).toFixed(0)}%`, lx, y, 9, "#ffc43d", "left");
+  text(`暴击倍率: 1.75x`, rx, y, 9, "#ffc43d", "left");
+  y += 14;
+  text(`弹匣容量: ${state.gunnerMagCapacity}`, lx, y, 9, "#d5d2bd", "left");
+  y += 20;
+
+  text("【炮台】", lx, y, 11, "#ff9d43", "left", 800);
+  y += 18;
+  const cDmg = 54 + state.cannonLevel * 20;
+  const cRate = cannonCooldown();
+  const blastR = Math.round((48 + state.cannonLevel * 3) * (1 + state.blastRadiusBonus));
+  text(`数量: ${state.cannonCount}/3`, lx, y, 9, "#d5d2bd", "left");
+  text(`强化: LV.${state.cannonLevel}`, rx, y, 9, "#d5d2bd", "left");
+  y += 14;
+  text(`基础伤害: ${cDmg}`, lx, y, 9, "#fff4c5", "left");
+  text(`射速: ${cRate.toFixed(2)}s`, rx, y, 9, "#fff4c5", "left");
+  y += 14;
+  text(`爆炸范围: ${blastR}px`, lx, y, 9, "#d8a3ff", "left");
+  text(`弹匣容量: ${state.cannonMagCapacity}`, rx, y, 9, "#d5d2bd", "left");
+  y += 14;
+  text(`爆炸衰减: 中心100%→边缘35%`, lx, y, 9, "#d8a3ff", "left");
+  y += 20;
+
+  text("【城防】", lx, y, 11, "#8899aa", "left", 800);
+  y += 18;
+  const wallMax = WALL_MAX_HP + (state.wallLevel || 0) * 2;
+  text(`城墙: ${state.wallHealth}/${wallMax}`, lx, y, 9, "#fff4c5", "left");
+  text(`城防等级: LV.${state.wallLevel || 0}/5`, rx, y, 9, "#fff4c5", "left");
+  y += 14;
+  text(`基地生命: ${state.lives}/${state.gateMax}`, lx, y, 9, "#ff8874", "left");
+  text(`维修加速: ${((state.defenseRepairBonus || 0) * 100).toFixed(0)}%`, rx, y, 9, "#65d18a", "left");
+  y += 20;
+
+  text("【生产】", lx, y, 11, "#69b9ff", "left", 800);
+  y += 18;
+  const ammoInterval = Math.max(0.28, 0.78 - state.productionLevel * 0.055);
+  text(`产线等级: LV.${state.productionLevel}`, lx, y, 9, "#d5d2bd", "left");
+  text(`产弹间隔: ${ammoInterval.toFixed(2)}s`, rx, y, 9, "#d5d2bd", "left");
+  y += 14;
+  text(`传送带速度: +${((state.beltSpeedBonus || 0) * 100).toFixed(0)}%`, lx, y, 9, "#fff4c5", "left");
+  text(`弹药效率: +${((state.ammoEfficiency || 0) * 100).toFixed(0)}%`, rx, y, 9, "#fff4c5", "left");
+  y += 14;
+  text(`搬运工: ${state.workers.length}人`, lx, y, 9, "#65d18a", "left");
+  y += 20;
+
+  text("【增益】", lx, y, 11, "#ffc43d", "left", 800);
+  y += 18;
+  text(`伤害加成: +${((state.damageBonus || 0) * 100).toFixed(0)}%`, lx, y, 9, "#fff4c5", "left");
+  text(`击杀奖励: +${((state.killCoinBonus || 0) * 100).toFixed(0)}%`, rx, y, 9, "#ffc43d", "left");
+  y += 14;
+  text(`燃烧延长: +${((state.burnDurationBonus || 0) * 100).toFixed(0)}%`, lx, y, 9, "#ff7048", "left");
+  text(`波次修复: ${state.waveRepair || 0}`, rx, y, 9, "#65d18a", "left");
+  y += 20;
+
+  text("【漏怪惩罚】", lx, y, 11, "#ff8874", "left", 800);
+  y += 18;
+  text("步兵/跑者/坦克/盾兵: -1", lx, y, 9, "#d5d2bd", "left");
+  y += 14;
+  text("狂战/法师: -2  泰坦: -3", lx, y, 9, "#d5d2bd", "left");
+  y += 14;
+  text("Boss: -5", lx, y, 9, "#ff8874", "left");
+}
+
 function draw() {
   ctx.save();
   drawBackground();
@@ -1584,6 +1919,28 @@ function draw() {
   drawParticles();
   drawHeader();
   drawShop();
+  if (state.upgradeBranch) {
+    const ub = state.upgradeBranch;
+    ctx.fillStyle = "rgba(13,23,17,0.7)";
+    ctx.fillRect(0, SHOP_TOP - 80, W, 80);
+    const bw = (W - 30) / 2;
+    for (let i = 0; i < ub.branches.length; i++) {
+      const b = ub.branches[i];
+      const bx = 10 + i * (bw + 10);
+      const by = SHOP_TOP - 74;
+      fillRound(bx, by, bw, 68, 8, "#fff4c5");
+      strokeRound(bx, by, bw, 68, 8, b.color, 3);
+      ctx.fillStyle = b.color;
+      ctx.fillRect(bx + 4, by + 3, bw - 8, 22);
+      text(b.title, bx + bw / 2, by + 14, 12, "#17231c", "center", 800);
+      text(b.desc, bx + bw / 2, by + 38, 10, "#4d5b52");
+      fillRound(bx + 15, by + 50, bw - 30, 14, 7, b.color);
+      text("选择", bx + bw / 2, by + 57, 9, "#17231c");
+    }
+    text("—— 选择强化路线 ——", W / 2, SHOP_TOP - 78, 9, "#fff4c5");
+  }
+
+  if (state.showStatusPanel) drawStatusPanel();
 
   if (state.flash > 0) {
     ctx.fillStyle = `rgba(238,90,72,${state.flash * 0.28})`;

@@ -329,7 +329,7 @@ describe('ammo-defense systems.js - focus target', () => {
     });
 
     test('clears dead focusTarget', () => {
-        expect(systemsJs).toMatch(/!state\.enemies\.includes\(state\.focusTarget\)/);
+        expect(systemsJs).toMatch(/!visible\.includes\(state\.focusTarget\)/);
     });
 });
 
@@ -673,7 +673,7 @@ describe('ammo-defense - pure logic (sandboxed)', () => {
         expect(G.TOTAL_WAVES).toBe(100);
     });
 
-    test('shop has 4 upgrade slots', () => {
-        expect(G.shop.length).toBe(4);
+    test('shop has 5 upgrade slots', () => {
+        expect(G.shop.length).toBe(5);
     });
 });

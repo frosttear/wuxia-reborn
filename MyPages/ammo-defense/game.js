@@ -29,6 +29,14 @@ function canvasPoint(event) {
 canvas.addEventListener("pointerdown", (event) => {
   if (state.mode !== "playing") return;
   const point = canvasPoint(event);
+  if (state.showStatusPanel) {
+    state.showStatusPanel = false;
+    return;
+  }
+  if (point.x >= 340 && point.x <= 390 && point.y >= 22 && point.y <= 54) {
+    state.showStatusPanel = true;
+    return;
+  }
   if (point.x >= BELT.x && point.x <= BELT.x + BELT.w &&
       point.y >= BELT.y + 35 && point.y <= BELT.y + 68) {
     if (state.beltEvent !== "jam") {
@@ -37,6 +45,21 @@ canvas.addEventListener("pointerdown", (event) => {
       const labels = { balanced: "均衡生产", bullet: "子弹优先", shell: "炮弹优先" };
       addFloater(labels[state.priority], BELT.x + BELT.w / 2, 155, "#fff4c5");
     }
+    return;
+  }
+  if (state.upgradeBranch) {
+    const by = SHOP_TOP - 74;
+    if (point.y >= by && point.y <= by + 68) {
+      const bw = (W - 30) / 2;
+      for (let i = 0; i < 2; i++) {
+        const bx = 10 + i * (bw + 10);
+        if (point.x >= bx && point.x <= bx + bw) {
+          applyBranch(i);
+          return;
+        }
+      }
+    }
+    state.upgradeBranch = null;
     return;
   }
   if (point.y >= SHOP_TOP) {
@@ -100,6 +123,8 @@ window.addEventListener("keydown", (event) => {
     tryUpgrade(2);
   } else if (event.code === "Digit4") {
     tryUpgrade(3);
+  } else if (event.code === "Digit5") {
+    tryUpgrade(4);
   }
 });
 

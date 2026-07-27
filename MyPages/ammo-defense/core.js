@@ -135,6 +135,7 @@ function saveEndlessState() {
     ammoEfficiency: state.ammoEfficiency,
     killCoinBonus: state.killCoinBonus,
     waveRepair: state.waveRepair,
+    wallLevel: state.wallLevel,
     burnDurationBonus: state.burnDurationBonus,
     defenseRepairBonus: state.defenseRepairBonus,
     synergyCounts: { ...state.synergyCounts },
@@ -306,6 +307,7 @@ const state = {
   gunnerRepairWave: [Infinity],
   cannonRepairWave: [Infinity],
   wallHealth: WALL_MAX_HP,
+  wallLevel: 0,
   wallRepairWave: Infinity,
   gunTimers: [0],
   cannonTimers: [0],
@@ -368,13 +370,16 @@ const state = {
   endlessWave: 0,
   synergyCounts: { fire: 0, armor: 0, speed: 0, economy: 0 },
   activeSynergies: [],
-  tipShown: { armor: false, shield: false, berserker: false },
+  tipShown: { armor: false, shield: false, berserker: false, saboteur: false, charger: false, splitter: false, bomber: false, necro: false, tunneler: false, titan: false },
   burnDurationBonus: 0,
   defenseRepairBonus: 0,
   prestige: loadPrestige(),
   tech: loadTech(),
   pendingLegacy: null,
-  legacySnapshot: null
+  legacySnapshot: null,
+  upgradeBranch: null,
+  wavePreview: null,
+  showStatusPanel: false
 };
 
 const bossNames = [
@@ -580,7 +585,22 @@ const shop = [
       ? "添加"
       : state.gunnerLevel >= maxGunnerLevel() ? "已满" : "强化",
     maxed: () => state.gunnerCount >= 3 && state.gunnerLevel >= maxGunnerLevel(),
-    desc: () => state.gunnerCount < 3 ? "增加一名枪手" : "伤害+3 射速" + Math.max(0.48, 0.9 - (state.gunnerLevel - 1) * 0.025 - (state.productionLevel - 1) * 0.008).toFixed(2) + "s→" + Math.max(0.48, 0.9 - state.gunnerLevel * 0.025 - (state.productionLevel - 1) * 0.008).toFixed(2) + "s",
+    desc: () => state.gunnerCount < 3 ? "增加一名枪手" : "点击选择精准或速射路线",
+    branching: () => state.gunnerCount >= 3,
+    branches: () => [
+      {
+        title: "精准路线",
+        desc: "伤害+5  暴击率+3%",
+        color: "#ee6d55",
+        apply: () => { state.gunnerLevel++; state.critChance += 0.03; }
+      },
+      {
+        title: "速射路线",
+        desc: "伤害+1  产线速度+8%",
+        color: "#ffb347",
+        apply: () => { state.gunnerLevel++; state.beltSpeedBonus += 0.08; }
+      }
+    ],
     action: () => {
       if (state.gunnerCount < 3) addGunner();
       else state.gunnerLevel = Math.min(maxGunnerLevel(), state.gunnerLevel + 1);
@@ -600,7 +620,22 @@ const shop = [
         ? "添加"
         : state.cannonLevel >= maxCannonLevel() ? "已满" : "强化",
       maxed: () => state.cannonCount >= 3 && state.cannonLevel >= maxCannonLevel(),
-      desc: () => state.cannonCount < 3 ? "增加一座炮台" : "伤害+20 射速" + Math.max(1.2, 2.5 - (state.cannonLevel - 1) * 0.07).toFixed(2) + "s→" + Math.max(1.2, 2.5 - state.cannonLevel * 0.07).toFixed(2) + "s 爆炸+3",
+      desc: () => state.cannonCount < 3 ? "增加一座炮台" : "点击选择重炮或散射路线",
+      branching: () => state.cannonCount >= 3,
+      branches: () => [
+        {
+          title: "重炮路线",
+          desc: "伤害+30  爆炸范围-5%",
+          color: "#ff9d43",
+          apply: () => { state.cannonLevel++; state.blastRadiusBonus -= 0.05; }
+        },
+        {
+          title: "散射路线",
+          desc: "伤害+10  爆炸范围+10%",
+          color: "#69b9ff",
+          apply: () => { state.cannonLevel++; state.blastRadiusBonus += 0.10; }
+        }
+      ],
       action: () => {
         if (state.cannonCount < 3) addCannon();
         else state.cannonLevel = Math.min(maxCannonLevel(), state.cannonLevel + 1);
@@ -615,6 +650,21 @@ const shop = [
     maxed: () => state.porterLevel >= 6,
     desc: () => "当前" + state.workers.length + "人 添加一名搬运工",
     action: () => addWorker()
+  },
+  {
+    key: "wall",
+    label: "城防强化",
+    color: "#8899aa",
+    cost: () => 200 + state.wallLevel * 180,
+    level: () => state.wallLevel,
+    maxed: () => state.wallLevel >= 5,
+    desc: () => "城墙+2 漏怪容错+1 (" + state.wallHealth + "/" + (WALL_MAX_HP + state.wallLevel * 2) + "→/" + (WALL_MAX_HP + (state.wallLevel + 1) * 2) + ")",
+    action: () => {
+      state.wallLevel++;
+      state.wallHealth = Math.min(state.wallHealth + 2, WALL_MAX_HP + state.wallLevel * 2);
+      state.gateMax++;
+      state.lives = Math.min(state.lives + 1, state.gateMax);
+    }
   }
 ];
 
@@ -1209,6 +1259,7 @@ function resetStageState(mode = "playing") {
     gunnerRepairWave: [Infinity],
     cannonRepairWave: [Infinity],
     wallHealth: WALL_MAX_HP,
+    wallLevel: 0,
     wallRepairWave: Infinity,
     gunTimers: [0],
     cannonTimers: [0],
@@ -1264,7 +1315,7 @@ function resetStageState(mode = "playing") {
     choiceRefreshes: 0,
     synergyCounts: { fire: 0, armor: 0, speed: 0, economy: 0 },
     activeSynergies: [],
-    tipShown: { armor: false, shield: false, berserker: false },
+    tipShown: { armor: false, shield: false, berserker: false, saboteur: false, charger: false, splitter: false, bomber: false, necro: false, tunneler: false, titan: false },
     burnDurationBonus: 0,
     defenseRepairBonus: 0
   });
@@ -1448,6 +1499,8 @@ function restoreEndlessSnap(snap) {
   state.ammoEfficiency = snap.ammoEfficiency;
   state.killCoinBonus = snap.killCoinBonus;
   state.waveRepair = snap.waveRepair;
+  state.wallLevel = snap.wallLevel || 0;
+  state.wallHealth = WALL_MAX_HP + state.wallLevel * 2;
   state.burnDurationBonus = snap.burnDurationBonus;
   state.defenseRepairBonus = snap.defenseRepairBonus;
   state.synergyCounts = { ...snap.synergyCounts };
