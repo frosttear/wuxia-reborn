@@ -91,20 +91,21 @@ const stageEnemyWeights = [
 
 const endlessHardTypes = ["titan", "necro", "tunneler", "berserker", "bomber"];
 
-function pickEnemyType(stage) {
+function resolveWaveWeights(stage) {
   const base = stageEnemyWeights[Math.min(stage - 1, stageEnemyWeights.length - 1)];
-  let weights;
-  if (stage > TOTAL_STAGES) {
-    const extra = stage - TOTAL_STAGES;
-    weights = { ...base };
-    for (const t of endlessHardTypes) {
-      if (weights[t]) weights[t] += extra * 2;
-    }
-    weights.grunt = Math.max(1, (weights.grunt || 3) - extra);
-    weights.runner = Math.max(1, (weights.runner || 6) - Math.floor(extra / 2));
-  } else {
-    weights = base;
+  if (stage <= TOTAL_STAGES) return base;
+  const extra = stage - TOTAL_STAGES;
+  const weights = { ...base };
+  for (const t of endlessHardTypes) {
+    if (weights[t]) weights[t] += extra * 2;
   }
+  weights.grunt = Math.max(1, (weights.grunt || 3) - extra);
+  weights.runner = Math.max(1, (weights.runner || 6) - Math.floor(extra / 2));
+  return weights;
+}
+
+function pickEnemyType(stage) {
+  const weights = resolveWaveWeights(stage);
   let total = 0;
   for (const w of Object.values(weights)) total += w;
   let roll = Math.random() * total;
@@ -113,6 +114,28 @@ function pickEnemyType(stage) {
     if (roll <= 0) return t;
   }
   return "grunt";
+}
+
+function waveComposition(wave) {
+  if (!wave) return {};
+  if (wave.type === "boss") return { boss: wave.count };
+  const weights = resolveWaveWeights(wave.stage);
+  let total = 0;
+  for (const w of Object.values(weights)) total += w;
+  const comp = {};
+  let remaining = wave.count;
+  const sorted = Object.entries(weights).sort((a, b) => b[1] - a[1]);
+  for (let i = 0; i < sorted.length; i++) {
+    const [t, w] = sorted[i];
+    if (i === sorted.length - 1) {
+      comp[t] = remaining;
+    } else {
+      const est = Math.round(wave.count * w / total);
+      comp[t] = Math.min(remaining, est);
+      remaining -= comp[t];
+    }
+  }
+  return comp;
 }
 
 function spawnEnemy(forcedType = null, countSpawn = true) {
@@ -1555,26 +1578,7 @@ function update(dt) {
       state.upgradeBranch = null;
       const nextWave = getWave(state.wave + 1);
       if (nextWave) {
-        const stage = nextWave.stage || currentStageNumber();
-        const base = stageEnemyWeights[Math.min(stage - 1, stageEnemyWeights.length - 1)];
-        let weights;
-        if (stage > TOTAL_STAGES) {
-          const extra = stage - TOTAL_STAGES;
-          weights = { ...base };
-          for (const t of endlessHardTypes) { if (weights[t]) weights[t] += extra * 2; }
-          weights.grunt = Math.max(1, (weights.grunt || 3) - extra);
-          weights.runner = Math.max(1, (weights.runner || 6) - Math.floor(extra / 2));
-        } else {
-          weights = base;
-        }
-        let total = 0;
-        for (const w of Object.values(weights)) total += w;
-        const preview = {};
-        for (const [t, w] of Object.entries(weights)) {
-          const est = Math.round(nextWave.count * w / total);
-          if (est > 0) preview[t] = est;
-        }
-        state.wavePreview = preview;
+        state.wavePreview = waveComposition(nextWave);
         state.nextMutator = nextWave.mutator || null;
       } else {
         state.wavePreview = null;

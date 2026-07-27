@@ -1828,8 +1828,30 @@ function drawStatusPanel() {
   fillRound(W - 60, 36, 36, 20, 6, "#ff8874");
   text("关闭", W - 42, 46, 9, "#17231c");
 
-  let y = 76;
+  let y = 74;
   const lx = 30, rx = W / 2 + 10;
+
+  const cw = getWave(state.wave);
+  if (cw) {
+    text("【当前波次】", lx, y, 11, "#fff4c5", "left", 800);
+    y += 16;
+    const stageText = cw.stage ? (state.endless ? `无尽阶段 ${cw.stage} · ` : `第 ${cw.stage} 关`) : "";
+    const waveText = state.endless ? `${cw.stageWave}/${WAVES_PER_STAGE}` : `第 ${cw.stageWave}/${WAVES_PER_STAGE} 波`;
+    text(stageText + waveText + (cw.mutator ? ` · ${cw.mutator.label}` : ""), lx, y, 9, cw.mutator ? "#ff9d43" : "#9ac4a2", "left", 800);
+    y += 14;
+    const comp = waveComposition(cw);
+    const entries = Object.entries(comp).filter(([, c]) => c > 0);
+    let cx = lx;
+    for (const [t, c] of entries) {
+      const name = enemyTypeNames[t] || t;
+      const col = enemyTypeColors[t] || "#fff4c5";
+      const tw = ctx.measureText(name + "×" + c).width * 0.6;
+      if (cx + tw + 8 > W - lx) { cx = lx; y += 14; }
+      text(`${name}×${c}`, cx, y, 8, col, "left");
+      cx += tw + 12;
+    }
+    y += 20;
+  }
 
   text("【枪手】", lx, y, 11, "#ee6d55", "left", 800);
   y += 18;
