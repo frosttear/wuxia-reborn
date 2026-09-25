@@ -921,6 +921,88 @@ body{
 .photo-caption{display:none !important;}
 .photo-reveal .photo-frame:after{display:none !important;}
 
+
+/* FINAL BASELINE + TITLE */
+.story .memory-1 .article-title{
+  font-family:"Ma Shan Zheng","KaiTi","STKaiti",cursive !important;
+  font-size:clamp(82px,9.5vw,138px) !important;
+  line-height:1 !important;
+  font-weight:400 !important;
+  letter-spacing:.12em !important;
+  text-indent:.12em !important;
+  color:#7b4542 !important;
+  text-align:center !important;
+  margin:0 !important;
+  padding:76px 40px 28px !important;
+  background:transparent !important;
+  text-shadow:0 1px 0 rgba(255,250,242,.85),0 4px 14px rgba(96,59,53,.10) !important;
+}
+.story .memory-1 .article-title:before,
+.story .memory-1 .article-title:after{display:none !important}
+
+.story .memory-1 .opening-text{
+  display:block !important;
+  box-sizing:border-box !important;
+  margin:0 !important;
+  padding:40px 78px 72px !important;
+  font-family:"Noto Serif SC","Songti SC","STSong",serif !important;
+  font-size:20px !important;
+  line-height:40px !important;
+  letter-spacing:.045em !important;
+  font-weight:400 !important;
+  text-indent:2em !important;
+  color:#4c403a !important;
+  background:
+    repeating-linear-gradient(
+      to bottom,
+      transparent 0,
+      transparent 39px,
+      rgba(103,137,153,.25) 39px,
+      rgba(103,137,153,.25) 40px
+    ) !important;
+  border-top:1px solid rgba(103,137,153,.25);
+}
+.story .memory-1 .opening{background:transparent !important}
+.story .memory-1{
+  background:
+    linear-gradient(90deg,
+      transparent 0,
+      transparent 70px,
+      rgba(181,91,91,.20) 70px,
+      rgba(181,91,91,.20) 71px,
+      transparent 71px),
+    linear-gradient(90deg,#fffaf1,#fbf5eb 50%,#fff9f1) !important;
+}
+.story .memory:not(.memory-1) p,
+.story .memory:not(.memory-1) .opening-text{
+  font-family:"Noto Serif SC","Songti SC","STSong",serif !important;
+  font-size:20px !important;
+  line-height:40px !important;
+  letter-spacing:.045em !important;
+  font-weight:400 !important;
+}
+@media(max-width:700px){
+  .story .memory-1 .article-title{
+    font-size:78px !important;
+    padding:66px 20px 24px !important;
+  }
+  .story .memory-1 .opening-text{
+    padding:34px 30px 54px 55px !important;
+    font-size:18px !important;
+    line-height:34px !important;
+  }
+}
+
+
+<style>
+.bgm-control{position:fixed;right:24px;bottom:24px;z-index:9999;width:48px;height:48px;border-radius:50%;border:1px solid rgba(126,82,72,.25);background:rgba(255,249,240,.82);backdrop-filter:blur(10px);box-shadow:0 8px 24px rgba(72,51,40,.12);color:#80534c;cursor:pointer;display:grid;place-items:center;transition:.3s}
+.bgm-control:hover{transform:translateY(-2px);background:rgba(255,249,240,.95)}
+.bgm-control.playing .note{animation:breathe 1.8s ease-in-out infinite}
+.bgm-label{position:absolute;right:60px;bottom:8px;white-space:nowrap;font:12px/1 var(--body-font);letter-spacing:.08em;color:#8c6960;opacity:0;transform:translateX(8px);transition:.3s;pointer-events:none}
+.bgm-control:hover .bgm-label{opacity:1;transform:none}
+@keyframes breathe{0%,100%{transform:scale(1)}50%{transform:scale(1.14)}}
+</style>
+
 </style>
 </head>
 <body>
@@ -1047,5 +1129,21 @@ body{
  }
 })();
 </script>
+
+<button class="bgm-control" id="bgmControl" aria-label="播放背景音乐"><span class="note">♪</span><span class="bgm-label">青春回望 · BGM</span></button>
+
+
+<script>
+(()=>{const b=document.getElementById('bgmControl');let c,m,t=null,on=false,s=0;
+const chords=[[293.66,349.23,440,523.25],[233.08,293.66,349.23,440],[174.61,261.63,349.23,440],[261.63,329.63,392,493.88]];
+function init(){c=new(window.AudioContext||window.webkitAudioContext)();m=c.createGain();m.gain.value=.055;m.connect(c.destination)}
+function tone(f,w,d,v,type){let o=c.createOscillator(),g=c.createGain();o.type=type;o.frequency.value=f;g.gain.setValueAtTime(.0001,w);g.gain.exponentialRampToValueAtTime(v,w+.08);g.gain.exponentialRampToValueAtTime(.0001,w+d);o.connect(g);g.connect(m);o.start(w);o.stop(w+d+.04)}
+function bar(){let n=c.currentTime+.03,ch=chords[s%4];ch.forEach((f,i)=>tone(f,n+i*.035,3.2,.018,'sine'));let q=[659.25,587.33,523.25,587.33,698.46,659.25,587.33,523.25];tone(q[s%8],n+.72,1.35,.012,'triangle');tone(q[(s+3)%8],n+2.05,1.05,.009,'triangle');s++}
+function start(){if(!c)init();if(c.state==='suspended')c.resume();clearInterval(t);bar();t=setInterval(bar,3000);on=true;b.classList.add('playing');b.setAttribute('aria-label','暂停背景音乐')}
+function stop(){clearInterval(t);t=null;on=false;b.classList.remove('playing');b.setAttribute('aria-label','播放背景音乐');if(m){m.gain.cancelScheduledValues(c.currentTime);m.gain.setTargetAtTime(.0001,c.currentTime,.18)}}
+b.addEventListener('click',()=>{if(on)stop();else{if(m)m.gain.setTargetAtTime(.055,c.currentTime,.18);start()}})
+})();
+</script>
+
 </body>
 </html>
