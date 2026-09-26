@@ -1105,6 +1105,236 @@ body{
     padding-right:8px !important;
   }
 }
+
+/* =========================================================
+   CLASSICAL LETTER PAPER — PRECISION BASELINE EDITION
+   ========================================================= */
+:root{
+  --classical-ink:#46372f;
+  --classical-paper:#f5ead7;
+  --classical-edge:#c6a77b;
+  --classical-red:#8b4d43;
+  --classical-line:rgba(128,99,66,.22);
+}
+
+/* Replace the modern ruled-paper / draft-paper appearance with aged,
+   archival letter paper. */
+.story{
+  background:
+    radial-gradient(circle at 18% 20%,rgba(171,130,76,.12),transparent 23rem),
+    radial-gradient(circle at 82% 72%,rgba(133,83,54,.08),transparent 25rem),
+    #ded0bc !important;
+  padding:10vh 0 13vh !important;
+}
+.story .memory{
+  width:min(940px,86vw) !important;
+  margin:0 auto 7vh !important;
+  background:
+    radial-gradient(circle at 20% 12%,rgba(255,255,255,.42),transparent 22rem),
+    radial-gradient(circle at 80% 86%,rgba(139,96,56,.055),transparent 24rem),
+    linear-gradient(90deg,#f0e1c8,#f8efdf 50%,#efe0c5) !important;
+  border:1px solid rgba(126,91,48,.30) !important;
+  box-shadow:
+    0 24px 60px rgba(73,51,33,.16),
+    inset 0 0 0 7px rgba(255,248,232,.24),
+    inset 0 0 55px rgba(120,84,48,.06) !important;
+  position:relative !important;
+  overflow:hidden !important;
+}
+
+/* Classical double-line frame */
+.story .memory:after{
+  content:"";
+  position:absolute;
+  inset:18px;
+  border:1px solid rgba(126,91,48,.18);
+  pointer-events:none;
+  z-index:0;
+}
+.story .memory:before{
+  content:"";
+  position:absolute;
+  top:26px;left:50%;
+  width:42px;height:42px;
+  transform:translateX(-50%) rotate(45deg);
+  border:1px solid rgba(139,77,67,.22);
+  background:rgba(248,238,217,.5);
+  z-index:0;
+}
+
+/* Hide the old red-margin / blue-rule look. */
+.story .memory,
+.story .memory-1{
+  background-color:var(--classical-paper) !important;
+}
+
+/* Every paragraph gets its OWN writing field. The line is at 31px,
+   matching the visual Chinese glyph baseline inside a 40px line box. */
+.story .memory p,
+.story .memory .opening-text{
+  position:relative !important;
+  z-index:2 !important;
+  box-sizing:border-box !important;
+  margin:0 !important;
+  padding:0 78px 72px !important;
+  font-family:"Noto Serif SC","Songti SC","STSong",serif !important;
+  font-size:20px !important;
+  line-height:40px !important;
+  letter-spacing:.045em !important;
+  font-weight:400 !important;
+  color:var(--classical-ink) !important;
+  text-indent:2em !important;
+  text-align:justify !important;
+  background:
+    repeating-linear-gradient(
+      to bottom,
+      transparent 0,
+      transparent 31px,
+      var(--classical-line) 31px,
+      var(--classical-line) 32px,
+      transparent 32px,
+      transparent 40px
+    ) !important;
+}
+
+/* The first page's writing begins immediately beneath the artistic title.
+   No inherited top padding means its first baseline is identical to all others. */
+.story .memory-1 .opening-text{
+  padding-top:0 !important;
+  border-top:0 !important;
+}
+
+/* Classical title treatment: seal-like red-brown ink, single line. */
+.story .memory-1 .article-title{
+  position:relative !important;
+  z-index:3 !important;
+  white-space:nowrap !important;
+  word-break:keep-all !important;
+  font-family:"Ma Shan Zheng","KaiTi","STKaiti",cursive !important;
+  font-size:clamp(72px,8.4vw,124px) !important;
+  line-height:1 !important;
+  font-weight:400 !important;
+  letter-spacing:.08em !important;
+  text-indent:0 !important;
+  text-align:center !important;
+  color:#75463f !important;
+  margin:0 !important;
+  padding:74px 30px 34px !important;
+  background:transparent !important;
+  text-shadow:0 1px 0 rgba(255,249,232,.75),0 3px 9px rgba(89,57,41,.10) !important;
+}
+
+/* Give the title page a restrained classical header line. */
+.story .memory-1 .article-title:after{
+  content:"";
+  display:block;
+  width:92px;
+  height:1px;
+  margin:30px auto 0;
+  background:rgba(139,77,67,.38);
+}
+
+/* Remove old decorative overlays that could visually cross the text. */
+.story .memory p:before,
+.story .memory p:after,
+.story .memory .opening-text:before,
+.story .memory .opening-text:after{
+  display:none !important;
+}
+
+/* Page number becomes a tiny archival mark, never over the body text. */
+.memory-no{
+  z-index:4 !important;
+  color:#9a7354 !important;
+  font-family:"Noto Serif SC","Songti SC","STSong",serif !important;
+}
+
+/* The photograph remains the final visual page, styled like an old album print. */
+.photo-reveal{
+  background:
+    radial-gradient(circle at 50% 40%,rgba(255,238,200,.72),transparent 25rem),
+    linear-gradient(135deg,#d9c3a7,#c29b78) !important;
+}
+.photo-frame{
+  background:#f5ead7 !important;
+  padding:15px 15px 15px !important;
+  box-shadow:0 30px 85px rgba(62,43,29,.25),0 1px 3px rgba(62,43,29,.14) !important;
+}
+.photo-frame img{
+  filter:saturate(.78) sepia(.12) contrast(.95) !important;
+}
+.photo-caption{display:none !important}
+
+/* Keep the already-embedded gentle BGM and its button. */
+.final{display:none !important}
+
+/* Mobile: keep the same baseline geometry, only scale the type. */
+@media(max-width:700px){
+  .story .memory{
+    width:92vw !important;
+  }
+  .story .memory p,
+  .story .memory .opening-text{
+    padding:0 30px 54px 55px !important;
+    font-size:18px !important;
+    line-height:34px !important;
+    letter-spacing:.025em !important;
+    background:
+      repeating-linear-gradient(
+        to bottom,
+        transparent 0,
+        transparent 26px,
+        var(--classical-line) 26px,
+        var(--classical-line) 27px,
+        transparent 27px,
+        transparent 34px
+      ) !important;
+  }
+  .story .memory-1 .article-title{
+    font-size:64px !important;
+    letter-spacing:.045em !important;
+    padding:64px 12px 28px !important;
+  }
+}
+
+
+/* FINAL TITLE SAFETY: "夏末秋初" must always stay on ONE line */
+.story .memory-1 .article-title,
+.story .memory-1 h1.article-title,
+.article-title{
+  display:block !important;
+  white-space:nowrap !important;
+  word-break:keep-all !important;
+  overflow:visible !important;
+  width:100% !important;
+  min-width:0 !important;
+  box-sizing:border-box !important;
+  writing-mode:horizontal-tb !important;
+}
+
+/* Desktop title sizing */
+.story .memory-1 .article-title{
+  font-size:clamp(66px,7.6vw,116px) !important;
+  padding-left:16px !important;
+  padding-right:16px !important;
+}
+
+/* On narrower screens, reduce the title instead of allowing a line break. */
+@media(max-width:900px){
+  .story .memory-1 .article-title{
+    font-size:clamp(52px,10vw,78px) !important;
+    letter-spacing:.045em !important;
+  }
+}
+@media(max-width:600px){
+  .story .memory-1 .article-title{
+    font-size:48px !important;
+    letter-spacing:.025em !important;
+    padding-left:4px !important;
+    padding-right:4px !important;
+  }
+}
+
 </style>
 
 </style>
