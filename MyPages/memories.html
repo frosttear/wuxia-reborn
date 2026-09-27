@@ -1335,6 +1335,288 @@ body{
   }
 }
 
+
+/* =========================================================
+   DEFINITIVE FIX — HERO TITLE + TRUE WRITING BASELINE
+   ========================================================= */
+
+/* HOME / HERO TITLE: this is the actual first-screen title.
+   Keep it on one line, always. Scale down rather than wrap. */
+.hero-copy{
+  width:100% !important;
+  max-width:none !important;
+  padding:0 4vw !important;
+  box-sizing:border-box !important;
+}
+.hero h1{
+  display:block !important;
+  width:100% !important;
+  max-width:none !important;
+  white-space:nowrap !important;
+  word-break:keep-all !important;
+  overflow:visible !important;
+  writing-mode:horizontal-tb !important;
+  font-size:clamp(58px,10vw,128px) !important;
+  line-height:1 !important;
+  letter-spacing:.07em !important;
+  text-indent:0 !important;
+  margin:0 auto !important;
+  transform-origin:center center !important;
+}
+@media(max-width:600px){
+  .hero h1{
+    font-size:52px !important;
+    letter-spacing:.035em !important;
+  }
+}
+
+/* ARTICLE TITLE: also keep the interior title on one line. */
+.story .memory-1 .article-title{
+  display:block !important;
+  width:100% !important;
+  white-space:nowrap !important;
+  word-break:keep-all !important;
+  overflow:visible !important;
+  font-size:clamp(64px,7.2vw,108px) !important;
+  letter-spacing:.07em !important;
+  text-indent:0 !important;
+}
+
+/* ---------------------------------------------------------
+   BODY BASELINE
+   A 40px line box + a rule at 31px means the rule passes
+   through the visual Chinese baseline instead of through the
+   middle or underneath the line.
+   --------------------------------------------------------- */
+.story .memory p,
+.story .memory .opening-text{
+  font-family:"Noto Serif SC","Songti SC","STSong",serif !important;
+  font-size:20px !important;
+  line-height:40px !important;
+  letter-spacing:.035em !important;
+  font-weight:400 !important;
+  color:#46372f !important;
+  text-indent:2em !important;
+  text-align:justify !important;
+  text-justify:inter-ideograph !important;
+
+  /* Critical: remove ALL inherited per-paragraph offsets. */
+  margin:0 !important;
+  padding:0 78px 72px !important;
+  min-height:0 !important;
+
+  /* The paper rule is tied directly to the text line box. */
+  background-image:
+    repeating-linear-gradient(
+      to bottom,
+      transparent 0,
+      transparent 30px,
+      rgba(128,99,66,.25) 30px,
+      rgba(128,99,66,.25) 31px,
+      transparent 31px,
+      transparent 40px
+    ) !important;
+  background-color:transparent !important;
+  background-repeat:repeat !important;
+  background-size:100% 40px !important;
+  background-position:0 0 !important;
+
+  position:relative !important;
+  z-index:2 !important;
+}
+
+/* Every old special paragraph is neutralized. */
+.story .memory:nth-child(n) p,
+.story .memory:nth-child(n) .opening-text{
+  font-size:20px !important;
+  line-height:40px !important;
+  letter-spacing:.035em !important;
+  margin:0 !important;
+  padding:0 78px 72px !important;
+  min-height:0 !important;
+}
+
+/* The first paragraph has exactly the same baseline as every other paragraph. */
+.story .memory-1 .opening-text{
+  padding-top:0 !important;
+  border:0 !important;
+}
+
+/* Do not let the old decorative center line cross the text. */
+.story:before{
+  display:none !important;
+}
+
+/* On the letter pages, no old paragraph-specific background/padding survives. */
+.story .memory p:before,
+.story .memory p:after,
+.story .memory .opening-text:before,
+.story .memory .opening-text:after{
+  display:none !important;
+}
+
+/* Mobile: same baseline geometry, scaled proportionally. */
+@media(max-width:700px){
+  .story .memory p,
+  .story .memory .opening-text,
+  .story .memory:nth-child(n) p,
+  .story .memory:nth-child(n) .opening-text{
+    font-size:18px !important;
+    line-height:34px !important;
+    letter-spacing:.02em !important;
+    padding:0 30px 54px 55px !important;
+    background-size:100% 34px !important;
+    background-image:
+      repeating-linear-gradient(
+        to bottom,
+        transparent 0,
+        transparent 25px,
+        rgba(128,99,66,.25) 25px,
+        rgba(128,99,66,.25) 26px,
+        transparent 26px,
+        transparent 34px
+      ) !important;
+  }
+}
+
+
+/* =========================================================
+   ART-DIRECTION PASS
+   Elegant literary / old-book aesthetic
+   ========================================================= */
+
+/* Palette: ink blue, warm ivory, muted brass — less "calligraphy poster",
+   more "private literary manuscript". */
+:root{
+  --art-ink:#3f4b50;
+  --art-deep:#35454b;
+  --art-accent:#8b7658;
+  --art-paper:#f5eddf;
+  --art-paper-light:#fbf7ef;
+}
+
+/* True homepage title: elegant Songti rather than heavy brush calligraphy. */
+.hero h1,
+.hero .hero-title,
+.landing h1,
+.landing .title,
+.cover h1,
+.cover .title,
+.intro h1,
+.intro .title{
+  font-family:"Noto Serif SC","Source Han Serif SC","Songti SC","STSong","SimSun",serif !important;
+  font-weight:500 !important;
+  font-style:normal !important;
+  color:var(--art-deep) !important;
+  white-space:nowrap !important;
+  word-break:keep-all !important;
+  overflow:visible !important;
+  text-align:center !important;
+  letter-spacing:.16em !important;
+  text-indent:.16em !important;
+  line-height:1.08 !important;
+  text-shadow:0 1px 0 rgba(255,255,255,.65) !important;
+}
+
+/* Cover/title selectors used by the current page structure. */
+.story .memory-1 .article-title{
+  font-family:"Noto Serif SC","Source Han Serif SC","Songti SC","STSong","SimSun",serif !important;
+  font-weight:500 !important;
+  color:var(--art-deep) !important;
+  letter-spacing:.14em !important;
+  text-indent:.14em !important;
+  text-shadow:0 1px 0 rgba(255,255,255,.7) !important;
+}
+
+/* If the actual homepage title is a generic heading, catch it without
+   changing body headings elsewhere. */
+.story > h1,
+.page > h1,
+body > h1,
+header h1{
+  font-family:"Noto Serif SC","Source Han Serif SC","Songti SC","STSong","SimSun",serif !important;
+  color:var(--art-deep) !important;
+  font-weight:500 !important;
+  white-space:nowrap !important;
+  word-break:keep-all !important;
+  text-align:center !important;
+  letter-spacing:.16em !important;
+  line-height:1.08 !important;
+}
+
+/* Subtitles: restrained warm brass instead of the previous reddish tone. */
+.hero .subtitle,
+.hero .tagline,
+.landing .subtitle,
+.cover .subtitle,
+.intro .subtitle,
+.story .subtitle{
+  color:var(--art-accent) !important;
+  font-family:"Noto Serif SC","Source Han Serif SC","Songti SC","STSong",serif !important;
+  letter-spacing:.28em !important;
+  font-weight:400 !important;
+}
+
+/* Classical paper becomes cleaner and brighter. */
+.story .memory{
+  background:
+    radial-gradient(circle at 18% 14%,rgba(255,255,255,.55),transparent 24rem),
+    radial-gradient(circle at 84% 82%,rgba(120,105,78,.045),transparent 25rem),
+    linear-gradient(90deg,var(--art-paper),var(--art-paper-light) 50%,#f2e9d9) !important;
+  border-color:rgba(73,82,80,.20) !important;
+}
+
+/* Ink is neutral, not reddish brown. */
+.story .memory p,
+.story .memory .opening-text{
+  color:#45484a !important;
+}
+
+/* Decorative lines use the same quiet ink/brass palette. */
+.story .memory:after{
+  border-color:rgba(92,100,98,.17) !important;
+}
+.story .memory:before{
+  border-color:rgba(139,118,88,.20) !important;
+  background:rgba(255,249,238,.42) !important;
+}
+
+/* Title ornament becomes a thin editorial rule rather than a calligraphic mark. */
+.story .memory-1 .article-title:after{
+  background:rgba(139,118,88,.42) !important;
+  width:74px !important;
+  margin-top:26px !important;
+}
+
+/* Keep the title on one line at every practical viewport. */
+.story .memory-1 .article-title{
+  white-space:nowrap !important;
+  word-break:keep-all !important;
+  font-size:clamp(64px,7.2vw,108px) !important;
+  padding-left:10px !important;
+  padding-right:10px !important;
+}
+@media(max-width:900px){
+  .story .memory-1 .article-title{
+    font-size:clamp(50px,9.5vw,76px) !important;
+    letter-spacing:.08em !important;
+    text-indent:.08em !important;
+  }
+}
+@media(max-width:600px){
+  .story .memory-1 .article-title{
+    font-size:46px !important;
+    letter-spacing:.045em !important;
+    text-indent:.045em !important;
+  }
+}
+
+/* The bottom seal/stamp, if present, is softened to match the new palette. */
+.seal,.stamp,.cover-seal{
+  color:#68757a !important;
+  border-color:rgba(104,117,122,.35) !important;
+}
+
 </style>
 
 </style>
