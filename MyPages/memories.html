@@ -2175,36 +2175,116 @@ function(t,e){"object"==typeof exports&&"undefined"!=typeof module?e(exports):"f
   var WIN_X = 0.30, WIN_Y = 1.00, WIN_Z = -2.13;
   var WIN_W = 0.88, WIN_H = 0.70;
   var winG = new THREE.Group();
-  /* The view outside, painted into a texture: a graded sky, haze at the
-     horizon and soft foliage. Flat coloured planes read as cardboard; this
-     reads as distance. */
+  /* The view outside. Rendered per PIXEL rather than assembled from soft
+     discs -- circles read as a cartoon, and stacking translucent ones washed
+     the whole opening out to a haze with no sky left in it. What is here is a
+     graded blue sky, fBm cumulus lit from the same side as the room's key
+     light, a cloud deck put into perspective so it compresses towards the
+     horizon, and a treeline flattened by aerial perspective. The lattice is
+     seeded, so the view is the same on every visit instead of being a lottery. */
   function outsideTexture(){
-    var c = document.createElement('canvas'); c.width = 256; c.height = 256;
+    var N = 768;
+    var c = document.createElement('canvas'); c.width = N; c.height = N;
     var g = c.getContext('2d');
-    var sky = g.createLinearGradient(0,0,0,256);
-    sky.addColorStop(0.00,'#7fb3d9');
-    sky.addColorStop(0.42,'#b9d8ea');
-    sky.addColorStop(0.62,'#e6eadf');
-    sky.addColorStop(1.00,'#f2e3c2');
-    g.fillStyle = sky; g.fillRect(0,0,256,256);
-    /* distant trees, deliberately soft */
-    g.globalAlpha = 0.55;
-    for (var i=0;i<26;i++){
-      var x = Math.random()*256, y = 168 + Math.random()*54;
-      var r = 16 + Math.random()*30;
-      var gr = g.createRadialGradient(x,y,1,x,y,r);
-      var shade = 90 + Math.random()*55;
-      gr.addColorStop(0,'rgba('+(shade*0.6|0)+','+(shade|0)+','+(shade*0.5|0)+',0.95)');
-      gr.addColorStop(1,'rgba('+(shade*0.6|0)+','+(shade|0)+','+(shade*0.5|0)+',0)');
-      g.fillStyle = gr; g.beginPath(); g.arc(x,y,r,0,7); g.fill();
+    var img = g.createImageData(N, N), D = img.data;
+
+    var seed = 20260929;
+    function rnd(){ seed = (seed*1664525 + 1013904223) & 0x7fffffff; return seed/0x7fffffff; }
+    var PERM = new Uint8Array(512);
+    (function(){
+      var p = new Uint8Array(256), i, j, t;
+      for (i=0;i<256;i++) p[i] = i;
+      for (i=255;i>0;i--){ j = (rnd()*(i+1))|0; t = p[i]; p[i] = p[j]; p[j] = t; }
+      for (i=0;i<512;i++) PERM[i] = p[i & 255];
+    })();
+    function fade(t){ return t*t*t*(t*(t*6-15)+10); }
+    function lerp(a,b,t){ return a + (b-a)*t; }
+    function smooth(e0,e1,x){ var t=(x-e0)/(e1-e0); t = t<0?0:(t>1?1:t); return t*t*(3-2*t); }
+    function hash(a,b){ return PERM[(PERM[a & 255] + (b & 255)) & 511] / 255; }
+    function vnoise(x,y){
+      var xi = Math.floor(x), yi = Math.floor(y);
+      var u = fade(x-xi), v = fade(y-yi);
+      return lerp(lerp(hash(xi,yi),   hash(xi+1,yi),   u),
+                  lerp(hash(xi,yi+1), hash(xi+1,yi+1), u), v);
     }
-    /* sun haze, on the side the light actually comes from */
-    g.globalAlpha = 0.85;
-    var hz = g.createRadialGradient(176,74,2,176,74,104);
-    hz.addColorStop(0,'rgba(255,248,222,0.95)');
-    hz.addColorStop(1,'rgba(255,248,222,0)');
-    g.fillStyle = hz; g.fillRect(0,0,256,256);
-    g.globalAlpha = 1;
+    function fbm(x,y){
+      var sum=0, amp=0.5, f=1;
+      for (var o=0;o<5;o++){ sum += amp*vnoise(x*f, y*f); f *= 2.03; amp *= 0.5; }
+      return sum / 0.96875;
+    }
+
+    /* Real blue overhead thinning to haze at the horizon. The old gradient
+       started at #7fb3d9 and was pale by 40% height, which is why there was
+       never any actual blue in the window. */
+    var STOPS = [[0.00, 52,108,192],[0.30, 88,146,212],[0.58,142,184,224],
+                 [0.74,190,214,232],[0.86,222,231,233],[1.00,214,220,214]];
+    function skyAt(v){
+      for (var i=1;i<STOPS.length;i++){
+        if (v <= STOPS[i][0] || i === STOPS.length-1){
+          var a = STOPS[i-1], b = STOPS[i];
+          var t = (v-a[0])/(b[0]-a[0]); t = t<0?0:(t>1?1:t);
+          return [lerp(a[1],b[1],t), lerp(a[2],b[2],t), lerp(a[3],b[3],t)];
+        }
+      }
+    }
+
+    var HOR = 0.80;                 // horizon, in texture space
+    var SUNU = 0.70, SUNV = 0.24;   // the side the key light actually comes from
+    var o = 0;
+    for (var py=0; py<N; py++){
+      var v = py/(N-1);
+      var sky = skyAt(v), sr = sky[0], sg = sky[1], sb = sky[2];
+      /* A flat cloud deck seen from below: rows of equal height are equal
+         distance, so the texture scale depends on v alone. */
+      var d  = HOR - v;
+      var pk = d > 0 ? 0.92/(d + 0.11) : 0;
+      var cy = pk*0.55 + 4.0;
+      var cfade = smooth(0.0, 0.16, d);
+      for (var px=0; px<N; px++){
+        var u = px/(N-1);
+        var r = sr, gg = sg, bb = sb;
+
+        if (d > 0){
+          var cx = u*pk*1.7 + 12.0;
+          var n  = fbm(cx, cy);
+          var cov = smooth(0.50, 0.72, n);
+          if (cov > 0.001){
+            /* Shade from the gradient towards the sun: a sample taken sunward
+               that is thinner means this part of the cloud faces the light. */
+            var n2 = fbm(cx + 0.30, cy - 0.30);
+            var sh = smooth(0, 1, 0.55 + 2.4*(n - n2));
+            var cr = lerp(146,255,sh), cg2 = lerp(155,255,sh), cb = lerp(170,255,sh);
+            var a = cov * cfade * 0.95;
+            r = lerp(r, cr, a); gg = lerp(gg, cg2, a); bb = lerp(bb, cb, a);
+          }
+        } else {
+          /* Distant trees. Aerial perspective, not a green cut-out: most of
+             the sky's haze sits in front of them, so they arrive low-contrast
+             and desaturated rather than as a bright green band. */
+          var tn  = fbm(u*6.5 + 3.1, 40.0);
+          var top = HOR + 0.010 - tn*0.034;
+          if (v > top){
+            var deep = smooth(0, 0.06, v - top);
+            var tr = lerp(126,92,deep), tg = lerp(142,112,deep), tb = lerp(120,92,deep);
+            r = lerp(tr, r, 0.44); gg = lerp(tg, gg, 0.44); bb = lerp(tb, bb, 0.44);
+          }
+        }
+
+        /* Sun glow last, so it sits over the cloud tops the way it really does. */
+        var du = u - SUNU, dv = v - SUNV;
+        /* Tight and gentle. At 0.50 over a wide radius the glow bleached the
+           whole right-hand pane back to the white haze this was meant to
+           replace. */
+        var glow = Math.exp(-(du*du + dv*dv)/0.032) * 0.32;
+        if (glow > 0.002){
+          r += (255-r)*glow; gg += (253-gg)*glow; bb += (238-bb)*glow;
+        }
+
+        D[o++] = r; D[o++] = gg; D[o++] = bb; D[o++] = 255;
+      }
+    }
+    g.putImageData(img, 0, 0);
+
     var t = new THREE.CanvasTexture(c);
     t.colorSpace = THREE.SRGBColorSpace;
     return t;
@@ -2833,8 +2913,17 @@ function(t,e){"object"==typeof exports&&"undefined"!=typeof module?e(exports):"f
   var animT = 0, animating = false, fromP = new THREE.Vector3(), fromQ = new THREE.Quaternion(),
       toP = new THREE.Vector3(), toQ = new THREE.Quaternion();
   function inspectPose(){
-    var d = new THREE.Vector3(0,0,-1).applyQuaternion(camera.quaternion);
-    toP.copy(camera.position).addScaledVector(d, 0.40);
+    /* Fill most of the frame rather than sitting at a fixed distance. The
+       distance is solved from the camera's ACTUAL fov and aspect: a hard-coded
+       0.40m looked reasonable on a wide screen and left the print small on a
+       tall one. Constrained by BOTH dimensions so it never crops. */
+    var FILL = 0.88;
+    var tan = Math.tan(THREE.MathUtils.degToRad(camera.fov)/2);
+    var dH = PH_ / (2 * FILL * tan);
+    var dW = PW  / (2 * FILL * tan * camera.aspect);
+    var dist = Math.max(dH, dW, camera.near + 0.06);
+    var dir = new THREE.Vector3(0,0,-1).applyQuaternion(camera.quaternion);
+    toP.copy(camera.position).addScaledVector(dir, dist);
     toQ.copy(camera.quaternion);
   }
   function togglePick(){

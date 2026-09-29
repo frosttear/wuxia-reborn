@@ -387,13 +387,16 @@ function(t,e){"object"==typeof exports&&"undefined"!=typeof module?e(exports):"f
           if (v > top){
             var deep = smooth(0, 0.06, v - top);
             var tr = lerp(126,92,deep), tg = lerp(142,112,deep), tb = lerp(120,92,deep);
-            r = lerp(tr, r, 0.56); gg = lerp(tg, gg, 0.56); bb = lerp(tb, bb, 0.56);
+            r = lerp(tr, r, 0.44); gg = lerp(tg, gg, 0.44); bb = lerp(tb, bb, 0.44);
           }
         }
 
         /* Sun glow last, so it sits over the cloud tops the way it really does. */
         var du = u - SUNU, dv = v - SUNV;
-        var glow = Math.exp(-(du*du + dv*dv)/0.050) * 0.50;
+        /* Tight and gentle. At 0.50 over a wide radius the glow bleached the
+           whole right-hand pane back to the white haze this was meant to
+           replace. */
+        var glow = Math.exp(-(du*du + dv*dv)/0.032) * 0.32;
         if (glow > 0.002){
           r += (255-r)*glow; gg += (253-gg)*glow; bb += (238-bb)*glow;
         }
@@ -1031,8 +1034,17 @@ function(t,e){"object"==typeof exports&&"undefined"!=typeof module?e(exports):"f
   var animT = 0, animating = false, fromP = new THREE.Vector3(), fromQ = new THREE.Quaternion(),
       toP = new THREE.Vector3(), toQ = new THREE.Quaternion();
   function inspectPose(){
-    var d = new THREE.Vector3(0,0,-1).applyQuaternion(camera.quaternion);
-    toP.copy(camera.position).addScaledVector(d, 0.40);
+    /* Fill most of the frame rather than sitting at a fixed distance. The
+       distance is solved from the camera's ACTUAL fov and aspect: a hard-coded
+       0.40m looked reasonable on a wide screen and left the print small on a
+       tall one. Constrained by BOTH dimensions so it never crops. */
+    var FILL = 0.88;
+    var tan = Math.tan(THREE.MathUtils.degToRad(camera.fov)/2);
+    var dH = PH_ / (2 * FILL * tan);
+    var dW = PW  / (2 * FILL * tan * camera.aspect);
+    var dist = Math.max(dH, dW, camera.near + 0.06);
+    var dir = new THREE.Vector3(0,0,-1).applyQuaternion(camera.quaternion);
+    toP.copy(camera.position).addScaledVector(dir, dist);
     toQ.copy(camera.quaternion);
   }
   function togglePick(){
