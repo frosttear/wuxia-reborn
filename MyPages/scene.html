@@ -85,13 +85,35 @@ function(t,e){"object"==typeof exports&&"undefined"!=typeof module?e(exports):"f
      demands an absurd vertical fov, dolly the camera back rather than distort. */
   function frameCamera(){
     camera.aspect = W/H;
-    var HFOV = THREE.MathUtils.degToRad(62);
+    /* Portrait needs its own horizontal field. Measured over a whole flight on
+       a phone, the table, window and landing spot together occupy only
+       ndc -0.49..+0.92 across and under a third of the height -- so the
+       landscape coverage leaves the room small and far away with most of the
+       frame empty wall and floor. Tighten to that band and pan onto it; the
+       content is not centred, it sits right of the aim point, so tightening
+       alone would slide the window off the edge. Landscape is untouched. */
+    var portrait = camera.aspect < 0.85;
+    var HFOV = THREE.MathUtils.degToRad(portrait ? 46 : 62);
+    var panX = portrait ? 0.24 : 0;
     var v = 2*Math.atan(Math.tan(HFOV/2)/camera.aspect);
-    var dolly = 1, VMAX = THREE.MathUtils.degToRad(60);
+    /* VMAX is what decides how near the camera can stand. The dolly below
+       compensates the clamp EXACTLY, so it preserves horizontal coverage --
+       which means capping the dolly does not magnify the scene, it just slides
+       the window out of frame. Widening the fov limit is the lever that
+       actually brings the camera forward.
+
+       At 60 a tall phone needed a 2.3x dolly and stood 4.4m from the table,
+       which put the whole room beyond the fog's near plane (2.6) and washed it
+       out to a haze. At 84 it stands about 2.8m away: same framing, no fog
+       wash, and the depth in the room reads properly. Desktop never reaches
+       VMAX, so dolly stays 1 and nothing there changes. */
+    var dolly = 1, VMAX = THREE.MathUtils.degToRad(84);
     if (v > VMAX){ dolly = Math.tan(v/2)/Math.tan(VMAX/2); v = VMAX; }
     camera.fov = THREE.MathUtils.radToDeg(v);
     camera.position.copy(CAM_BASE).sub(CAM_TARGET).multiplyScalar(dolly).add(CAM_TARGET);
-    camera.lookAt(CAM_TARGET);
+    var aim = new THREE.Vector3().copy(CAM_TARGET);
+    aim.x += panX; camera.position.x += panX;   // pure pan, so the pose is unchanged
+    camera.lookAt(aim);
     camera.updateProjectionMatrix();
   }
   frameCamera();
