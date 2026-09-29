@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <title>夏末秋初</title>
 <style>
-@import url('https://fonts.googleapis.com/css2?family=Ma+Shan+Zheng&family=Noto+Serif+SC:wght@400;500;600&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Ma+Shan+Zheng&family=Noto+Serif+SC:wght@400;500;600&display=optional');
 :root{--ink:#45484a;--paper:#fbf4e7;--paper2:#fffaf1;--line:rgba(126,104,78,.20);--bg:#e4d9c8;--serif:"Noto Serif SC","Songti SC","STSong",serif;--title:"Ma Shan Zheng","KaiTi","STKaiti",cursive}
 *{box-sizing:border-box}
 html{scroll-behavior:smooth;background:var(--bg)}
@@ -229,6 +229,17 @@ body:before{content:"";position:fixed;inset:0;z-index:99;pointer-events:none;opa
 .photo-card{transform-origin:center center}
 @media(max-width:700px){.photo-stage{width:88vw;top:3%}.photo-end .floor-rug,.photo-end .bed-edge{display:none}}
 
+</style>
+<style id="gl-early-hide">
+/* Must sit in the HEAD. The full override lives at the end of a 7MB document,
+   so the browser had already painted the old CSS room long before reaching it
+   -- that is the half-second of the original design you saw flash past. */
+.photo-end .floor,.photo-end .floor-real,.photo-end .floor-glow,
+.photo-end .room-baseboard,.photo-end .room-table,.photo-end .window,
+.photo-end .curtain,.photo-end .light-shaft,.photo-end .wall-grain,
+.photo-end .room-light,.photo-end .air,.photo-end .photo-stage{display:none!important}
+.photo-end::before{display:none!important}
+.photo-end{background:#d8c9b2!important}
 </style>
 </head>
 <body>
@@ -1864,20 +1875,27 @@ if(bgm){bgm.volume=.22;bgmBtn.addEventListener('click',async()=>{try{if(bgm.paus
 <style id="gl-room-css">
 /* The simulated room replaces the CSS one. Everything that used to fake depth
    with gradients is hidden; the canvas is the scene now. */
-.photo-end.gl-mode .floor,
-.photo-end.gl-mode .floor-real,
-.photo-end.gl-mode .floor-glow,
-.photo-end.gl-mode .room-baseboard,
-.photo-end.gl-mode .room-table,
-.photo-end.gl-mode .window,
-.photo-end.gl-mode .curtain,
-.photo-end.gl-mode .light-shaft,
-.photo-end.gl-mode .wall-grain,
-.photo-end.gl-mode .room-light,
-.photo-end.gl-mode .air,
-.photo-end.gl-mode .photo-stage{display:none!important}
-.photo-end.gl-mode::before{display:none!important}
-.photo-end.gl-mode{background:#d8c9b2!important}
+/* Hidden from the moment the stylesheet parses, NOT when the script gets
+   round to adding .gl-mode -- otherwise the old CSS room paints for a frame or
+   two first and you see it flash past. The .no-gl escape hatch puts it back if
+   WebGL is unavailable. */
+.photo-end .floor,
+.photo-end .floor-real,
+.photo-end .floor-glow,
+.photo-end .room-baseboard,
+.photo-end .room-table,
+.photo-end .window,
+.photo-end .curtain,
+.photo-end .light-shaft,
+.photo-end .wall-grain,
+.photo-end .room-light,
+.photo-end .air,
+.photo-end .photo-stage{display:none!important}
+.photo-end::before{display:none!important}
+.photo-end{background:#d8c9b2!important}
+.photo-end.no-gl .floor-real,.photo-end.no-gl .room-table,.photo-end.no-gl .window,
+.photo-end.no-gl .curtain,.photo-end.no-gl .room-baseboard,
+.photo-end.no-gl .photo-stage{display:block!important}
 .gl-room{position:absolute!important;inset:0!important;z-index:20!important;
   cursor:default;touch-action:manipulation}
 .gl-room canvas{display:block!important;width:100%!important;height:100%!important}
@@ -1904,7 +1922,11 @@ function(t,e){"object"==typeof exports&&"undefined"!=typeof module?e(exports):"f
    itself. The camera never moves.
    ===================================================================== */
 (function(){
-  if (typeof THREE === 'undefined') return;
+  if (typeof THREE === 'undefined'){
+    var sec0 = document.getElementById('photoEnd');
+    if (sec0) sec0.classList.add('no-gl');
+    return;
+  }
   var section = document.getElementById('photoEnd');
   if (!section) return;
   var srcImg = section.querySelector('.photo-card img');
@@ -1924,7 +1946,7 @@ function(t,e){"object"==typeof exports&&"undefined"!=typeof module?e(exports):"f
   renderer.shadowMap.type = THREE.PCFSoftShadowMap;
   renderer.outputColorSpace = THREE.SRGBColorSpace;
   renderer.toneMapping = THREE.ACESFilmicToneMapping;
-  renderer.toneMappingExposure = 1.02;
+  renderer.toneMappingExposure = 1.24;
   host.appendChild(renderer.domElement);
 
   var scene = new THREE.Scene();
@@ -1933,24 +1955,44 @@ function(t,e){"object"==typeof exports&&"undefined"!=typeof module?e(exports):"f
 
   /* Fixed camera. It must show table top -> table edge -> air -> floor, so it
      sits above the table looking slightly down, with the floor well in frame. */
+  var CAM_BASE   = new THREE.Vector3(0.30, 1.34, 1.74);
+  var CAM_TARGET = new THREE.Vector3(-0.06, 0.74, 0);
   var camera = new THREE.PerspectiveCamera(38, W/H, 0.05, 40);
-  camera.position.set(0.34, 1.26, 1.62);
-  camera.lookAt(new THREE.Vector3(-0.10, 0.52, 0));
+  /* A PerspectiveCamera's fov is VERTICAL, so on a tall phone screen the
+     horizontal field of view collapses and anything drifting sideways leaves
+     the frame. Hold the HORIZONTAL coverage constant instead, and if that
+     demands an absurd vertical fov, dolly the camera back rather than distort. */
+  function frameCamera(){
+    camera.aspect = W/H;
+    var HFOV = THREE.MathUtils.degToRad(62);
+    var v = 2*Math.atan(Math.tan(HFOV/2)/camera.aspect);
+    var dolly = 1, VMAX = THREE.MathUtils.degToRad(60);
+    if (v > VMAX){ dolly = Math.tan(v/2)/Math.tan(VMAX/2); v = VMAX; }
+    camera.fov = THREE.MathUtils.radToDeg(v);
+    camera.position.copy(CAM_BASE).sub(CAM_TARGET).multiplyScalar(dolly).add(CAM_TARGET);
+    camera.lookAt(CAM_TARGET);
+    camera.updateProjectionMatrix();
+  }
+  frameCamera();
 
   /* ---------- light ---------- */
-  scene.add(new THREE.HemisphereLight(0xfff2dc, 0x6b5238, 0.62));
-  var sun = new THREE.DirectionalLight(0xffeccc, 2.15);
-  sun.position.set(2.1, 2.5, 1.15);
+  scene.add(new THREE.HemisphereLight(0xfff2dc, 0x7d6244, 1.05));
+  /* Daylight enters through the window on the back wall, so the light has to
+     sit BEHIND that window and shine forward into the room. It used to be off
+     the front-right, which is why the shadows looked wrong: they fell away
+     from the camera while the only visible light source was behind the desk. */
+  var sun = new THREE.DirectionalLight(0xffeccc, 2.35);
+  sun.position.set(2.35, 2.25, -1.55);
   sun.castShadow = true;
   sun.shadow.mapSize.set(2048, 2048);
-  sun.shadow.camera.near = 0.4; sun.shadow.camera.far = 8;
-  sun.shadow.camera.left = -2.0; sun.shadow.camera.right = 2.0;
-  sun.shadow.camera.top = 2.0;   sun.shadow.camera.bottom = -2.0;
+  sun.shadow.camera.near = 0.5; sun.shadow.camera.far = 11;
+  sun.shadow.camera.left = -2.8; sun.shadow.camera.right = 2.8;
+  sun.shadow.camera.top = 2.8;   sun.shadow.camera.bottom = -2.8;
   sun.shadow.bias = -0.0006;
   sun.shadow.radius = 3.2;
   scene.add(sun);
-  var fill = new THREE.DirectionalLight(0xdfe8ff, 0.30);
-  fill.position.set(-1.6, 1.2, 0.9); scene.add(fill);
+  var fill = new THREE.DirectionalLight(0xe8eeff, 0.55);
+  fill.position.set(-1.3, 1.0, 1.6); scene.add(fill);
 
   /* ---------- procedural wood ---------- */
   function woodTexture(base, dark, scale, rough){
@@ -2006,55 +2048,277 @@ function(t,e){"object"==typeof exports&&"undefined"!=typeof module?e(exports):"f
   var legMat   = new THREE.MeshStandardMaterial({color:0x6d4527, roughness:0.62});
   var table = new THREE.Group();
   var TW = 1.30, TD = 0.66, TT = 0.035;
+  var TZ = -1.42;   // desk pushed back against the wall
   var topM = new THREE.Mesh(new THREE.BoxGeometry(TW, TT, TD), tableMat);
-  topM.position.set(0, TABLE_Y - TT/2, -0.34);
+  topM.position.set(0, TABLE_Y - TT/2, TZ);
   topM.castShadow = true; topM.receiveShadow = true; table.add(topM);
   var apron = new THREE.Mesh(new THREE.BoxGeometry(TW*0.92, 0.07, TD*0.86),
               new THREE.MeshStandardMaterial({color:0x7d5331, roughness:0.68}));
-  apron.position.set(0, TABLE_Y - TT - 0.045, -0.34);
+  apron.position.set(0, TABLE_Y - TT - 0.045, TZ);
   apron.castShadow = true; table.add(apron);
   [[-1,-1],[1,-1],[-1,1],[1,1]].forEach(function(s){
     var leg = new THREE.Mesh(new THREE.BoxGeometry(0.055, TABLE_Y-TT, 0.055), legMat);
-    leg.position.set(s[0]*(TW/2-0.06), (TABLE_Y-TT)/2, -0.34 + s[1]*(TD/2-0.06));
+    leg.position.set(s[0]*(TW/2-0.06), (TABLE_Y-TT)/2, TZ + s[1]*(TD/2-0.06));
     leg.castShadow = true; leg.receiveShadow = true; table.add(leg);
   });
   scene.add(table);
   /* the front edge of the table top, in world Z -- the lip the photo goes over */
-  var TABLE_FRONT_Z = -0.34 + TD/2;
+  var TABLE_FRONT_Z = TZ + TD/2;
+
+  /* ---------- things on the desk ---------- */
+  /* A desk with nothing on it reads as a prop. These also give the light
+     something to cast shadows across, which sells the depth. */
+  function book(w,h,d,col,x,y,z,ry){
+    var g = new THREE.Group();
+    var cover = new THREE.Mesh(new THREE.BoxGeometry(w,h,d),
+      new THREE.MeshStandardMaterial({color:col, roughness:0.78}));
+    cover.castShadow = true; cover.receiveShadow = true; g.add(cover);
+    var pages = new THREE.Mesh(new THREE.BoxGeometry(w*0.94, h*0.80, d*0.96),
+      new THREE.MeshStandardMaterial({color:0xefe7d4, roughness:0.95}));
+    pages.position.x = w*0.035; pages.castShadow = true; g.add(pages);
+    g.position.set(x,y,z); g.rotation.y = ry;
+    scene.add(g); return g;
+  }
+  var BX = -0.46, BZ = TZ + 0.02;
+  /* The top book's upper face -- the print rests here, so the contact solver
+     needs to know about it or the photo simply falls through the stack. */
+  var BOOK_TOP = 0, BOOK_CX = 0, BOOK_CZ = 0, BOOK_HX = 0.082, BOOK_HZ = 0.060;
+  book(0.215,0.036,0.155, 0x7d4a3c, BX,        TABLE_Y+0.018, BZ,        0.10);
+  book(0.196,0.030,0.142, 0x3f5a6b, BX+0.012,  TABLE_Y+0.051, BZ-0.012, -0.06);
+  book(0.178,0.026,0.132, 0x6d6a4a, BX-0.008,  TABLE_Y+0.079, BZ+0.008,  0.17);
+  BOOK_TOP = TABLE_Y + 0.079 + 0.013; BOOK_CX = BX-0.008; BOOK_CZ = BZ+0.008;
+
+  /* a small potted plant */
+  var plantG = new THREE.Group();
+
+  /* Pot: a lathe profile rather than a plain cylinder, so it has a belly, a
+     foot and a rolled rim -- straight-sided tubes are what made the old one
+     look like a bucket. */
+  var potPts = [];
+  [[0.000,0.000],[0.030,0.000],[0.033,0.008],[0.036,0.026],[0.043,0.052],
+   [0.048,0.072],[0.050,0.083],[0.0505,0.090],[0.047,0.090],[0.0455,0.083],
+   [0.0435,0.070],[0.038,0.045],[0.031,0.016],[0.028,0.006],[0.000,0.006]
+  ].forEach(function(q){ potPts.push(new THREE.Vector2(q[0],q[1])); });
+  var pot = new THREE.Mesh(
+    new THREE.LatheGeometry(potPts, 40),
+    new THREE.MeshStandardMaterial({color:0xb06a46, roughness:0.72, metalness:0.02})
+  );
+  pot.castShadow = true; pot.receiveShadow = true; plantG.add(pot);
+
+  var soil = new THREE.Mesh(
+    new THREE.CircleGeometry(0.045, 26),
+    new THREE.MeshStandardMaterial({color:0x33241a, roughness:1.0})
+  );
+  soil.rotation.x = -Math.PI/2; soil.position.y = 0.0855;
+  soil.receiveShadow = true; plantG.add(soil);
+
+  /* A leaf built from a real silhouette -- pointed at the tip, widest a third
+     of the way up -- then curved along its length and rolled about its spine.
+     The old version was a flat rectangle, which is most of why it read as
+     cardboard. */
+  function leafGeometry(len, wid){
+    var sh = new THREE.Shape();
+    sh.moveTo(0, 0);
+    sh.bezierCurveTo( wid*0.55, len*0.16,  wid*0.50, len*0.62,  0, len);
+    sh.bezierCurveTo(-wid*0.50, len*0.62, -wid*0.55, len*0.16,  0, 0);
+    var g = new THREE.ShapeGeometry(sh, 16);
+    g = g.toNonIndexed ? g : g;
+    var pos = g.attributes.position;
+    for (var i=0;i<pos.count;i++){
+      var x = pos.getX(i), y = pos.getY(i);
+      var t = Math.min(1, Math.max(0, y/len));
+      var droop = -Math.pow(t, 2.1) * len * 0.42;        // tip bows over
+      var curl  = Math.pow(Math.abs(x)/(wid*0.55+1e-6), 2) * len * 0.055; // spine roll
+      pos.setXYZ(i, x, y + droop*0.15, droop + curl);
+    }
+    pos.needsUpdate = true; g.computeVertexNormals();
+    return g;
+  }
+  var greens = [0x4a7434, 0x5b8a3c, 0x3f6a30, 0x648f46];
+  var leafMats = greens.map(function(c){
+    return new THREE.MeshStandardMaterial({color:c, roughness:0.62,
+             side:THREE.DoubleSide, metalness:0.0});
+  });
+  var stemMat = new THREE.MeshStandardMaterial({color:0x4b6b34, roughness:0.75});
+
+  for (var li=0; li<13; li++){
+    var ang  = (li/13)*Math.PI*2 + (li%2)*0.36;
+    var lean = 0.30 + ((li*7)%5)*0.11;
+    var len  = 0.082 + ((li*3)%5)*0.016;
+    var wid  = len*0.42;
+    var g    = new THREE.Group();
+
+    var stem = new THREE.Mesh(
+      new THREE.CylinderGeometry(0.0018, 0.0026, len*0.42, 6), stemMat);
+    stem.position.y = len*0.21; stem.castShadow = true; g.add(stem);
+
+    var leaf = new THREE.Mesh(leafGeometry(len, wid), leafMats[li % leafMats.length]);
+    leaf.position.y = len*0.40;
+    leaf.rotation.y = (li%3-1)*0.22;          // a little twist, so no two match
+    leaf.castShadow = true;
+    g.add(leaf);
+
+    g.position.set(Math.cos(ang)*0.013, 0.086, Math.sin(ang)*0.013);
+    g.rotation.order = 'YXZ';
+    g.rotation.y = -ang;
+    g.rotation.x = lean;
+    plantG.add(g);
+  }
+
+  plantG.position.set(0.44, TABLE_Y, TZ + 0.04);
+  plantG.rotation.y = 0.5;
+  scene.add(plantG);
 
   /* ---------- window ---------- */
   /* Set into the back wall, on the side the draught comes from, so the wind in
      the room has a visible source. */
-  var WIN_X = 0.86, WIN_Y = 1.46, WIN_Z = -2.13;
-  var WIN_W = 1.02, WIN_H = 1.14;
+  var WIN_X = 0.30, WIN_Y = 1.00, WIN_Z = -2.13;
+  var WIN_W = 0.88, WIN_H = 0.70;
   var winG = new THREE.Group();
+  /* The view outside, painted into a texture: a graded sky, haze at the
+     horizon and soft foliage. Flat coloured planes read as cardboard; this
+     reads as distance. */
+  function outsideTexture(){
+    var c = document.createElement('canvas'); c.width = 256; c.height = 256;
+    var g = c.getContext('2d');
+    var sky = g.createLinearGradient(0,0,0,256);
+    sky.addColorStop(0.00,'#7fb3d9');
+    sky.addColorStop(0.42,'#b9d8ea');
+    sky.addColorStop(0.62,'#e6eadf');
+    sky.addColorStop(1.00,'#f2e3c2');
+    g.fillStyle = sky; g.fillRect(0,0,256,256);
+    /* distant trees, deliberately soft */
+    g.globalAlpha = 0.55;
+    for (var i=0;i<26;i++){
+      var x = Math.random()*256, y = 168 + Math.random()*54;
+      var r = 16 + Math.random()*30;
+      var gr = g.createRadialGradient(x,y,1,x,y,r);
+      var shade = 90 + Math.random()*55;
+      gr.addColorStop(0,'rgba('+(shade*0.6|0)+','+(shade|0)+','+(shade*0.5|0)+',0.95)');
+      gr.addColorStop(1,'rgba('+(shade*0.6|0)+','+(shade|0)+','+(shade*0.5|0)+',0)');
+      g.fillStyle = gr; g.beginPath(); g.arc(x,y,r,0,7); g.fill();
+    }
+    /* sun haze, on the side the light actually comes from */
+    g.globalAlpha = 0.85;
+    var hz = g.createRadialGradient(176,74,2,176,74,104);
+    hz.addColorStop(0,'rgba(255,248,222,0.95)');
+    hz.addColorStop(1,'rgba(255,248,222,0)');
+    g.fillStyle = hz; g.fillRect(0,0,256,256);
+    g.globalAlpha = 1;
+    var t = new THREE.CanvasTexture(c);
+    t.colorSpace = THREE.SRGBColorSpace;
+    return t;
+  }
+  /* The outside shows through the WHOLE opening -- the left half is open air,
+     the right half is seen through glass. Same texture, different treatment. */
+  var outTex = outsideTexture();
   var glass = new THREE.Mesh(
     new THREE.PlaneGeometry(WIN_W, WIN_H),
-    new THREE.MeshBasicMaterial({color:0xfdf0d2})      // bright daylight outside
+    new THREE.MeshBasicMaterial({map:outTex})
   );
   glass.position.set(WIN_X, WIN_Y, WIN_Z+0.005);
   winG.add(glass);
-  var sky = new THREE.Mesh(
-    new THREE.PlaneGeometry(WIN_W*0.99, WIN_H*0.52),
-    new THREE.MeshBasicMaterial({color:0xcfe4f2})
+  /* a faint sheen on the pane, so it reads as glazed rather than as a hole */
+  var sheen = new THREE.Mesh(
+    new THREE.PlaneGeometry(WIN_W/2, WIN_H),
+    new THREE.MeshBasicMaterial({color:0xffffff, transparent:true, opacity:0.12,
+                                 blending:THREE.AdditiveBlending, depthWrite:false})
   );
-  sky.position.set(WIN_X, WIN_Y+WIN_H*0.24, WIN_Z+0.006);
-  winG.add(sky);
-  var frameMat = new THREE.MeshStandardMaterial({color:0xb08a62, roughness:0.62});
-  function bar(w,h,d,x,y,z){
-    var m = new THREE.Mesh(new THREE.BoxGeometry(w,h,d), frameMat);
-    m.position.set(x,y,z); m.castShadow = true; winG.add(m); return m;
+  sheen.position.set(WIN_X+WIN_W/4, WIN_Y, WIN_Z+0.012);
+  sheen.rotation.z = 0.0;
+  winG.add(sheen);
+  /* a recessed reveal, which is what actually sells the wall's thickness */
+  var revealMat = new THREE.MeshStandardMaterial({color:0xd8cbb4, roughness:0.92});
+  function reveal(w,h,d,x,y,z,rx,ry){
+    var m = new THREE.Mesh(new THREE.PlaneGeometry(w,h), revealMat);
+    m.position.set(x,y,z); m.rotation.x = rx||0; m.rotation.y = ry||0;
+    m.receiveShadow = true; winG.add(m);
   }
-  var FT = 0.05;
-  bar(WIN_W+FT*2, FT, 0.07, WIN_X, WIN_Y+WIN_H/2+FT/2, WIN_Z+0.03);   // head
-  bar(WIN_W+FT*2, FT, 0.07, WIN_X, WIN_Y-WIN_H/2-FT/2, WIN_Z+0.03);   // sill top
-  bar(FT, WIN_H+FT*2, 0.07, WIN_X-WIN_W/2-FT/2, WIN_Y, WIN_Z+0.03);   // jambs
-  bar(FT, WIN_H+FT*2, 0.07, WIN_X+WIN_W/2+FT/2, WIN_Y, WIN_Z+0.03);
-  bar(0.032, WIN_H, 0.05, WIN_X, WIN_Y, WIN_Z+0.03);                  // mullions
-  bar(WIN_W, 0.032, 0.05, WIN_X, WIN_Y, WIN_Z+0.03);
-  var sill = new THREE.Mesh(new THREE.BoxGeometry(WIN_W+0.20, 0.05, 0.16), frameMat);
-  sill.position.set(WIN_X, WIN_Y-WIN_H/2-FT, WIN_Z+0.08);
+  var RD = 0.11;
+  reveal(WIN_W, RD, 0, WIN_X, WIN_Y+WIN_H/2, WIN_Z+RD/2, Math.PI/2, 0);   // head
+  reveal(WIN_W, RD, 0, WIN_X, WIN_Y-WIN_H/2, WIN_Z+RD/2, -Math.PI/2, 0);  // sill
+  reveal(RD, WIN_H, 0, WIN_X-WIN_W/2, WIN_Y, WIN_Z+RD/2, 0, Math.PI/2);   // jambs
+  reveal(RD, WIN_H, 0, WIN_X+WIN_W/2, WIN_Y, WIN_Z+RD/2, 0, -Math.PI/2);
+
+  /* Joinery, not a rectangle of colour. A real window reads through three
+     things: an outer casing that stands proud of the wall, a slimmer inner sash
+     set back from it, and glazing bars that are thinner still. Making all of
+     them the same chunky box is what made the old one look like a sticker. */
+  var caseMat = new THREE.MeshStandardMaterial({color:0xece0cd, roughness:0.58});
+  var sashMat = new THREE.MeshStandardMaterial({color:0xf5ecdd, roughness:0.50});
+  var barMat  = new THREE.MeshStandardMaterial({color:0xf7efe2, roughness:0.46});
+  function slab(mat,w,h,d,x,y,z){
+    var m = new THREE.Mesh(new THREE.BoxGeometry(w,h,d), mat);
+    m.position.set(x,y,z); m.castShadow = true; m.receiveShadow = true;
+    winG.add(m); return m;
+  }
+  var CW_ = 0.085, CD_ = 0.055;                 // casing width / depth
+  var CZ_ = WIN_Z + 0.085;
+  slab(caseMat, WIN_W+CW_*2, CW_, CD_, WIN_X, WIN_Y+WIN_H/2+CW_/2, CZ_);
+  slab(caseMat, WIN_W+CW_*2, CW_, CD_, WIN_X, WIN_Y-WIN_H/2-CW_/2, CZ_);
+  slab(caseMat, CW_, WIN_H+CW_*2, CD_, WIN_X-WIN_W/2-CW_/2, WIN_Y, CZ_);
+  slab(caseMat, CW_, WIN_H+CW_*2, CD_, WIN_X+WIN_W/2+CW_/2, WIN_Y, CZ_);
+  var SW_ = 0.036, SD_ = 0.030, SZ_ = WIN_Z + 0.048;
+  slab(sashMat, WIN_W, SW_, SD_, WIN_X, WIN_Y+WIN_H/2-SW_/2, SZ_);
+  slab(sashMat, WIN_W, SW_, SD_, WIN_X, WIN_Y-WIN_H/2+SW_/2, SZ_);
+  slab(sashMat, SW_, WIN_H, SD_, WIN_X-WIN_W/2+SW_/2, WIN_Y, SZ_);
+  slab(sashMat, SW_, WIN_H, SD_, WIN_X+WIN_W/2-SW_/2, WIN_Y, SZ_);
+  /* six panes: two glazing bars up, one across */
+  var GB = 0.016, GZ_ = WIN_Z + 0.040;
+  slab(barMat, GB, WIN_H-SW_*2, 0.020, WIN_X+WIN_W/4, WIN_Y, GZ_);
+  slab(barMat, WIN_W/2-SW_, GB, 0.020, WIN_X+WIN_W/4, WIN_Y+WIN_H*0.06, GZ_);
+  /* a mullion down the middle, where the opening leaf shuts against */
+  slab(sashMat, 0.026, WIN_H, SD_, WIN_X, WIN_Y, SZ_);
+  /* The left leaf stands open into the room. This is where the draught that
+     moves the curtains and lifts the photograph is coming from -- with the
+     window shut, the whole scene was being blown by nothing. */
+  var leaf = new THREE.Group();
+  leaf.position.set(WIN_X - WIN_W/2 + 0.012, WIN_Y, WIN_Z + 0.052);
+  var LW = WIN_W/2 - 0.02, LH = WIN_H - SW_*1.4, LF = 0.030;
+  function leafSlab(w,h,d,x,y){
+    var m = new THREE.Mesh(new THREE.BoxGeometry(w,h,d), sashMat);
+    m.position.set(x,y,0); m.castShadow = true; m.receiveShadow = true; leaf.add(m);
+  }
+  leafSlab(LW, LF, 0.028, LW/2, LH/2 - LF/2);
+  leafSlab(LW, LF, 0.028, LW/2, -LH/2 + LF/2);
+  leafSlab(LF, LH, 0.028, LF/2, 0);
+  leafSlab(LF, LH, 0.028, LW - LF/2, 0);
+  var leafGlass = new THREE.Mesh(
+    new THREE.PlaneGeometry(LW-LF*2, LH-LF*2),
+    new THREE.MeshPhysicalMaterial({color:0xdfeaf0, roughness:0.08, metalness:0,
+      transparent:true, opacity:0.26, side:THREE.DoubleSide})
+  );
+  leafGlass.position.set(LW/2, 0, 0.002);
+  leaf.add(leafGlass);
+  var leafBar = new THREE.Mesh(new THREE.BoxGeometry(LW-LF*2, GB*0.8, 0.018), barMat);
+  leafBar.position.set(LW/2, LH*0.06, 0.004); leafBar.castShadow = true; leaf.add(leafBar);
+  var handle = new THREE.Mesh(new THREE.CylinderGeometry(0.006,0.006,0.052,10), new THREE.MeshStandardMaterial({color:0x7a6144, roughness:0.4, metalness:0.5}));
+  handle.rotation.z = Math.PI/2;
+  handle.position.set(LW - LF/2, -LH*0.06, 0.028);
+  leaf.add(handle);
+  leaf.rotation.y = 0.92;                 // swung in towards the room
+  winG.add(leaf);
+
+  /* stone sill with a drip edge, proud of the casing */
+  var sillMat = new THREE.MeshStandardMaterial({color:0xded2bd, roughness:0.76});
+  var sill = new THREE.Mesh(new THREE.BoxGeometry(WIN_W+CW_*2+0.07, 0.034, 0.145), sillMat);
+  sill.position.set(WIN_X, WIN_Y-WIN_H/2-CW_-0.017, WIN_Z+0.115);
   sill.castShadow = true; sill.receiveShadow = true; winG.add(sill);
+  var drip = new THREE.Mesh(new THREE.BoxGeometry(WIN_W+CW_*2+0.07, 0.013, 0.020), caseMat);
+  drip.position.set(WIN_X, WIN_Y-WIN_H/2-CW_-0.040, WIN_Z+0.180);
+  drip.castShadow = true; winG.add(drip);
+  /* curtain rod above the opening */
+  var rodMat = new THREE.MeshStandardMaterial({color:0x6b543a, roughness:0.45, metalness:0.45});
+  var rod = new THREE.Mesh(new THREE.CylinderGeometry(0.010,0.010,WIN_W+0.62,14), rodMat);
+  rod.rotation.z = Math.PI/2;
+  rod.position.set(WIN_X, WIN_Y+WIN_H/2+CW_+0.085, WIN_Z+0.15);
+  rod.castShadow = true; winG.add(rod);
+  [-1,1].forEach(function(sgn){
+    var fin = new THREE.Mesh(new THREE.SphereGeometry(0.019,14,12), rodMat);
+    fin.position.set(WIN_X + sgn*(WIN_W/2+0.31), rod.position.y, rod.position.z);
+    winG.add(fin);
+  });
+
   scene.add(winG);
 
   /* ---------- curtains ---------- */
@@ -2062,37 +2326,66 @@ function(t,e){"object"==typeof exports&&"undefined"!=typeof module?e(exports):"f
      the photo feels -- so a gust visibly moves the cloth and the print together
      instead of them running on unrelated timers. */
   var curtains = [];
-  var CUR_W = 0.46, CUR_H = 1.86, CUR_SX = 12, CUR_SY = 26;
-  var curMat = new THREE.MeshStandardMaterial({
-    color:0xf6efe1, roughness:0.94, side:THREE.DoubleSide,
-    transparent:true, opacity:0.96
+  var CUR_W = 0.52, CUR_H = 1.30, CUR_SX = 22, CUR_SY = 44;
+  /* Silk, not paper. Three things separate the two: cloth has a SHEEN lobe --
+     a soft rim-light that paper simply does not have -- it is slightly
+     translucent so a bright window glows through it, and it drapes in rounded
+     waves rather than creasing. MeshPhysicalMaterial's sheen gives the first
+     two; the finer mesh and smoother displacement below give the third. */
+  /* Silk, and bright. It was reading dark for two reasons: it was 10%
+     transparent over a wall in its own shadow, and it had no self-lift at all,
+     so every fold that turned away from the window went muddy. */
+  var curMat = new THREE.MeshPhysicalMaterial({
+    color:0xfffdf7,
+    roughness:0.56, metalness:0.0,
+    sheen:1.0, sheenRoughness:0.22, sheenColor:new THREE.Color(0xfff6e4),
+    emissive:new THREE.Color(0x3a3327), emissiveIntensity:1.0,
+    side:THREE.DoubleSide,
+    transparent:true, opacity:0.985
   });
-  [[WIN_X-WIN_W/2-0.20, -1],[WIN_X+WIN_W/2+0.20, 1]].forEach(function(cfg){
+  [[WIN_X-WIN_W/2-0.22, -1],[WIN_X+WIN_W/2+0.22, 1]].forEach(function(cfg){
     var g = new THREE.PlaneGeometry(CUR_W, CUR_H, CUR_SX, CUR_SY);
     var m = new THREE.Mesh(g, curMat);
-    m.position.set(cfg[0], WIN_Y+0.20, WIN_Z+0.14);
+    /* Hung from the rod and kept ABOVE the desk line: at the old height most
+       of each panel sat behind the desk, which is why they could not be seen. */
+    m.position.set(cfg[0], WIN_Y+WIN_H/2+0.15-CUR_H/2 + 0.22, WIN_Z+0.24);
     m.castShadow = true; m.receiveShadow = true;
     scene.add(m);
     curtains.push({mesh:m, base:g.attributes.position.array.slice(0),
                    attr:g.attributes.position, side:cfg[1]});
   });
+  /* An OPEN curtain is gathered, not flat. The fabric is pulled to the side so
+     it concertinas into standing vertical pleats that run the whole drop and
+     flare a little at the hem. That gathered shape is the thing that reads as a
+     curtain; a smooth sheet with a ripple on it reads as a hanging cloth. */
+  var PLEATS = 5;
   function updateCurtains(t, strength){
     for (var ci=0; ci<curtains.length; ci++){
       var c = curtains[ci], a = c.attr.array, base = c.base;
+      var blow = strength * c.side;
       for (var i=0;i<a.length;i+=3){
         var x = base[i], y = base[i+1];
-        /* hem swings, head barely moves: fixed at the rail */
-        var drop = (CUR_H/2 - y) / CUR_H;
-        var sway = Math.sin(x*7.0 + t*2.1) * 0.020
-                 + Math.sin(x*3.1 - t*1.35) * 0.030
-                 + fbm(x*2.0, y*1.2, t*0.5) * 0.045;
-        a[i]   = x;
-        a[i+1] = y;
-        a[i+2] = sway * drop * (0.35 + strength*1.35);
+        var drop = (CUR_H/2 - y) / CUR_H, d2 = drop*drop;
+        var u = (x + CUR_W/2) / CUR_W;                  // 0..1 across the panel
+
+        /* the standing pleats -- deeper towards the hem, and gathering pulls
+           the panel narrower than its flat width */
+        var depth = 0.052 * (0.72 + 0.46*drop);
+        var pleat = Math.sin(u * Math.PI * 2 * PLEATS) * depth;
+        var gather = -x * 0.22;                         // drawn in at the rail
+
+        /* the wind moves the whole gathered bundle rather than rippling it */
+        var sway = Math.sin(u*Math.PI*1.7 + t*1.15) * 0.014
+                 + fbm(u*1.4, y*0.8, t*0.34) * 0.026;
+
+        a[i]   = x + gather + (blow*0.30 + sway*0.5) * d2;
+        a[i+1] = y + Math.abs(blow)*0.09*d2;
+        a[i+2] = pleat + (sway*0.7 + blow*0.16) * d2;
       }
       c.attr.needsUpdate = true;
       c.mesh.geometry.computeVertexNormals();
-      c.mesh.rotation.y = c.side * 0.05 * (0.4 + strength) ;
+      c.mesh.rotation.z = -c.side * strength * 0.09;
+      c.mesh.rotation.y =  c.side * 0.05 * (0.4 + strength);
     }
   }
 
@@ -2173,14 +2466,17 @@ function(t,e){"object"==typeof exports&&"undefined"!=typeof module?e(exports):"f
     var nz = fbm(p.x*s + 71.1,      p.y*s + 5.2,  p.z*s + ts);
     /* blowing broadly out of the window: -X and +Z, with the noise swinging
        the direction around rather than jittering it */
-    out.set((-0.29 + nx*0.38) * env,
-            ( 0.56 + ny*0.62) * env,
-            ( 0.15 + nz*0.30) * env);
+    out.set((-0.32 + nx*0.30) * env,
+            /* Updraught kept small. At 0.56 the print was being lofted well above the
+               desk on release and then dropping back -- a balloon, not a photograph.
+               It only needs enough to peel off the table; gravity does the rest. */
+            ( 0.00 + ny*0.05) * env,
+            ( 0.22 + nz*0.16) * env);
     return out;
   }
 
   /* ---------- rigid body ---------- */
-  var MASS = 0.0046;                       // ~4g for a 15cm print
+  var MASS = 0.0016;                       // ~4g for a 15cm print
   var GRAV = new THREE.Vector3(0, -9.81, 0);
   /* thin-plate inertia, in body axes */
   /* Inertia, scaled up. The textbook thin-plate tensor for a 4g print is so
@@ -2188,7 +2484,7 @@ function(t,e){"object"==typeof exports&&"undefined"!=typeof module?e(exports):"f
      explicit integrator threw the photo across the room. A real print also
      resists being spun far more than an idealised zero-thickness plate does,
      so this is a defensible fudge as well as a necessary one. */
-  var ISCALE = 26;
+  var ISCALE = 52;
   var Ix = MASS*(PH_*PH_)/12*ISCALE, Iy = MASS*(PW*PW)/12*ISCALE,
       Iz = MASS*(PW*PW+PH_*PH_)/12*ISCALE;
   var invI = new THREE.Vector3(1/Ix, 1/Iy, 1/Iz);
@@ -2199,14 +2495,16 @@ function(t,e){"object"==typeof exports&&"undefined"!=typeof module?e(exports):"f
   var vel = new THREE.Vector3();
   var quat = new THREE.Quaternion();
   var omega = new THREE.Vector3();          // world-space angular velocity
-  var bend = 0, bendV = 0, restT = 0, spin = 0;                  // sheet curvature state
+  var bend = 0, bendV = 0, restT = 0, spin = 0;
+  var lifted = false, onFloor = false, floorT = 0, lastFloorY = 1e9;
+  var pose0 = new THREE.Vector3(), quat0 = new THREE.Quaternion();                  // sheet curvature state
   var bendAxis = new THREE.Vector2(1,0);
   var settled = false, simT = 0, running = false;
 
   var RHO = 1.2, AREA = PW*PH_;
-  var KPM = 0.52;  // strength of that pitching moment (thin plate: tiny inertia,
+  var KPM = 0.272;  // strength of that pitching moment (thin plate: tiny inertia,
                     // so this is ~40x smaller than it looks like it should be)
-  var CD_N = 2.75, CD_T = 0.06;             // plate broadside vs edge-on
+  var CD_N = 14.50, CD_T = 0.20;             // plate broadside vs edge-on
 
   function resetBody(){
     /* Lying on the table, a little back from the front lip, and NOT perfectly
@@ -2215,12 +2513,28 @@ function(t,e){"object"==typeof exports&&"undefined"!=typeof module?e(exports):"f
        one. Resting a hair above it meant no contact, nothing to resist the
        breeze, and the print quietly span up while it was supposed to be lying
        still on the table. */
-    pos.set(-0.02, TABLE_Y + THICK/2 + 0.00004, TABLE_FRONT_Z - PH_*0.52);
+    /* On the table itself, not on the books -- the stack stands proud enough
+       to hide the print behind it from this camera. Kept clear of both the
+       books and the plant, near the front lip so the draught can get under it. */
+    pos.set(-0.03, TABLE_Y, TABLE_FRONT_Z - PH_*0.58);
     vel.set(0,0,0);
-    var e = new THREE.Euler(-Math.PI/2 + 0.012, 0.03, 0.008);
+    var e = new THREE.Euler(-Math.PI/2 + 0.006, 0.03, 0.004);
     quat.setFromEuler(e);
     omega.set(0,0,0);
-    bend = 0.055; bendV = 0; restT = 0; spin = 0; restRef.copy(pos);            // slight resting curl
+    /* Seat it from the GEOMETRY rather than a guessed offset. The resting tilt
+       drops one corner a millimetre or so below the centre, so a fixed nudge
+       either left the print sunk into the table or floating above it. Solve for
+       the height that puts the lowest corner just on the surface. */
+    (function(){
+      var lo = 1e9;
+      for (var ci=0; ci<CORNERS.length; ci++){
+        var wy = CORNERS[ci].clone().applyQuaternion(quat).y + pos.y;
+        if (wy < lo) lo = wy;
+      }
+      pos.y += (TABLE_Y + 0.00012) - lo;
+    })();
+    bend = 0.055; bendV = 0; restT = 0; spin = 0; restRef.copy(pos);
+    lifted = false; onFloor = false; photo.castShadow = true; floorT = 0; pose0.copy(pos); quat0.copy(quat);            // slight resting curl
     simT = 0; settled = false;
     photo.position.copy(pos); photo.quaternion.copy(quat);
     applyBend();
@@ -2234,24 +2548,33 @@ function(t,e){"object"==typeof exports&&"undefined"!=typeof module?e(exports):"f
   function applyBend(){
     var a = posAttr.array;
     var ax = bendAxis.x, ay = bendAxis.y;
-    for (var i=0;i<a.length;i+=3){
-      var x = basePos[i], y = basePos[i+1], z = basePos[i+2];
-      /* distance along the bending direction, normalised to the half-span */
-      var d = (x*ax + y*ay) / (Math.max(PW,PH_)*0.5);
-      var curl = bend * (d*d - 0.34);                 // parabolic arch
-      var tip  = bend * 0.35 * Math.pow(Math.abs(d), 3.0) * Math.sign(d);
-      a[i]   = x;
-      a[i+1] = y;
-      a[i+2] = z + (curl + tip) * Math.max(PW,PH_) * 0.42;
+    var half = Math.max(PW,PH_)*0.5;
+    /* Curl amplitude is capped to the print's own half-thickness. It used to be
+       0.42 of the long edge -- about 3mm of travel on a 0.9mm-thick sheet -- so
+       the curled middle passed straight through the table and the floor. */
+    var amp = Math.min(Math.max(PW,PH_)*0.42, THICK*0.5/Math.max(0.02,Math.abs(bend)));
+    for (var j=0;j<a.length;j+=3){
+      var x = basePos[j], y = basePos[j+1], z = basePos[j+2];
+      var d = (x*ax + y*ay) / half;
+      var curl = bend*(d*d - 0.34);
+      var tip  = bend*0.35*Math.pow(Math.abs(d),3.0)*Math.sign(d);
+      a[j]   = x;
+      a[j+1] = y;
+      a[j+2] = z + (curl + tip) * amp;
     }
     posAttr.needsUpdate = true;
     photoGeo.computeVertexNormals();
   }
 
   /* contact points: the four corners plus the centre */
+  /* On the BOTTOM face, and with the mid-edges included: testing only the four
+     mid-plane corners let an edge dip below the surface between them. */
+  var CZ = -THICK/2;
   var CORNERS = [
-    new THREE.Vector3(-PW/2,-PH_/2,0), new THREE.Vector3(PW/2,-PH_/2,0),
-    new THREE.Vector3(PW/2, PH_/2,0),  new THREE.Vector3(-PW/2, PH_/2,0)
+    new THREE.Vector3(-PW/2,-PH_/2,CZ), new THREE.Vector3(PW/2,-PH_/2,CZ),
+    new THREE.Vector3(PW/2, PH_/2,CZ),  new THREE.Vector3(-PW/2, PH_/2,CZ),
+    new THREE.Vector3(0,-PH_/2,CZ),     new THREE.Vector3(0, PH_/2,CZ),
+    new THREE.Vector3(-PW/2,0,CZ),      new THREE.Vector3(PW/2,0,CZ)
   ];
   /* aero sample panels: quadrants. Sampling the wind at FOUR places is what
      makes the upwind edge lift first instead of the whole sheet rising flat. */
@@ -2275,7 +2598,11 @@ function(t,e){"object"==typeof exports&&"undefined"!=typeof module?e(exports):"f
     _n.set(0,0,1).applyQuaternion(quat);
 
     var loadAlong = 0, loadTotal = 0;
-    for (var i=0;i<PANELS.length;i++){
+    /* Once it is down, it is DOWN. Leaving the wind switched on meant a late
+       gust could pick the print up off the boards again and shuffle it around,
+       which is not what a photo on a floor does. */
+    var aero = !onFloor;
+    for (var i=0; aero && i<PANELS.length; i++){
       _r.copy(PANELS[i]).applyQuaternion(quat);
       _wp.copy(pos).add(_r);
       windAt(simT, _wp, _wind);
@@ -2316,6 +2643,44 @@ function(t,e){"object"==typeof exports&&"undefined"!=typeof module?e(exports):"f
       loadTotal += Math.abs(fn);
     }
 
+    /* Presentation bias, and the one place this departs from pure physics: in
+       the last stretch of the fall a gentle torque favours landing face-up. A
+       real print lands either way, but a memory page wants to end looking at
+       the photograph rather than at the back of it. It is weak enough that the
+       tumbling above it is unaffected. */
+    if (pos.y < 0.20 && vel.y < 0.05){
+      _n.set(0,0,1).applyQuaternion(quat);
+      if (_n.y < 0.985){
+        _ax.crossVectors(_n, UP);
+        /* n x UP vanishes when the print is EXACTLY upside-down, which is the
+           one case this exists to rescue -- so fall back to any perpendicular
+           axis there. Getting this wrong meant it always landed face down. */
+        if (_ax.lengthSq() < 1e-6) _ax.set(1,0,0).cross(_n);
+        _ax.normalize();
+        var w = (0.20 - pos.y)/0.20;
+        torque.addScaledVector(_ax, 0.075 * w * (1 - _n.y)*0.5);
+      }
+    }
+
+    /* A body at rest stays at rest. Until the airflow genuinely beats the
+       print's own weight it does not creep, shiver or hop -- it just lies
+       there. Before this, every small gust in the opening breeze nudged it
+       about the table top. */
+    if (!lifted){
+      /* Release on the storyboard's second gust rather than on a force
+         threshold. Holding the body rigid also held its ORIENTATION, and
+         lift-off is progressive -- the edge tips first, which is what raises
+         the angle of attack -- so a hard force gate meant it never left at all. */
+      var aeroUp = force.y + MASS*9.81;
+      if (simT > 2.75 || aeroUp > MASS*9.81*1.45) lifted = true;
+      else {
+        vel.set(0,0,0); omega.set(0,0,0);
+        pos.copy(pose0); quat.copy(quat0);
+        bendV += (140*(0.05-bend) - 13*bendV)*dt; bend += bendV*dt;
+        return;
+      }
+    }
+
     /* ---- contacts: table top, then floor ---- */
     var grounded = false, contacts = 0;
     for (var c=0;c<CORNERS.length;c++){
@@ -2323,8 +2688,10 @@ function(t,e){"object"==typeof exports&&"undefined"!=typeof module?e(exports):"f
       _wp.copy(pos).add(_r);
       /* which surface is under this corner? */
       var surfY = FLOOR_Y;
-      var overTable = Math.abs(_wp.x) < TW/2 && _wp.z > -0.34-TD/2 && _wp.z < TABLE_FRONT_Z;
+      var overTable = Math.abs(_wp.x) < TW/2 && _wp.z > TZ-TD/2 && _wp.z < TABLE_FRONT_Z;
       if (overTable) surfY = TABLE_Y;
+      if (Math.abs(_wp.x-BOOK_CX) < BOOK_HX && Math.abs(_wp.z-BOOK_CZ) < BOOK_HZ)
+        surfY = BOOK_TOP;
       var pen = surfY - _wp.y;
       if (pen > 0){
         grounded = true; contacts++;
@@ -2338,7 +2705,7 @@ function(t,e){"object"==typeof exports&&"undefined"!=typeof module?e(exports):"f
            Stiffer still (520) made sqrt(k/m)*dt exceed the explicit-integrator
            stability limit and the whole thing exploded, hence the 480Hz step
            below rather than pushing k any higher. */
-        var k = 260.0, d = 1.6;
+        var k = 260.0, d = 3.4;
         var fN = k*pen - d*vN;
         if (fN < 0) fN = 0;
         _f.set(0, fN, 0);
@@ -2355,6 +2722,31 @@ function(t,e){"object"==typeof exports&&"undefined"!=typeof module?e(exports):"f
     vel.addScaledVector(force, dt/MASS);
     vel.multiplyScalar(Math.exp(-(grounded ? 2.6 : 0.08)*dt));
     pos.addScaledVector(vel, dt);
+
+    /* While it is still at table height it may slide, tip and roll over the
+       lip -- but it must not HOP. Clamped AFTER integration: placed before it,
+       the aerodynamic force simply re-accelerated the print on the same step
+       and it leapt 30cm anyway. It leaves the table because it runs out of
+       table, not because it is thrown. */
+    /* Once it is on the boards it may slide and it may settle flat, but it
+       must never rebound. The penalty contact hands energy back on every
+       impact, which is why it bounced like a ball instead of landing like a
+       sheet of paper. Forbidding upward velocity outright removes all of it,
+       not just the first bounce. */
+    if (onFloor){
+      /* Clamping the VELOCITY alone was not enough: the contact spring moves
+         the position within the same step, before the clamp runs, which left a
+         few millimetres of hop on every impact. Holding the height monotonic
+         once it is down removes the last of it. */
+      if (vel.y > 0) vel.y = 0;
+      if (pos.y > lastFloorY) pos.y = lastFloorY;
+      lastFloorY = pos.y;
+    }
+
+    if (!onFloor && pos.y > TABLE_Y - 0.05 && vel.y > 0.015){
+      vel.y = 0.015;
+      if (pos.y > TABLE_Y + 0.004) pos.y = TABLE_Y + 0.004;
+    }
 
     /* angular: tau = I * alpha in body axes */
     var tb = torque.clone().applyQuaternion(quat.clone().invert());
@@ -2384,31 +2776,12 @@ function(t,e){"object"==typeof exports&&"undefined"!=typeof module?e(exports):"f
       bendAxis.set(0.25, 1).normalize();
     }
 
-    /* Presentation bias, and the one place this departs from pure physics: in
-       the last stretch of the fall a gentle torque favours landing face-up. A
-       real print lands either way, but a memory page wants to end looking at
-       the photograph rather than at the back of it. It is weak enough that the
-       tumbling above it is unaffected. */
-    if (pos.y < 0.72 && pos.y > 0.035 && vel.y < 0){
-      _n.set(0,0,1).applyQuaternion(quat);
-      if (_n.y < 0.985){
-        _ax.crossVectors(_n, UP);
-        /* n x UP vanishes when the print is EXACTLY upside-down, which is the
-           one case this exists to rescue -- so fall back to any perpendicular
-           axis there. Getting this wrong meant it always landed face down. */
-        if (_ax.lengthSq() < 1e-6) _ax.set(1,0,0).cross(_n);
-        _ax.normalize();
-        var w = (0.72 - pos.y)/0.72;
-        torque.addScaledVector(_ax, 0.034 * w * (1 - _n.y)*0.5);
-      }
-    }
-
     /* STATIC FRICTION. While the sheet is still fully supported, the surface
        holds it: it does not creep or pirouette under a breeze. Only once the
        wind has peeled enough of it off the surface (fewer than three corners
        still touching) does it become free to move. Without this the print
        slowly span on the spot while it was supposed to be lying still. */
-    if (contacts >= 3){
+    if (contacts >= 6){
       omega.multiplyScalar(Math.exp(-16*dt));
       var fz=Math.exp(-11*dt); vel.x *= fz; vel.z *= fz;
     }
@@ -2417,8 +2790,27 @@ function(t,e){"object"==typeof exports&&"undefined"!=typeof module?e(exports):"f
        its slide and its spin bleed away fast. Without this it kept a slow yaw
        for ever, because with the body resting almost exactly ON the plane the
        corners barely penetrate and the contact friction had nothing to bite. */
-    var nearFloor = pos.y < FLOOR_Y + 0.014;
-    if (nearFloor){ omega.multiplyScalar(Math.exp(-9*dt)); vel.multiplyScalar(Math.exp(-6*dt)); }
+    var nearFloor = pos.y < FLOOR_Y + 0.09;
+    if (nearFloor && lifted && !onFloor){
+      /* Touchdown is INELASTIC. A penalty spring always hands energy back, so
+         the print bounced no matter how hard the contact was damped. Killing
+         the downward velocity at the moment of contact removes it outright. */
+      onFloor = true;
+      vel.y = 0; vel.multiplyScalar(0.18); omega.multiplyScalar(0.14);
+    }
+    /* Once it has touched down, bleed the remaining energy off hard. It was
+       hopping between 1cm and 14cm for seconds after landing, because the
+       penalty contact stores energy and hands it straight back. */
+    if (onFloor){
+      vel.multiplyScalar(Math.exp(-7*dt)); omega.multiplyScalar(Math.exp(-9*dt));
+      /* Landing is terminal. A penalty contact rings for a long time on a body
+         this light, and waiting for it to go quiet on its own left the print
+         twitching for twenty seconds. Once it is down, give it a moment to lie
+         flat and then stop simulating altogether. */
+      floorT += dt;
+      if (floorT > 1.0){ settled = true; photo.castShadow = false; vel.set(0,0,0); omega.set(0,0,0); }
+    }
+    if (nearFloor){ omega.multiplyScalar(Math.exp(-14*dt)); vel.multiplyScalar(Math.exp(-10*dt)); }
 
     /* ---- coming to rest ---- */
     /* Settle on DISPLACEMENT, not on instantaneous speed. A light body on a
@@ -2426,11 +2818,11 @@ function(t,e){"object"==typeof exports&&"undefined"!=typeof module?e(exports):"f
        fired even though the print had visibly stopped. What matters is whether
        it has actually gone anywhere. */
     if (nearFloor){
-      if (pos.distanceTo(restRef) > 0.005){ restRef.copy(pos); restT = 0; }
+      if (pos.distanceTo(restRef) > 0.010){ restRef.copy(pos); restT = 0; }
       else restT += dt;
     } else { restT = 0; restRef.copy(pos); }
     if (restT > 0.5 && !settled){
-      settled = true;
+      settled = true; photo.castShadow = false;
       /* freeze: a print on the floor does not shiver */
       vel.set(0,0,0); omega.set(0,0,0);
     }
@@ -2452,8 +2844,13 @@ function(t,e){"object"==typeof exports&&"undefined"!=typeof module?e(exports):"f
     if (picked){ restPos.copy(photo.position); restQuat.copy(photo.quaternion); inspectPose(); }
     else { toP.copy(restPos); toQ.copy(restQuat); }
     animT = 0; animating = true;
+    setHeld(picked);
     host.style.cursor = picked ? 'zoom-out' : 'zoom-in';
   }
+  /* No extra light and no emissive boost when it is held up -- the print keeps
+     whatever the room gives it. */
+  function setHeld(on){}
+
   var ray = new THREE.Raycaster(), ndc = new THREE.Vector2();
   renderer.domElement.addEventListener('pointerdown', function(e){
     if (!settled) return;
@@ -2464,6 +2861,7 @@ function(t,e){"object"==typeof exports&&"undefined"!=typeof module?e(exports):"f
   });
 
   /* ---------- loop ---------- */
+  var SPEED = 0.56;          // < 1 = a slower, more languid fall
   var FIXED = 1/480, acc = 0, last = 0, raf = 0;
   function frame(now){
     raf = requestAnimationFrame(frame);
@@ -2471,7 +2869,9 @@ function(t,e){"object"==typeof exports&&"undefined"!=typeof module?e(exports):"f
     if (!(dt > 0) || dt > 0.25) dt = 1/60;
 
     if (running && !picked && !animating){
-      acc += dt; var guard = 0;
+      /* One dial for pace. Scaling time leaves the trajectory, the tumble count
+       and the landing spot exactly as tuned -- it just plays them slower. */
+    acc += dt * SPEED; var guard = 0;
       while (acc >= FIXED && guard++ < 260){ step(FIXED); acc -= FIXED; }
       photo.position.copy(pos);
       photo.quaternion.copy(quat);
@@ -2499,18 +2899,46 @@ function(t,e){"object"==typeof exports&&"undefined"!=typeof module?e(exports):"f
     if (!raf) raf = requestAnimationFrame(frame);
   }
   window.__glStart = start;
+  /* Test hook: advance the physics without waiting on the renderer. Headless
+     WebGL runs at under a frame a second, which starved the fixed-step loop and
+     made the simulation look stuck when it was merely being given no time. */
+  window.__glAdvance = function(seconds){
+    var n = Math.round(seconds/FIXED);
+    for (var i=0;i<n;i++) step(FIXED);
+    photo.position.copy(pos); photo.quaternion.copy(quat); applyBend();
+    return window.__glState();
+  };
   window.__glState = function(){
     return {t:+simT.toFixed(2), settled:settled, picked:picked,
             p:[+pos.x.toFixed(3),+pos.y.toFixed(3),+pos.z.toFixed(3)],
             v:[+vel.x.toFixed(3),+vel.y.toFixed(3),+vel.z.toFixed(3)],
             w:[+omega.x.toFixed(2),+omega.y.toFixed(2),+omega.z.toFixed(2)],
             bend:+bend.toFixed(3), turns:+(spin/(2*Math.PI)).toFixed(2),
-            normalY:+(new THREE.Vector3(0,0,1).applyQuaternion(quat).y).toFixed(3)};
+            normalY:+(new THREE.Vector3(0,0,1).applyQuaternion(quat).y).toFixed(3),
+            ndc:(function(){ var v=pos.clone().project(camera);
+                  return [+v.x.toFixed(3), +v.y.toFixed(3)]; })(),
+            lowCorner:(function(){ var lo=1e9;
+                for (var c2=0;c2<CORNERS.length;c2++){
+                  var w2=CORNERS[c2].clone().applyQuaternion(quat).add(pos);
+                  if (w2.y<lo) lo=w2.y; }
+                return +lo.toFixed(5); })(),
+            fov:+camera.fov.toFixed(1), shadow:photo.castShadow, lifted:lifted, onFloor:onFloor, floorT:+floorT.toFixed(2), restT:+restT.toFixed(2),
+            probe:(function(){
+              function nd(x,y,z){var v=new THREE.Vector3(x,y,z).project(camera);
+                return [+v.x.toFixed(2),+v.y.toFixed(2)];}
+              return {winTop:nd(WIN_X, WIN_Y+WIN_H/2+0.07, WIN_Z),
+                      winBot:nd(WIN_X, WIN_Y-WIN_H/2-0.07, WIN_Z),
+                      lampTop:nd(0.44, TABLE_Y+0.20, TZ+0.04),
+                      deskFront:nd(0, TABLE_Y, TABLE_FRONT_Z),
+                      curtainL:(curtains[0]?nd(curtains[0].mesh.position.x,
+                                 curtains[0].mesh.position.y, curtains[0].mesh.position.z):null),
+                      curtainR:(curtains[1]?nd(curtains[1].mesh.position.x,
+                                 curtains[1].mesh.position.y, curtains[1].mesh.position.z):null)};})()};
   };
 
   addEventListener('resize', function(){
     W = section.clientWidth || innerWidth; H = section.clientHeight || innerHeight;
-    camera.aspect = W/H; camera.updateProjectionMatrix(); renderer.setSize(W,H);
+    frameCamera(); renderer.setSize(W,H);
   });
 
   /* run when the reader actually arrives, re-arm when they leave */
