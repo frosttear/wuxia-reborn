@@ -2636,6 +2636,13 @@ function(t,e){"object"==typeof exports&&"undefined"!=typeof module?e(exports):"f
       pos.y += (TABLE_Y + 0.00012) - lo;
     })();
     bend = 0.055; bendV = 0; restT = 0; spin = 0; restRef.copy(pos);
+    /* lastFloorY is the monotonic floor clamp's running low-water mark, and it
+       MUST be re-armed here. Left holding the previous run's resting height,
+       the clamp fires the instant onFloor goes true on the next play and snaps
+       the centre down to it while the print is still tilted -- which buried a
+       corner 28mm under the boards. It only ever moves downward, so every
+       replay started lower than the last and the print sank further each time. */
+    lastFloorY = 1e9;
     lifted = false; onFloor = false; photo.castShadow = true; floorT = 0; pose0.copy(pos); quat0.copy(quat);            // slight resting curl
     simT = 0; settled = false;
     photo.position.copy(pos); photo.quaternion.copy(quat);
