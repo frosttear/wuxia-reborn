@@ -1943,15 +1943,20 @@ function(t,e){"object"==typeof exports&&"undefined"!=typeof module?e(exports):"f
   renderer.setPixelRatio(Math.min(devicePixelRatio||1, 2));
   renderer.setSize(W, H);
   renderer.shadowMap.enabled = true;
-  renderer.shadowMap.type = THREE.PCFSoftShadowMap;
+  /* Hard-edged, not soft: an illustrated room has sun patches with crisp
+     outlines, and the cel ramp below would only band a soft penumbra anyway. */
+  renderer.shadowMap.type = THREE.PCFShadowMap;
   renderer.outputColorSpace = THREE.SRGBColorSpace;
-  renderer.toneMapping = THREE.ACESFilmicToneMapping;
-  renderer.toneMappingExposure = 1.24;
+  /* Linear, not ACES: filmic tone mapping greys and desaturates exactly the
+     clean, bright palette the anime look depends on, and a window that clips
+     to white is the effect we want. */
+  renderer.toneMapping = THREE.LinearToneMapping;
+  renderer.toneMappingExposure = 1.0;
   host.appendChild(renderer.domElement);
 
   var scene = new THREE.Scene();
-  scene.background = new THREE.Color(0xd8c9b2);
-  scene.fog = new THREE.Fog(0xd6c6ad, 2.6, 7.0);
+  scene.background = new THREE.Color(0xefe9df);
+  /* no fog: illustration keeps the far wall as crisp as the near floor */
 
   /* Fixed camera. It must show table top -> table edge -> air -> floor, so it
      sits above the table looking slightly down, with the floor well in frame. */
@@ -1998,23 +2003,41 @@ function(t,e){"object"==typeof exports&&"undefined"!=typeof module?e(exports):"f
   frameCamera();
 
   /* ---------- light ---------- */
-  scene.add(new THREE.HemisphereLight(0xfff2dc, 0x7d6244, 1.05));
-  /* Daylight enters through the window on the back wall, so the light has to
-     sit BEHIND that window and shine forward into the room. It used to be off
-     the front-right, which is why the shadows looked wrong: they fell away
-     from the camera while the only visible light source was behind the desk. */
-  var sun = new THREE.DirectionalLight(0xffeccc, 2.35);
-  sun.position.set(2.35, 2.25, -1.55);
+  /* The room is mostly lit by bounce, which in an illustration is a bright,
+     warm, almost flat tone -- so the ambient carries most of the scene. */
+  scene.add(new THREE.HemisphereLight(0xfff7ec, 0xc89a72, 1.55));
+  /* Daylight comes in ONLY through the window: the back wall is solid and
+     casts shadows, so the sun reaches the desk and floor as window-shaped
+     patches, glazing bars and all. The direction is chosen so the patch lands
+     on the floor just in front of the desk, where the photograph comes down. */
+  var SUN_DIR = new THREE.Vector3(-0.30, -0.62, 1.0).normalize();
+  var SUN_AIM = new THREE.Vector3(-0.20, 0, -0.52);
+  var sun = new THREE.DirectionalLight(0xfff1d6, 2.7);
+  sun.position.copy(SUN_AIM).addScaledVector(SUN_DIR, -8);
+  sun.target.position.copy(SUN_AIM);
   sun.castShadow = true;
   sun.shadow.mapSize.set(2048, 2048);
-  sun.shadow.camera.near = 0.5; sun.shadow.camera.far = 11;
-  sun.shadow.camera.left = -2.8; sun.shadow.camera.right = 2.8;
-  sun.shadow.camera.top = 2.8;   sun.shadow.camera.bottom = -2.8;
-  sun.shadow.bias = -0.0006;
-  sun.shadow.radius = 3.2;
-  scene.add(sun);
-  var fill = new THREE.DirectionalLight(0xe8eeff, 0.55);
+  sun.shadow.camera.near = 0.5; sun.shadow.camera.far = 16;
+  /* wide enough that every visible bit of floor has the wall inside the
+     shadow camera -- outside it the sun would leak straight through */
+  sun.shadow.camera.left = -4.2; sun.shadow.camera.right = 4.2;
+  sun.shadow.camera.top = 4.2;   sun.shadow.camera.bottom = -4.2;
+  /* generous normal bias: nearly everything in the room sits in the wall's
+     shadow, and a 4mm shadow texel otherwise speckles every edge that faces
+     the sun -- the ink pass then draws the speckles as dotted lines */
+  sun.shadow.bias = -0.001;
+  sun.shadow.normalBias = 0.028;
+  scene.add(sun); scene.add(sun.target);
+  var fill = new THREE.DirectionalLight(0xeef2ff, 0.32);
   fill.position.set(-1.3, 1.0, 1.6); scene.add(fill);
+
+  /* Cel ramp shared by every toon material: shadow side, half tone, lit. */
+  var toonRamp = new THREE.DataTexture(
+    new Uint8Array([120,120,120,255, 120,120,120,255, 205,205,205,255, 255,255,255,255]),
+    4, 1, THREE.RGBAFormat);
+  toonRamp.minFilter = toonRamp.magFilter = THREE.NearestFilter;
+  toonRamp.generateMipmaps = false;
+  toonRamp.needsUpdate = true;
 
   /* ---------- procedural wood ---------- */
   function woodTexture(base, dark, scale, rough){
@@ -2045,43 +2068,109 @@ function(t,e){"object"==typeof exports&&"undefined"!=typeof module?e(exports):"f
   /* ---------- room ---------- */
   var FLOOR_Y = 0, TABLE_Y = 0.74;
 
-  var floorTex = woodTexture('#9a6c45', '#4a2d18', 5, 1);
+  /* Illustrated floorboards: long planks running away from the viewer, each a
+     slightly different flat tone, separated by a drawn seam -- the boards
+     themselves are what read as "wooden floor" in a drawing, not grain. */
+  function plankTexture(){
+    var N = 1024, PLANKS = 8, pw = N/PLANKS;
+    var c = document.createElement('canvas'); c.width = N; c.height = N;
+    var g = c.getContext('2d');
+    var seed = 7;
+    function rnd(){ seed = (seed*1664525 + 1013904223) >>> 0; return seed/4294967296; }
+    var tones = ['#c48b56','#c18853','#c78f5a','#be8550','#c58c57'];
+    for (var p=0; p<PLANKS; p++){
+      var x = p*pw, y = rnd()*N, len = N*(0.55 + rnd()*0.4);
+      /* two boards per column, butted end to end at a random point */
+      [[y, len],[y+len, N-len]].forEach(function(seg){
+        g.fillStyle = tones[(rnd()*tones.length)|0];
+        g.fillRect(x, seg[0], pw, seg[1]);
+        g.fillRect(x, seg[0]-N, pw, seg[1]);
+        g.fillStyle = 'rgba(92,52,24,0.55)';
+        g.fillRect(x, (seg[0]+seg[1]) % N - 1, pw, 2);
+      });
+      /* a few long, sparse grain strokes, drawn rather than noisy */
+      g.strokeStyle = 'rgba(120,70,34,0.16)'; g.lineWidth = 1.4;
+      for (var k=0; k<3; k++){
+        var gx = x + 12 + rnd()*(pw-24);
+        g.beginPath(); g.moveTo(gx, 0);
+        g.bezierCurveTo(gx+6, N*0.3, gx-6, N*0.6, gx+3, N); g.stroke();
+      }
+      /* the seam between boards, with a lit edge beside it */
+      g.fillStyle = 'rgba(84,46,20,0.75)'; g.fillRect(x, 0, 2, N);
+      g.fillStyle = 'rgba(255,214,160,0.20)'; g.fillRect(x+2, 0, 2, N);
+    }
+    var t = new THREE.CanvasTexture(c);
+    t.wrapS = t.wrapT = THREE.RepeatWrapping;
+    t.repeat.set(12.5, 12.5);           // ~14cm boards
+    t.colorSpace = THREE.SRGBColorSpace;
+    t.anisotropy = 8;
+    return t;
+  }
   var floor = new THREE.Mesh(
     new THREE.PlaneGeometry(14, 14),
-    new THREE.MeshStandardMaterial({map:floorTex, roughness:0.72, metalness:0.02})
+    new THREE.MeshStandardMaterial({map:plankTexture()})
   );
   floor.rotation.x = -Math.PI/2;
   floor.position.y = FLOOR_Y;
   floor.receiveShadow = true;
   scene.add(floor);
 
-  var wall = new THREE.Mesh(
-    new THREE.PlaneGeometry(14, 6),
-    new THREE.MeshStandardMaterial({color:0xe3d7c2, roughness:0.95})
-  );
-  wall.position.set(0, 3, -2.15);
-  wall.receiveShadow = true;
-  scene.add(wall);
+  /* The back wall is SOLID and has a real hole for the window. It used to be
+     a plane the sun passed straight through, which lit the whole room evenly;
+     now the only sunlight inside is what the opening lets in. Built before the
+     window constants exist, so the opening is spelled out here and must match
+     WIN_X / WIN_Y / WIN_W / WIN_H below. */
+  var wallMat = new THREE.MeshStandardMaterial({color:0xeae6e0});
+  (function(){
+    /* 4mm inside the opening, so the hole's edges never sit exactly on the
+       window reveals -- coplanar faces z-fight and the ink pass draws it */
+    var x0 = 0.30-0.44+0.004, x1 = 0.30+0.44-0.004, y0 = 1.00-0.35+0.004, y1 = 1.00+0.35-0.004;
+    var T = 0.12, Z = -2.15 - T/2;
+    [[-7, x0, 0, 6], [x1, 7, 0, 6], [x0, x1, 0, y0], [x0, x1, y1, 6]].forEach(function(r){
+      var m = new THREE.Mesh(new THREE.BoxGeometry(r[1]-r[0], r[3]-r[2], T), wallMat);
+      m.position.set((r[0]+r[1])/2, (r[2]+r[3])/2, Z);
+      /* casts (it is what shapes the light) but does not receive: the sun is
+         behind it, so its room face would only collect shadow acne */
+      m.castShadow = true; m.receiveShadow = false;
+      scene.add(m);
+    });
+  })();
+  /* skirting board, which gives the wall/floor junction a drawn line */
+  var skirt = new THREE.Mesh(new THREE.BoxGeometry(14, 0.075, 0.03),
+    new THREE.MeshStandardMaterial({color:0xf6f2ea}));
+  skirt.position.set(0, 0.0375, -2.15 + 0.015);
+  skirt.receiveShadow = true; scene.add(skirt);
 
   /* Table: top, apron, four legs -- a real box, so the edge the photo has to
      clear is genuinely there. */
-  var tableTex = woodTexture('#b07c4e', '#5a3620', 2, 1);
-  var tableMat = new THREE.MeshStandardMaterial({map:tableTex, roughness:0.5, metalness:0.03});
-  var legMat   = new THREE.MeshStandardMaterial({color:0x6d4527, roughness:0.62});
+  /* A light folding table: pale wood top on slim crossed steel legs. Same top
+     slab as before -- the contact solver only knows about the top. */
+  var tableTex = woodTexture('#dcab74', '#b07a45', 2, 1);
+  var tableMat = new THREE.MeshStandardMaterial({map:tableTex});
+  var legMat   = new THREE.MeshStandardMaterial({color:0xc4c7cc});
   var table = new THREE.Group();
   var TW = 1.30, TD = 0.66, TT = 0.035;
   var TZ = -1.42;   // desk pushed back against the wall
   var topM = new THREE.Mesh(new THREE.BoxGeometry(TW, TT, TD), tableMat);
   topM.position.set(0, TABLE_Y - TT/2, TZ);
   topM.castShadow = true; topM.receiveShadow = true; table.add(topM);
-  var apron = new THREE.Mesh(new THREE.BoxGeometry(TW*0.92, 0.07, TD*0.86),
-              new THREE.MeshStandardMaterial({color:0x7d5331, roughness:0.68}));
-  apron.position.set(0, TABLE_Y - TT - 0.045, TZ);
+  var apron = new THREE.Mesh(new THREE.BoxGeometry(TW*0.94, 0.022, TD*0.90),
+              new THREE.MeshStandardMaterial({color:0xb98652}));
+  apron.position.set(0, TABLE_Y - TT - 0.011, TZ);
   apron.castShadow = true; table.add(apron);
-  [[-1,-1],[1,-1],[-1,1],[1,1]].forEach(function(s){
-    var leg = new THREE.Mesh(new THREE.BoxGeometry(0.055, TABLE_Y-TT, 0.055), legMat);
-    leg.position.set(s[0]*(TW/2-0.06), (TABLE_Y-TT)/2, TZ + s[1]*(TD/2-0.06));
-    leg.castShadow = true; leg.receiveShadow = true; table.add(leg);
+  function bar(a, b, r, mat, parent){
+    var dir = new THREE.Vector3().subVectors(b, a), L = dir.length();
+    var m = new THREE.Mesh(new THREE.CylinderGeometry(r, r, L, 10), mat);
+    m.position.copy(a).addScaledVector(dir, 0.5);
+    m.quaternion.setFromUnitVectors(new THREE.Vector3(0,1,0), dir.normalize());
+    m.castShadow = true; m.receiveShadow = true; parent.add(m); return m;
+  }
+  /* an X at each end, crossing front-to-back, with a foot rail on the floor */
+  [-1, 1].forEach(function(sx){
+    var x = sx*(TW/2 - 0.09), yT = TABLE_Y - TT - 0.022, zf = TZ + TD/2 - 0.05, zb = TZ - TD/2 + 0.05;
+    bar(new THREE.Vector3(x, 0.012, zf), new THREE.Vector3(x, yT, zb), 0.012, legMat, table);
+    bar(new THREE.Vector3(x, 0.012, zb), new THREE.Vector3(x, yT, zf), 0.012, legMat, table);
+    bar(new THREE.Vector3(x, 0.012, zf+0.02), new THREE.Vector3(x, 0.012, zb-0.02), 0.013, legMat, table);
   });
   scene.add(table);
   /* the front edge of the table top, in world Z -- the lip the photo goes over */
@@ -2191,124 +2280,129 @@ function(t,e){"object"==typeof exports&&"undefined"!=typeof module?e(exports):"f
   plantG.rotation.y = 0.5;
   scene.add(plantG);
 
+  /* ---------- the rest of the room ---------- */
+  /* A lived-in room, not a stage with one desk. Everything here sits on the
+     back-left wall or the right of the floor -- clear of the photograph's
+     flight, which leaves the desk to the front-left -- and none of it is known
+     to the contact solver. */
+  function prop(geo, color, x, y, z, parent){
+    var m = new THREE.Mesh(geo, new THREE.MeshStandardMaterial({color:color}));
+    m.position.set(x, y, z); m.castShadow = true; m.receiveShadow = true;
+    (parent || scene).add(m); return m;
+  }
+  /* low bookshelf against the wall, two open shelves of paperbacks */
+  var shelf = new THREE.Group();
+  var SH_W = 0.92, SH_H = 0.62, SH_D = 0.28, ST = 0.022, shelfWood = 0xd09a60;
+  prop(new THREE.BoxGeometry(SH_W, ST, SH_D), shelfWood, 0, SH_H - ST/2, 0, shelf);
+  prop(new THREE.BoxGeometry(SH_W, ST, SH_D), shelfWood, 0, SH_H/2, 0, shelf);
+  prop(new THREE.BoxGeometry(SH_W, ST, SH_D), shelfWood, 0, 0.03, 0, shelf);
+  prop(new THREE.BoxGeometry(ST, SH_H, SH_D), shelfWood, -SH_W/2 + ST/2, SH_H/2, 0, shelf);
+  prop(new THREE.BoxGeometry(ST, SH_H, SH_D), shelfWood,  SH_W/2 - ST/2, SH_H/2, 0, shelf);
+  prop(new THREE.BoxGeometry(ST, SH_H, SH_D), shelfWood, 0.06, SH_H/2, 0, shelf);
+  prop(new THREE.BoxGeometry(SH_W, SH_H, 0.01), 0xb98650, 0, SH_H/2, -SH_D/2 + 0.005, shelf);
+  var spines = [0x5d7a8c, 0xc9b48a, 0x8c4b3f, 0x6f8a5c, 0xe8e0cf, 0x46607a, 0xb7865a, 0x9a9a92, 0x7a5c84];
+  (function(){
+    var s = 3;
+    function rnd(){ s = (s*1664525 + 1013904223) >>> 0; return s/4294967296; }
+    [[0.041, SH_H/2 - ST - 0.03], [SH_H/2 + ST/2, SH_H - ST - 0.03]].forEach(function(row){
+      [[-SH_W/2 + ST, 0.06 - ST/2], [0.06 + ST/2, SH_W/2 - ST]].forEach(function(bay){
+        var x = bay[0] + 0.004, end = bay[1] - rnd()*0.10;   // leave a gap at the end
+        while (x < end - 0.02){
+          var w = 0.016 + rnd()*0.018, h = (row[1] - row[0]) * (0.72 + rnd()*0.26);
+          prop(new THREE.BoxGeometry(w, h, 0.17 + rnd()*0.05),
+               spines[(rnd()*spines.length)|0], x + w/2, row[0] + h/2, 0.02, shelf);
+          x += w;                    // butted: a gap shows the back panel as slivers
+        }
+      });
+    });
+  })();
+  shelf.position.set(-1.25, 0, -2.15 + SH_D/2 + 0.01);
+  scene.add(shelf);
+  /* an old box television on top of it */
+  var tv = new THREE.Group();
+  prop(new THREE.BoxGeometry(0.34, 0.25, 0.27), 0xb8b6ae, 0, 0.125, 0, tv);
+  prop(new THREE.BoxGeometry(0.27, 0.19, 0.01), 0x4b5258, -0.012, 0.13, 0.136, tv);
+  prop(new THREE.BoxGeometry(0.035, 0.012, 0.01), 0x7d7f7c, 0.142, 0.05, 0.136, tv);
+  tv.position.set(-1.40, SH_H, -2.15 + SH_D/2 + 0.01);
+  tv.rotation.y = 0.08;
+  scene.add(tv);
+  /* a tall narrow mirror, and a few notes pinned to the wall */
+  var mirror = new THREE.Group();
+  prop(new THREE.BoxGeometry(0.17, 0.36, 0.014), 0x6e5844, 0, 0, 0, mirror);
+  /* the glass with its two drawn highlight streaks, painted rather than
+     modelled -- thin boxes alias into dotted ink lines */
+  var mc = document.createElement('canvas'); mc.width = 64; mc.height = 160;
+  var mg = mc.getContext('2d');
+  mg.fillStyle = '#c9d2d6'; mg.fillRect(0, 0, 64, 160);
+  mg.fillStyle = '#f4f7f8';
+  [[14, 9], [36, 6]].forEach(function(st){
+    mg.beginPath(); mg.moveTo(st[0], 160); mg.lineTo(st[0]+st[1], 160);
+    mg.lineTo(st[0]+st[1]+34, 0); mg.lineTo(st[0]+34, 0); mg.closePath(); mg.fill();
+  });
+  var mtex = new THREE.CanvasTexture(mc); mtex.colorSpace = THREE.SRGBColorSpace;
+  var glassM = new THREE.Mesh(new THREE.PlaneGeometry(0.14, 0.33),
+    new THREE.MeshStandardMaterial({map:mtex}));
+  glassM.position.z = 0.0075; mirror.add(glassM);
+  mirror.position.set(-1.70, 1.20, -2.15 + 0.008);
+  scene.add(mirror);
+  [[-0.92,1.14,0.10],[-0.83,1.17,-0.06],[-0.88,1.05,0.04],[-0.78,1.07,0.12],[-0.70,1.15,-0.03]].forEach(function(n, i){
+    var note = prop(new THREE.BoxGeometry(0.065, 0.065, 0.002), i % 2 ? 0xfbf7ea : 0xf3ecd8,
+                    n[0], n[1], -2.15 + 0.002);
+    note.rotation.z = n[2]; note.castShadow = false;
+  });
+  /* on the floor to the right: a cushion and two books left lying about */
+  var cushionGeo = new THREE.SphereGeometry(0.5, 28, 18);
+  cushionGeo.scale(0.46, 0.09, 0.32);
+  var cushion = prop(cushionGeo, 0xf2eee6, 0.98, 0.045, -0.82);
+  cushion.rotation.y = 0.5;
+  var fb1 = prop(new THREE.BoxGeometry(0.17, 0.022, 0.23), 0x7f9a6f, 0.60, 0.011, -0.40);
+  fb1.rotation.y = -0.45;
+  var fb2 = prop(new THREE.BoxGeometry(0.16, 0.02, 0.22), 0x6d8796, 0.47, 0.010, -0.18);
+  fb2.rotation.y = 0.25;
+
   /* ---------- window ---------- */
   /* Set into the back wall, on the side the draught comes from, so the wind in
      the room has a visible source. */
   var WIN_X = 0.30, WIN_Y = 1.00, WIN_Z = -2.13;
   var WIN_W = 0.88, WIN_H = 0.70;
   var winG = new THREE.Group();
-  /* The view outside. Rendered per PIXEL rather than assembled from soft
-     discs -- circles read as a cartoon, and stacking translucent ones washed
-     the whole opening out to a haze with no sky left in it. What is here is a
-     graded blue sky, fBm cumulus lit from the same side as the room's key
-     light, a cloud deck put into perspective so it compresses towards the
-     horizon, and a treeline flattened by aerial perspective. The lattice is
-     seeded, so the view is the same on every visit instead of being a lottery. */
+  /* The view outside: a plain blue sky drawn in the same flat, illustrated
+     style as the room -- a clean gradient and a few cel-shaded clouds with
+     crisp edges. No noise and no haze, which blurred the whole opening. */
   function outsideTexture(){
-    var N = 768;
+    var N = 1024;
     var c = document.createElement('canvas'); c.width = N; c.height = N;
     var g = c.getContext('2d');
-    var img = g.createImageData(N, N), D = img.data;
 
-    var seed = 20260929;
-    function rnd(){ seed = (seed*1664525 + 1013904223) & 0x7fffffff; return seed/0x7fffffff; }
-    var PERM = new Uint8Array(512);
-    (function(){
-      var p = new Uint8Array(256), i, j, t;
-      for (i=0;i<256;i++) p[i] = i;
-      for (i=255;i>0;i--){ j = (rnd()*(i+1))|0; t = p[i]; p[i] = p[j]; p[j] = t; }
-      for (i=0;i<512;i++) PERM[i] = p[i & 255];
-    })();
-    function fade(t){ return t*t*t*(t*(t*6-15)+10); }
-    function lerp(a,b,t){ return a + (b-a)*t; }
-    function smooth(e0,e1,x){ var t=(x-e0)/(e1-e0); t = t<0?0:(t>1?1:t); return t*t*(3-2*t); }
-    function hash(a,b){ return PERM[(PERM[a & 255] + (b & 255)) & 511] / 255; }
-    function vnoise(x,y){
-      var xi = Math.floor(x), yi = Math.floor(y);
-      var u = fade(x-xi), v = fade(y-yi);
-      return lerp(lerp(hash(xi,yi),   hash(xi+1,yi),   u),
-                  lerp(hash(xi,yi+1), hash(xi+1,yi+1), u), v);
-    }
-    function fbm(x,y){
-      var sum=0, amp=0.5, f=1;
-      for (var o=0;o<5;o++){ sum += amp*vnoise(x*f, y*f); f *= 2.03; amp *= 0.5; }
-      return sum / 0.96875;
-    }
+    var sky = g.createLinearGradient(0, 0, 0, N);
+    sky.addColorStop(0.00, '#4f93d8');
+    sky.addColorStop(0.60, '#7db6e8');
+    sky.addColorStop(1.00, '#b5d8f2');
+    g.fillStyle = sky; g.fillRect(0, 0, N, N);
 
-    /* Real blue overhead thinning to haze at the horizon. The old gradient
-       started at #7fb3d9 and was pale by 40% height, which is why there was
-       never any actual blue in the window. */
-    var STOPS = [[0.00, 52,108,192],[0.30, 88,146,212],[0.58,142,184,224],
-                 [0.74,190,214,232],[0.86,222,231,233],[1.00,214,220,214]];
-    function skyAt(v){
-      for (var i=1;i<STOPS.length;i++){
-        if (v <= STOPS[i][0] || i === STOPS.length-1){
-          var a = STOPS[i-1], b = STOPS[i];
-          var t = (v-a[0])/(b[0]-a[0]); t = t<0?0:(t>1?1:t);
-          return [lerp(a[1],b[1],t), lerp(a[2],b[2],t), lerp(a[3],b[3],t)];
-        }
+    /* Each cloud is a row of overlapping puffs: a light blue-grey underside,
+       then the same puffs in white nudged up, so the base reads as shadow. */
+    function cloud(x, y, s){
+      var puffs = [[-1.6,0.25,0.75],[-0.8,-0.15,1.0],[0.1,-0.35,1.15],[1.0,-0.05,0.95],[1.8,0.3,0.7]];
+      function draw(dy, colour){
+        g.fillStyle = colour; g.beginPath();
+        puffs.forEach(function(p){
+          g.moveTo(x + p[0]*s + p[2]*s, y + p[1]*s + dy);
+          g.arc(x + p[0]*s, y + p[1]*s + dy, p[2]*s, 0, Math.PI*2);
+        });
+        g.rect(x - 1.6*s, y + dy, 3.4*s, 0.95*s);
+        g.fill();
       }
+      draw(0, '#d6e4f0');
+      draw(-0.22*s, '#ffffff');
     }
-
-    var HOR = 0.80;                 // horizon, in texture space
-    var SUNU = 0.70, SUNV = 0.24;   // the side the key light actually comes from
-    var o = 0;
-    for (var py=0; py<N; py++){
-      var v = py/(N-1);
-      var sky = skyAt(v), sr = sky[0], sg = sky[1], sb = sky[2];
-      /* A flat cloud deck seen from below: rows of equal height are equal
-         distance, so the texture scale depends on v alone. */
-      var d  = HOR - v;
-      var pk = d > 0 ? 0.92/(d + 0.11) : 0;
-      var cy = pk*0.55 + 4.0;
-      var cfade = smooth(0.0, 0.16, d);
-      for (var px=0; px<N; px++){
-        var u = px/(N-1);
-        var r = sr, gg = sg, bb = sb;
-
-        if (d > 0){
-          var cx = u*pk*1.7 + 12.0;
-          var n  = fbm(cx, cy);
-          var cov = smooth(0.50, 0.72, n);
-          if (cov > 0.001){
-            /* Shade from the gradient towards the sun: a sample taken sunward
-               that is thinner means this part of the cloud faces the light. */
-            var n2 = fbm(cx + 0.30, cy - 0.30);
-            var sh = smooth(0, 1, 0.55 + 2.4*(n - n2));
-            var cr = lerp(146,255,sh), cg2 = lerp(155,255,sh), cb = lerp(170,255,sh);
-            var a = cov * cfade * 0.95;
-            r = lerp(r, cr, a); gg = lerp(gg, cg2, a); bb = lerp(bb, cb, a);
-          }
-        } else {
-          /* Distant trees. Aerial perspective, not a green cut-out: most of
-             the sky's haze sits in front of them, so they arrive low-contrast
-             and desaturated rather than as a bright green band. */
-          var tn  = fbm(u*6.5 + 3.1, 40.0);
-          var top = HOR + 0.010 - tn*0.034;
-          if (v > top){
-            var deep = smooth(0, 0.06, v - top);
-            var tr = lerp(126,92,deep), tg = lerp(142,112,deep), tb = lerp(120,92,deep);
-            r = lerp(tr, r, 0.44); gg = lerp(tg, gg, 0.44); bb = lerp(tb, bb, 0.44);
-          }
-        }
-
-        /* Sun glow last, so it sits over the cloud tops the way it really does. */
-        var du = u - SUNU, dv = v - SUNV;
-        /* Tight and gentle. At 0.50 over a wide radius the glow bleached the
-           whole right-hand pane back to the white haze this was meant to
-           replace. */
-        var glow = Math.exp(-(du*du + dv*dv)/0.032) * 0.32;
-        if (glow > 0.002){
-          r += (255-r)*glow; gg += (253-gg)*glow; bb += (238-bb)*glow;
-        }
-
-        D[o++] = r; D[o++] = gg; D[o++] = bb; D[o++] = 255;
-      }
-    }
-    g.putImageData(img, 0, 0);
+    cloud(N*0.28, N*0.30, N*0.055);
+    cloud(N*0.74, N*0.20, N*0.042);
+    cloud(N*0.60, N*0.56, N*0.034);
 
     var t = new THREE.CanvasTexture(c);
     t.colorSpace = THREE.SRGBColorSpace;
+    t.anisotropy = 8;
     return t;
   }
   /* The outside shows through the WHOLE opening -- the left half is open air,
@@ -2437,13 +2531,14 @@ function(t,e){"object"==typeof exports&&"undefined"!=typeof module?e(exports):"f
   /* Silk, and bright. It was reading dark for two reasons: it was 10%
      transparent over a wall in its own shadow, and it had no self-lift at all,
      so every fold that turned away from the window went muddy. */
-  var curMat = new THREE.MeshPhysicalMaterial({
-    color:0xfffdf7,
-    roughness:0.56, metalness:0.0,
-    sheen:1.0, sheenRoughness:0.22, sheenColor:new THREE.Color(0xfff6e4),
-    emissive:new THREE.Color(0x3a3327), emissiveIntensity:1.0,
+  /* Restyled as sheer voile, as in an illustrated room: white, lit from
+     within by the window behind it, and see-through enough that the wall and
+     the light show through the folds. */
+  var curMat = new THREE.MeshStandardMaterial({
+    color:0xffffff,
+    emissive:new THREE.Color(0x6a655c), emissiveIntensity:1.0,
     side:THREE.DoubleSide,
-    transparent:true, opacity:0.985
+    transparent:true, opacity:0.62, depthWrite:false
   });
   [[WIN_X-WIN_W/2-0.22, -1],[WIN_X+WIN_W/2+0.22, 1]].forEach(function(cfg){
     var g = new THREE.PlaneGeometry(CUR_W, CUR_H, CUR_SX, CUR_SY);
@@ -2451,7 +2546,8 @@ function(t,e){"object"==typeof exports&&"undefined"!=typeof module?e(exports):"f
     /* Hung from the rod and kept ABOVE the desk line: at the old height most
        of each panel sat behind the desk, which is why they could not be seen. */
     m.position.set(cfg[0], WIN_Y+WIN_H/2+0.15-CUR_H/2 + 0.22, WIN_Z+0.24);
-    m.castShadow = true; m.receiveShadow = true;
+    /* sheer: it would cast a solid black shadow, which voile does not */
+    m.castShadow = false; m.receiveShadow = true;
     scene.add(m);
     curtains.push({mesh:m, base:g.attributes.position.array.slice(0),
                    attr:g.attributes.position, side:cfg[1]});
@@ -2490,6 +2586,74 @@ function(t,e){"object"==typeof exports&&"undefined"!=typeof module?e(exports):"f
       c.mesh.rotation.y =  c.side * 0.05 * (0.4 + strength);
     }
   }
+
+  /* ---------- light through the window ---------- */
+  /* Faint additive sheets laid along the sun's direction, so the air between
+     the window and the patch on the floor glows the way it does in the
+     illustration. Bright at the glass, gone before the floor. */
+  var shafts = [];
+  (function(){
+    var c = document.createElement('canvas'); c.width = 64; c.height = 256;
+    var g = c.getContext('2d');
+    var along = g.createLinearGradient(0, 0, 0, 256);
+    along.addColorStop(0, 'rgba(255,255,255,1)');
+    along.addColorStop(0.45, 'rgba(255,255,255,0.45)');
+    along.addColorStop(1, 'rgba(255,255,255,0)');
+    g.fillStyle = along; g.fillRect(0, 0, 64, 256);
+    g.globalCompositeOperation = 'destination-in';
+    var across = g.createLinearGradient(0, 0, 64, 0);
+    across.addColorStop(0, 'rgba(0,0,0,0)'); across.addColorStop(0.25, 'rgba(0,0,0,1)');
+    across.addColorStop(0.75, 'rgba(0,0,0,1)'); across.addColorStop(1, 'rgba(0,0,0,0)');
+    g.fillStyle = across; g.fillRect(0, 0, 64, 256);
+    var tex = new THREE.CanvasTexture(c);
+    var mat = new THREE.MeshBasicMaterial({map:tex, color:0xfff0cc, transparent:true, opacity:0.10,
+      blending:THREE.AdditiveBlending, depthWrite:false, side:THREE.DoubleSide});
+    var x0 = WIN_X - WIN_W/2, x1 = WIN_X + WIN_W/2, y0 = WIN_Y - WIN_H/2, y1 = WIN_Y + WIN_H/2;
+    var z = WIN_Z + 0.03, L = 1.9;
+    function sheet(a, b){
+      var c2 = b.clone().addScaledVector(SUN_DIR, L), d2 = a.clone().addScaledVector(SUN_DIR, L);
+      var geo = new THREE.BufferGeometry();
+      geo.setAttribute('position', new THREE.Float32BufferAttribute(
+        [a.x,a.y,a.z, b.x,b.y,b.z, c2.x,c2.y,c2.z, d2.x,d2.y,d2.z], 3));
+      geo.setAttribute('uv', new THREE.Float32BufferAttribute([0,1, 1,1, 1,0, 0,0], 2));
+      geo.setIndex([0,1,2, 0,2,3]);
+      var m = new THREE.Mesh(geo, mat); m.renderOrder = 5;
+      scene.add(m); shafts.push(m);
+    }
+    [0.25, 0.5, 0.75].forEach(function(f){
+      var y = y0 + (y1-y0)*f, x = x0 + (x1-x0)*f;
+      sheet(new THREE.Vector3(x0, y, z), new THREE.Vector3(x1, y, z));
+      sheet(new THREE.Vector3(x, y0, z), new THREE.Vector3(x, y1, z));
+    });
+  })();
+
+  /* ---------- cel shading ---------- */
+  /* Every lit surface in the room becomes a toon material on the shared ramp,
+     keeping its colour, texture and transparency. Done here, after the room
+     is built and before the photograph exists: the print is a real photo and
+     keeps its own physically lit material. */
+  (function(){
+    var cache = new Map();
+    function toToon(m){
+      if (!m || !m.isMeshStandardMaterial) return m;
+      if (cache.has(m)) return cache.get(m);
+      var t = new THREE.MeshToonMaterial({
+        color:m.color, map:m.map, gradientMap:toonRamp,
+        emissive:m.emissive, emissiveIntensity:m.emissiveIntensity,
+        transparent:m.transparent, opacity:m.opacity, side:m.side, depthWrite:m.depthWrite
+      });
+      cache.set(m, t); return t;
+    }
+    scene.traverse(function(o){
+      if (!o.isMesh) return;
+      o.material = Array.isArray(o.material) ? o.material.map(toToon) : toToon(o.material);
+    });
+  })();
+
+  /* One plain render per frame. The screen-space ink pass drew the whole room
+     twice, supersampled, and rebuilt a 4096 shadow map every frame -- enough
+     to drop the page to a frame or two a second, so the fall looked frozen. */
+  function renderFrame(){ renderer.render(scene, camera); }
 
   /* ---------- the photograph ---------- */
   var PW, PH_, THICK = 0.00045;
@@ -2984,7 +3148,11 @@ function(t,e){"object"==typeof exports&&"undefined"!=typeof module?e(exports):"f
   function frame(now){
     raf = requestAnimationFrame(frame);
     var dt = (now - last)/1000; last = now;
-    if (!(dt > 0) || dt > 0.25) dt = 1/60;
+    /* A slow frame still advances real time (capped), so a heavy page plays
+       the fall at a lower frame rate instead of freezing it. Only a long gap,
+       such as a background tab, falls back to a single tick. */
+    if (!(dt > 0) || dt > 1) dt = 1/60;
+    else if (dt > 0.1) dt = 0.1;
 
     if (running && !picked && !animating){
       /* One dial for pace. Scaling time leaves the trajectory, the tumble count
@@ -3007,7 +3175,7 @@ function(t,e){"object"==typeof exports&&"undefined"!=typeof module?e(exports):"f
       photo.quaternion.slerpQuaternions(fromQ, toQ, e);
       if (animT >= 1) animating = false;
     }
-    renderer.render(scene, camera);
+    renderFrame();
   }
 
   function start(){
@@ -3072,6 +3240,77 @@ function(t,e){"object"==typeof exports&&"undefined"!=typeof module?e(exports):"f
   raf = requestAnimationFrame(frame);
 })();
 
+</script>
+<script id="bg-music">
+/* Background sound for the page: a soft, low-passed wind bed and a single
+   warm piano note, synthesised with the Web Audio API -- no audio file.
+   Browsers only allow sound after a user gesture, so it starts on the
+   reader's first click anywhere on the page. */
+(function(){
+  // 创建网页音频上下文 (Web Audio API)
+  const AudioContext = window.AudioContext || window.webkitAudioContext;
+  if (!AudioContext) return;
+  let audioCtx;
+
+  function initMusic() {
+    audioCtx = new AudioContext();
+
+    // 1. 生成温暖的背景粉红噪音（模拟微风）
+    const bufferSize = 2 * audioCtx.sampleRate,
+        noiseBuffer = audioCtx.createBuffer(1, bufferSize, audioCtx.sampleRate),
+        output = noiseBuffer.getChannelData(0);
+    for (let i = 0; i < bufferSize; i++) {
+      output[i] = Math.random() * 2 - 1;
+    }
+
+    const whiteNoise = audioCtx.createBufferSource();
+    whiteNoise.buffer = noiseBuffer;
+    whiteNoise.loop = true;
+
+    // 用低通滤波器将噪音变得温和，像柔和的风声
+    const filter = audioCtx.createBiquadFilter();
+    filter.type = 'lowpass';
+    filter.frequency.value = 400; // 模拟低沉的穿堂风
+
+    const windGain = audioCtx.createGain();
+    windGain.gain.value = 0.05; // 风声作为极其温柔的背景
+
+    whiteNoise.connect(filter);
+    filter.connect(windGain);
+    windGain.connect(audioCtx.destination);
+    whiteNoise.start();
+
+    // 2. 模拟钢琴单音生成的函数
+    // Scheduled relative to the context clock: an absolute 0.5 is already in
+    // the past if the context has been running for a moment.
+    playPianoNote(587.33, audioCtx.currentTime + 0.5); // 播放一个温暖的D5音
+  }
+
+  // 简单的钢琴物理建模合成音色
+  function playPianoNote(frequency, startTime) {
+    const osc = audioCtx.createOscillator();
+    const gainNode = audioCtx.createGain();
+
+    osc.type = 'sine'; // 正弦波，提供纯净的基音
+    osc.frequency.setValueAtTime(frequency, startTime);
+
+    // 钢琴特有的“击弦-衰减”包络
+    gainNode.gain.setValueAtTime(0, startTime);
+    gainNode.gain.linearRampToValueAtTime(0.3, startTime + 0.02); // 极快的击弦
+    gainNode.gain.exponentialRampToValueAtTime(0.001, startTime + 3.0); // 漫长的余音衰减
+
+    osc.connect(gainNode);
+    gainNode.connect(audioCtx.destination);
+
+    osc.start(startTime);
+    osc.stop(startTime + 3.0);
+  }
+
+  // 当用户首次点击页面时启动音乐（浏览器安全合规要求）
+  document.addEventListener('click', () => {
+    if (!audioCtx) initMusic();
+  });
+})();
 </script>
 </body>
 </html>
