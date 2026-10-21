@@ -2968,10 +2968,12 @@ function(t,e){"object"==typeof exports&&"undefined"!=typeof module?e(exports):"f
         lifted = true;
         omega.copy(peelAxis).multiplyScalar(Math.max(peelV, 1.0));
         vel.copy(omega).cross(_tmp.copy(pos).sub(peelPivot));
-        /* pushed out over the desk's front lip, towards the viewer, so the
-           sideways draught carries it to the middle of the floor rather than
-           off the left edge of the frame */
-        vel.x += 0.06; vel.z += 0.42; vel.y += 0.12;
+        /* Pushed out over the desk's front lip and against the draught's
+           leftward drift, so it lands near the middle of the floor. Measured:
+           at 0.06 sideways it landed off the left edge of a phone's portrait
+           frame (ndc x -1.21); at 0.85 it lands at -0.59 on a phone and -0.28
+           on desktop, where the portrait framing in frameCamera expects it. */
+        vel.x += 0.85; vel.z += 0.42; vel.y += 0.12;
       } else {
         vel.set(0,0,0); omega.set(0,0,0);
         return;
