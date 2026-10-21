@@ -3199,7 +3199,17 @@ function(t,e){"object"==typeof exports&&"undefined"!=typeof module?e(exports):"f
       if (animT >= 1) animating = false;
     }
     renderFrame();
+    /* Nothing to draw for nobody: stop the loop while the room is off-screen
+       or the tab is hidden, instead of re-rendering the scene forever. */
+    if (!shown()){ cancelAnimationFrame(raf); raf = 0; }
   }
+
+  var onScreen = false;
+  function shown(){ return onScreen && !document.hidden; }
+  function resume(){
+    if (shown() && !raf){ last = performance.now(); raf = requestAnimationFrame(frame); }
+  }
+  document.addEventListener('visibilitychange', resume);
 
   function start(){
     resetBody();
@@ -3215,6 +3225,7 @@ function(t,e){"object"==typeof exports&&"undefined"!=typeof module?e(exports):"f
     var n = Math.round(seconds/FIXED);
     for (var i=0;i<n;i++) step(FIXED);
     photo.position.copy(pos); photo.quaternion.copy(quat); applyBend();
+    renderFrame();   // the loop may be paused off-screen; show the new pose
     return window.__glState();
   };
   window.__glState = function(){
@@ -3254,6 +3265,7 @@ function(t,e){"object"==typeof exports&&"undefined"!=typeof module?e(exports):"f
   var armed = true;
   new IntersectionObserver(function(es){
     es.forEach(function(e){
+      onScreen = e.isIntersecting; resume();
       if (e.intersectionRatio >= 0.40){ if (armed){ armed = false; start(); } }
       else if (e.intersectionRatio <= 0.10){ armed = true; }
     });
