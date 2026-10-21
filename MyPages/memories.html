@@ -1971,8 +1971,11 @@ function(t,e){"object"==typeof exports&&"undefined"!=typeof module?e(exports):"f
        content is not centred, it sits right of the aim point, so tightening
        alone would slide the window off the edge. Landscape is untouched. */
     var portrait = camera.aspect < 0.85;
-    var HFOV = THREE.MathUtils.degToRad(portrait ? 46 : 62);
-    var panX = portrait ? 0.24 : 0;
+    /* Wide enough, and panned little enough, that the photo's landing spot
+       on the left of the floor stays in frame on a phone (measured on 390x844:
+       landing at ndc x -0.81, window and right curtain at +0.40 / +0.76). */
+    var HFOV = THREE.MathUtils.degToRad(portrait ? 62 : 62);
+    var panX = portrait ? 0.06 : 0;
     var v = 2*Math.atan(Math.tan(HFOV/2)/camera.aspect);
     /* VMAX is what decides how near the camera can stand. The dolly below
        compensates the clamp EXACTLY, so it preserves horizontal coverage --
@@ -2946,15 +2949,22 @@ function(t,e){"object"==typeof exports&&"undefined"!=typeof module?e(exports):"f
     }
 
     /* Lift-off is a PEEL, not a slide. The draught gets under the upwind
-       corner first and raises it while the print pivots on the opposite,
-       downwind corner: the first gust stirs it, the lull lets it sag back, and
-       the second gust stands it up until the wind takes the whole sheet off
-       the table. Below that the print lies still -- no creep, no shiver. */
+       corner first while the print pivots on the opposite, downwind corner.
+       A light sheet cannot balance propped up on a corner, so until the
+       second gust the corner only lifts and trembles a few degrees, and lies
+       back down in the lull. The second gust then snaps it up in one quick
+       movement and the wind takes the whole sheet off the table. */
     if (!lifted){
       var env = windEnv(simT);
-      var tgt = Math.max(0, env - 0.45) * 0.36;
-      if (tgt > 0) tgt += 0.035 * Math.sin(simT * 17.0) * Math.min(1, tgt * 6);  // the edge trembles
-      peelV += (55*(tgt - peel) - 8*peelV)*dt;
+      var snap = simT > 3.3 && env > 1.9;
+      var tgt;
+      if (snap) tgt = 0.62;
+      else {
+        tgt = Math.min(0.10, Math.max(0, env - 0.45) * 0.09);
+        if (tgt > 0) tgt += 0.02 * Math.sin(simT * 17.0) * Math.min(1, tgt * 12);  // the edge trembles
+      }
+      var kP = snap ? 220 : 55, cP = snap ? 18 : 8;
+      peelV += (kP*(tgt - peel) - cP*peelV)*dt;
       peel += peelV*dt;
       if (peel < 0){ peel = 0; peelV = Math.max(0, peelV); }
       _pq.setFromAxisAngle(peelAxis, peel);
@@ -2966,14 +2976,12 @@ function(t,e){"object"==typeof exports&&"undefined"!=typeof module?e(exports):"f
            turning about the pivot, plus the gust's push. From here the wind
            pressing on the raised underside is what lifts it off the table. */
         lifted = true;
-        omega.copy(peelAxis).multiplyScalar(Math.max(peelV, 1.0));
+        /* the same turn rate the tuned flight leaves the desk with, however
+           fast the snap itself was */
+        omega.copy(peelAxis).multiplyScalar(1.05);
         vel.copy(omega).cross(_tmp.copy(pos).sub(peelPivot));
-        /* Pushed out over the desk's front lip and against the draught's
-           leftward drift, so it lands near the middle of the floor. Measured:
-           at 0.06 sideways it landed off the left edge of a phone's portrait
-           frame (ndc x -1.21); at 0.85 it lands at -0.59 on a phone and -0.28
-           on desktop, where the portrait framing in frameCamera expects it. */
-        vel.x += 0.85; vel.z += 0.42; vel.y += 0.12;
+        /* pushed out over the desk's front lip, towards the viewer */
+        vel.x += 0.06; vel.z += 0.42; vel.y += 0.12;
       } else {
         vel.set(0,0,0); omega.set(0,0,0);
         return;
