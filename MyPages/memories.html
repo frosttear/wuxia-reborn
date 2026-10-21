@@ -2708,7 +2708,7 @@ function(t,e){"object"==typeof exports&&"undefined"!=typeof module?e(exports):"f
   /* The storyboard the spec asks for: breeze -> building -> first gust (the
      edge stirs) -> second, stronger gust (it is lifted clear). Expressed as an
      envelope on the wind, NOT as keyframes on the photo. */
-  function windAt(t, p, out){
+  function windEnv(t){
     var env;
     if (t < 1.1)      env = 0.16 + 0.10*t;                       // barely a breeze
     else if (t < 2.0) env = 0.30 + 0.85*(t-1.1);                 // building
@@ -2720,6 +2720,10 @@ function(t,e){"object"==typeof exports&&"undefined"!=typeof module?e(exports):"f
     else if (t < 5.0) env = 0.92 + 0.22*Math.sin(t*0.9);         // gusty airflow
     else if (t < 6.4) env = Math.max(0.10, 0.92 - (t-5.0)*0.62); // it passes
     else              env = 0.05;                                 // still air
+    return env;
+  }
+  function windAt(t, p, out){
+    var env = windEnv(t);
     var s = 0.55, ts = t*0.45;
     var nx = fbm(p.x*s + ts,        p.y*s,        p.z*s);
     var ny = fbm(p.x*s + 31.7,      p.y*s + ts,   p.z*s + 11.3);
@@ -2757,6 +2761,10 @@ function(t,e){"object"==typeof exports&&"undefined"!=typeof module?e(exports):"f
   var omega = new THREE.Vector3();          // world-space angular velocity
   var bend = 0, bendV = 0, restT = 0, spin = 0;
   var lifted = false, onFloor = false, floorT = 0, lastFloorY = 1e9;
+  /* the peel: how far the upwind corner has been lifted, about which axis and pivot */
+  var peel = 0, peelV = 0, peelPivot = new THREE.Vector3(), peelAxis = new THREE.Vector3();
+  var _pq = new THREE.Quaternion();
+  var PEEL_DIR = new THREE.Vector3(-0.32, 0, 0.22).normalize();  // mean downwind, level
   var pose0 = new THREE.Vector3(), quat0 = new THREE.Quaternion();                  // sheet curvature state
   var bendAxis = new THREE.Vector2(1,0);
   var settled = false, simT = 0, running = false;
@@ -2802,6 +2810,14 @@ function(t,e){"object"==typeof exports&&"undefined"!=typeof module?e(exports):"f
        replay started lower than the last and the print sank further each time. */
     lastFloorY = 1e9;
     lifted = false; onFloor = false; photo.castShadow = true; floorT = 0; pose0.copy(pos); quat0.copy(quat);            // slight resting curl
+    /* the peel pivots on the downwind-most corner, about a level axis across the wind */
+    peel = 0; peelV = 0;
+    var best = -1e9;
+    for (var pc=0; pc<4; pc++){
+      var cw = CORNERS[pc].clone().applyQuaternion(quat0).add(pose0);
+      if (cw.dot(PEEL_DIR) > best){ best = cw.dot(PEEL_DIR); peelPivot.copy(cw); }
+    }
+    peelAxis.crossVectors(UP, PEEL_DIR).normalize();
     simT = 0; settled = false;
     photo.position.copy(pos); photo.quaternion.copy(quat);
     applyBend();
@@ -2929,21 +2945,35 @@ function(t,e){"object"==typeof exports&&"undefined"!=typeof module?e(exports):"f
       }
     }
 
-    /* A body at rest stays at rest. Until the airflow genuinely beats the
-       print's own weight it does not creep, shiver or hop -- it just lies
-       there. Before this, every small gust in the opening breeze nudged it
-       about the table top. */
+    /* Lift-off is a PEEL, not a slide. The draught gets under the upwind
+       corner first and raises it while the print pivots on the opposite,
+       downwind corner: the first gust stirs it, the lull lets it sag back, and
+       the second gust stands it up until the wind takes the whole sheet off
+       the table. Below that the print lies still -- no creep, no shiver. */
     if (!lifted){
-      /* Release on the storyboard's second gust rather than on a force
-         threshold. Holding the body rigid also held its ORIENTATION, and
-         lift-off is progressive -- the edge tips first, which is what raises
-         the angle of attack -- so a hard force gate meant it never left at all. */
-      var aeroUp = force.y + MASS*9.81;
-      if (simT > 2.75 || aeroUp > MASS*9.81*1.45) lifted = true;
-      else {
+      var env = windEnv(simT);
+      var tgt = Math.max(0, env - 0.45) * 0.36;
+      if (tgt > 0) tgt += 0.035 * Math.sin(simT * 17.0) * Math.min(1, tgt * 6);  // the edge trembles
+      peelV += (55*(tgt - peel) - 8*peelV)*dt;
+      peel += peelV*dt;
+      if (peel < 0){ peel = 0; peelV = Math.max(0, peelV); }
+      _pq.setFromAxisAngle(peelAxis, peel);
+      quat.copy(_pq).multiply(quat0);
+      pos.copy(pose0).sub(peelPivot).applyQuaternion(_pq).add(peelPivot);
+      bendV += (140*(0.05 + peel*0.30 - bend) - 13*bendV)*dt; bend += bendV*dt;
+      if (peel > 0.50 || simT > 3.9){
+        /* Hand over to the free body with the motion it already has -- still
+           turning about the pivot, plus the gust's push. From here the wind
+           pressing on the raised underside is what lifts it off the table. */
+        lifted = true;
+        omega.copy(peelAxis).multiplyScalar(Math.max(peelV, 1.0));
+        vel.copy(omega).cross(_tmp.copy(pos).sub(peelPivot));
+        /* pushed out over the desk's front lip, towards the viewer, so the
+           sideways draught carries it to the middle of the floor rather than
+           off the left edge of the frame */
+        vel.x += 0.06; vel.z += 0.42; vel.y += 0.12;
+      } else {
         vel.set(0,0,0); omega.set(0,0,0);
-        pos.copy(pose0); quat.copy(quat0);
-        bendV += (140*(0.05-bend) - 13*bendV)*dt; bend += bendV*dt;
         return;
       }
     }
@@ -2990,11 +3020,6 @@ function(t,e){"object"==typeof exports&&"undefined"!=typeof module?e(exports):"f
     vel.multiplyScalar(Math.exp(-(grounded ? 2.6 : 0.08)*dt));
     pos.addScaledVector(vel, dt);
 
-    /* While it is still at table height it may slide, tip and roll over the
-       lip -- but it must not HOP. Clamped AFTER integration: placed before it,
-       the aerodynamic force simply re-accelerated the print on the same step
-       and it leapt 30cm anyway. It leaves the table because it runs out of
-       table, not because it is thrown. */
     /* Once it is on the boards it may slide and it may settle flat, but it
        must never rebound. The penalty contact hands energy back on every
        impact, which is why it bounced like a ball instead of landing like a
@@ -3008,11 +3033,6 @@ function(t,e){"object"==typeof exports&&"undefined"!=typeof module?e(exports):"f
       if (vel.y > 0) vel.y = 0;
       if (pos.y > lastFloorY) pos.y = lastFloorY;
       lastFloorY = pos.y;
-    }
-
-    if (!onFloor && pos.y > TABLE_Y - 0.05 && vel.y > 0.015){
-      vel.y = 0.015;
-      if (pos.y > TABLE_Y + 0.004) pos.y = TABLE_Y + 0.004;
     }
 
     /* angular: tau = I * alpha in body axes */
@@ -3139,6 +3159,11 @@ function(t,e){"object"==typeof exports&&"undefined"!=typeof module?e(exports):"f
   /* ---------- loop ---------- */
   var SPEED = 0.56;          // < 1 = a slower, more languid fall
   var FIXED = 1/480, acc = 0, last = 0, raf = 0;
+  /* The wind reaches the window before it reaches the desk. Both read the
+     same wind timeline, but the curtains start CUR_AHEAD seconds into it (past
+     the faint opening breeze, so they move at once) and the photograph's clock
+     only starts after LEAD seconds -- at first only the curtains move. */
+  var LEAD = 0.8, CUR_AHEAD = 0.8, windT = 0;
   function frame(now){
     raf = requestAnimationFrame(frame);
     var dt = (now - last)/1000; last = now;
@@ -3151,16 +3176,20 @@ function(t,e){"object"==typeof exports&&"undefined"!=typeof module?e(exports):"f
     if (running && !picked && !animating){
       /* One dial for pace. Scaling time leaves the trajectory, the tumble count
        and the landing spot exactly as tuned -- it just plays them slower. */
-    acc += dt * SPEED; var guard = 0;
-      while (acc >= FIXED && guard++ < 260){ step(FIXED); acc -= FIXED; }
+      windT += dt * SPEED;
+      if (windT > LEAD){
+        acc += Math.min(dt * SPEED, windT - LEAD); var guard = 0;
+        while (acc >= FIXED && guard++ < 260){ step(FIXED); acc -= FIXED; }
+      }
       photo.position.copy(pos);
       photo.quaternion.copy(quat);
       applyBend();
       if (settled) host.style.cursor = 'zoom-in';
     }
     /* the cloth answers the same gust the photo does */
-    var envNow = Math.min(1.6, windAt(running ? simT : (now/1000), pos, _wind).length()/1.9);
-    updateCurtains(running ? simT : now/1000, envNow);
+    var curT = running ? windT + CUR_AHEAD : now/1000;
+    var envNow = Math.min(1.6, windAt(curT, pos, _wind).length()/1.9);
+    updateCurtains(curT, envNow);
 
     if (animating){
       animT = Math.min(1, animT + dt/0.62);
@@ -3175,7 +3204,7 @@ function(t,e){"object"==typeof exports&&"undefined"!=typeof module?e(exports):"f
   function start(){
     resetBody();
     running = true; picked = false; animating = false;
-    last = performance.now(); acc = 0;
+    last = performance.now(); acc = 0; windT = 0;
     if (!raf) raf = requestAnimationFrame(frame);
   }
   window.__glStart = start;
@@ -3225,10 +3254,10 @@ function(t,e){"object"==typeof exports&&"undefined"!=typeof module?e(exports):"f
   var armed = true;
   new IntersectionObserver(function(es){
     es.forEach(function(e){
-      if (e.intersectionRatio >= 0.55){ if (armed){ armed = false; start(); } }
+      if (e.intersectionRatio >= 0.40){ if (armed){ armed = false; start(); } }
       else if (e.intersectionRatio <= 0.10){ armed = true; }
     });
-  }, {threshold:[0,.1,.35,.55,.8,1]}).observe(section);
+  }, {threshold:[0,.1,.35,.4,.55,.8,1]}).observe(section);
 
   resetBody();
   raf = requestAnimationFrame(frame);
