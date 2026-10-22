@@ -2531,11 +2531,14 @@ function(t,e){"object"==typeof exports&&"undefined"!=typeof module?e(exports):"f
   /* Restyled as sheer voile, as in an illustrated room: white, lit from
      within by the window behind it, and see-through enough that the wall and
      the light show through the folds. */
+  /* Brighter than the wall behind it, or it simply reads as more wall: the
+     window light glowing through it carries most of its tone, and it is
+     dense enough that the wall colour does not show through and flatten it. */
   var curMat = new THREE.MeshStandardMaterial({
     color:0xffffff,
-    emissive:new THREE.Color(0x6a655c), emissiveIntensity:1.0,
+    emissive:new THREE.Color(0x9a958c), emissiveIntensity:1.0,
     side:THREE.DoubleSide,
-    transparent:true, opacity:0.62, depthWrite:false
+    transparent:true, opacity:0.80, depthWrite:false
   });
   [[WIN_X-WIN_W/2-0.22, -1],[WIN_X+WIN_W/2+0.22, 1]].forEach(function(cfg){
     var g = new THREE.PlaneGeometry(CUR_W, CUR_H, CUR_SX, CUR_SY);
@@ -2543,8 +2546,10 @@ function(t,e){"object"==typeof exports&&"undefined"!=typeof module?e(exports):"f
     /* Hung from the rod and kept ABOVE the desk line: at the old height most
        of each panel sat behind the desk, which is why they could not be seen. */
     m.position.set(cfg[0], WIN_Y+WIN_H/2+0.15-CUR_H/2 + 0.22, WIN_Z+0.24);
-    /* sheer: it would cast a solid black shadow, which voile does not */
-    m.castShadow = false; m.receiveShadow = true;
+    /* sheer: it would cast a solid black shadow, which voile does not; and
+       it hangs in front of a sunny window, so it glows rather than taking the
+       wall's shadow, which left it the same dull tone as the wall */
+    m.castShadow = false; m.receiveShadow = false;
     scene.add(m);
     curtains.push({mesh:m, base:g.attributes.position.array.slice(0),
                    attr:g.attributes.position, side:cfg[1]});
