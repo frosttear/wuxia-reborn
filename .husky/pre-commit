@@ -1,1 +1,28 @@
-cd wuxia-reborn && npm test
+# Run only the test suites that cover what is being committed.
+#   MyPages/ammo-defense*            -> tests/ammo-defense.test.js
+#   wuxia-reborn/ (the game)         -> every other suite
+#   test setup / package / jest cfg  -> everything
+#   anything else (e.g. other pages) -> no tests
+# PRECOMMIT_STAGED overrides the staged-file list, for trying the hook out.
+
+staged=${PRECOMMIT_STAGED:-$(git diff --cached --name-only --diff-filter=ACMRD)}
+
+all=0; game=0; ammo=0
+for f in $staged; do
+  case "$f" in
+    wuxia-reborn/tests/setup.js|wuxia-reborn/package.json|wuxia-reborn/package-lock.json) all=1 ;;
+    MyPages/ammo-defense.html|MyPages/ammo-defense/*|wuxia-reborn/tests/ammo-defense.test.js) ammo=1 ;;
+    wuxia-reborn/*) game=1 ;;
+  esac
+done
+
+cd wuxia-reborn || exit 1
+if [ $all = 1 ] || { [ $game = 1 ] && [ $ammo = 1 ]; }; then
+  npm test
+elif [ $game = 1 ]; then
+  npx jest --testPathPattern=tests/ --testPathIgnorePatterns=ammo-defense
+elif [ $ammo = 1 ]; then
+  npx jest tests/ammo-defense.test.js
+else
+  echo "pre-commit: no tested files staged - skipping tests"
+fi
