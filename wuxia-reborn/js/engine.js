@@ -371,6 +371,7 @@ const Engine = {
         const displayEvent = {
             title: `羁绊·${npc ? npc.name : npcId}·第${level}章${chapterNote}`,
             text: (prefix || '') + step.text,
+            illustration: step.illustration,
             type: '羁绊'
         };
         const allChoices = (step.choices || []).map(c =>
@@ -903,7 +904,8 @@ const Engine = {
             id: step.id,
             title: `【${chain.name}】${step.title}`,
             type: '任务',
-            text: step.text
+            text: step.text,
+            illustration: step.illustration
         };
         const allChoices = (step.choices || []).map(c => ({
             ...c, locked: c.requirements ? !this.checkConditions(c.requirements) : false
@@ -1699,6 +1701,7 @@ const Engine = {
         await UI.epiloguePause(400);
         UI.setEpilogueMode(true);
         await UI.addEpilogueIllustration('jianhun-origin-win');
+        await UI.addEpilogueIllustration('return-to-today');
         await UI.waitForClick();
         await UI.epiloguePause(400);
 
@@ -2119,7 +2122,7 @@ const Engine = {
         if (!char) { alert('没有存档可以导出'); return; }
         this.saveGame();
         const payload = {
-            v: '0.28.0',
+            v: '0.28.1',
             char: JSON.parse(localStorage.getItem('wuxia_save')),
         };
         const encoded = btoa(unescape(encodeURIComponent(JSON.stringify(payload))));

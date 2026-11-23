@@ -87,7 +87,8 @@
             "flags": {
               "tianmo_sign2": true
             }
-          }
+          },
+          "illustration": "dragon-ridge-ledger"
         },
         {
           "id": "harbinger_3",
@@ -235,7 +236,8 @@
             "flags": {
               "chaos2": true
             }
-          }
+          },
+          "illustration": "temple-water-bowl"
         },
         {
           "id": "chaos_3",
@@ -1744,7 +1746,8 @@
             "flags": {
               "truth_assembled": true
             }
-          }
+          },
+          "illustration": "elder-written-risks"
         }
       ],
       "completionReward": {

@@ -663,6 +663,7 @@ const UI = {
             <div class="log-title-row"><span class="log-type type-${event.type}">${event.type}</span>${event.title}</div>
             <div class="log-text"></div>`;
         this.logEl.appendChild(entry);
+        if (event.illustration) this.addIllustration(event.illustration);
         this.notifyEventTab();
 
         // Cancel any previous reveal animation still running

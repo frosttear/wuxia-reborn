@@ -1,6 +1,20 @@
 // gallery.js — Illustration gallery with unlock tracking
 
 const GALLERY_DATA = [
+    // 剧情新章
+    { id: "dragon-ridge-ledger", name: "运送簿上的空名", hint: "在龙脊山石台找到运送簿", category: "bosses" },
+    { id: "temple-water-bowl", name: "他仍会接一碗水", hint: "调查山神庙密室", category: "bosses" },
+    { id: "lu-wugui-mountain-pass", name: "最初没有救下的人", hint: "听沈玄清说起陆无归的往事", category: "bonds" },
+    { id: "yan-inn-defense", name: "门前先拔出的刀", hint: "与燕赤行赶到废驿站", category: "bonds" },
+    { id: "yan-three-records", name: "三份记录对上之后", hint: "与燕赤行核对含光门旧案", category: "bonds" },
+    { id: "li-guard-the-door", name: "守住通向后院的门", hint: "陪李云舒到顾朝川的书房", category: "bonds" },
+    { id: "li-plum-sleeve", name: "梅枝挂住了袖角", hint: "回到梅园看李云舒练剑", category: "bonds" },
+    { id: "su-seventh-day", name: "第七日认出了妹妹", hint: "见证苏青救治受控武人", category: "bonds" },
+    { id: "mei-shadow-testimony", name: "梅园里没有握手", hint: "听凌雪向李云舒交代旧案", category: "bonds", secret: true },
+    { id: "elder-written-risks", name: "他终于把风险写下来", hint: "向沈玄清问清轮回的风险", category: "bosses", secret: true },
+    { id: "seal-memory-thread", name: "通向今日的一线光", hint: "确认退路，进入封印记忆", category: "bosses", secret: true },
+    { id: "return-to-today", name: "山路还是来时的山路", hint: "解除封印，回到今日", category: "bosses", secret: true },
+
     // 武道传承
     { id: 'rebirth',                      name: '世界线回溯',           hint: '完成一世旅途，踏入轮回之门',               category: 'bosses' },
     { id: 'wuxiang-unlock',               name: '无相剑意',             hint: '完成「无相剑意」任务链',                   category: 'bosses' },
