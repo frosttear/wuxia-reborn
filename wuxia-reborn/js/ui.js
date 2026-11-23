@@ -1531,13 +1531,11 @@ const UI = {
             this.chainBtn.disabled = busy;
         }
 
-        // Show final boss shortcut only when all bonds are complete
+        // Show final boss shortcut when the keeper and chosen companions are ready
         const finalBossBtn = document.getElementById('finalBossBtn');
         if (finalBossBtn) {
             const char = state.char;
-            const bonds = state.bonds || {};
-            const allBondsDone = char && Object.keys(bonds).length > 0 &&
-                Object.entries(bonds).every(([npcId, levels]) => (char.bondLevels || {})[npcId] >= levels.length);
+            const allBondsDone = char && Engine.canBreakSeal(char);
             const bossNotYetFired = char && !(char.flags && char.flags.boss_triggered);
             finalBossBtn.style.display = (allBondsDone && bossNotYetFired && !busy) ? '' : 'none';
             finalBossBtn.disabled = busy;

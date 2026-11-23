@@ -990,9 +990,9 @@ const Engine = {
             const bridgeLines = [
                 { text: '他们一个一个地消散了——不是消失，是融进来了。', cls: 'epilogue' },
                 { text: '每一世没走完的路，每一次走错后留下的东西，每一个此生记得、彼生又忘记的教训，此刻全部落回到你身上，像是某种搁置了太久的债务，终于结清了。', cls: 'epilogue' },
-                { text: '你没有更强大。你只是，终于完整了。', cls: 'epilogue-win' },
+                { text: '你认出了自己的选择。仍有遗憾，也仍能决定下一步。', cls: 'epilogue-win' },
                 { text: '────────────────────', cls: 'system' },
-                { text: '你想起了王铁说的那些话，想起了李云舒在城墙上的那个夜晚，想起了燕赤行没想清楚就拔刀的那一刻，想起了苏青说的「你会停下来吗」，想起了凌雪坐在台阶上提着陶壶问你的那个早晨，想起了沈玄清说的「你走过了我这一生都没走过的路」。', cls: 'epilogue' },
+                { text: '你想起已经同行过的人：他们留下的手艺、查证过的旧案、愿意承担的责任。还有人尚未与你走近，还有争执没有和解。那些空白，不会使已经发生的相助变成虚假。', cls: 'epilogue' },
                 { text: '力量为何而存——\n\n不是为了我自己。是为了他们。是为了不让那把刀落下来，是为了让那盏灯还能亮着，是为了让那杯水还能被接住。', cls: 'epilogue-win' },
                 { text: '那道力量在你面前停了一下。这是它千年来第一次遇见一个不试图封印它、不试图占有它、只是站在这里、带着整个人间走过来的人。\n\n「来。」', cls: 'epilogue' },
             ];
@@ -1023,6 +1023,14 @@ const Engine = {
             if ((char.bondLevels[npcId] || 0) < maxLevel) return false;
         }
         return true;
+    },
+
+    canBreakSeal(char) {
+        // The keeper explains the seal; three freely chosen companions provide outside support.
+        const levels = char.bondLevels || {};
+        return (levels.mysterious_elder || 0) >= 5 &&
+            ['wang_tie', 'li_yunshu', 'yan_chixing', 'su_qing', 'ling_xue']
+                .filter(id => (levels[id] || 0) >= 5).length >= 3;
     },
 
     // ── Test combat (no consequences) ────────────────────────────────────────
@@ -1089,19 +1097,19 @@ const Engine = {
             // 苏青济世线: 天魔 HP -20%
             if (f.su_qing_mission_path && (bl.su_qing || 0) >= 5) {
                 enemy.hp = Math.round(enemy.hp * 0.8);
-                UI.addLog('【脉诊知敌】苏青整理的噬魂真经诊断文书，让你明晰天魔本源的弱点——天魔气血上限削减两成。', 'unlock');
+                UI.addLog('【脉诊知敌】你按苏青标出的换息间隙截断供血阵，她与接应者先将受控武人移出。失去外来的气血，天魔生命上限降低两成。', 'unlock');
             }
 
             // 李云舒家族压力线: 天魔 defense -25
             if (f.li_yunshu_family_path && (bl.li_yunshu || 0) >= 5) {
                 enemy.defense = Math.max(0, enemy.defense - 25);
-                UI.addLog('【梅影剑意】李云舒所查到的天魔宫内情，让你对天魔的防御布置了然于胸——天魔防御降低。', 'unlock');
+                UI.addLog('【梅影剑意】李云舒用外堂名册找到守阵人的换班路线，带接应者打开侧门。天魔失去外围屏障，防御降低。', 'unlock');
             }
 
             // 凌雪自由线: 天魔 attack -25
             if (!f.lx_blade_path && (bl.ling_xue || 0) >= 5) {
                 enemy.attack = Math.max(0, enemy.attack - 25);
-                UI.addLog('「师父，你输了——不是输给他，是输给你自己。」\n\n凌雪站在天魔面前，那句话如一把刀，刺进了陆无归的心。天魔神情一滞，气机微乱。', 'dialog');
+                UI.addLog('凌雪挡住陆无归射向逃亡者的一剑：「你救过我。但今天这些人，我也要救。」她主动截下追击，令他无法专注攻向你。', 'dialog');
             }
 
             // 王铁: 纯叙事内心独白——「为什么要赢」的重量
@@ -1116,11 +1124,11 @@ const Engine = {
         const job = this.getJob(char.job);
         const cs = Combat.initState(char, enemy, job);
         cs.postNarrative = postNarrative || '';
-        if ((enemy.isHiddenBoss || enemy.isTrueFinalBoss) && this.allBondsComplete(char)) {
+        if ((enemy.isHiddenBoss || enemy.isTrueFinalBoss) && this.canBreakSeal(char)) {
             cs.allBondsBonus = true;
-            UI.addLog('【羁绊之力】王铁、李云舒、神秘老者、燕赤行、苏青、凌雪……这一世结下的所有情谊，此刻化为无形之力，护持于你！', 'unlock');
-        } else if (enemy.isHiddenBoss && !this.allBondsComplete(char)) {
-            UI.addLog('【羁绊未满】你感到胸中力量空缺……或许，集齐所有羁绊才能撼动此敌。', 'info');
+            UI.addLog('【共同赴约】那些已经与你走过一程的人，各自留下了接应。你记得他们的选择，也守住自己的决定。', 'unlock');
+        } else if (enemy.isHiddenBoss && !this.canBreakSeal(char)) {
+            UI.addLog('【破封准备】完成沈玄清的五段羁绊，了解封印；再与任意三位同行者完成羁绊，建立外部接应。无需所有人圆满，也无需彼此原谅。', 'info');
         }
         if (enemy.isFinalBoss || enemy.isHiddenBoss || enemy.isTrueFinalBoss) cs.noFlee = true;
         // 燕赤行放下执念线: player attack buff for 天魔 battle
@@ -1406,7 +1414,7 @@ const Engine = {
             UI.renderCharacter(char, this.state.jobs);
             if (enemy.isTrueFinalBoss) {
                 UI.addLog('力竭。意识开始涣散——', 'system');
-                UI.addLog('然后，腰间的玉牌射出一道冷光。\n\n「这条时间线，还没走到头。」\n\n沈玄清的声音从很远的地方传来。意识重新聚拢，你还站在九百年前的荒野上。', 'epilogue');
+                UI.addLog('然后，腰间的玉牌射出一道冷光。\n\n「出口还在。要不要再试，由你决定。」\n\n沈玄清的声音从很远的地方传来。意识重新聚拢，你沿约定的引线退回封印记忆入口，眼前仍是九百年前的荒野。', 'epilogue');
                 UI.showCombatReturnBtn('lost', () => {
                     UI.hideCombatOverlay();
                     this.startCombat(enemy, '');
@@ -1416,8 +1424,8 @@ const Engine = {
             if (enemy.isHiddenBoss) {
                 UI.addIllustration('sword-soul-lose');
                 UI.addLog('你击败了天魔，却败于那更深处的剑意。此生功亏一筑。', 'system');
-                if (!this.allBondsComplete(char)) {
-                    UI.addLog('【提示】剑魂的弱点是"不懂人心"——走遍江湖，与王铁、李云舒、神秘老者、燕赤行、苏青、凌雪六人结下真正的羁绊，或可找到突破之法。', 'info');
+                if (!this.canBreakSeal(char)) {
+                    UI.addLog('【提示】破封需要沈玄清交代封印规则，以及任意三位同行者的完整羁绊。不同人的选择，都可以成为接应；不必完成全部人物线。', 'info');
                 }
                 UI.showCombatReturnBtn('lost', () => {
                     UI.hideCombatOverlay();
@@ -1572,9 +1580,9 @@ const Engine = {
     triggerFinalBossNow() {
         const { char } = this.state;
         if (!char || this.state.gamePhase !== 'idle') return;
-        if (!this.allBondsComplete(char)) return;
+        if (!this.canBreakSeal(char)) return;
 
-        if (!confirm('【羁绊汇聚】你与所有同行者都结下了真正的羁绊。跳过剩余时间，直接前往那场最终的对决？')) return;
+        if (!confirm('【羁绊汇聚】你已了解封印，并有同行者提供接应。跳过剩余时间，直接前往那场最终的对决？')) return;
 
         char.ageMonths = Math.max(char.ageMonths, 240);
         char.flags.boss_triggered = true;
@@ -1588,12 +1596,12 @@ const Engine = {
 
         if (isTrueEnding) {
             // Route based on whether bonds are complete:
-            // true path (all bonds) → elder_truth_form_appears (reveal + 九百年前)
-            // wrong path (missing bonds) → elder_true_form_appears (absorption)
-            const truePath = this.allBondsComplete(char);
+            // true path (keeper and three companions) → elder_truth_form_appears (reveal + 九百年前)
+            // container path (insufficient preparation) → elder_true_form_appears (absorption)
+            const truePath = this.canBreakSeal(char);
             this.state.gamePhase = 'idle';
             UI.updateControls(this.state);
-            UI.addLog('剑意化为飞灰，玉牌归于沉寂。', 'win');
+            UI.addLog('显形的剑意散去，玉牌深处仍有搏动。', 'win');
             UI.addLog('你以为，一切终于结束了……', 'system');
             setTimeout(() => {
                 this.state.gamePhase = 'idle';
@@ -1619,7 +1627,7 @@ const Engine = {
             }
             this.state.gamePhase = 'victory';   // block player actions during transition
             UI.updateControls(this.state);
-            UI.addLog('天魔轰然倒下。江湖归于平静，风也停了。', 'win');
+            UI.addLog('天魔倒下，供血阵失去催动。远处传来开锁与呼喊的声音，受困的人正在被带离。', 'win');
 
             // 燕赤行放下执念线: 落败后在战场边缘，念出含光门三十人名字
             const f = char.flags || {};
@@ -1632,7 +1640,7 @@ const Engine = {
 
             // 李云舒家族线 + 燕赤行放下执念线 cross-NPC easter egg
             if (f.li_yunshu_family_path && (bl.li_yunshu || 0) >= 5 && !f.yan_chixing_hatred_path && (bl.yan_chixing || 0) >= 5) {
-                UI.addLog('李云舒后来说起母亲和那个人的故事。燕赤行才第一次知道，季沧海能活到今天，有一个叫梅影剑的女人付出过什么代价。', 'epilogue');
+                UI.addLog('燕赤行认出了李云舒手里的旧信：「季沧海说过那位救他的女人。我不知道，你是她的女儿。」李云舒点了点头。两人把还未核清的名字写到同一张纸上。', 'epilogue');
                 UI.addLog('无人明说，无人追问。只是一个停顿，和沉默。', 'epilogue');
             }
 
@@ -1678,8 +1686,8 @@ const Engine = {
             { text: '────────────────────', cls: 'system' },
             { text: '那道盘踞在他身上九百年的力量，终于在这一刻离他而去。', cls: 'epilogue-win' },
             { text: '双鱼玉佩的碎片化为光点，在风中渐渐消散——那道困了他九百年、也困了你无数世的枷锁，就此断裂。', cls: 'epilogue' },
-            { text: '你第一次感到，这个世界上没有任何人在注视你、等待你、安排你。', cls: 'epilogue' },
-            { text: '只有你自己，和这片天地。', cls: 'epilogue' },
+            { text: '封印记忆散去，你沿引线回到今日。山路仍是来时的山路，九百年的往事没有被抹去；改变的是从今以后。', cls: 'epilogue' },
+            { text: '接应的人在路口等你。你终于可以自己决定何时出发，又在哪里停下。', cls: 'epilogue' },
             { text: '这一世，是你的。', cls: 'epilogue-win' },
         ];
 
@@ -1711,7 +1719,7 @@ const Engine = {
                 illId: 'yan-chixing-true-ending',
                 lines: [
                     { text: '【燕赤行 · 了却前尘】', cls: 'epilogue-title' },
-                    { text: '含光山上的碑立好之后，燕赤行下了山，此后再没回去过。他说那是含光门的事，不是他的事——他的事，已经了了。', cls: 'epilogue' },
+                    { text: '离开含光山后，燕赤行仍收着季沧海寄来的查证信。他不再只为报仇走路，但那些未结的旧案，他没有忘记。', cls: 'epilogue' },
                     { text: '天魔死后不久，季沧海送来了一封信。信不长，只说了一件事：他打算重建含光门，想知道燕赤行是否愿意回来。', cls: 'epilogue' },
                     { text: '「他想重建。」燕赤行把信叠好，收进怀里，「我回了他，说我不去做那件事。但他要挂牌，我帮他守几天场子没问题。」', cls: 'epilogue-dialogue' },
                     { text: '「含光门是师父的含光门，」他停顿了一下，「他想把那个名字留下来，是他的选择。我的选择，是把灯带出来——不需要那块牌匾。」', cls: 'epilogue-dialogue' },
@@ -1786,13 +1794,34 @@ const Engine = {
             },
         ];
 
-        for (const { illId, lines } of epilogues) {
+        const endingNpcs = ['wang_tie', 'yan_chixing', 'ling_xue', 'su_qing', 'mysterious_elder', 'li_yunshu'];
+        const afterFlags = ['wang_wish_fulfilled', 'yan_afterstory_done', 'lx_afterstory_done', 'su_afterstory_done', 'elder_afterstory_done', 'li_afterstory_done'];
+        const quietEndings = [
+            '镇口有人练着王铁教过的刀法。旧镖路还要有人走，送出去的承诺还要有人接着兑现。你在门口停了一会儿，把记得的招式又演了一遍。',
+            '燕赤行把核过的旧账收进怀里。他还会去找证人，也会顺路护送走夜路的人。临别时他说：「有消息，照旧地方留信。」',
+            '凌雪整理旧档，去找那些被她的任务伤过的人。有人不肯见她，她把可以作证的去处留下，没有要求一个回答。',
+            '苏青把最后一份记录抄好，留给下一位接手的医者。你要走时，她拉住你的手腕再把了一次脉：「往后难受了，照样要来看。」',
+            '沈玄清在院里坐了很久，第一次不用分神压住识海里的剑意。他把该交代的往事继续写下。九百年的重担放下了，做错过的事仍要慢慢补。',
+            '李云舒收剑，抬头问你下一程往哪里走。你说还没想好，她便提议先去吃面。她仍有想查的事，也仍有想看的山水。',
+        ];
+        const visibleEpilogues = epilogues.flatMap((ep, i) => {
+            if (((char.bondLevels || {})[endingNpcs[i]] || 0) < 5) return [];
+            if (!(char.flags || {})[afterFlags[i]]) {
+                return [{ ...ep, lines: [{ text: quietEndings[i], cls: 'epilogue' }] }];
+            }
+            return [ep];
+        });
+        if (char.flags.mei_shadow_testimony_done) {
+            visibleEpilogues.push({ illId: null, lines: [{ text: '李云舒与凌雪分别收到了旧案的新证词。她们仍没有说和解，却都履行了留下作证的承诺。你没有替她们写下一个结论。', cls: 'epilogue' }] });
+        }
+
+        for (const { illId, lines } of visibleEpilogues) {
             for (const { text, cls } of lines) {
                 await UI.addLogTypewriter(text, cls);
                 await UI.epiloguePause(300);
             }
             await UI.epiloguePause(300);
-            await UI.addEpilogueIllustration(illId);
+            if (illId) await UI.addEpilogueIllustration(illId);
             await UI.waitForClick();
             await UI.slideOutEpilogueSection();
             await UI.epiloguePause(200);
@@ -2090,7 +2119,7 @@ const Engine = {
         if (!char) { alert('没有存档可以导出'); return; }
         this.saveGame();
         const payload = {
-            v: '0.27.17',
+            v: '0.28.0',
             char: JSON.parse(localStorage.getItem('wuxia_save')),
         };
         const encoded = btoa(unescape(encodeURIComponent(JSON.stringify(payload))));

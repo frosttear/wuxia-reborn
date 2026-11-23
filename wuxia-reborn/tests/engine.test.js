@@ -446,3 +446,39 @@ describe('_checkAndAutoPromote', () => {
         expect(char.job).toBe(originalJob);
     });
 });
+
+// Story routes must permit unfinished relationships without inventing completed ones.
+describe('Engine.canBreakSeal story preparation', () => {
+    test('keeper and any three companions suffice without all six bonds', () => {
+        const char = makeChar({ bondLevels: { mysterious_elder: 5, wang_tie: 5, su_qing: 5, yan_chixing: 5 } });
+        expect(Engine.canBreakSeal(char)).toBe(true);
+    });
+    test('another set of companions can reach the same ending', () => {
+        const char = makeChar({ bondLevels: { mysterious_elder: 5, li_yunshu: 5, ling_xue: 5, su_qing: 5 } });
+        expect(Engine.canBreakSeal(char)).toBe(true);
+    });
+    test('companions cannot replace the keeper explaining the seal', () => {
+        expect(Engine.canBreakSeal(makeChar({ bondLevels: { mysterious_elder: 4, wang_tie: 5, su_qing: 5, yan_chixing: 5, ling_xue: 5 } }))).toBe(false);
+    });
+    test('two companions are insufficient and missing levels are safe', () => {
+        expect(Engine.canBreakSeal(makeChar({ bondLevels: { mysterious_elder: 5, wang_tie: 5, su_qing: 5 } }))).toBe(false);
+        expect(Engine.canBreakSeal({})).toBe(false);
+    });
+});
+
+describe('Mei garden testimony prerequisites', () => {
+    const ev = require('../data/events.json').find(e => e.id === 'mei_shadow_testimony');
+    beforeEach(() => resetEngine({ bondLevels: { li_yunshu: 5, ling_xue: 5 }, flags: { lx_afterstory_done: true, li_yunshu_family_path: true } }));
+    test('appears only after both relevant arcs and cannot repeat', () => {
+        expect(Engine.checkConditions(ev.conditions)).toBe(true);
+        Engine.state.char.flags.mei_shadow_testimony_done = true;
+        expect(Engine.checkConditions(ev.conditions)).toBe(false);
+    });
+    test('does not reveal guilt before Ling has confessed or on Li freedom route', () => {
+        Engine.state.char.flags.lx_afterstory_done = false;
+        expect(Engine.checkConditions(ev.conditions)).toBe(false);
+        Engine.state.char.flags.lx_afterstory_done = true;
+        Engine.state.char.flags.li_yunshu_family_path = false;
+        expect(Engine.checkConditions(ev.conditions)).toBe(false);
+    });
+});

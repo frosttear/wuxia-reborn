@@ -88,7 +88,7 @@ mainChainIds.forEach(id => {
 out('## 二、关键剧情事件');
 out('');
 
-const bossIds = ['tianmo_appears','elder_true_form_appears','elder_truth_form_appears'];
+const bossIds = ['tianmo_appears','hidden_boss_appears','elder_true_form_appears','elder_truth_form_appears','mei_shadow_testimony'];
 bossIds.forEach(id => {
   const ev = events.find(e => e.id === id);
   if (!ev) return;
@@ -124,9 +124,9 @@ out('');
 
 const npcNames = {
   yan_chixing: '燕赤行（疤脸剑客）',
-  wang_tie: '王铁（铁匠）',
+  wang_tie: '王铁（老镖师）',
   su_qing: '苏青（游医）',
-  li_yunshu: '李云舒（书生）',
+  li_yunshu: '李云舒（江湖剑客）',
   ling_xue: '凌雪（白衣剑客）',
   mysterious_elder: '神秘老人（沈玄清）',
 };
@@ -139,6 +139,7 @@ Object.entries(npcNames).forEach(([key, label]) => {
   npcBonds.forEach(bond => {
     out(`#### 羁绊 ${bond.level}：${bond.title}`);
     out('');
+    if (bond.conditions) { out(`*分支条件：${JSON.stringify(bond.conditions)}*`); out(''); }
     if (bond.desc) { out(bond.desc); out(''); }
     formatSteps(bond.steps);
   });
@@ -158,6 +159,6 @@ afterIds.forEach(id => {
 
 // ── WRITE ─────────────────────────────────────────────────────────────────────
 const outPath = path.join(ROOT, 'docs/story-review.md');
-fs.writeFileSync(outPath, lines.join('\n'), 'utf8');
+fs.writeFileSync(outPath, lines.map(line => line.trimEnd()).join('\n'), 'utf8');
 const size = Math.round(fs.statSync(outPath).size / 1024);
 console.log(`Written: ${outPath} (${size} KB, ${lines.length} lines)`);
