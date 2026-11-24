@@ -1,4 +1,21 @@
 {
   "buildCommand": "bash scripts/build-edgeone.sh",
-  "outputDirectory": "."
+  "outputDirectory": ".",
+  "redirects": [
+    {
+      "source": "/gal/dreamhealer",
+      "destination": "/gal/dreamhealer/",
+      "statusCode": 301
+    },
+    {
+      "source": "/gal/dreamhealer/engine",
+      "destination": "/gal/dreamhealer/engine/",
+      "statusCode": 301
+    },
+    {
+      "source": "/wuxia-reborn",
+      "destination": "/wuxia-reborn/",
+      "statusCode": 301
+    }
+  ]
 }
