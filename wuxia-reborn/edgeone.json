@@ -1,4 +1,0 @@
-{
-  "buildCommand": "bash scripts/build-edgeone.sh",
-  "outputDirectory": "."
-}
