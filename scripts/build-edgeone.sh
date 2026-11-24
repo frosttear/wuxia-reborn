@@ -3,7 +3,7 @@ set -euo pipefail
 
 cd "$(dirname "${BASH_SOURCE[0]}")/.."
 workspace="$(mktemp -d)"
-trap 'rm -r -- "$workspace"' EXIT
+trap 'rm --force --recursive -- "$workspace"' EXIT
 
 source_dir="$workspace/dreamhealer"
 target_dir="gal/dreamhealer"
